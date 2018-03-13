@@ -18,11 +18,13 @@ return [
     '{n, plural, =1{Group} other{Groups}}' => '{n, plural, =1{Groupe} other{Groupes}}',
     '{n, plural, =1{User} other{Users}}' => '{n, plural, =1{Utilisateur} other{Utilisateurs}}',
     '{n, plural, =1{Person} other{Persons}}' => '{n, plural, =1{Personne} other{Personnes}}',
+    '{n, plural, =1{Sensor} other{Sensors}}' => '{n, plural, =1{Capteur} other{Capteurs}}',
     '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}' => '{n, plural, =1{Objet Agronomique} other{Objets Agronomiques}}',
     
     'Add Dataset' => 'Importer un jeux de données',
     'Add Document' => 'Ajouter un document',
     'Add Document Script' => 'Ajouter un script',
+    'Add Sensor' => 'Ajouter des Capteurs',
     'Address' => 'Adresse',
     'Admin' => 'Administrateur',
     'Administrative Contacts' => 'Contacts administratifs',

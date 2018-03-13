@@ -59,6 +59,7 @@ AppAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}', ['n' => 2]), 'url' => ['/agronomical-object/index']];
         $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
         $menuItems[] = ['label' => Yii::t('app', 'Variables'), 'url' => ['/variable/index']];
+        $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 'url' => ['/sensor/create']];
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
                             ['label' => Yii::t('app', '{n, plural, =1{Group} other{Groups}}', ['n' => 2]), 'url' => ['/group/index']],
