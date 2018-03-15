@@ -250,4 +250,27 @@ class VariableController extends Controller {
             }
         }
     }
+    
+    /**
+     * used for ajax call
+     * @return array with the variables uris and their alias
+     */
+    public function actionGetVariablesUriAndAlias() {
+        $searchModel = new VariableSearch();        
+        $variables = [];
+        $totalPages = 1;
+        for ($i = 0; $i < $totalPages; $i++) {
+            $params[\app\models\yiiModels\YiiModelsConstants::PAGE] = $i;
+            $searchResult = $searchModel->search(Yii::$app->session['access_token'], $params);
+            
+            $foundedVars = $searchResult->getModels();
+            $totalPages = $searchResult->getPagination()->totalCount;
+            foreach ($foundedVars as $variable) {
+//                $variables[$variable->uri] = $variable->label;
+                $variables[] = $variable->uri;
+            }
+        }
+        
+        return json_encode($variables, JSON_UNESCAPED_SLASHES);
+    }
 }
