@@ -32,18 +32,17 @@ use yii\helpers\Url;
                 datatype: 'json'
             }).done(function (data) {
                 variables = JSON.parse(data);
-                console.log(typeof variables);
             }).fail(function (jqXHR, textStatus) {
                                     //SILEX:todo
                                     //gestion messages d'erreur
                                     //\SILEX:todo
                                     alert("ERROR : " + jqXHR);
-           }); 
+           });
            
            //generate handsontable
             var hotElement = document.querySelector('#dataset-multiple-insert-table');        
             var handsontable = new Handsontable(hotElement, {
-               startRows: 1,
+               startRows: 2,
                columns: [
                    {
                        data: 'alias',
@@ -82,11 +81,6 @@ use yii\helpers\Url;
                        data: 'dateOfLastCalibration',
                        type: 'date',
                        dateFormat: 'YYYY-MM-DD',
-                       required: false
-                   },
-                   {
-                       data: 'document',
-                       type: 'text',
                        required: false
                    }
                ],
