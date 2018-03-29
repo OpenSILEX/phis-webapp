@@ -48,7 +48,9 @@ class WSUriModel extends \openSILEX\guzzleClientPHP\WSModel {
         $requestRes = $this->get($sessionToken, $subService, $params);
         
         if (isset($requestRes->{WSConstants::RESULT}->{WSConstants::DATA}))  {
-            return (array) $requestRes->{WSConstants::RESULT}->{WSConstants::DATA};
+            $toReturn[WSConstants::PAGINATION] = (array) $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION};
+            $toReturn[WSConstants::DATA] =  (array) $requestRes->{WSConstants::RESULT}->{WSConstants::DATA};
+            return $toReturn;
         } else {
             return $requestRes;
         }

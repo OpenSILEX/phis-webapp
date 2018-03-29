@@ -161,6 +161,13 @@ use yii\widgets\ActiveForm;
             $('#yiivariablemodel-label').val(variableLabelTab[0] + "_" + variableLabelTab[1] + "_" + toAdd);
         }
     }
+    
+    function validateUrl(url) {
+        url_validate = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+        if(!url_validate.test(url)){
+           alert('bad uri/url given');
+        }
+    }
 </script>
 
 <div class="variable-form">
@@ -332,6 +339,7 @@ use yii\widgets\ActiveForm;
                   'enableError' => true,
                   'options' => [
                     'class' => 'input-priority',
+                    'onchange' => 'validateUrl(this.value)'
                    ]
               ],
               [

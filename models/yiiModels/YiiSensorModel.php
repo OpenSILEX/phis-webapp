@@ -144,4 +144,53 @@ class YiiSensorModel extends WSActiveRecord {
     public function attributesToArray() {
         throw new Exception('Not implemented');
     }
+    
+    /**
+     * calls web service and return the list of sensors types of the ontology
+     * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
+     * @return list of the sensors types
+     */
+    public function getSensorsTypes($sessionToken) {
+        $sensorConceptUri = "http://www.phenome-fppn.fr/vocabulary/2017#SensingDevice";
+        $params = [];
+        if ($this->pageSize !== null) {
+           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+        }
+        if ($this->page !== null) {
+            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+        }
+        
+        $wsUriModel = new WSUriModel();
+        $requestRes = $wsUriModel->getDescendants($sessionToken, $sensorConceptUri, $params);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                return "token";
+            } else {
+                return $requestRes;
+            }
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * 
+     * @param string $sessionToken
+     * @param array $sensors
+     * @return string|array 
+     */
+    public function createSensors($sessionToken, $sensors) {
+        $requestRes = $this->wsTripletModel->post($sessionToken, "", $sensors);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes->{\app\models\wsModels\WSConstants::TOKEN})) {
+                return $requestRes;
+            } else {
+                return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
+            }
+        } else {
+            return $requestRes;
+        }
+    }
 }
