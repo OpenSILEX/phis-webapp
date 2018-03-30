@@ -30,12 +30,42 @@
            
         // Empty validator
         emptyValidator = function(value, callback) {
-          if (!value || 0 === value.length) {
+          if (isEmpty(value)) {
             callback(false);
           } else {
             callback(true);
           }
         };
+        
+        /**
+         * 
+         * @param {type} value
+         * @returns {Boolean} true if value is empty
+         */
+        function isEmpty(value) {
+          if (!value || 0 === value.length) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+        
+        /**
+         * validate a sensor value. callback will be true if the value is 
+         * not empty and is a sensor type
+         * @param {type} value
+         * @param {type} callback
+         * @returns {undefined} 
+         */
+        sensorTypeValidator = function(value, callback) {
+            if (isEmpty(value)) {
+                callback(false);
+            } else if (sensingDevicesTypes.indexOf(value) > -1) {
+                callback(true);
+            } else {
+                callback(false);
+            }
+        }
            
         function firstRowRequiedRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -73,7 +103,7 @@
                     source: sensingDevicesTypes,
                     strict: true,
                     required: true,
-//                    validator: emptyValidator
+                    validator: sensorTypeValidator
                 },
                 {
                     data: 'brand',
