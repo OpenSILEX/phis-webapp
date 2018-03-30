@@ -117,11 +117,9 @@ class SensorController extends Controller {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }
         $variableModel = new \app\models\yiiModels\YiiVariableModel();
-        $variables = $variableModel->getVariablesUriAndAlias();
         return $this->render('create', [
             'model' => $sensorModel,
-            'sensorsTypes' => json_encode($sensorsTypes, JSON_UNESCAPED_SLASHES),
-            'variables' => json_encode($variables, JSON_UNESCAPED_SLASHES)
+            'sensorsTypes' => json_encode($sensorsTypes, JSON_UNESCAPED_SLASHES)
         ]);
     }
     
@@ -140,6 +138,26 @@ class SensorController extends Controller {
             }
         }
         return null;
+    }
+    
+    /**
+     * Search a sensor by uri.
+     * @param String $uri searched sensor's uri
+     * @return mixed YiiSensorModel : the searched sensor
+     *               "token" if the user must log in
+     */
+    public function findModel($uri) {
+        $sessionToken = Yii::$app->session['access_token'];
+        $sensorModel = new YiiSensorModel();
+        $requestRes = $sensorModel->findByURI($sessionToken, $uri);
+        
+        if ($requestRes === true) {
+            return $sensorModel;
+        } else if(isset($requestRes["token"])) {
+            return "token";
+        } else {
+           throw new NotFoundHttpException('The requested page does not exist');
+        }
     }
     
     /**
@@ -225,5 +243,45 @@ class SensorController extends Controller {
             return json_encode($insertionResult, JSON_UNESCAPED_SLASHES); 
         }
         return true;
+    }
+    
+    /**
+     * list all sensors
+     * @return mixed
+     */
+    public function actionIndex() {
+        $searchModel = new \app\models\yiiModels\SensorSearch();
+        
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        
+        if (is_string($searchResult)) {
+            return $this->render('/site/error', [
+                    'name' => 'Internal error',
+                    'message' => $searchResult]);
+        } else if (is_array($searchResult) && isset($searchResult["token"])) { //user must log in
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        } else {
+            return $this->render('index', [
+               'searchModel' => $searchModel,
+                'dataProvider' => $searchResult
+            ]);
+        }
+    }
+    
+    /**
+     * @action Displays a single sensor model
+     * @return mixed
+     */
+    public function actionView($id) {
+        $res = $this->findModel($id);
+        
+        if ($res === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        } else {            
+            return $this->render('view', [
+                'model' => $res,
+            ]);
+        }
+        
     }
 }

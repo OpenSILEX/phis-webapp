@@ -18,7 +18,7 @@
 
 <div class="dataset-form">
     <div id="sensors-created" class="alert alert-success">Sensors Created</div>
-    <button type = "button" id="export" id="exportButton">Export</button>
+    <!--<button type = "button" id="export" id="exportButton">Export</button>-->
     <div id="dataset-multiple-insert-table"></div>
     <div id="dataset-multiple-insert-button" style="margin-top : 1%">
         <button type="button" class="btn btn-success" id="sensors-save"><?= Yii::t('app', 'Create Sensors') ?></button>

@@ -17,6 +17,7 @@ namespace app\models\yiiModels;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSTripletModel;
 use app\models\wsModels\WSUriModel;
+use app\models\wsModels\WSSensorModel;
 
 use Yii;
 
@@ -37,48 +38,49 @@ class YiiSensorModel extends WSActiveRecord {
      * @var string
      */
     public $uri;
+    const URI = "uri";
     /**
      * the type uri (concept uri) of the sensor
      *  (e.g. http://www.phenome-fppn.fr/vocabulary/2017#RadiationSensor)
      * @var string
      */
     public $rdfType;
+    const RDF_TYPE = "rdfType";
     /**
-     * the alias of the sensor
+     * the label of the sensor
      *  (e.g. par03_p)
      * @var string
      */
-    public $alias;
+    public $label;
+    const LABEL = "label";
     /**
      * the brand of the sensor
      *  (e.g. Skye Instruments)
      * @var string
      */
     public $brand; 
-    /**
-     * the uri of the variable measured by the sensor
-     *  (e.g. http://www.phenome-fppn.fr/phenovia/id/variables/v001)
-     * @var string
-     */
-    public $variable;
+    const BRAND = "brand";
     /**
      * the in service date of the sensor
      *  (e.g 2011-05-01)
      * @var string
      */
     public $inServiceDate;
+    const IN_SERVICE_DATE = "inServiceDate";
     /**
      * the date of purchase of the sensor
      *  (e.g. 2011-01-01)
      * @var string
      */
     public $dateOfPurchase;
+    const DATE_OF_PURCHASE = "dateOfPurchase";
     /**
      * the date of last calibration of the sensor
      *  (e.g 2017-03-22)
      * @var string
      */
     public $dateOfLastCalibration;
+    const DATE_OF_LAST_CALIBRATION = "dateOfLastCalibration";
     /**
      * the uri of documents linked to the sensor
      * @var string
@@ -105,6 +107,7 @@ class YiiSensorModel extends WSActiveRecord {
     public function __construct($pageSize = null, $page = null) {
         $this->wsTripletModel = new WSTripletModel();
         $this->wsUriModel = new WSUriModel();
+        $this->wsModel = new WSSensorModel();
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize : $this->pageSize = null;
         ($page !== null || $page !== "") ? $this->page = $page : $this->page = null;
     }
@@ -115,7 +118,7 @@ class YiiSensorModel extends WSActiveRecord {
      */
     public function rules() {
        return [
-          [['rdfType', 'brand', 'variable', 'alias'], 'required'],  
+          [['rdfType', 'brand', 'label'], 'required'],  
           [['inServiceDate', 'dateOfPurchase', 'dateOfLastCalibration', 'documents'], 'safe']
         ]; 
     }
@@ -128,21 +131,44 @@ class YiiSensorModel extends WSActiveRecord {
         return [
             'uri' => 'URI',
             'rdfType' => Yii::t('app', 'Type'),
-            'alias' => Yii::t('app', 'Alias'),
+            'label' => Yii::t('app', 'Alias'),
             'brand' => Yii::t('app', 'Brand'),
-            'variable' => Yii::t('app', 'Variable'),
             'inServiceDate' => Yii::t('app', 'In Service Date'),
             'dateOfPurchase' => Yii::t('app', 'Date Of Purchase'),
             'dateOfLastCalibration' => Yii::t('app', 'Date Of Last Calibration')
         ];
     }
     
+    /**
+     * allows to fill the attributes with the informations in the array given 
+     * @param array $array array key => value which contains the metadata of 
+     *                     a sensor
+     */
     protected function arrayToAttributes($array) {
-        throw new Exception('Not implemented');
+        $this->uri = $array[YiiSensorModel::URI];
+        $this->rdfType = $array[YiiSensorModel::RDF_TYPE];
+        $this->label = $array[YiiSensorModel::LABEL];
+        $this->brand = $array[YiiSensorModel::BRAND];
+        $this->inServiceDate = $array[YiiSensorModel::IN_SERVICE_DATE];
+        $this->dateOfLastCalibration = $array[YiiSensorModel::DATE_OF_LAST_CALIBRATION];
+        $this->dateOfPurchase = $array[YiiSensorModel::DATE_OF_PURCHASE];
     }
 
+    /**
+     * Create an array representing the sensor
+     * Used for the web service for example
+     * @return array with the attributes. 
+     */
     public function attributesToArray() {
-        throw new Exception('Not implemented');
+        $elementForWebService[YiiSensorModel::URI] = $this->uri;
+        $elementForWebService[YiiSensorModel::RDF_TYPE] = $this->rdfType;
+        $elementForWebService[YiiSensorModel::LABEL] = $this->label;
+        $elementForWebService[YiiSensorModel::BRAND] = $this->brand;
+        $elementForWebService[YiiSensorModel::IN_SERVICE_DATE] = $this->inServiceDate;
+        $elementForWebService[YiiSensorModel::DATE_OF_LAST_CALIBRATION] = $this->dateOfLastCalibration;
+        $elementForWebService[YiiSensorModel::DATE_OF_PURCHASE] = $this->dateOfPurchase;
+        
+        return $elementForWebService;
     }
     
     /**
@@ -188,6 +214,33 @@ class YiiSensorModel extends WSActiveRecord {
                 return $requestRes;
             } else {
                 return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
+            }
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * get sensor's informations by uri
+     * @param string $sessionToken user session token
+     * @param string $uri sensor's uri
+     */
+    public function findByURI($sessionToken, $uri) {
+        $params = [];
+        if ($this->pageSize !== null) {
+           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+        }
+        if ($this->page !== null) {
+            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+        }
+        $requestRes = $this->wsModel->getSensorByUri($sessionToken, $uri, $params);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                return $requestRes;
+            } else {
+                $this->arrayToAttributes($requestRes);
+                return true;
             }
         } else {
             return $requestRes;
