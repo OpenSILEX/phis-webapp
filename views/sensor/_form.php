@@ -25,6 +25,7 @@
     </div>
     <script>
         var sensingDevicesTypes = JSON.parse('<?php echo $sensorsTypes; ?>');
+        console.log(sensingDevicesTypes);
         
         $('#sensors-created').hide();
            
@@ -112,13 +113,13 @@
                     validator: emptyValidator
                 },
                 {
-                    data: 'inServiceDate',
+                    data: 'dateOfPurchase',
                     type: 'date',
                     dateFormat: 'YYYY-MM-DD',
                     required: false
                 },
                 {
-                    data: 'dateOfPurchase',
+                    data: 'inServiceDate',
                     type: 'date',
                     dateFormat: 'YYYY-MM-DD',
                     required: false
@@ -136,9 +137,9 @@
                 '<b><?= Yii::t('app', 'Alias') ?></b>',
                 '<b><?= Yii::t('app', 'Type') ?></b>',
                 '<b><?= Yii::t('app', 'Brand') ?></b>',
-                '<b><?= Yii::t('app', 'In Service Date') ?></b>',
                 '<b><?= Yii::t('app', 'Date Of Purchase') ?></b>',
-                '<b><?= Yii::t('app', 'Date Of Last Calibration') ?></b>'
+                '<b><?= Yii::t('app', 'In Service Date') ?></b>',
+                '<b><?= Yii::t('app', 'Date Of Last Calibration') ?></b>' 
             ],
             manualRowMove: true,
             manualColumnMove: true,
@@ -177,7 +178,7 @@
                     data: {sensors: sensors}
                 }).done(function (data) {
                     for (var i = 0; i < data.length; i++) {
-                       handsontable.setDataAtCell(0, i, data[i]);
+                       handsontable.setDataAtCell(i, 0, data[i]);
                     }
                     
                     $('#sensors-save').hide();

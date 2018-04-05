@@ -69,7 +69,6 @@ class SensorController extends Controller {
             }
         }
         
-        
         return $sensorsTypes;
     }
     
@@ -99,7 +98,6 @@ class SensorController extends Controller {
                 }
             }
         }
-        
         
         return $sensorsTypes;
     }
@@ -202,23 +200,23 @@ class SensorController extends Controller {
                 $tripletsGroup[] = $brand;
                 
                 //5. (optional) triplet inServiceDate
-                if ($sensor[4] !== "") {
+                if ($sensor[5] !== "") {
                     $inServiceDate = null;
                     $inServiceDate["s"] = "?";
                     $inServiceDate["p"] = "http://www.phenome-fppn.fr/vocabulary/2017#inServiceDate";
                     $inServiceDate["o_type"] = "literal";
-                    $inServiceDate["o"] = $sensor[4];
+                    $inServiceDate["o"] = $sensor[5];
                     $inServiceDate["g"] = $sensorsGraph;
                     $tripletsGroup[] = $inServiceDate;
                 }
                 
                 //6. (optional) triplet dateOfPurchase
-                if ($sensor[5] !== "") {
+                if ($sensor[4] !== "") {
                     $dateOfPurchase = null;
                     $dateOfPurchase["s"] = "?";
                     $dateOfPurchase["p"] = "http://www.phenome-fppn.fr/vocabulary/2017#dateOfPurchase";
                     $dateOfPurchase["o_type"] = "literal";
-                    $dateOfPurchase["o"] = $sensor[5];
+                    $dateOfPurchase["o"] = $sensor[4];
                     $dateOfPurchase["g"] = $sensorsGraph;
                     $tripletsGroup[] = $dateOfPurchase;
                 }

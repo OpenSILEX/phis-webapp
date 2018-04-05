@@ -18,6 +18,7 @@ use yii\helpers\Html;
 /* @var $model app\models\YiiSensorModel */
 
 $this->title = Yii::t('yii', 'Add Sensors');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="sensor-create">

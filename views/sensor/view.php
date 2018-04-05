@@ -14,7 +14,6 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiSensorModel */
@@ -31,8 +30,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
+            'label',
             'uri',
-            'label',            
             [
               'attribute' => 'rdfType',
               'format' => 'raw',
