@@ -16,6 +16,7 @@ namespace app\models\yiiModels;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSTripletModel;
 use app\models\wsModels\WSUriModel;
+use app\models\wsModels\WSVectorModel;
 
 use Yii;
 
@@ -90,7 +91,7 @@ class YiiVectorModel extends WSActiveRecord {
      */
     public function __construct($pageSize = null, $page = null) {
         $this->wsTripletModel = new WSTripletModel();
-//        $this->wsModel = new WSVectorModel();
+        $this->wsModel = new WSVectorModel();
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize : $this->pageSize = null;
         ($page !== null || $page !== "") ? $this->page = $page : $this->page = null;
     }
@@ -121,12 +122,34 @@ class YiiVectorModel extends WSActiveRecord {
         ];
     }
     
+    /**
+     * allows to fill the attributes with the informations in the array given 
+     * @param array $array array key => value which contains the metadata of 
+     *                     a sensor
+     */
     protected function arrayToAttributes($array) {
-        //todo
+        $this->uri = $array[YiiVectorModel::URI];
+        $this->rdfType = $array[YiiVectorModel::RDF_TYPE];
+        $this->label = $array[YiiVectorModel::LABEL];
+        $this->brand = $array[YiiVectorModel::BRAND];
+        $this->inServiceDate = $array[YiiVectorModel::IN_SERVICE_DATE];
+        $this->dateOfPurchase = $array[YiiVectorModel::DATE_OF_PURCHASE];
     }
 
+    /**
+     * Create an array representing the vector
+     * Used for the web service for example
+     * @return array with the attributes. 
+     */
     public function attributesToArray() {
-        //todo
+        $elementForWebService[YiiVectorModel::URI] = $this->uri;
+        $elementForWebService[YiiVectorModel::RDF_TYPE] = $this->rdfType;
+        $elementForWebService[YiiVectorModel::LABEL] = $this->label;
+        $elementForWebService[YiiVectorModel::BRAND] = $this->brand;
+        $elementForWebService[YiiVectorModel::IN_SERVICE_DATE] = $this->inServiceDate;
+        $elementForWebService[YiiVectorModel::DATE_OF_PURCHASE] = $this->dateOfPurchase;
+        
+        return $elementForWebService;
     }
     
     /**
@@ -161,17 +184,44 @@ class YiiVectorModel extends WSActiveRecord {
     /**
      * 
      * @param string $sessionToken
-     * @param array $sensors
+     * @param array $vectors
      * @return string|array 
      */
-    public function createVectors($sessionToken, $sensors) {
-        $requestRes = $this->wsTripletModel->post($sessionToken, "", $sensors);
+    public function createVectors($sessionToken, $vectors) {
+        $requestRes = $this->wsTripletModel->post($sessionToken, "", $vectors);
         
         if (!is_string($requestRes)) {
             if (isset($requestRes->{\app\models\wsModels\WSConstants::TOKEN})) {
                 return $requestRes;
             } else {
                 return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
+            }
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * get vector's informations by uri
+     * @param string $sessionToken user session token
+     * @param string $uri sensor's uri
+     */
+    public function findByURI($sessionToken, $uri) {
+        $params = [];
+        if ($this->pageSize !== null) {
+           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+        }
+        if ($this->page !== null) {
+            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+        }
+        $requestRes = $this->wsModel->getVectorByUri($sessionToken, $uri, $params);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                return $requestRes;
+            } else {
+                $this->arrayToAttributes($requestRes);
+                return true;
             }
         } else {
             return $requestRes;

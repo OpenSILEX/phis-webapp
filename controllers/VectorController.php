@@ -209,4 +209,64 @@ class VectorController extends Controller {
         }
         return true;
     }
+    
+    /**
+     * Search a vector by uri.
+     * @param String $uri searched vector's uri
+     * @return mixed YiiSensorModel : the searched vector
+     *               "token" if the user must log in
+     */
+    public function findModel($uri) {
+        $sessionToken = Yii::$app->session['access_token'];
+        $vectorModel = new YiiVectorModel();
+        $requestRes = $vectorModel->findByURI($sessionToken, $uri);
+        
+        if ($requestRes === true) {
+            return $vectorModel;
+        } else if(isset($requestRes["token"])) {
+            return "token";
+        } else {
+           throw new NotFoundHttpException('The requested page does not exist');
+        }
+    }
+    
+    /**
+     * list all vectors
+     * @return mixed
+     */
+    public function actionIndex() {
+        $searchModel = new \app\models\yiiModels\VectorSearch();
+        
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        
+        if (is_string($searchResult)) {
+            return $this->render('/site/error', [
+                    'name' => 'Internal error',
+                    'message' => $searchResult]);
+        } else if (is_array($searchResult) && isset($searchResult["token"])) { //user must log in
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        } else {
+            return $this->render('index', [
+               'searchModel' => $searchModel,
+                'dataProvider' => $searchResult
+            ]);
+        }
+    }
+    
+    /**
+     * @action Displays a single vector model
+     * @return mixed
+     */
+    public function actionView($id) {
+        $res = $this->findModel($id);
+        
+        if ($res === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        } else {            
+            return $this->render('view', [
+                'model' => $res,
+            ]);
+        }
+        
+    }
 }
