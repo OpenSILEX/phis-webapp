@@ -19,6 +19,7 @@ return [
     '{n, plural, =1{User} other{Users}}' => '{n, plural, =1{Utilisateur} other{Utilisateurs}}',
     '{n, plural, =1{Person} other{Persons}}' => '{n, plural, =1{Personne} other{Personnes}}',
     '{n, plural, =1{Sensor} other{Sensors}}' => '{n, plural, =1{Capteur} other{Capteurs}}',
+    '{n, plural, =1{Vector} other{Vectors}}' => '{n, plural, =1{Vecteur} other{Vecteurs}}',
     '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}' => '{n, plural, =1{Objet Agronomique} other{Objets Agronomiques}}',
     
     'Add Dataset' => 'Importer un jeux de données',
