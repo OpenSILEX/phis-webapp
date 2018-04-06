@@ -60,6 +60,7 @@ AppAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
         $menuItems[] = ['label' => Yii::t('app', 'Variables'), 'url' => ['/variable/index']];
         $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 'url' => ['/sensor/index']];
+        $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 'url' => ['/vector/index']];
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
                             ['label' => Yii::t('app', '{n, plural, =1{Group} other{Groups}}', ['n' => 2]), 'url' => ['/group/index']],
