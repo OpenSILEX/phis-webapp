@@ -103,6 +103,10 @@ AppAsset::register($this);
                                     'label' => '<span class="glyphicon glyphicon-fire" aria-hidden="true"></span> ' . Yii::t('app', 'Web API'), 
                                     'url' => 'http://localhost:8084/phis2ws/'
                                 ],
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> ' . Yii::t('app', 'Vocabulary'), 
+                                    'url' => ['/site/ontology']
+                                ],
                             ]
             
                         ];
