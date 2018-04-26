@@ -163,7 +163,7 @@ class SensorController extends Controller {
      * @return string the json of the creation return
      */
     public function actionCreateMultipleSensors() {
-        $sensors = Yii::$app->request->post()["sensors"];
+        $sensors = json_decode(Yii::$app->request->post()["sensors"]);
         $sessionToken = Yii::$app->session['access_token'];
         if (count($sensors) > 0) {
             $sensorsGraph = Yii::$app->params['baseURI'] . "sensors";

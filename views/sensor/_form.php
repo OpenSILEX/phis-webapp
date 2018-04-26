@@ -170,12 +170,14 @@
          */
         function add(callback) {
             if (callback) {
-                sensors = handsontable.getData();
+                sensorsArray = handsontable.getData();
+                sensorsString = JSON.stringify(sensorsArray);
+                
                 $.ajax({
                     url: 'index.php?r=sensor%2Fcreate-multiple-sensors',
                     type: 'POST',
                     dataType: 'json',
-                    data: {sensors: sensors}
+                    data: {sensors: sensorsString}
                 }).done(function (data) {
                     for (var i = 0; i < data.length; i++) {
                        handsontable.setDataAtCell(i, 0, data[i]);
