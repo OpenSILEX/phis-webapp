@@ -163,12 +163,13 @@
          */
         function add(callback) {
             if (callback) {
-                vectors = handsontable.getData();
+                vectorsArray = handsontable.getData();
+                vectorsString = JSON.stringify(vectorsArray);
                 $.ajax({
                     url: 'index.php?r=vector%2Fcreate-multiple-vectors',
                     type: 'POST',
                     dataType: 'json',
-                    data: {vectors: vectors}
+                    data: {vectors: vectorsString}
                 }).done(function (data) {
                     for (var i = 0; i < data.length; i++) {
                        handsontable.setDataAtCell(i, 0, data[i]);

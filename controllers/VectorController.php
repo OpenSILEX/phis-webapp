@@ -142,7 +142,7 @@ class VectorController extends Controller {
      * @return string the json of the creation return
      */
     public function actionCreateMultipleVectors() {
-        $vectors = Yii::$app->request->post()["vectors"];
+        $vectors = json_decode(Yii::$app->request->post()["vectors"]);
         $sessionToken = Yii::$app->session['access_token'];
         if (count($vectors) > 0) {
             $vectorsGraph = Yii::$app->params['baseURI'] . "vectors";
