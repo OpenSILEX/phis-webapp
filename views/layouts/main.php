@@ -21,6 +21,7 @@ use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
 require_once(__DIR__ . '/../../config/config.php');
+require_once(__DIR__ . '/../../config/web_services.php');
 
 AppAsset::register($this);
 ?>
@@ -101,7 +102,7 @@ AppAsset::register($this);
                                 ],
                                 [
                                     'label' => '<span class="glyphicon glyphicon-fire" aria-hidden="true"></span> ' . Yii::t('app', 'Web API'), 
-                                    'url' => 'http://localhost:8084/phis2ws/'
+                                    'url' => WS_PHIS_PATH_DOC
                                 ],
                                 [
                                     'label' => '<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> ' . Yii::t('app', 'Vocabulary'), 
@@ -162,7 +163,7 @@ AppAsset::register($this);
                                 ],
                                 [
                                     'label' => '<span class="glyphicon glyphicon-fire" aria-hidden="true"></span> ' . Yii::t('app', 'Web API'), 
-                                    'url' => 'http://localhost:8084/phis2ws/'
+                                    'url' => WS_PHIS_PATH_DOC
                                 ],
                             ]   
                         ];
