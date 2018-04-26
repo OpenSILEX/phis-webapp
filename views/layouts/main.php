@@ -21,6 +21,7 @@ use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
 require_once(__DIR__ . '/../../config/config.php');
+require_once(__DIR__ . '/../../config/web_services.php');
 
 AppAsset::register($this);
 ?>
@@ -54,32 +55,123 @@ AppAsset::register($this);
         
         
     } else if (Yii::$app->session['isAdmin']) { //Cas d'un admin
-        $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 'url' => ['/project/index']];
-        $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['/experiment/index']];
-        $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}', ['n' => 2]), 'url' => ['/agronomical-object/index']];
+        $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
+                        'items' => [
+                            [
+                                'label' => '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
+                                'url' => ['/project/index'],
+                            ],
+                            [
+                                'label' => '<span class="glyphicon glyphicon-grain" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]),
+                                'url' => ['/experiment/index']
+                            ],
+                            [
+                                'label' => '<span class="glyphicon glyphicon-leaf" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}', ['n' => 2]),
+                                'url' => ['/agronomical-object/index']
+                            ],
+                            [
+                                'label' => '<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> ' . Yii::t('app', 'Variables'), 
+                                'url' => ['/variable/index']
+                            ]
+                        ]];
         $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
-        $menuItems[] = ['label' => Yii::t('app', 'Variables'), 'url' => ['/variable/index']];
-        $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 'url' => ['/sensor/index']];
-        $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 'url' => ['/vector/index']];
+        $menuItems[] = ['label' => Yii::t('app', 'Installation'),
+                        'items' => [
+                            [
+                                'label' => '<span class="glyphicon glyphicon-camera" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 
+                                'url' => ['/sensor/index']
+                            ],
+                            [
+                                'label' => '<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
+                                'url' => ['/vector/index']
+                            ]
+                        ]];
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
-                            ['label' => Yii::t('app', '{n, plural, =1{Group} other{Groups}}', ['n' => 2]), 'url' => ['/group/index']],
-                            ['label' => Yii::t('app', '{n, plural, =1{Person} other{Persons}}', ['n' => 2]), 'url' => ['/user/index']],
-                            ['label' => Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 2]), 'url' => ['/document/index']]
-                        ]
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-th" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Group} other{Groups}}', ['n' => 2]), 
+                                    'url' => ['/group/index']
+                                ],
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-user" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Person} other{Persons}}', ['n' => 2]), 
+                                    'url' => ['/user/index']
+                                ],
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-book" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 2]), 
+                                    'url' => ['/document/index']
+                                ],
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-fire" aria-hidden="true"></span> ' . Yii::t('app', 'Web API'), 
+                                    'url' => WS_PHIS_PATH_DOC
+                                ],
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> ' . Yii::t('app', 'Vocabulary'), 
+                                    'url' => ['/site/ontology']
+                                ],
+                            ]
             
-        ];
-        $menuItems[] = ['label' => Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')', 'url' => ['/site/disconnect']];
+                        ];
+        
+        $menuItems[] = [
+                            'label' => '<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> ' . Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')', 
+                            'url' => ['/site/disconnect']
+                        ];
     } else { // Cas d'un utilisateur simple connecté
-        $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 'url' => ['/project/index']];
-        $menuItems[] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['/experiment/index']];
+        $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
+                        'items' => [
+                            [
+                                'label' => '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
+                                'url' => ['/project/index'],
+                            ],
+                            [
+                                'label' => '<span class="glyphicon glyphicon-grain" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]),
+                                'url' => ['/experiment/index']
+                            ],
+                            [
+                                'label' => '<span class="glyphicon glyphicon-leaf" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}', ['n' => 2]),
+                                'url' => ['/agronomical-object/index']
+                            ],
+                            [
+                                'label' => '<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> ' . Yii::t('app', 'Variables'), 
+                                'url' => ['/variable/index']
+                            ]
+                        ]];
+        $menuItems[] = ['label' => Yii::t('app', 'Installation'),
+                        'items' => [
+                            [
+                                'label' => '<span class="glyphicon glyphicon-camera" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 
+                                'url' => ['/sensor/index']
+                            ],
+                            [
+                                'label' => '<span class="glyphicon glyphicon-blackboard" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
+                                'url' => ['/vector/index']
+                            ]
+                        ]];
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
-                            ['label' => Yii::t('app', '{n, plural, =1{Person} other{Persons}}', ['n' => 2]), 'url' => ['/user/index']],
-                            ['label' => Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 2]), 'url' => ['/document/index']]
-                        ]
-        ];
-        $menuItems[] = ['label' => Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')', 'url' => ['/site/disconnect']];
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-th" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Group} other{Groups}}', ['n' => 2]), 
+                                    'url' => ['/group/index']
+                                ],
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-user" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Person} other{Persons}}', ['n' => 2]), 
+                                    'url' => ['/user/index']
+                                ],
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-book" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 2]), 
+                                    'url' => ['/document/index']
+                                ],
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-fire" aria-hidden="true"></span> ' . Yii::t('app', 'Web API'), 
+                                    'url' => WS_PHIS_PATH_DOC
+                                ],
+                            ]   
+                        ];
+        
+        $menuItems[] = [
+                            'label' => '<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> ' . Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')', 
+                            'url' => ['/site/disconnect']
+                        ];
     }
     
     
@@ -99,6 +191,7 @@ AppAsset::register($this);
     
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
+        'encodeLabels' => false,
         'items' => $menuItems 
     ]);
     NavBar::end();

@@ -169,4 +169,12 @@ class SiteController extends Controller
         ]);
         Yii::$app->response->cookies->add($languageCookie);
     }
+    
+    /**
+     * render the page with the description of the phis vocabulary
+     * @return string
+     */
+    public function actionOntology() {
+        return $this->render('ontology');
+    }
 }
