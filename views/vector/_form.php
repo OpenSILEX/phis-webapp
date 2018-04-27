@@ -189,7 +189,7 @@
                 })
                 .fail(function (jqXHR, textStatus) {
                     console.log(jqXHR.responseText);
-                    document.getElementById("vector-multiple-insert-table").style.display = "block";
+                    document.getElementById("vector-creation").style.display = "block";
                     document.getElementById("loader").style.display = "none";
                 });
             } 
