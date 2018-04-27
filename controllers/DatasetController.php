@@ -199,7 +199,7 @@ class DatasetController extends Controller {
                             $error = null;
                             $error[DatasetController::ERRORS_LINE] = $i + 1;
                             $error[DatasetController::ERRORS_COLUMN] = $columnNumber;
-                            $error[DatasetController::ERRORS_MESSAGE] = Yii::t('app/message', 'Bad date format.');
+                            $error[DatasetController::ERRORS_MESSAGE] = Yii::t('app/message', 'Bad date format, expected format : YYYY-MM-DD');
                             $rowsErrors[] = $error;
                         }
                     } else { //it is a variable, is it a double ?
@@ -479,16 +479,19 @@ class DatasetController extends Controller {
                 . '}' ;
         
         //4. Missing Columns headers 
-        $updateSettings .= ',afterGetColHeader: function (col, th) {';
-        foreach ($csvErrors[DatasetController::ERRORS_MISSING_COLUMN] as $key => $missingColumn) { 
-            //$toAdd = 1 because missing columns keys begins at 0
-            //         2 if there is also the errors rows columns 
-            $updateSettings .= 'if (col === ' . ((count($csvHeaders) - 1) + $key + 1) . ' ) { '
-                        . 'th.style.color = "red";'
-                        . '}';
+        if (isset($csvErrors[DatasetController::ERRORS_MISSING_COLUMN])) {
+            $updateSettings .= ',afterGetColHeader: function (col, th) {';
+            foreach ($csvErrors[DatasetController::ERRORS_MISSING_COLUMN] as $key => $missingColumn) { 
+                //$toAdd = 1 because missing columns keys begins at 0
+                //         2 if there is also the errors rows columns 
+                $updateSettings .= 'if (col === ' . ((count($csvHeaders) - 1) + $key + 1) . ' ) { '
+                            . 'th.style.color = "red";'
+                            . '}';
+            }
+            $updateSettings .= '}';
         }
         
-        $updateSettings .= '}';
+        
         
         
         $updateSettings .= '});';
