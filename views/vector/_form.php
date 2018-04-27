@@ -19,16 +19,20 @@
 <div class="dataset-form">
     <div id="vectors-created" class="alert alert-success">Vectors Created</div>
     <!--<button type = "button" id="export" id="exportButton">Export</button>-->
-    <div id="vector-multiple-insert-table"></div>
-    <div id="vector-multiple-insert-button" style="margin-top : 1%">
-        <button type="button" class="btn btn-success" id="vectors-save"><?= Yii::t('app', 'Create Vectors') ?></button>
+    <div id="vectors-creation">
+        <div id="vector-multiple-insert-table"></div>
+        <div id="vector-multiple-insert-button" style="margin-top : 1%">
+            <button type="button" class="btn btn-success" id="vectors-save"><?= Yii::t('app', 'Create Vectors') ?></button>
+        </div>
     </div>
+    
+    <div id="loader" class="loader" style="display:none"></div>
+    
     <script>
         var vectorsTypes = JSON.parse('<?php echo $vectorsTypes; ?>');
-        console.log(vectorsTypes);
         
         $('#vectors-created').hide();
-           
+        
         // Empty validator
         emptyValidator = function(value, callback) {
           if (isEmpty(value)) {
@@ -66,7 +70,7 @@
             } else {
                 callback(false);
             }
-        }
+        };
            
         function firstRowRequiedRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -163,6 +167,9 @@
          */
         function add(callback) {
             if (callback) {
+                document.getElementById("loader").style.display = "block";
+                document.getElementById("vectors-creation").style.display = "none";
+                
                 vectorsArray = handsontable.getData();
                 vectorsString = JSON.stringify(vectorsArray);
                 $.ajax({
@@ -171,6 +178,8 @@
                     dataType: 'json',
                     data: {vectors: vectorsString}
                 }).done(function (data) {
+                    document.getElementById("vectors-creation").style.display = "block";
+                    document.getElementById("loader").style.display = "none";
                     for (var i = 0; i < data.length; i++) {
                        handsontable.setDataAtCell(i, 0, data[i]);
                     }
@@ -180,6 +189,8 @@
                 })
                 .fail(function (jqXHR, textStatus) {
                     console.log(jqXHR.responseText);
+                    document.getElementById("vector-multiple-insert-table").style.display = "block";
+                    document.getElementById("loader").style.display = "none";
                 });
             } 
         } 
@@ -188,6 +199,5 @@
          $(document).on('click', '#vectors-save', function() {
              handsontable.validateCells(add);
          });
-         
     </script>
 </div>
