@@ -24,16 +24,15 @@ use yii\helpers\Html;
     
     <div class="image-visualization-form">
         <?php $form = ActiveForm::begin(); ?>
-             <?=
-             $form->field($model, 'rdfType')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $model->getRdfTypes(),
-                'options' => [
-                    'placeholder' => 'Select an image type if wanted ...'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); ?>
+             <?= $form->field($model, 'rdfType')->widget(\kartik\select2\Select2::classname(),[
+                    'data' => $model->getRdfTypes(Yii::$app->session['access_token']),
+                    'options' => [
+                        'placeholder' => 'Select an image type if wanted ...'
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]); ?>
             
             <div class="form-group">
                 <?= Html::Button(Yii::t('yii', 'Show Images'), ['class' => 'btn btn-primary', 'id' => 'imageSearchButton']) ?>
