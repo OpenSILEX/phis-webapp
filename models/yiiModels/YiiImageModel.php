@@ -16,6 +16,7 @@ namespace app\models\yiiModels;
 
 use app\models\wsModels\WSImageModel;
 use app\models\wsModels\WSActiveRecord;
+use app\models\wsModels\WSUriModel;
 use Yii;
 
 /**
@@ -152,15 +153,39 @@ class YiiImageModel extends WSActiveRecord {
      * get the list of the images types defined in the ontology.
      * @return the list of rdf types of images
      */
-    public function getRdfTypes() {
-        //SILEX:todo
-        //when the service to get the types will be developped, 
-        //implements here
-        //\SILEX:todo
-        return [
-          "http://www.phenome-fppn.fr/vocabulary/2017#HemisphericalImage"  => Yii::t('app', 'Hemisphericals'),
-//          "http://www.phenome-fppn.fr/vocabulary/2017#RGBImage"  => Yii::t('app', 'RGBImage'),
-
-        ];
+    public function getRdfTypes($sessionToken) {
+        $imageConceptUri = "http://www.phenome-fppn.fr/vocabulary/2017#Image";
+        
+        $imagesTypes = [];
+        $totalPages = 1;
+        for ($i = 0; $i < $totalPages; $i++) {
+            $this->page = $i;
+            
+            $params = null;
+            
+            if ($this->pageSize !== null) {
+                $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+            }
+            if ($this->page !== null) {
+                $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+            }
+            
+            $wsUriModel = new WSUriModel();
+            $requestRes = $wsUriModel->getDescendants($sessionToken, $imageConceptUri, $params);
+            
+            if (!is_string($requestRes)) {
+                if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                    return "token";
+                } else {
+                    foreach ($requestRes[\app\models\wsModels\WSConstants::DATA] as $imageType) {
+                        $imagesTypes[$imageType->uri] = explode("#", $imageType->uri)[1];
+                    }
+                }
+            } else {
+                return $requestRes;
+            }
+        }
+        
+        return $imagesTypes;
     }
 }
