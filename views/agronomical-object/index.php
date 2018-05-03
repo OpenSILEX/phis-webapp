@@ -42,10 +42,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'uri',
             'alias',
             [
-                'attribute' => 'typeAgronomicalObject',
+                'attribute' => 'rdfType',
                 'format' => 'raw',
                 'value' => function($model, $key, $index) {
-                    return explode("#", $model->typeAgronomicalObject)[1];
+                    return explode("#", $model->rdfType)[1];
                 }
             ],
             [
