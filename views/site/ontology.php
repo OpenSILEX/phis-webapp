@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 <?php 
-$species = [
+    $species = [
         ['label_la' => 'Beta vulgaris', 'label_en' => 'Beet', 'label_fr' => 'Betterave', 'uri' => 'http://www.phenome-fppn.fr/id/species/betavulgaris'],  
         ['label_la' => 'Helianthus annuus', 'label_en' => 'Sunflower', 'label_fr' => 'Tournesol', 'uri' => 'http://www.phenome-fppn.fr/id/species/helianthusannuus'],
         ['label_la' => 'Vicia faba', 'label_en' => 'Fababean', 'label_fr' => 'Féverole', 'uri' => 'http://www.phenome-fppn.fr/id/species/viciafaba'],
@@ -120,6 +120,16 @@ $species = [
             + count($spectroradiometers) + count($temperatureSensors) + count($sensingDevices)
             + count($windSensors);
     
+    $images = [
+           ["label" => "Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#Image"],
+           ["label" => "Hemispherical Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#HemisphericalImage"],
+           ["label" => "Multispectral Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#MultispectralImage"],
+           ["label" => "NIR Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#NIRImage"],
+           ["label" => "RGB Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#RGBImage"],
+           ["label" => "TIR Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#TIRImage"],
+       ];
+    
+    
     $vectors = [
         ["label" => "Field Robot", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#FieldRobot"],
         ["label" => "Gantry", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#Gantry"],
@@ -179,6 +189,10 @@ $species = [
                     <span class="badge badge-primary badge-pill"><?= Html::encode(count($windSensors)) ?></span>
                 </li>
             </ul>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <?= Html::a(Yii::t('yii', 'Images'), ['ontology', '#' => 'images']) ?>
+            <span class="badge badge-primary badge-pill"><?= Html::encode(count($images)) ?></span>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <?= Html::a(Yii::t('yii', 'Vectors'), ['ontology', '#' => 'vectors']) ?>
@@ -438,5 +452,23 @@ $species = [
             ]
         ]);   
     ?>
-     
+    
+    <h2 id="images"><?= Html::encode(Yii::t('app', 'Images')) ?></h2>
+    <?php
+        $imagesProvider = new \yii\data\ArrayDataProvider([
+           'allModels' => $images,
+           'sort' => [
+               'attributes' => ['label', 'uri']
+           ]
+        ]);        
+
+        echo yii\grid\GridView::widget([
+            'dataProvider' => $imagesProvider,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                'label',
+                'uri'
+            ]
+        ]);   
+    ?>
 </div>
