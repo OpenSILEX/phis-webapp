@@ -105,11 +105,14 @@ AppAsset::register($this);
                                     'url' => WS_PHIS_PATH_DOC
                                 ],
                                 [
+                                    'label' => '<span class="glyphicon glyphicon-link" aria-hidden="true"></span> ' . Yii::t('app', 'Documentation'), 
+                                    'url' => "http://147.100.175.121/phis-docs-community/"
+                                ],
+                                [
                                     'label' => '<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> ' . Yii::t('app', 'Vocabulary'), 
                                     'url' => ['/site/ontology']
                                 ],
                             ]
-            
                         ];
         
         $menuItems[] = [
@@ -164,6 +167,10 @@ AppAsset::register($this);
                                 [
                                     'label' => '<span class="glyphicon glyphicon-fire" aria-hidden="true"></span> ' . Yii::t('app', 'Web API'), 
                                     'url' => WS_PHIS_PATH_DOC
+                                ],
+                                [
+                                    'label' => '<span class="glyphicon glyphicon-link" aria-hidden="true"></span> ' . Yii::t('app', 'Documentation'), 
+                                    'url' => "http://147.100.175.121/phis-docs-community/"
                                 ],
                             ]   
                         ];
@@ -220,7 +227,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; INRA MISTEA 2014-2018 (SILEX-PHIS v.2.2 - 18 January 2018)</p>
+        <p class="pull-left">&copy; INRA MISTEA 2014-2018 (SILEX-PHIS v.2.3 - 04 May 2018)</p>
     </div> 
 </footer> 
 
