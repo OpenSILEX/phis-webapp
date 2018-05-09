@@ -49,6 +49,24 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
+                'attribute' => 'properties',
+                'format' => 'raw',
+                'value' => function($model, $key, $index) {
+                    $toReturn = "<ul>";
+                    foreach ($model->properties as $property) {
+                        if (explode("#", $property->relation)[1] !== "type") {
+                            $toReturn .= "<li>"
+                                    . "<b>" . explode("#", $property->relation)[1] . "</b>"
+                                    . " : "
+                                    . $property->value
+                                    . "</li>";
+                        }
+                    }
+                    $toReturn .= "</ul>";
+                    return $toReturn;
+                },
+            ],
+            [
                 'attribute' => 'experiment',
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) {
