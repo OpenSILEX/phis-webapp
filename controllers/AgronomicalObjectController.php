@@ -319,8 +319,8 @@ require_once '../config/config.php';
                 $plot = str_getcsv($row, AgronomicalObjectController::DELIM_CSV);
                 $p = null;
                 $p["geometry"] = $plot[$correspondances[AgronomicalObjectController::GEOMETRY]];
-                $p["uriExperiment"] = $plot[$correspondances[AgronomicalObjectController::EXPERIMENT_URI]];
-                $p["typeAgronomicalObject"] = Yii::$app->params['Plot'];
+                $p["experiment"] = $plot[$correspondances[AgronomicalObjectController::EXPERIMENT_URI]];
+                $p["rdfType"] = Yii::$app->params['Plot'];
                 
                 if (isset($correspondances[AgronomicalObjectController::ALIAS])) {
                     $alias["relation"] = Yii::$app->params['hasAlias'];
@@ -328,13 +328,13 @@ require_once '../config/config.php';
                     $p["properties"][] = $alias;
                 }
                 if (isset($correspondances[AgronomicalObjectController::SPECIES])) {
-                    $species["typeProperty"] = Yii::$app->params['Species'];
+                    $species["rdfType"] = Yii::$app->params['Species'];
                     $species["relation"] = Yii::$app->params['fromSpecies'];
                     $species["value"] = $plot[$correspondances[AgronomicalObjectController::SPECIES]];
                     $p["properties"][] = $species;
                 }
                 if (isset($correspondances[AgronomicalObjectController::VARIETY]) && $this->valueIsNotEmpty($plot[$correspondances[AgronomicalObjectController::VARIETY]])) {
-                    $variety["typeProperty"] = Yii::$app->params['Variety'];
+                    $variety["rdfType"] = Yii::$app->params['Variety'];
                     $variety["relation"] = Yii::$app->params['fromVariety'];
                     $value = str_replace(" ", "_", $plot[$correspondances[AgronomicalObjectController::VARIETY]]);
                     $variety["value"] = $value;
@@ -389,7 +389,6 @@ require_once '../config/config.php';
                 $correspondancesCSV = $this->getCSVHeaderCorrespondancesOrErrors(str_getcsv($fileContent[0], AgronomicalObjectController::DELIM_CSV));
                 $forWebService = $this->getArrayForWebServiceCreate($fileContent, $correspondancesCSV);
                 $requestRes = $agronomicalObjectModel->insert(Yii::$app->session['access_token'], $forWebService);
-                
                 
                 if (is_string($requestRes)) {//Request error
                     return $this->render('/site/error', [

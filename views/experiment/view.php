@@ -233,12 +233,30 @@ $this->params['breadcrumbs'][] = $this->title;
                     'uri',
                     'alias',
                     [
-                        'attribute' => 'typeAgronomicalObject',
+                        'attribute' => 'rdfType',
                         'format' => 'raw',
                         'value' => function($model, $key, $index) {
-                            return explode("#", $model->typeAgronomicalObject)[1];
+                            return explode("#", $model->rdfType)[1];
                         }
                     ], 
+                    [
+                        'attribute' => 'properties',
+                        'format' => 'raw',
+                        'value' => function($model, $key, $index) {
+                            $toReturn = "<ul>";
+                            foreach ($model->properties as $property) {
+                                if (explode("#", $property->relation)[1] !== "type") {
+                                    $toReturn .= "<li>"
+                                            . "<b>" . explode("#", $property->relation)[1] . "</b>"
+                                            . " : "
+                                            . $property->value
+                                            . "</li>";
+                                }
+                            }
+                            $toReturn .= "</ul>";
+                            return $toReturn;
+                        },
+                    ],
                 ]
             ]);
     }    
