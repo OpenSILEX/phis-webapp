@@ -113,10 +113,15 @@ class VectorController extends Controller {
         if ($vectorsTypes === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }
+        
+        $usersModel = new \app\models\yiiModels\YiiUserModel();
+        $usersMails = $usersModel->getUsersMails(Yii::$app->session['access_token']);
+        
         $variableModel = new \app\models\yiiModels\YiiVariableModel();
         return $this->render('create', [
             'model' => $model,
-            'vectorsTypes' => json_encode($vectorsTypes, JSON_UNESCAPED_SLASHES)
+            'vectorsTypes' => json_encode($vectorsTypes, JSON_UNESCAPED_SLASHES),
+            'users' => json_encode($usersMails)
         ]);
     }
     
@@ -144,69 +149,32 @@ class VectorController extends Controller {
     public function actionCreateMultipleVectors() {
         $vectors = json_decode(Yii::$app->request->post()["vectors"]);
         $sessionToken = Yii::$app->session['access_token'];
+        
+        $vectorsUris = null;
         if (count($vectors) > 0) {
-            $vectorsGraph = Yii::$app->params['baseURI'] . "vectors";
-            //needs to insert sensors. 
-            $triplets = null;
-            
             foreach ($vectors as $vector) {
-                $tripletsGroup = null;
-                //1. triplet type
-                $type = null;
-                $type["s"] = "?";
-                $type["p"] = "rdf:type";
-                $type["o_type"] = "uri";
-                $type["o"] = $this->getVectorTypeCompleteUri($vector[2]);
-                $type["g"] = $vectorsGraph;
-                $tripletsGroup[] = $type;
-                
-                //2. triplet alias
-                $alias = null;
-                $alias["s"] = "?";
-                $alias["p"] = "rdfs:label";
-                $alias["o_type"] = "literal";
-                $alias["o"] = $vector[1];
-                $alias["g"] = $vectorsGraph;
-                $tripletsGroup[] = $alias;
-                
-                //3. triplet brand
-                $brand = null;
-                $brand["s"] = "?";
-                $brand["p"] = "http://www.phenome-fppn.fr/vocabulary/2017#hasBrand";
-                $brand["o_type"] = "literal";
-                $brand["o"] = $vector[3];
-                $brand["g"] = $vectorsGraph;
-                $tripletsGroup[] = $brand;
-                
-                //5. (optional) triplet inServiceDate
-                if ($vector[5] !== "") {
-                    $inServiceDate = null;
-                    $inServiceDate["s"] = "?";
-                    $inServiceDate["p"] = "http://www.phenome-fppn.fr/vocabulary/2017#inServiceDate";
-                    $inServiceDate["o_type"] = "literal";
-                    $inServiceDate["o"] = $vector[5];
-                    $inServiceDate["g"] = $vectorsGraph;
-                    $tripletsGroup[] = $inServiceDate;
-                }
-                
-                //6. (optional) triplet dateOfPurchase
+                $vectorModel = new YiiVectorModel();
+                $vectorModel->rdfType = $this->getVectorTypeCompleteUri($vector[2]);
+                $vectorModel->label = $vector[1];
+                $vectorModel->brand = $vector[3];
+                $vectorModel->inServiceDate = $vector[6];
+                $vectorModel->personInCharge = $vector[7];
                 if ($vector[4] !== "") {
-                    $dateOfPurchase = null;
-                    $dateOfPurchase["s"] = "?";
-                    $dateOfPurchase["p"] = "http://www.phenome-fppn.fr/vocabulary/2017#dateOfPurchase";
-                    $dateOfPurchase["o_type"] = "literal";
-                    $dateOfPurchase["o"] = $vector[4];
-                    $dateOfPurchase["g"] = $vectorsGraph;
-                    $tripletsGroup[] = $dateOfPurchase;
+                    $vectorModel->serialNumber = $vector[4];
                 }
-                $triplets[] = $tripletsGroup;
+                if ($vector[5] != "") {
+                    $vectorModel->dateOfPurchase = $vector[5];
+                }
+
+                $forWebService[] = $vectorModel->attributesToArray();
+                $insertionResult = $vectorModel->insert($sessionToken, $forWebService);
+                
+                $vectorsUris[] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
             }
             
-            $vectorModel = new YiiVectorModel();
-            $insertionResult = $vectorModel->createVectors($sessionToken, $triplets);
-            
-            return json_encode($insertionResult, JSON_UNESCAPED_SLASHES); 
+            return json_encode($vectorsUris, JSON_UNESCAPED_SLASHES); 
         }
+        
         return true;
     }
     

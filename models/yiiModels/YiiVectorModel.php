@@ -58,6 +58,12 @@ class YiiVectorModel extends WSActiveRecord {
     public $brand; 
     const BRAND = "brand";
     /**
+     * the serial number of the vector
+     * @var string
+     */
+    public $serialNumber;
+    const SERIAL_NUMBER = "serialNumber";
+    /**
      * the in service date of the vector
      *  (e.g 2011-05-01)
      * @var string
@@ -71,6 +77,13 @@ class YiiVectorModel extends WSActiveRecord {
      */
     public $dateOfPurchase;
     const DATE_OF_PURCHASE = "dateOfPurchase";
+    /**
+     * email of the person in charge of the sensor (must be a person declared in PHIS)
+     * (e.g morgane.vidal@inra.fr)
+     * @var string
+     */
+    public $personInCharge;
+    const PERSON_IN_CHARGE = "personInCharge";
     /**
      * the uri of documents linked to the sensor
      * @var string
@@ -102,8 +115,8 @@ class YiiVectorModel extends WSActiveRecord {
      */
     public function rules() {
        return [
-          [['rdfType', 'brand', 'label'], 'required'],  
-          [['inServiceDate', 'dateOfPurchase', 'documents'], 'safe']
+          [['rdfType', 'brand', 'label', 'personInCharge', 'inServiceDate'], 'required'],  
+          [['serialNumber', 'dateOfPurchase', 'documents'], 'safe']
         ]; 
     }
     
@@ -117,8 +130,10 @@ class YiiVectorModel extends WSActiveRecord {
             'rdfType' => Yii::t('app', 'Type'),
             'label' => Yii::t('app', 'Alias'),
             'brand' => Yii::t('app', 'Brand'),
+            'serialNumber' => Yii::t('app', 'Serial Number'),
             'inServiceDate' => Yii::t('app', 'In Service Date'),
-            'dateOfPurchase' => Yii::t('app', 'Date Of Purchase')
+            'dateOfPurchase' => Yii::t('app', 'Date Of Purchase'),
+            'personInCharge' => Yii::t('app', 'Person In Charge')
         ];
     }
     
@@ -132,8 +147,10 @@ class YiiVectorModel extends WSActiveRecord {
         $this->rdfType = $array[YiiVectorModel::RDF_TYPE];
         $this->label = $array[YiiVectorModel::LABEL];
         $this->brand = $array[YiiVectorModel::BRAND];
+        $this->serialNumber = $array[YiiVectorModel::SERIAL_NUMBER];
         $this->inServiceDate = $array[YiiVectorModel::IN_SERVICE_DATE];
         $this->dateOfPurchase = $array[YiiVectorModel::DATE_OF_PURCHASE];
+        $this->personInCharge = $array[YiiVectorModel::PERSON_IN_CHARGE];
     }
 
     /**
@@ -149,7 +166,15 @@ class YiiVectorModel extends WSActiveRecord {
         $elementForWebService[YiiVectorModel::LABEL] = $this->label;
         $elementForWebService[YiiVectorModel::BRAND] = $this->brand;
         $elementForWebService[YiiVectorModel::IN_SERVICE_DATE] = $this->inServiceDate;
-        $elementForWebService[YiiVectorModel::DATE_OF_PURCHASE] = $this->dateOfPurchase;
+        $elementForWebService[YiiVectorModel::PERSON_IN_CHARGE] = $this->personInCharge;
+        
+        if ($this->serialNumber !== null) {
+            $elementForWebService[YiiVectorModel::SERIAL_NUMBER] = $this->serialNumber;
+        }
+        
+        if ($this->dateOfPurchase !== null) {
+            $elementForWebService[YiiVectorModel::DATE_OF_PURCHASE] = $this->dateOfPurchase;
+        }
         
         return $elementForWebService;
     }
@@ -177,26 +202,6 @@ class YiiVectorModel extends WSActiveRecord {
                 return "token";
             } else {
                 return $requestRes;
-            }
-        } else {
-            return $requestRes;
-        }
-    }
-    
-    /**
-     * 
-     * @param string $sessionToken
-     * @param array $vectors
-     * @return string|array 
-     */
-    public function createVectors($sessionToken, $vectors) {
-        $requestRes = $this->wsTripletModel->post($sessionToken, "", $vectors);
-        
-        if (!is_string($requestRes)) {
-            if (isset($requestRes->{\app\models\wsModels\WSConstants::TOKEN})) {
-                return $requestRes;
-            } else {
-                return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
             }
         } else {
             return $requestRes;

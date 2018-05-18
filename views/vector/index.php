@@ -48,8 +48,16 @@ $this->params['breadcrumbs'][] = $this->title;
               }
             ],
             'brand',
+            'serialNumber',
             'inServiceDate',
             'dateOfPurchase',
+            [
+              'attribute' => 'personInCharge',
+              'format' => 'raw',
+              'value' => function ($model, $key, $index) {
+                    return Html::a($model->personInCharge, ['user/view', 'id' => $model->personInCharge]);
+                },
+            ],
 
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',

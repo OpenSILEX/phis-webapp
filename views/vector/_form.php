@@ -30,6 +30,7 @@
     
     <script>
         var vectorsTypes = JSON.parse('<?php echo $vectorsTypes; ?>');
+        var users = JSON.parse('<?php echo $users; ?>');
         
         $('#vectors-created').hide();
         
@@ -71,6 +72,16 @@
                 callback(false);
             }
         };
+        
+        personInChargeValidator = function(value, callback) {
+          if (isEmpty(value)) {
+                callback(false);
+            } else if (users.indexOf(value) > -1) {
+                callback(true);
+            } else {
+                callback(false);
+            }  
+        }
            
         function firstRowRequiedRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -117,6 +128,11 @@
                     validator: emptyValidator
                 },
                 {
+                    data: 'serialNumber',
+                    type: 'text',
+                    required: true
+                },
+                {
                     data: 'dateOfPurchase',
                     type: 'date',
                     dateFormat: 'YYYY-MM-DD',
@@ -126,7 +142,16 @@
                     data: 'inServiceDate',
                     type: 'date',
                     dateFormat: 'YYYY-MM-DD',
-                    required: false
+                    required: true,
+                    validator: emptyValidator
+                },
+                {
+                    data: 'personInCharge',
+                    type: 'dropdown',
+                    source: users,
+                    strict: true,
+                    required: true,
+                    validator: personInChargeValidator
                 }
             ],
             rowHeaders: true,
@@ -135,8 +160,10 @@
                 '<b><?= Yii::t('app', 'Alias') ?></b>',
                 '<b><?= Yii::t('app', 'Type') ?></b>',
                 '<b><?= Yii::t('app', 'Brand') ?></b>',
+                '<b><?= Yii::t('app', 'Serial Number') ?></b>',
                 '<b><?= Yii::t('app', 'Date Of Purchase') ?></b>',
-                '<b><?= Yii::t('app', 'In Service Date') ?></b>'
+                '<b><?= Yii::t('app', 'In Service Date') ?></b>',
+                '<b><?= Yii::t('app', 'Person In Charge') ?></b>'
             ],
             manualRowMove: true,
             manualColumnMove: true,
@@ -153,7 +180,7 @@
                 return cellProperties;
             },
             afterGetColHeader: function (col, th) {
-                if (col === 1 | col === 2 | col === 3) {
+                if (col === 1 | col === 2 | col === 3 | col ===6 | col === 7) {
                     th.style.color = "red";
                 }
             }
