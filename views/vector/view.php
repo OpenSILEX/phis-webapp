@@ -40,8 +40,16 @@ $this->params['breadcrumbs'][] = $this->title;
               }
             ],
             'brand',
+            'serialNumber',
             'inServiceDate',
-            'dateOfPurchase'
+            'dateOfPurchase',
+            [
+              'attribute' => 'personInCharge',
+              'format' => 'raw',
+              'value' => function ($model) {
+                    return Html::a($model->personInCharge, ['user/view', 'id' => $model->personInCharge]);
+                },
+            ],
         ]
     ]); ?>
  
