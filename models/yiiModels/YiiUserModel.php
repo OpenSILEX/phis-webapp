@@ -173,5 +173,24 @@ class YiiUserModel extends WSActiveRecord {
             return $requestRes;
         }
     }
+    
+    
+    /**
+     * 
+     * @return array the list of the users mails existing in the database
+     */
+    public function getUsersMails($sessionToken) {
+        $searchUserModel = new UserSearch();
+        $users = $searchUserModel->find($sessionToken, []);
+        $usersMails = null;
+        
+        if ($users !== null) {
+            foreach ($users as $user) {
+                $usersMails[] = $user->email;
+            }
+        }
+        
+        return $usersMails;
+    }
 }
 
