@@ -208,28 +208,6 @@ class YiiVectorModel extends WSActiveRecord {
         }
     }
     
-    
-    //A ENLEVER//
-    /**
-     * 
-     * @param string $sessionToken
-     * @param array $vectors
-     * @return string|array 
-     */
-    public function createVectors($sessionToken, $vectors) {
-        $requestRes = $this->wsTripletModel->post($sessionToken, "", $vectors);
-        
-        if (!is_string($requestRes)) {
-            if (isset($requestRes->{\app\models\wsModels\WSConstants::TOKEN})) {
-                return $requestRes;
-            } else {
-                return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
-            }
-        } else {
-            return $requestRes;
-        }
-    }
-    
     /**
      * get vector's informations by uri
      * @param string $sessionToken user session token
