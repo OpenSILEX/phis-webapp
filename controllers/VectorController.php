@@ -19,6 +19,7 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 
 use app\models\yiiModels\YiiVectorModel;
+use app\models\yiiModels\UserSearch;
 
 /**
  * CRUD actions for vector model
@@ -117,7 +118,6 @@ class VectorController extends Controller {
         $usersModel = new \app\models\yiiModels\YiiUserModel();
         $usersMails = $usersModel->getUsersMails(Yii::$app->session['access_token']);
         
-        $variableModel = new \app\models\yiiModels\YiiVariableModel();
         return $this->render('create', [
             'model' => $model,
             'vectorsTypes' => json_encode($vectorsTypes, JSON_UNESCAPED_SLASHES),
@@ -236,5 +236,74 @@ class VectorController extends Controller {
             ]);
         }
         
+    }
+    
+    /**
+     * 
+     * @param array $vectorsTypes
+     * @return arra list of the vectors types
+     */
+    private function vectorsTypesToMap($vectorsTypes) {
+        $toReturn;
+        foreach($vectorsTypes as $type) {
+            $toReturn["http://www.phenome-fppn.fr/vocabulary/2017#" . $type] = $type;
+        }
+        
+        return $toReturn;
+    }
+    
+    /**
+     * 
+     * @param mixed $users persons list
+     * @return ArrayHelper list of the persons 'email' => 'email'
+     */
+    private function usersToMap($users) {
+        if ($users !== null) {
+            return \yii\helpers\ArrayHelper::map($users, 'email', 'email');
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * update a vector
+     * @param string $id uri of the vector to update
+     * @return mixed the page to show
+     */
+    public function actionUpdate($id) {
+        $sessionToken = Yii::$app->session['access_token'];
+        $model = new YiiVectorModel();
+        $model->uri = $id;
+        
+        //if the form is complete, try to update vector
+        if ($model->load(Yii::$app->request->post())) {
+            
+            $forWebService[] = $model->attributesToArray();
+            $requestRes = $model->update($sessionToken, $forWebService);
+            
+            if (is_string($requestRes) && $requestRes === "token") { //user must log in
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->redirect(['view', 'id' => $model->uri]);
+            }
+        } else {
+            $model = $this->findModel($id);
+            
+            //list of vector's types
+            $vectorsTypes = $this->getVectorsTypes();
+            if ($vectorsTypes === "token") {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            }
+        
+            //list of users
+            $searchUserModel = new UserSearch();
+            $users = $searchUserModel->find($sessionToken, []);
+            
+            return $this->render('update', [
+                'model' => $model,
+                'types' => $this->vectorsTypesToMap($vectorsTypes),
+                'users' => $this->usersToMap($users)
+            ]);
+        }
     }
 }
