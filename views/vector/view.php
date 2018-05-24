@@ -26,6 +26,14 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="vector-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
+    
+    <p>
+    <?php
+        if (Yii::$app->session['isAdmin']) {
+            echo Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']);
+        }
+    ?>
+    </p>
 
 <?= DetailView::widget([
         'model' => $model,
