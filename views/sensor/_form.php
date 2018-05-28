@@ -29,7 +29,7 @@
     
     <script>
         var sensingDevicesTypes = JSON.parse('<?php echo $sensorsTypes; ?>');
-        console.log(sensingDevicesTypes);
+        var users = JSON.parse('<?php echo $users; ?>');
         
         $('#sensors-created').hide();
            
@@ -70,7 +70,24 @@
             } else {
                 callback(false);
             }
-        }
+        };
+        
+        /**
+         * validate a person in charge value (must be an email of the users list)
+         * will be true if the value is not empty and is part of the users list
+         * @param {type} value
+         * @param {type} callback
+         * @returns {undefined}
+         */
+        personInChargeValidator = function(value, callback) {
+          if (isEmpty(value)) {
+                callback(false);
+            } else if (users.indexOf(value) > -1) {
+                callback(true);
+            } else {
+                callback(false);
+            }  
+        };
            
         function firstRowRequiedRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -117,6 +134,11 @@
                     validator: emptyValidator
                 },
                 {
+                    data: 'serialNumber',
+                    type: 'text',
+                    required: false
+                },
+                {
                     data: 'dateOfPurchase',
                     type: 'date',
                     dateFormat: 'YYYY-MM-DD',
@@ -133,6 +155,14 @@
                     type: 'date',
                     dateFormat: 'YYYY-MM-DD',
                     required: false
+                },
+                { 
+                    data: 'personInCharge',
+                    type: 'dropdown',
+                    source: users,
+                    strict: true,
+                    required: true,
+                    validator: personInChargeValidator
                 }
             ],
             rowHeaders: true,
@@ -141,9 +171,11 @@
                 '<b><?= Yii::t('app', 'Alias') ?></b>',
                 '<b><?= Yii::t('app', 'Type') ?></b>',
                 '<b><?= Yii::t('app', 'Brand') ?></b>',
+                '<b><?= Yii::t('app', 'Serial Number') ?></b>',
                 '<b><?= Yii::t('app', 'Date Of Purchase') ?></b>',
                 '<b><?= Yii::t('app', 'In Service Date') ?></b>',
-                '<b><?= Yii::t('app', 'Date Of Last Calibration') ?></b>' 
+                '<b><?= Yii::t('app', 'Date Of Last Calibration') ?></b>',
+                '<b><?= Yii::t('app', 'Person In Charge') ?></b>' 
             ],
             manualRowMove: true,
             manualColumnMove: true,
@@ -160,11 +192,10 @@
                 return cellProperties;
             },
             afterGetColHeader: function (col, th) {
-                if (col === 1 | col === 2 | col === 3) {
+                if (col === 1 | col === 2 | col === 3 | col === 6 | col === 8) {
                     th.style.color = "red";
                 }
             }
-            
          });
          
         /**

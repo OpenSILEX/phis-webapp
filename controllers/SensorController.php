@@ -107,17 +107,20 @@ class SensorController extends Controller {
      * @return mixed
      */
     public function actionCreate() {
-        $sessionToken = Yii::$app->session['access_token'];
         $sensorModel = new YiiSensorModel();
         
         $sensorsTypes = $this->getSensorsTypes();
         if ($sensorsTypes === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }
-        $variableModel = new \app\models\yiiModels\YiiVariableModel();
+        
+        $usersModel = new \app\models\yiiModels\YiiUserModel();
+        $usersMails = $usersModel->getUsersMails(Yii::$app->session['access_token']);
+        
         return $this->render('create', [
             'model' => $sensorModel,
-            'sensorsTypes' => json_encode($sensorsTypes, JSON_UNESCAPED_SLASHES)
+            'sensorsTypes' => json_encode($sensorsTypes, JSON_UNESCAPED_SLASHES),
+            'users' => json_encode($usersMails)
         ]);
     }
     
@@ -166,79 +169,32 @@ class SensorController extends Controller {
         $sensors = json_decode(Yii::$app->request->post()["sensors"]);
         $sessionToken = Yii::$app->session['access_token'];
         if (count($sensors) > 0) {
-            $sensorsGraph = Yii::$app->params['baseURI'] . "sensors";
-            //needs to insert sensors. 
-            $triplets = null;
-            
+            $sensorsUris = null;
             foreach ($sensors as $sensor) {
-                $tripletsGroup = null;
-                //1. triplet type
-                $type = null;
-                $type["s"] = "?";
-                $type["p"] = "rdf:type";
-                $type["o_type"] = "uri";
-                $type["o"] = $this->getSensorTypeCompleteUri($sensor[2]);
-                $type["g"] = $sensorsGraph;
-                $tripletsGroup[] = $type;
-                
-                //2. triplet alias
-                $alias = null;
-                $alias["s"] = "?";
-                $alias["p"] = "rdfs:label";
-                $alias["o_type"] = "literal";
-                $alias["o"] = $sensor[1];
-                $alias["g"] = $sensorsGraph;
-                $tripletsGroup[] = $alias;
-                
-                //3. triplet brand
-                $brand = null;
-                $brand["s"] = "?";
-                $brand["p"] = "http://www.phenome-fppn.fr/vocabulary/2017#hasBrand";
-                $brand["o_type"] = "literal";
-                $brand["o"] = $sensor[3];
-                $brand["g"] = $sensorsGraph;
-                $tripletsGroup[] = $brand;
-                
-                //5. (optional) triplet inServiceDate
-                if ($sensor[5] !== "") {
-                    $inServiceDate = null;
-                    $inServiceDate["s"] = "?";
-                    $inServiceDate["p"] = "http://www.phenome-fppn.fr/vocabulary/2017#inServiceDate";
-                    $inServiceDate["o_type"] = "literal";
-                    $inServiceDate["o"] = $sensor[5];
-                    $inServiceDate["g"] = $sensorsGraph;
-                    $tripletsGroup[] = $inServiceDate;
-                }
-                
-                //6. (optional) triplet dateOfPurchase
-                if ($sensor[4] !== "") {
-                    $dateOfPurchase = null;
-                    $dateOfPurchase["s"] = "?";
-                    $dateOfPurchase["p"] = "http://www.phenome-fppn.fr/vocabulary/2017#dateOfPurchase";
-                    $dateOfPurchase["o_type"] = "literal";
-                    $dateOfPurchase["o"] = $sensor[4];
-                    $dateOfPurchase["g"] = $sensorsGraph;
-                    $tripletsGroup[] = $dateOfPurchase;
-                }
-                
-                //7. (optional) triplet dateOfLastCalibration
-                if ($sensor[6] !== "") {
-                    $dateOfLastCalibration = null;
-                    $dateOfLastCalibration["s"] = "?";
-                    $dateOfLastCalibration["p"] = "http://www.phenome-fppn.fr/vocabulary/2017#dateOfLastCalibration";
-                    $dateOfLastCalibration["o_type"] = "literal";
-                    $dateOfLastCalibration["o"] = $sensor[6];
-                    $dateOfLastCalibration["g"] = $sensorsGraph;
-                    
-                    $tripletsGroup[] = $dateOfLastCalibration;
-                }
-                $triplets[] = $tripletsGroup;
+              $sensorModel = new YiiSensorModel();
+              $sensorModel->rdfType = $this->getSensorTypeCompleteUri($sensor[2]);
+              $sensorModel->label = $sensor[1];
+              $sensorModel->brand = $sensor[3];
+              $sensorModel->inServiceDate = $sensor[6];
+              $sensorModel->personInCharge = $sensor[8];
+              
+              if ($sensor[4] !== "") {
+                  $sensorModel->serialNumber = $sensor[4];
+              }
+              if ($sensor[5] !== "") {
+                  $sensorModel->dateOfPurchase = $sensor[5];
+              }
+              if ($sensor[7] !== "") {
+                  $sensorModel->dateOfLastCalibration = $sensor[7];
+              }
+              
+              $forWebService[] = $sensorModel->attributesToArray();
+              $insertionResult = $sensorModel->insert($sessionToken, $forWebService);
+              
+              $sensorsUris[] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
             }
             
-            $sensorModel = new YiiSensorModel();
-            $insertionResult = $sensorModel->createSensors($sessionToken, $triplets);
-            
-            return json_encode($insertionResult, JSON_UNESCAPED_SLASHES); 
+            return json_encode($sensorsUris, JSON_UNESCAPED_SLASHES); 
         }
         return true;
     }

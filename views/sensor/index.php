@@ -29,6 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('yii', 'Create') . ' ' . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) ?>
+         <?php // Html::a('Characterize Sensors', ['create-characterize-sensors'], ['class' => 'btn btn-success']) ?>
     </p>
     
    <?= GridView::widget([
@@ -47,9 +48,16 @@ $this->params['breadcrumbs'][] = $this->title;
               }
             ],
             'brand',
+            'serialNumber',
             'inServiceDate',
-            'dateOfPurchase',
             'dateOfLastCalibration',
+            [
+              'attribute' => 'personInCharge',
+              'format' => 'raw',
+              'value' => function ($model, $key, $index) {
+                    return Html::a($model->personInCharge, ['user/view', 'id' => $model->personInCharge]);
+                },
+            ],
 
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',

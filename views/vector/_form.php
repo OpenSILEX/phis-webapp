@@ -130,7 +130,7 @@
                 {
                     data: 'serialNumber',
                     type: 'text',
-                    required: true
+                    required: false
                 },
                 {
                     data: 'dateOfPurchase',
