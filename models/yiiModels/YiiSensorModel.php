@@ -61,6 +61,13 @@ class YiiSensorModel extends WSActiveRecord {
     public $brand; 
     const BRAND = "brand";
     /**
+     * the serial number of the sensor 
+     *  (e.g. E1JFHS849DNSKF8DH)
+     * @var string 
+     */
+    public $serialNumber;
+    const SERIAL_NUMBER = "serialNumber";
+    /**
      * the in service date of the sensor
      *  (e.g 2011-05-01)
      * @var string
@@ -81,6 +88,13 @@ class YiiSensorModel extends WSActiveRecord {
      */
     public $dateOfLastCalibration;
     const DATE_OF_LAST_CALIBRATION = "dateOfLastCalibration";
+    /**
+     * email of the person in charge of the sensor
+     *  (e.g. user@email.com)
+     * @var string
+     */
+    public $personInCharge;
+    const PERSON_IN_CHARGE = "personInCharge";
     /**
      * the uri of documents linked to the sensor
      * @var string
@@ -118,8 +132,8 @@ class YiiSensorModel extends WSActiveRecord {
      */
     public function rules() {
        return [
-          [['rdfType', 'brand', 'label'], 'required'],  
-          [['inServiceDate', 'dateOfPurchase', 'dateOfLastCalibration', 'documents'], 'safe']
+          [['rdfType', 'brand', 'label', 'inServiceDate', 'personInCharge'], 'required'],  
+          [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents'], 'safe']
         ]; 
     }
     
@@ -133,9 +147,11 @@ class YiiSensorModel extends WSActiveRecord {
             'rdfType' => Yii::t('app', 'Type'),
             'label' => Yii::t('app', 'Alias'),
             'brand' => Yii::t('app', 'Brand'),
+            'serialNumber'=> Yii::t('app', 'Serial Number'),
             'inServiceDate' => Yii::t('app', 'In Service Date'),
             'dateOfPurchase' => Yii::t('app', 'Date Of Purchase'),
-            'dateOfLastCalibration' => Yii::t('app', 'Date Of Last Calibration')
+            'dateOfLastCalibration' => Yii::t('app', 'Date Of Last Calibration'),
+            'personInCharge' => Yii::t('app', 'Person In Charge')
         ];
     }
     
@@ -149,9 +165,11 @@ class YiiSensorModel extends WSActiveRecord {
         $this->rdfType = $array[YiiSensorModel::RDF_TYPE];
         $this->label = $array[YiiSensorModel::LABEL];
         $this->brand = $array[YiiSensorModel::BRAND];
+        $this->serialNumber = $array[YiiSensorModel::SERIAL_NUMBER];
         $this->inServiceDate = $array[YiiSensorModel::IN_SERVICE_DATE];
         $this->dateOfLastCalibration = $array[YiiSensorModel::DATE_OF_LAST_CALIBRATION];
         $this->dateOfPurchase = $array[YiiSensorModel::DATE_OF_PURCHASE];
+        $this->personInCharge = $array[YiiSensorModel::PERSON_IN_CHARGE];
     }
 
     /**
@@ -167,8 +185,17 @@ class YiiSensorModel extends WSActiveRecord {
         $elementForWebService[YiiSensorModel::LABEL] = $this->label;
         $elementForWebService[YiiSensorModel::BRAND] = $this->brand;
         $elementForWebService[YiiSensorModel::IN_SERVICE_DATE] = $this->inServiceDate;
-        $elementForWebService[YiiSensorModel::DATE_OF_LAST_CALIBRATION] = $this->dateOfLastCalibration;
-        $elementForWebService[YiiSensorModel::DATE_OF_PURCHASE] = $this->dateOfPurchase;
+        $elementForWebService[YiiSensorModel::PERSON_IN_CHARGE] = $this->personInCharge;
+        
+        if ($this->serialNumber !== null) {
+            $elementForWebService[YiiSensorModel::SERIAL_NUMBER] = $this->serialNumber;
+        }
+        if ($this->dateOfLastCalibration !== null) {
+            $elementForWebService[YiiSensorModel::DATE_OF_LAST_CALIBRATION] = $this->dateOfLastCalibration;
+        }
+        if ($this->dateOfPurchase !== null) {
+           $elementForWebService[YiiSensorModel::DATE_OF_PURCHASE] = $this->dateOfPurchase; 
+        }
         
         return $elementForWebService;
     }
