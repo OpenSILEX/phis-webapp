@@ -507,7 +507,7 @@ require_once '../config/config.php';
                 foreach ($models as $model) {
                     $stringToWrite = $model->uri . AgronomicalObjectController::DELIM_CSV . 
                                      $model->alias . AgronomicalObjectController::DELIM_CSV .
-                                     $model->typeAgronomicalObject . AgronomicalObjectController::DELIM_CSV .
+                                     $model->rdfType . AgronomicalObjectController::DELIM_CSV .
                                      $model->experiment . AgronomicalObjectController::DELIM_CSV . 
                                      "\n";
                     
