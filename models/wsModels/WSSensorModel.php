@@ -54,4 +54,22 @@ class WSSensorModel extends \openSILEX\guzzleClientPHP\WSModel {
             return $requestRes;
         }
     }
+    
+    /**
+     * 
+     * @param string $sessionToken
+     * @param array $params data corresponding to the sensor profile
+     * @return mixed the query result 
+     *               a string "token" if token expired
+     */
+    public function postSensorProfile($sessionToken, $params) {
+        $subService = "/profiles";
+        $requestRes = $this->post($sessionToken, $subService, $params);
+        
+        if (isset($requestRes->{WSConstants::TOKEN})) {
+            return WEB_SERVICE_TOKEN;
+        } else {
+            return $requestRes;
+        }
+    }
 }

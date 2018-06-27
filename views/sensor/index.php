@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('yii', 'Create') . ' ' . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) ?>
-         <?php // Html::a('Characterize Sensors', ['create-characterize-sensors'], ['class' => 'btn btn-success']) ?>
+         <?= Html::a('Characterize Sensors', ['characterize'], ['class' => 'btn btn-success']) ?>
     </p>
     
    <?= GridView::widget([

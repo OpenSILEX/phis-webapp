@@ -102,6 +102,28 @@ class SensorController extends Controller {
         return $sensorsTypes;
     }
     
+    public function getSensorsTypesSimpleAndUri() {
+        $model = new YiiSensorModel();
+        
+        $sensorsTypes = [];
+        $totalPages = 1;
+        for ($i = 0; $i < $totalPages; $i++) {
+            $model->page = $i;
+            $sensingDevicesConcepts = $model->getSensorsTypes(Yii::$app->session['access_token']);
+            if ($sensingDevicesConcepts === "token") {
+                return "token";
+            } else {
+                $totalPages = $sensingDevicesConcepts[\app\models\wsModels\WSConstants::PAGINATION][\app\models\wsModels\WSConstants::TOTAL_PAGES];
+
+                foreach ($sensingDevicesConcepts[\app\models\wsModels\WSConstants::DATA] as $sensorType) {
+                    $sensorsTypes[$sensorType->uri] = explode("#", $sensorType->uri)[1];
+                }
+            }
+        }
+        
+        return $sensorsTypes;
+    }
+    
     /**
      * generated the sensor creation page
      * @return mixed
@@ -237,5 +259,25 @@ class SensorController extends Controller {
             ]);
         }
         
+    }
+    
+    public function actionCharacterize() {
+        $sensorModel = new YiiSensorModel();
+        //get all the sensors types 
+        //(the sensor's uris list will be updated when the user will choose a sensor type)
+        $sensorsTypes = $this->getSensorsTypesSimpleAndUri();
+        
+        if (is_string($sensorsTypes) && $sensorsTypes === "token") { //user must log in
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        } else if (is_string($sensorsTypes)) { //server error
+            return $this->render('/site/error', [
+                    'name' => 'Internal error',
+                    'message' => $sensorsTypes]);
+        } else {
+            return $this->render('characterize', [
+               'model' => $sensorModel,
+               'sensorsTypes' => $sensorsTypes
+            ]);
+        }
     }
 }
