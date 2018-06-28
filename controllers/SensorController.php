@@ -261,11 +261,44 @@ class SensorController extends Controller {
         
     }
     
+    public function getSensorsUrisAndLabels($rdfType = null) {
+        $sessionToken = Yii::$app->session['access_token'];
+        $sensorSearchModel = new \app\models\yiiModels\SensorSearch();
+        $sensors = null;
+        
+        $sensorSearchModel->rdfType = $rdfType;
+        
+        $sensorSearchModel->totalPages = 1;
+        
+        for ($i = 0; $i <= intval($sensorSearchModel->totalPages); $i++) {
+            $searchParam[\app\models\wsModels\WSConstants::PAGE] = $i;
+            
+            $searchResult = $sensorSearchModel->search($sessionToken, $searchParam);
+            
+            if (is_string($searchResult)) {
+                return $this->render('/site/error', [
+                    'name' => 'Internal error',
+                    'message' => $searchResult]);
+            } else {
+                $models = $searchResult->getmodels();
+            }
+            
+            foreach ($models as $model) {
+                $sensors[$model->uri] = $model->label;
+            }
+        }
+        
+        return $sensors;
+    }
+    
     public function actionCharacterize() {
         $sensorModel = new YiiSensorModel();
         //get all the sensors types 
         //(the sensor's uris list will be updated when the user will choose a sensor type)
         $sensorsTypes = $this->getSensorsTypesSimpleAndUri();
+        
+        //get all the sensors uris (with labels)
+        $sensors = $this->getSensorsUrisAndLabels();
         
         if (is_string($sensorsTypes) && $sensorsTypes === "token") { //user must log in
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -276,8 +309,26 @@ class SensorController extends Controller {
         } else {
             return $this->render('characterize', [
                'model' => $sensorModel,
-               'sensorsTypes' => $sensorsTypes
+               'sensorsTypes' => $sensorsTypes,
+               'sensorsUris' => $sensors
             ]);
+        }
+    }
+    
+    public function actionGetSensorsUriByRdfType($rdfType) {   
+        $sensorsUrisAndLabels = $this->getSensorsUrisAndLabels(urldecode($rdfType));
+
+        $sensors = null;
+        
+        if ($sensorsUrisAndLabels !== null) {
+        
+            foreach ($sensorsUrisAndLabels as $key => $value) {
+                $sensors[] = ["label" => $value, "uri" => $key];
+            }
+
+            return json_encode($sensors, JSON_UNESCAPED_SLASHES);
+        } else {
+            return json_encode(null);
         }
     }
 }

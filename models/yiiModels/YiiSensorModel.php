@@ -100,16 +100,6 @@ class YiiSensorModel extends WSActiveRecord {
      * @var string
      */
     public $documents;
-    /**
-     * corresponds to the WSTripletModel, used for the insertions of the sensor
-     * @var WSTripletModel
-     */
-    private $wsTripletModel;
-    /**
-     * corresponds to the WSUriModel, used for the gets of the sensor
-     * @var WSUriModel
-     */
-    private $wsUriModel;
     
     /**
      * Initialize wsModels. In this class, as there is no dedicated service, there 
@@ -119,8 +109,6 @@ class YiiSensorModel extends WSActiveRecord {
      * @param string $page number of the current page 
      */
     public function __construct($pageSize = null, $page = null) {
-        $this->wsTripletModel = new WSTripletModel();
-        $this->wsUriModel = new WSUriModel();
         $this->wsModel = new WSSensorModel();
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize : $this->pageSize = null;
         ($page !== null || $page !== "") ? $this->page = $page : $this->page = null;
@@ -132,7 +120,7 @@ class YiiSensorModel extends WSActiveRecord {
      */
     public function rules() {
        return [
-          [['rdfType', 'brand', 'label', 'inServiceDate', 'personInCharge'], 'required'],  
+          [['rdfType', 'brand', 'label', 'inServiceDate', 'personInCharge', 'uri'], 'required'],  
           [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents'], 'safe']
         ]; 
     }
@@ -223,26 +211,6 @@ class YiiSensorModel extends WSActiveRecord {
                 return "token";
             } else {
                 return $requestRes;
-            }
-        } else {
-            return $requestRes;
-        }
-    }
-    
-    /**
-     * 
-     * @param string $sessionToken
-     * @param array $sensors
-     * @return string|array 
-     */
-    public function createSensors($sessionToken, $sensors) {
-        $requestRes = $this->wsTripletModel->post($sessionToken, "", $sensors);
-        
-        if (!is_string($requestRes)) {
-            if (isset($requestRes->{\app\models\wsModels\WSConstants::TOKEN})) {
-                return $requestRes;
-            } else {
-                return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
             }
         } else {
             return $requestRes;

@@ -16,6 +16,8 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiSensorModel */
+/* @var $sensorsUris array */
+/* @var $sensorsTypes array */
 
 $this->title = Yii::t('yii', 'Characterize Sensors');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 'url' => ['index']];
@@ -25,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?= $this->render('_form-characterize', [
         'model' => $model,
-        'sensorsTypes' => $sensorsTypes
+        'sensorsTypes' => $sensorsTypes,
+        'sensorsUris' => $sensorsUris
     ]) ?>    
 </div>
