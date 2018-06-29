@@ -119,9 +119,10 @@ class YiiSensorModel extends WSActiveRecord {
      * @return array the rules of the attributes
      */
     public function rules() {
-       return [
-          [['rdfType', 'brand', 'label', 'inServiceDate', 'personInCharge', 'uri'], 'required'],  
-          [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents'], 'safe']
+       return [ 
+           [['rdfType', 'uri'], 'required'], 
+          [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents',
+              'brand', 'label', 'inServiceDate', 'personInCharge'], 'safe']
         ]; 
     }
     
@@ -165,8 +166,8 @@ class YiiSensorModel extends WSActiveRecord {
      * Used for the web service for example
      * @return array with the attributes. 
      */
-    public function attributesToArray() {
-        $elementForWebService[YiiModelsConstants::PAGE] = $this->page - 1;
+    public function attributesToArray() {        
+        $elementForWebService[YiiModelsConstants::PAGE] = $this->page <= 0 ? 0 : $this->page - 1;
         $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
         $elementForWebService[YiiSensorModel::URI] = $this->uri;
         $elementForWebService[YiiSensorModel::RDF_TYPE] = $this->rdfType;
@@ -242,5 +243,18 @@ class YiiSensorModel extends WSActiveRecord {
         } else {
             return $requestRes;
         }
+    }
+    
+    public function insertProfile($sessionToken, $sensorProfile) {
+        $requestRes = $this->wsModel->postSensorProfile($sessionToken, $sensorProfile);
+        
+        if (is_string($requestRes) && $requestRes === "token") {
+                return $requestRes;
+        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES})) {
+            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
+        } else {
+            return $requestRes;
+        }
+       
     }
 }

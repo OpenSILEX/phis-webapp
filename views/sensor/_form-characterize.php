@@ -69,6 +69,29 @@ use yii\helpers\Url;
         //\SILEX:warning
         var rdfType = $('#rdfType').val().split("#")[1];
         
+        //1.1 get the rdfType of the uri
+        $.ajax({
+           url: '<?= Url::to(['sensor/get-sensors-uri-by-rdf-type']) ?>',
+           type: 'GET',
+           data: 'uri=' + $('#uri').val(),
+           datatype: 'json'
+        }).done(function(data) {
+            
+            //1.2 update the rdfType field and show the right form
+            rdfType = JSON.parse(data);
+            
+            var options = "<option value=\"\"></option>";
+            
+            //3. update the list
+            if (sensors !== null) {
+                for (i = 0; i < sensors.length; i++) {
+                    options += "<option value=\"" + sensors[i].uri + "\">" + sensors[i].label + "</option>";
+                }
+            }
+            
+            $("#uri").html(options);
+        });
+        
         if (rdfType === "Camera" || rdfType === "HemisphericalCamera"
                  || rdfType === "HyperspectralCamera" || rdfType === "MultispectralCamera"
                  || rdfType === "RGBCamera" || rdfType === "TIRCamera") {
@@ -138,14 +161,20 @@ use yii\helpers\Url;
     </div>
     
     <div id="lens" style="display:none">
-        <?= Html::label(Yii::t('app', 'Focal Length') . '(mm)', 'focalLength') ?>
-        <?= Html::textInput('focalLength', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::label(Yii::t('app', 'Brand'), 'lensBrand') ?>
+        <?= Html::textInput('lensBrand', null, ['class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Aperture') . '(fnumber)', 'aperture') ?>
-        <?= Html::textInput('aperture', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::label(Yii::t('app', 'Brand'), 'lensPersonInCharge') ?>
+        <?= Html::textInput('lensPersonInCharge', "", ['class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Brand'), 'brand') ?>
-        <?= Html::textInput('brand', null, ['class' => 'form-control']); ?>
+        <?= Html::label(Yii::t('app', 'Brand'), 'lensInServiceDate') ?>
+        <?= Html::textInput('lensInServiceDate', "", ['class' => 'form-control']); ?>
+        
+        <?= Html::label(Yii::t('app', 'Focal Length') . '(mm)', 'lensFocalLength') ?>
+        <?= Html::textInput('lensFocalLength', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        
+        <?= Html::label(Yii::t('app', 'Aperture') . '(fnumber)', 'lensAperture') ?>
+        <?= Html::textInput('lensAperture', null, ['type' => 'number', 'class' => 'form-control']); ?>
     </div>
     
     <div id="lidar" style="display:none">
@@ -178,7 +207,7 @@ use yii\helpers\Url;
         <?= Html::label(Yii::t('app', 'Spectral Sampling Interval'), 'spectralSamplingInterval') ?>
         <?= Html::textInput('spectralSamplingInterval', null, ['class' => 'form-control']); ?>
     </div>
-    
+    <br/>
     <div class="form-group">
         <?= Html::submitButton(Yii::t('yii', 'Characterize Sensor'), ['class' => 'btn btn-success']) ?>
     </div>
