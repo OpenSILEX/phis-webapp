@@ -33,7 +33,7 @@ class UserSearch extends YiiUserModel {
      */
     public function rules() {
         return [
-          [['email', 'familyName', 'firstName', 'phone', 'affiliation', 'orcid', 'available', 'isAdmin'], 'safe']  
+          [['email', 'familyName', 'firstName', 'phone', 'affiliation', 'orcid', 'available', 'isAdmin', 'uri'], 'safe']  
         ];
     }
     

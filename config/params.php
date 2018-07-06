@@ -14,5 +14,6 @@ return [
     'Variety' => 'http://www.phenome-fppn.fr/vocabulary/2017#Variety',
     'fromVariety' => 'http://www.phenome-fppn.fr/vocabulary/2017#fromVariety',
     'hasExperimentModalities' => 'http://www.phenome-fppn.fr/vocabulary/2017#hasExperimentModalities',
-    'hasRepetition' => 'http://www.phenome-fppn.fr/vocabulary/2017#hasRepetition'
+    'hasRepetition' => 'http://www.phenome-fppn.fr/vocabulary/2017#hasRepetition',
+    'Motivation' => 'http://www.w3.org/ns/oa#Motivation'
 ];
