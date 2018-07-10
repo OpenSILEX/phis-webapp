@@ -15,6 +15,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use app\components\AnnotationWidget;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiProjectModel */
@@ -30,21 +31,26 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItem' => $model->uri], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
-        <?php //Html::a('Delete', ['delete', 'id' => $model->uri], [
+        <!--add annotation button-->
+        <?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
+        <?php
+        //Html::a('Delete', ['delete', 'id' => $model->uri], [
 //            'class' => 'btn btn-danger',
 //            'data' => [
 //                'confirm' => 'Are you sure you want to delete this item?',
 //                'method' => 'post',
 //            ],
-//        ]) ?>
+//        ]) 
+        ?>
     </p>
 
-    <?= DetailView::widget([
+    <?=
+    DetailView::widget([
         'model' => $model,
         'attributes' => [
             'uri',
             'acronyme',
-            'name',   
+            'name',
             //'parentProject',
             [
                 'attribute' => 'parentProject',
@@ -56,63 +62,63 @@ $this->params['breadcrumbs'][] = $this->title;
             'financialSupport',
             'financialName',
             [
-              'attribute' => 'dateStart',
-              'format' => 'raw',
-              'value' => function($model) {
-                return date_format(date_create($model->dateStart), 'jS F Y');
-              }
-            ],
-            [
-              'attribute' => 'dateEnd',
-              'format' => 'raw',
-              'value' => function($model) {
-                return date_format(date_create($model->dateEnd), 'jS F Y');
-              }
-            ],
-            [
-              'attribute' => 'scientificContacts',
-              'format' => 'raw',
-              'value' => function ($model) {
-                $toReturn = "";
-                if (count($model->scientificContacts) > 0) {
-                    foreach($model->scientificContacts as $scientificContact) {
-                        $toReturn .= Html::a($scientificContact["firstName"] . " " . $scientificContact["familyName"], ['user/view', 'id' => $scientificContact["email"]]);
-                        $toReturn .= ", ";
-                    }
-                    $toReturn = rtrim($toReturn, ", ");
+                'attribute' => 'dateStart',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return date_format(date_create($model->dateStart), 'jS F Y');
                 }
-                return $toReturn;
-              }
             ],
             [
-              'attribute' => 'administrativeContacts',
-              'format' => 'raw',
-              'value' => function ($model) {
-                $toReturn = "";
-                if (count($model->administrativeContacts) > 0) {
-                    foreach($model->administrativeContacts as $administrativeContact) {
-                        $toReturn .= Html::a($administrativeContact["firstName"] . " " . $administrativeContact["familyName"], ['user/view', 'id' => $administrativeContact["email"]]);
-                        $toReturn .= ", ";
-                    }
-                    $toReturn = rtrim($toReturn, ", ");
+                'attribute' => 'dateEnd',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return date_format(date_create($model->dateEnd), 'jS F Y');
                 }
-                return $toReturn;
-              }
             ],
             [
-              'attribute' => 'projectCoordinatorContacts',
-              'format' => 'raw',
-              'value' => function ($model) {
-                $toReturn = "";
-                if (count($model->projectCoordinatorContacts) > 0) {
-                    foreach($model->projectCoordinatorContacts as $projectCoordinatorContact) {
-                        $toReturn .= Html::a($projectCoordinatorContact["firstName"] . " " . $projectCoordinatorContact["familyName"], ['user/view', 'id' => $projectCoordinatorContact["email"]]);
-                        $toReturn .= ", ";
+                'attribute' => 'scientificContacts',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    if (count($model->scientificContacts) > 0) {
+                        foreach ($model->scientificContacts as $scientificContact) {
+                            $toReturn .= Html::a($scientificContact["firstName"] . " " . $scientificContact["familyName"], ['user/view', 'id' => $scientificContact["email"]]);
+                            $toReturn .= ", ";
+                        }
+                        $toReturn = rtrim($toReturn, ", ");
                     }
-                    $toReturn = rtrim($toReturn, ", ");
+                    return $toReturn;
                 }
-                return $toReturn;
-              }
+            ],
+            [
+                'attribute' => 'administrativeContacts',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    if (count($model->administrativeContacts) > 0) {
+                        foreach ($model->administrativeContacts as $administrativeContact) {
+                            $toReturn .= Html::a($administrativeContact["firstName"] . " " . $administrativeContact["familyName"], ['user/view', 'id' => $administrativeContact["email"]]);
+                            $toReturn .= ", ";
+                        }
+                        $toReturn = rtrim($toReturn, ", ");
+                    }
+                    return $toReturn;
+                }
+            ],
+            [
+                'attribute' => 'projectCoordinatorContacts',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    if (count($model->projectCoordinatorContacts) > 0) {
+                        foreach ($model->projectCoordinatorContacts as $projectCoordinatorContact) {
+                            $toReturn .= Html::a($projectCoordinatorContact["firstName"] . " " . $projectCoordinatorContact["familyName"], ['user/view', 'id' => $projectCoordinatorContact["email"]]);
+                            $toReturn .= ", ";
+                        }
+                        $toReturn = rtrim($toReturn, ", ");
+                    }
+                    return $toReturn;
+                }
             ],
             [
                 'attribute' => 'website',
@@ -122,36 +128,37 @@ $this->params['breadcrumbs'][] = $this->title;
             'keywords',
             'description',
         ],
-    ]) ?>
-    
-    <?php if ($dataDocumentsProvider->getCount() > 0) {
-            echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
-            echo GridView::widget([
-                'dataProvider' => $dataDocumentsProvider,
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-                    'title',
-                    'creator',
-                    [
-                        'attribute' => 'creationDate',
-                        'format' => 'raw',
-                        'value' => function($model) {
-                          return date_format(date_create($model->creationDate), 'jS F Y');
-                        }
-                    ],
-                    'language',
-                    ['class' => 'yii\grid\ActionColumn',
-                        'template' => '{view}',
-                        'buttons' => [
-                            'view' => function($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
-                                                ['document/view', 'id' => $model->uri]); 
-                            },
-                        ]
-                    ],
-                ]
-            ]);
-          } 
+    ])
+    ?>
+
+    <?php
+    if ($dataDocumentsProvider->getCount() > 0) {
+        echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
+        echo GridView::widget([
+            'dataProvider' => $dataDocumentsProvider,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                'title',
+                'creator',
+                [
+                    'attribute' => 'creationDate',
+                    'format' => 'raw',
+                    'value' => function($model) {
+                        return date_format(date_create($model->creationDate), 'jS F Y');
+                    }
+                ],
+                'language',
+                ['class' => 'yii\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['document/view', 'id' => $model->uri]);
+                        },
+                    ]
+                ],
+            ]
+        ]);
+    }
     ?>
 
 </div>

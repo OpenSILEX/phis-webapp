@@ -14,7 +14,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use rmrevin\yii\fontawesome\FAS;
+use app\components\AnnotationWidget;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiSensorModel */
@@ -23,16 +23,10 @@ $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<?=
-Html::a(
-        FAS::icon('comment') . ' ' . Yii::t('app', 'Add annotation'), [
-    'annotation/create',
-    'target' => $model->uri,
-        ], [
-    'class' => 'btn btn-default',
-        ]
-);
-?>
+
+<!--add annotation button-->
+<?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
+
 <div class="sensor-view">
 
     <h1><?= Html::encode($this->title) ?></h1>

@@ -29,7 +29,7 @@ use Yii;
 class YiiAnnotationModel extends WSActiveRecord {
 
     public $label = "Annotation";
-    
+
     /**
      * uri of the annotation
      *  (e.g. http://www.phenome-fppn.fr/platform/id/annotation/3ce85bf7-1d99-4831-9c13-4d7ebdafe1d6)
@@ -46,8 +46,8 @@ class YiiAnnotationModel extends WSActiveRecord {
      */
     public $creationDate;
 
-    const CREATION_DATE = "creator";
-    
+    const CREATION_DATE = "creationDate";
+
     /**
      * the creator of the annotation
      *  (e.g. http://www.phenome-fppn.fr/diaphen/id/agent/acharleroy)
@@ -64,25 +64,26 @@ class YiiAnnotationModel extends WSActiveRecord {
      */
     public $motivatedBy;
 
-    const MOTIVATEDBY = "motivatedBy";
+    const MOTIVATED_BY = "motivatedBy";
 
     /**
      * the description of the annotation
      *  (e.g. http://www.w3.org/ns/oa#commenting)
      * @var string
      */
-    public $comment;
+    public $comments;
 
-    const COMMENT = "comment";
+    const COMMENTS = "comments";
 
     /**
-     *  a target associate to this annotation http://www.phenome-fppn.fr/phenovia/2017/o1032481
-     *  (e.g. http://www.w3.org/ns/oa#commenting)
+     *  a target associate to this annotation 
+     *  (e.g. http://www.phenome-fppn.fr/phenovia/2017/o1032481)
      * @var string
      */
     public $targets;
 
-    const TARGET = "targets";
+    const TARGETS = "targets";
+    const TARGET_JSON = "targetsValues";
 
     public function __construct($pageSize = null, $page = null) {
         $date = new \DateTime();
@@ -94,20 +95,20 @@ class YiiAnnotationModel extends WSActiveRecord {
 
     public function rules() {
         return [
-            [['uri', 'creator', 'motivatedBy', 'comment', 'targets'], 'required'],
-            [['uri', 'creator', 'motivatedBy', 'comment', 'targets'], 'safe'],
-            [['comment'], 'string'],
-            [['uri', 'creator', 'target'], 'string', 'max' => 300]
+            [[YiiAnnotationModel::URI, YiiAnnotationModel::CREATOR, YiiAnnotationModel::MOTIVATED_BY, YiiAnnotationModel::COMMENTS, YiiAnnotationModel::TARGETS], 'required'],
+            [[YiiAnnotationModel::URI, YiiAnnotationModel::CREATOR, YiiAnnotationModel::MOTIVATED_BY, YiiAnnotationModel::COMMENTS, YiiAnnotationModel::TARGETS], 'safe'],
+            [[YiiAnnotationModel::COMMENTS], 'string'],
+            [[YiiAnnotationModel::URI, YiiAnnotationModel::CREATOR, YiiAnnotationModel::TARGETS], 'string', 'max' => 300]
         ];
     }
 
     public function attributeLabels() {
         return [
-            'uri' => 'URI',
-            'creator' => Yii::t('app', 'Name'),
-            'motivatedBy' => Yii::t('app', 'Motivated By'),
-            'comment' => Yii::t('app', 'Comment'),
-            'target' => Yii::t('app', 'Targets')
+            YiiAnnotationModel::URI => 'URI',
+            YiiAnnotationModel::CREATOR => Yii::t('app', 'Creator'),
+            YiiAnnotationModel::MOTIVATED_BY => Yii::t('app', 'Motivated by'),
+            YiiAnnotationModel::COMMENTS => Yii::t('app', 'Comments'),
+            YiiAnnotationModel::TARGETS => Yii::t('app', 'Targets')
         ];
     }
 
@@ -119,9 +120,9 @@ class YiiAnnotationModel extends WSActiveRecord {
     protected function arrayToAttributes($array) {
         $this->uri = $array[YiiAnnotationModel::URI];
         $this->creator = $array[YiiAnnotationModel::CREATOR];
-        $this->comment = $array[YiiAnnotationModel::COMMENT];
-        $this->motivatedBy = $array[YiiAnnotationModel::MOTIVATEDBY];
-        $this->targets = $array[YiiAnnotationModel::TARGET];
+        $this->comments = $array[YiiAnnotationModel::COMMENTS];
+        $this->motivatedBy = $array[YiiAnnotationModel::MOTIVATED_BY];
+        $this->targets = $array[YiiAnnotationModel::TARGETS];
     }
 
     /**
@@ -131,9 +132,16 @@ class YiiAnnotationModel extends WSActiveRecord {
      */
     public function attributesToArray() {
         $elementForWebService[YiiAnnotationModel::CREATOR] = $this->creator;
-        $elementForWebService[YiiAnnotationModel::COMMENT] = $this->comment;
-        $elementForWebService[YiiAnnotationModel::MOTIVATEDBY] = $this->motivatedBy;
-        $elementForWebService[YiiAnnotationModel::TARGET] = [$this->targets];
+        $elementForWebService[YiiAnnotationModel::MOTIVATED_BY] = $this->motivatedBy;
+        $elementForWebService[YiiAnnotationModel::CREATION_DATE] = $this->creationDate;
+        // For now one target can be choose
+        if (isset($this->targets) && !empty($this->targets)) {
+            $elementForWebService[YiiAnnotationModel::TARGETS] = $this->targets;
+        }
+        if (isset($this->comments) && !empty($this->comments)) {
+            $elementForWebService[YiiAnnotationModel::COMMENTS] = $this->targets;
+        }
+//        var_dump($this->targets);exit();
         return $elementForWebService;
     }
 

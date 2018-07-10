@@ -14,6 +14,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use app\models\yiiModels\YiiAnnotationModel;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiSensorModel */
@@ -31,13 +32,19 @@ $this->params['breadcrumbs'][] = $this->title;
     DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'uri',
-            'creator',
-            'motivatedBy',
-            'creationDate',
-            'comment',
-            'target' => [
-                'attribute' => 'targets',
+            YiiAnnotationModel::URI,
+            YiiAnnotationModel::CREATOR,
+            YiiAnnotationModel::MOTIVATED_BY,
+            YiiAnnotationModel::CREATION_DATE,
+            YiiAnnotationModel::TARGETS => [
+                'attribute' => YiiAnnotationModel::COMMENTS,
+                'format' => 'html',
+                'value' => function ($model) {
+                    return implode(('<br>,'), $model->comments);
+                }
+            ],
+            YiiAnnotationModel::TARGETS => [
+                'attribute' => YiiAnnotationModel::TARGETS,
                 'format' => 'html',
                 'value' => function ($model) {
                     return implode(('<br>,'), $model->targets);

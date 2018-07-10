@@ -2,6 +2,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\data\ArrayDataProvider;
+use app\models\yiiModels\YiiAnnotationModel;
+use yii\grid\GridView;
 
 /**
  * @var yii\web\View $this
@@ -12,21 +15,45 @@ use yii\widgets\ActiveForm;
 
 <div class="event-form">
 
-    <?php $form = ActiveForm::begin();?>
+    <?php $form = ActiveForm::begin(); ?>
 
-    <?php echo  $form->field($model, 'motivatedBy')->dropDownList(
-        $motivationIndividuals
+    <?=
+    $form->field($model, YiiAnnotationModel::MOTIVATED_BY)->dropDownList(
+            $motivationIndividuals
     );
     ?>
-    
 
-    <?php echo $form->field($model, 'creationDate')->textInput(['readonly' => 'true']); ?>
-
+    <?= $form->field($model, YiiAnnotationModel::CREATION_DATE)->textInput(['readonly' => 'true']); ?>
 
 
-    <?php echo $form->field($model, 'target')->textInput(['readonly'=> 'true']); ?>
+    <?php
+    // Show targets
+    foreach ($model->targets as $target) {
+        $targets[] = [YiiAnnotationModel::TARGETS => $target];
+    }
 
-    <?php echo $form->field($model, 'comment')->textArea(['rows' => 5]); ?>
+    $dataProvider = new ArrayDataProvider([
+        'allModels' => $targets,
+        'pagination' => [
+            'pageSize' => 10,
+        ],
+    ]);
+
+    echo GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            YiiAnnotationModel::TARGETS
+        ],
+    ]);
+    ?>
+    <!--input list of targets-->
+    <?php
+    foreach ($model->targets as $index => $target) {
+        echo $form->field($model, YiiAnnotationModel::TARGETS . "[$index]")->hiddenInput(['readonly' => 'true', "value" => $target])->label(false);
+    }
+    ?>
+    <!--First body-->
+    <?= $form->field($model, YiiAnnotationModel::COMMENTS . "[0]")->textArea(['rows' => 5]); ?>
 
 
     <div class="form-group">

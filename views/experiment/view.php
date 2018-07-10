@@ -1,4 +1,5 @@
 <?php
+
 //**********************************************************************************************
 //                                       view.php 
 //
@@ -14,6 +15,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use app\components\AnnotationWidget;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiExperimentModel */
@@ -33,104 +35,105 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         ?>
         <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItem' => $model->uri], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
-        <?= Html::a(Yii::t('app', 'Map Visualization'), 
-                ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'false'], ['class' => 'btn btn-info']) ?>
-        <?php if (Yii::$app->session['isAdmin']) {
-            echo Html::a(Yii::t('app', 'Generate Map'), 
-                ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
-            }
-         ?>
+        <?= Html::a(Yii::t('app', 'Map Visualization'), ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'false'], ['class' => 'btn btn-info'])
+        ?>
+        <?php
+        if (Yii::$app->session['isAdmin']) {
+            echo Html::a(Yii::t('app', 'Generate Map'), ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
+        }
+        ?>
+        <!--add annotation button-->
+        <?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
     </p>
 
     <?php
-    
     $attributes;
-    
+
     if (Yii::$app->session['isAdmin']) {
         $attributes = [
             'uri',
             'alias',
             [
-              'attribute' => 'projects',
-              'format' => 'raw',
-              'value' => function ($model) {
-                $toReturn = "";
-                if (count($model->projects) > 0) {
-                    foreach($model->projects as $project) {
-                        $toReturn .= Html::a($project["acronyme"], ['project/view', 'id' => $project["uri"]]);
-                        $toReturn .= ", ";
+                'attribute' => 'projects',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    if (count($model->projects) > 0) {
+                        foreach ($model->projects as $project) {
+                            $toReturn .= Html::a($project["acronyme"], ['project/view', 'id' => $project["uri"]]);
+                            $toReturn .= ", ";
+                        }
+                        $toReturn = rtrim($toReturn, ", ");
                     }
-                    $toReturn = rtrim($toReturn, ", ");
+                    return $toReturn;
                 }
-                return $toReturn;
-              }
             ],
             [
-              'attribute' => 'startDate',
-              'format' => 'raw',
-              'value' => function($model) {
-                return date_format(date_create($model->startDate), 'jS F Y');
-              }
+                'attribute' => 'startDate',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return date_format(date_create($model->startDate), 'jS F Y');
+                }
             ],
             [
-              'attribute' => 'endDate',
-              'format' => 'raw',
-              'value' => function($model) {
-                return date_format(date_create($model->endDate), 'jS F Y');
-              }
+                'attribute' => 'endDate',
+                'format' => 'raw',
+                'value' => function($model) {
+                    return date_format(date_create($model->endDate), 'jS F Y');
+                }
             ],
             'field',
             'campaign',
             'place',
             [
-              'attribute' => 'scientificSupervisorContact',
-              'format' => 'raw',
-              'value' => function ($model) {
-                $toReturn = "";
-                if (count($model->scientificSupervisorContacts) > 0) {
-                    foreach($model->scientificSupervisorContacts as $scientificSupervisor) {
-                        $toReturn .= Html::a($scientificSupervisor["firstName"] . " " . $scientificSupervisor["familyName"], ['user/view', 'id' => $scientificSupervisor["email"]]);
-                        $toReturn .= ", ";
+                'attribute' => 'scientificSupervisorContact',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    if (count($model->scientificSupervisorContacts) > 0) {
+                        foreach ($model->scientificSupervisorContacts as $scientificSupervisor) {
+                            $toReturn .= Html::a($scientificSupervisor["firstName"] . " " . $scientificSupervisor["familyName"], ['user/view', 'id' => $scientificSupervisor["email"]]);
+                            $toReturn .= ", ";
+                        }
+                        $toReturn = rtrim($toReturn, ", ");
                     }
-                    $toReturn = rtrim($toReturn, ", ");
+                    return $toReturn;
                 }
-                return $toReturn;
-              }
             ],
-                    [
-              'attribute' => 'technicalSupervisorContact',
-              'format' => 'raw',
-              'value' => function ($model) {
-                $toReturn = "";
-                if (count($model->technicalSupervisorContacts) > 0) {
-                    foreach($model->technicalSupervisorContacts as $technicalSupervisorContact) {
-                        $toReturn .= Html::a($technicalSupervisorContact["firstName"] . " " . $technicalSupervisorContact["familyName"], ['user/view', 'id' => $technicalSupervisorContact["email"]]);
-                        $toReturn .= ", ";
+            [
+                'attribute' => 'technicalSupervisorContact',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    if (count($model->technicalSupervisorContacts) > 0) {
+                        foreach ($model->technicalSupervisorContacts as $technicalSupervisorContact) {
+                            $toReturn .= Html::a($technicalSupervisorContact["firstName"] . " " . $technicalSupervisorContact["familyName"], ['user/view', 'id' => $technicalSupervisorContact["email"]]);
+                            $toReturn .= ", ";
+                        }
+                        $toReturn = rtrim($toReturn, ", ");
                     }
-                    $toReturn = rtrim($toReturn, ", ");
+                    return $toReturn;
                 }
-                return $toReturn;
-              }
             ],
             'cropSpecies',
             'objective',
             //'groups',
             'keywords',
             'comment:ntext',
-             [
-              'attribute' => 'groups',
-              'format' => 'raw',
-              'value' => function ($model) {
-                $toReturn = "";
-                if (count($model->groups) > 0) {
-                    foreach($model->groups as $group) {
-                        $toReturn .= Html::a($group["name"], ['group/view', 'id' => $group["uri"]]);
-                        $toReturn .= ", ";
+            [
+                'attribute' => 'groups',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    if (count($model->groups) > 0) {
+                        foreach ($model->groups as $group) {
+                            $toReturn .= Html::a($group["name"], ['group/view', 'id' => $group["uri"]]);
+                            $toReturn .= ", ";
+                        }
+                        $toReturn = rtrim($toReturn, ", ");
                     }
-                    $toReturn = rtrim($toReturn, ", ");
+                    return $toReturn;
                 }
-                return $toReturn;
-              }
             ],
         ];
     } else {
@@ -138,19 +141,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'uri',
             'alias',
             [
-              'attribute' => 'projects',
-              'format' => 'raw',
-              'value' => function ($model) {
-                $toReturn = "";
-                if (count($model->projects) > 0) {
-                    foreach($model->projects as $project) {
-                        $toReturn .= Html::a($project["acronyme"], ['project/view', 'id' => $project["uri"]]);
-                        $toReturn .= ", ";
+                'attribute' => 'projects',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    if (count($model->projects) > 0) {
+                        foreach ($model->projects as $project) {
+                            $toReturn .= Html::a($project["acronyme"], ['project/view', 'id' => $project["uri"]]);
+                            $toReturn .= ", ";
+                        }
+                        $toReturn = rtrim($toReturn, ", ");
                     }
-                    $toReturn = rtrim($toReturn, ", ");
+                    return $toReturn;
                 }
-                return $toReturn;
-              }
             ],
             'startDate',
             'endDate',
@@ -158,34 +161,34 @@ $this->params['breadcrumbs'][] = $this->title;
             'campaign',
             'place',
             [
-              'attribute' => 'scientificSupervisorContact',
-              'format' => 'raw',
-              'value' => function ($model) {
-                $toReturn = "";
-                if (count($model->scientificSupervisorContacts) > 0) {
-                    foreach($model->scientificSupervisorContacts as $scientificSupervisor) {
-                        $toReturn .= Html::a($scientificSupervisor["firstName"] . " " . $scientificSupervisor["familyName"], ['user/view', 'id' => $scientificSupervisor["email"]]);
-                        $toReturn .= ", ";
+                'attribute' => 'scientificSupervisorContact',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    if (count($model->scientificSupervisorContacts) > 0) {
+                        foreach ($model->scientificSupervisorContacts as $scientificSupervisor) {
+                            $toReturn .= Html::a($scientificSupervisor["firstName"] . " " . $scientificSupervisor["familyName"], ['user/view', 'id' => $scientificSupervisor["email"]]);
+                            $toReturn .= ", ";
+                        }
+                        $toReturn = rtrim($toReturn, ", ");
                     }
-                    $toReturn = rtrim($toReturn, ", ");
+                    return $toReturn;
                 }
-                return $toReturn;
-              }
             ],
-                    [
-              'attribute' => 'technicalSupervisorContact',
-              'format' => 'raw',
-              'value' => function ($model) {
-                $toReturn = "";
-                if (count($model->technicalSupervisorContacts) > 0) {
-                    foreach($model->technicalSupervisorContacts as $technicalSupervisorContact) {
-                        $toReturn .= Html::a($technicalSupervisorContact["firstName"] . " " . $technicalSupervisorContact["familyName"], ['user/view', 'id' => $technicalSupervisorContact["email"]]);
-                        $toReturn .= ", ";
+            [
+                'attribute' => 'technicalSupervisorContact',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    if (count($model->technicalSupervisorContacts) > 0) {
+                        foreach ($model->technicalSupervisorContacts as $technicalSupervisorContact) {
+                            $toReturn .= Html::a($technicalSupervisorContact["firstName"] . " " . $technicalSupervisorContact["familyName"], ['user/view', 'id' => $technicalSupervisorContact["email"]]);
+                            $toReturn .= ", ";
+                        }
+                        $toReturn = rtrim($toReturn, ", ");
                     }
-                    $toReturn = rtrim($toReturn, ", ");
+                    return $toReturn;
                 }
-                return $toReturn;
-              }
             ],
             'cropSpecies',
             'objective',
@@ -194,71 +197,73 @@ $this->params['breadcrumbs'][] = $this->title;
             'comment:ntext',
         ];
     }
-     
+
     echo DetailView::widget([
         'model' => $model,
         'attributes' => $attributes
-    ]); ?>
-    
-     <?php if ($dataDocumentsProvider->getCount() > 0) {
-            echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
-            echo GridView::widget([
-                'dataProvider' => $dataDocumentsProvider,
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-                    'title',
-                    'creator',
-                    'creationDate',
-                    'language',
-                    ['class' => 'yii\grid\ActionColumn',
-                        'template' => '{view}',
-                        'buttons' => [
-                            'view' => function($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
-                                                ['document/view', 'id' => $model->uri]); 
-                            },
-                        ]
-                    ],
-                ]
-            ]);
-          } 
+    ]);
     ?>
-    
-    <?php if ($dataAgronomicalObjectsProvider->getCount() > 0) {
-        echo "<h3>" . Yii::t('app', 'Linked Agronomical Objects') . "</h3>";
-            echo GridView::widget([
-                'dataProvider' => $dataAgronomicalObjectsProvider,
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-                    'uri',
-                    'alias',
-                    [
-                        'attribute' => 'rdfType',
-                        'format' => 'raw',
-                        'value' => function($model, $key, $index) {
-                            return explode("#", $model->rdfType)[1];
-                        }
-                    ], 
-                    [
-                        'attribute' => 'properties',
-                        'format' => 'raw',
-                        'value' => function($model, $key, $index) {
-                            $toReturn = "<ul>";
-                            foreach ($model->properties as $property) {
-                                if (explode("#", $property->relation)[1] !== "type") {
-                                    $toReturn .= "<li>"
-                                            . "<b>" . explode("#", $property->relation)[1] . "</b>"
-                                            . " : "
-                                            . $property->value
-                                            . "</li>";
-                                }
-                            }
-                            $toReturn .= "</ul>";
-                            return $toReturn;
+
+    <?php
+    if ($dataDocumentsProvider->getCount() > 0) {
+        echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
+        echo GridView::widget([
+            'dataProvider' => $dataDocumentsProvider,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                'title',
+                'creator',
+                'creationDate',
+                'language',
+                ['class' => 'yii\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['document/view', 'id' => $model->uri]);
                         },
-                    ],
-                ]
-            ]);
-    }    
+                    ]
+                ],
+            ]
+        ]);
+    }
+    ?>
+
+    <?php
+    if ($dataAgronomicalObjectsProvider->getCount() > 0) {
+        echo "<h3>" . Yii::t('app', 'Linked Agronomical Objects') . "</h3>";
+        echo GridView::widget([
+            'dataProvider' => $dataAgronomicalObjectsProvider,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                'uri',
+                'alias',
+                [
+                    'attribute' => 'rdfType',
+                    'format' => 'raw',
+                    'value' => function($model, $key, $index) {
+                        return explode("#", $model->rdfType)[1];
+                    }
+                ],
+                [
+                    'attribute' => 'properties',
+                    'format' => 'raw',
+                    'value' => function($model, $key, $index) {
+                        $toReturn = "<ul>";
+                        foreach ($model->properties as $property) {
+                            if (explode("#", $property->relation)[1] !== "type") {
+                                $toReturn .= "<li>"
+                                        . "<b>" . explode("#", $property->relation)[1] . "</b>"
+                                        . " : "
+                                        . $property->value
+                                        . "</li>";
+                            }
+                        }
+                        $toReturn .= "</ul>";
+                        return $toReturn;
+                    },
+                ],
+            ]
+        ]);
+    }
     ?>
 </div>
