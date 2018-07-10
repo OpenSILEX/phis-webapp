@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
             YiiAnnotationModel::CREATOR,
             YiiAnnotationModel::MOTIVATED_BY,
             YiiAnnotationModel::CREATION_DATE,
-            YiiAnnotationModel::TARGETS => [
+            YiiAnnotationModel::COMMENTS => [
                 'attribute' => YiiAnnotationModel::COMMENTS,
                 'format' => 'html',
                 'value' => function ($model) {

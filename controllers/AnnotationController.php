@@ -69,6 +69,7 @@ class AnnotationController extends Controller {
             if (is_string($requestRes) && $requestRes === \app\models\wsModels\WSConstants::TOKEN) { //L'utilisateur doit se connecter
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
+                var_dump($requestRes);exit;
                 $annotationModel->uri = $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
                 return $this->redirect(['view', 'id' => $annotationModel->uri]);
             }
@@ -165,6 +166,7 @@ class AnnotationController extends Controller {
         $sessionToken = Yii::$app->session['access_token'];
         $annotationModel = new YiiAnnotationModel(null, null);
         $requestRes = $annotationModel->findByURI($sessionToken, $uri);
+        
         if ($requestRes === true) {
             return $annotationModel;
         } else if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {

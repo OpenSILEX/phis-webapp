@@ -139,7 +139,7 @@ class YiiAnnotationModel extends WSActiveRecord {
             $elementForWebService[YiiAnnotationModel::TARGETS] = $this->targets;
         }
         if (isset($this->comments) && !empty($this->comments)) {
-            $elementForWebService[YiiAnnotationModel::COMMENTS] = $this->targets;
+            $elementForWebService[YiiAnnotationModel::COMMENTS] = $this->comments;
         }
 //        var_dump($this->targets);exit();
         return $elementForWebService;
