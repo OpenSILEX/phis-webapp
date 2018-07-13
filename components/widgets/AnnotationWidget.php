@@ -9,10 +9,10 @@
 // Creation date: 10 july 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 // Last modification date:  10 july 2018
-// Subject: A widget used to generate a customizable annotation interface bouton
+// Subject: A widget used to generate a customizable annotation interface button
 //******************************************************************************
 
-namespace app\components;
+namespace app\components\widgets;
 
 use yii\base\Widget;
 use yii\helpers\Html;
@@ -21,7 +21,7 @@ use rmrevin\yii\fontawesome\FAS;
 use app\models\yiiModels\YiiAnnotationModel;
 
 /**
- *  A widget used to generate a customizable annotation interface bouton
+ *  A widget used to generate a customizable annotation interface button
  */
 class AnnotationWidget extends Widget {
 
@@ -54,7 +54,9 @@ class AnnotationWidget extends Widget {
      * @return string the string rendered
      */
     public function run() {
-
+        //SILEX:conception
+        // Maybe create a bar widget and put buttons in it
+        //\SILEX:conception
         return Html::a(
                         FAS::icon('comment') . ' ' . Yii::t('app', 'Add annotation'), [
                     'annotation/create',

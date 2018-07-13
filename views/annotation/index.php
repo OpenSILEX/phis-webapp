@@ -15,6 +15,10 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\models\yiiModels\YiiAnnotationModel;
+use app\controllers\AnnotationController;
+use kartik\select2\Select2;
+use app\components\helpers\RDF;
+use yii\bootstrap\BaseHtml;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AnnotationSearch */
@@ -32,18 +36,40 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            YiiAnnotationModel::URI,
-            YiiAnnotationModel::CREATOR,
-             YiiAnnotationModel::MOTIVATED_BY => [
-                'attribute' => YiiAnnotationModel::MOTIVATED_BY,
-                'filter' => Html::activeDropDownList($searchModel, YiiAnnotationModel::MOTIVATED_BY, $motivationIndividuals, ['class' => 'form-control', 'prompt' => 'Select Category']),
+            [
+                'label' => YiiAnnotationModel::COMMENTS_LABEL,
+                'attribute' => YiiAnnotationModel::COMMENTS,
+                'format' => 'html',
+                'value' => function ($model) {
+                    return implode(('<br>,'), $model->comments);
+                }
             ],
-            YiiAnnotationModel::CREATION_DATE,
+            YiiAnnotationModel::CREATOR,
+            YiiAnnotationModel::MOTIVATED_BY => [
+                'attribute' => YiiAnnotationModel::MOTIVATED_BY,
+                'value' => function($model) {
+                    return RDF::prettyUri($model->motivatedBy);
+                },
+                'filter' => Select2::widget([
+                    'attribute' => YiiAnnotationModel::MOTIVATED_BY,
+                    'model' => $searchModel,
+                    'name' => 'motivation_instances_filter',
+                    'data' => ${AnnotationController::MOTIVATION_INSTANCES},
+                    'options' => ['multiple' => false, 'placeholder' => 'Select motivation'],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ])
+            ],
+            [
+                'label' => YiiAnnotationModel::CREATION_DATE_LABEL,
+                'attribute' => YiiAnnotationModel::CREATION_DATE
+            ],
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',
                 'buttons' => [
                     'view' => function($url, $model, $key) {
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['annotation/view', 'id' => $model->uri]);
+                        return Html::a(BaseHtml::icon('eye-open'), ['annotation/view', 'id' => $model->uri]);
                     },
                 ]
             ],

@@ -8,23 +8,24 @@
 // Copyright © - INRA - 2018
 // Creation date: June 2018
 // Contact: arnaud.charleroy@.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  June, 2017
+// Last modification date:  June, 2018
 // Subject: The Yii model for the Annotation. Used with web services
 //***********************************************************************************************
 
 namespace app\models\yiiModels;
 
-use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSAnnotationModel;
+use app\models\wsModels\WSActiveRecord;
 use Yii;
 
 /**
- * The yii model for the projects. 
+ * The yii model for the annotation. 
  * Implements a customized Active Record
  *  (WSActiveRecord, for the web services access)
  * @see app\models\wsModels\WSAnnotationModel
  * @see app\models\wsModels\WSActiveRecord
- * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @author Morgane Vidal <morgane.vidal@inra.fr> 
+ * @author Arnaud Charleroy <arnaud.charleroy@.fr>
  */
 class YiiAnnotationModel extends WSActiveRecord {
 
@@ -38,6 +39,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $uri;
 
     const URI = "uri";
+    const URI_LABEL = "URI";
 
     /**
      * the creation date of the annotation
@@ -47,6 +49,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $creationDate;
 
     const CREATION_DATE = "creationDate";
+    const CREATION_DATE_LABEL = "Date of Annotation";
 
     /**
      * the creator of the annotation
@@ -56,6 +59,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $creator;
 
     const CREATOR = "creator";
+    const CREATOR_LABEL = "Creator";
 
     /**
      * the purpose of the annotation
@@ -65,6 +69,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $motivatedBy;
 
     const MOTIVATED_BY = "motivatedBy";
+    const MOTIVATED_BY_LABEL = "Motivated by";
 
     /**
      * the description of the annotation
@@ -74,6 +79,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $comments;
 
     const COMMENTS = "comments";
+    const COMMENTS_LABEL = "Description";
 
     /**
      *  a target associate to this annotation 
@@ -83,7 +89,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $targets;
 
     const TARGETS = "targets";
-    const TARGET_JSON = "targetsValues";
+    const TARGETS_LABEL = "Targets";
 
     public function __construct($pageSize = null, $page = null) {
         $date = new \DateTime();
@@ -93,6 +99,10 @@ class YiiAnnotationModel extends WSActiveRecord {
         $this->page = ($page !== null || $pageSize === "") ? $page : null;
     }
 
+    /**
+     * 
+     * @inheritdoc
+     */
     public function rules() {
         return [
             [[YiiAnnotationModel::URI, YiiAnnotationModel::CREATOR, YiiAnnotationModel::MOTIVATED_BY, YiiAnnotationModel::COMMENTS, YiiAnnotationModel::TARGETS], 'required'],
@@ -102,13 +112,17 @@ class YiiAnnotationModel extends WSActiveRecord {
         ];
     }
 
+    /**
+     * 
+     * @inheritdoc
+     */
     public function attributeLabels() {
         return [
-            YiiAnnotationModel::URI => 'URI',
-            YiiAnnotationModel::CREATOR => Yii::t('app', 'Creator'),
-            YiiAnnotationModel::MOTIVATED_BY => Yii::t('app', 'Motivated by'),
-            YiiAnnotationModel::COMMENTS => Yii::t('app', 'Comments'),
-            YiiAnnotationModel::TARGETS => Yii::t('app', 'Targets')
+            YiiAnnotationModel::URI => YiiAnnotationModel::URI_LABEL,
+            YiiAnnotationModel::CREATOR => Yii::t('app', YiiAnnotationModel::CREATOR_LABEL),
+            YiiAnnotationModel::MOTIVATED_BY => Yii::t('app', YiiAnnotationModel::MOTIVATED_BY_LABEL),
+            YiiAnnotationModel::COMMENTS => Yii::t('app', YiiAnnotationModel::COMMENTS_LABEL),
+            YiiAnnotationModel::TARGETS => Yii::t('app', YiiAnnotationModel::TARGETS_LABEL)
         ];
     }
 
@@ -141,12 +155,11 @@ class YiiAnnotationModel extends WSActiveRecord {
         if (isset($this->comments) && !empty($this->comments)) {
             $elementForWebService[YiiAnnotationModel::COMMENTS] = $this->comments;
         }
-//        var_dump($this->targets);exit();
         return $elementForWebService;
     }
 
     /**
-     * 
+     * Find an annotation by this uri
      * @param string $sessionToken
      * @param string $uri
      * @return mixed l'objet s'il existe, un message sinon

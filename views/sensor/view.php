@@ -14,7 +14,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use app\components\AnnotationWidget;
+use app\components\widgets\AnnotationWidget;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiSensorModel */

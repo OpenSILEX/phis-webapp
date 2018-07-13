@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\data\ArrayDataProvider;
 use app\models\yiiModels\YiiAnnotationModel;
 use yii\grid\GridView;
+use app\controllers\AnnotationController;
 
 /**
  * @var yii\web\View $this
@@ -19,7 +20,7 @@ use yii\grid\GridView;
 
     <?=
     $form->field($model, YiiAnnotationModel::MOTIVATED_BY)->dropDownList(
-            $motivationIndividuals
+            ${AnnotationController::MOTIVATION_INSTANCES}
     );
     ?>
 
@@ -52,7 +53,10 @@ use yii\grid\GridView;
         echo $form->field($model, YiiAnnotationModel::TARGETS . "[$index]")->hiddenInput(['readonly' => 'true', "value" => $target])->label(false);
     }
     ?>
-    <!--First body-->
+    <!--//SILEX:conception
+    // Think about putting image, documents and note in the annotation
+    //\SILEX-->
+    <!--First annotation body-->
     <?= $form->field($model, YiiAnnotationModel::COMMENTS . "[0]")->textArea(['rows' => 5]); ?>
 
 

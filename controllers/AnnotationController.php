@@ -19,6 +19,7 @@ use yii\web\Controller;
 use app\models\yiiModels\YiiAnnotationModel;
 use app\models\wsModels\WSUriModel;
 use app\models\yiiModels\YiiUserModel;
+use app\components\helpers\RDF;
 
 require_once '../config/config.php';
 
@@ -50,12 +51,12 @@ class AnnotationController extends Controller {
      */
     public function actionCreate($attributes = null) {
         $session = Yii::$app->session;
-        $sessionToken = $session['access_token'];
+        $sessionToken = $session[\app\models\wsModels\WSConstants::ACCESS_TOKEN];
         $annotationModel = new YiiAnnotationModel(null, null);
         // load parameters
         $annotationModel->load(Yii::$app->request->get(), '');
         // load motivation instances list
-        $motivationIndividuals = $this->getMotivationInstances();
+        $motivationInstances = $this->getMotivationInstances();
         //If user as validate form
         if ($annotationModel->load(Yii::$app->request->post())) {
             // Set model creator 
@@ -69,7 +70,6 @@ class AnnotationController extends Controller {
             if (is_string($requestRes) && $requestRes === \app\models\wsModels\WSConstants::TOKEN) { //L'utilisateur doit se connecter
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
-                var_dump($requestRes);exit;
                 $annotationModel->uri = $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
                 return $this->redirect(['view', 'id' => $annotationModel->uri]);
             }
@@ -77,7 +77,7 @@ class AnnotationController extends Controller {
             return $this->render(
                             'create', [
                         'model' => $annotationModel,
-                        'motivationIndividuals' => $motivationIndividuals,
+                        AnnotationController::MOTIVATION_INSTANCES => $motivationInstances,
                             ]
             );
         }
@@ -90,9 +90,9 @@ class AnnotationController extends Controller {
     public function actionIndex() {
         // initialize annotation search model
         $searchModel = new \app\models\yiiModels\AnnotationSearch();
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        $searchResult = $searchModel->search(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], Yii::$app->request->queryParams);
         // load motivation instances list
-        $motivationIndividuals = $this->getMotivationInstances();
+        $motivationInstances = $this->getMotivationInstances();
         if (is_string($searchResult)) {
             return $this->render('/site/error', [
                         'name' => 'Internal error',
@@ -103,7 +103,7 @@ class AnnotationController extends Controller {
             return $this->render('index', [
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
-                        'motivationIndividuals' => $motivationIndividuals
+                        AnnotationController::MOTIVATION_INSTANCES => $motivationInstances
             ]);
         }
     }
@@ -115,22 +115,22 @@ class AnnotationController extends Controller {
      * @return array motivation instances list
      */
     public function getMotivationInstances() {
-        if (isset(Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES]) && !empty(Yii::$app->session['motivation_instances'])) {
+        if (isset(Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES]) && !empty(Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES])) {
             return Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES];
         }
 
         $wsUriModel = new WSUriModel();
-        $requestRes = $wsUriModel->getInstances(Yii::$app->session['access_token'], Yii::$app->params['Motivation'], ["pageSize" => 100]);
+        $requestRes = $wsUriModel->getInstances(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], Yii::$app->params['Motivation'], ["pageSize" => 100]);
 
         if (!is_string($requestRes)) {
             if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
                 return \app\models\wsModels\WSConstants::TOKEN;
             } else {
                 foreach ($requestRes as $motivation) {
-                    $motivationIndividuals[$motivation->uri] = explode("#", $motivation->uri)[1];
+                    $motivationInstances[$motivation->uri] = RDF::prettyUri($motivation->uri);
                 }
-                Yii::$app->session['motivation_instances'] = $motivationIndividuals;
-                return $motivationIndividuals;
+                Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES] = $motivationInstances;
+                return $motivationInstances;
             }
         } else {
             if ($requestRes === \app\models\wsModels\WSConstants::TOKEN) { //L'utilisateur doit se connecter
@@ -163,10 +163,10 @@ class AnnotationController extends Controller {
      *                                "token" is the user must log in
      */
     public function findModel($uri) {
-        $sessionToken = Yii::$app->session['access_token'];
+        $sessionToken = Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN];
         $annotationModel = new YiiAnnotationModel(null, null);
         $requestRes = $annotationModel->findByURI($sessionToken, $uri);
-        
+
         if ($requestRes === true) {
             return $annotationModel;
         } else if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {

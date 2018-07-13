@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use app\controllers\AnnotationController;
 
 /**
  * @var yii\web\View $this
@@ -23,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
         '_form',
         [
             'model' => $model,
-            'motivationIndividuals' => $motivationIndividuals,
+            AnnotationController::MOTIVATION_INSTANCES => ${AnnotationController::MOTIVATION_INSTANCES},
         ]
     ) 
     ?>

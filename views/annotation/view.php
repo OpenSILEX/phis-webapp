@@ -15,9 +15,10 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\models\yiiModels\YiiAnnotationModel;
+use app\components\helpers\RDF;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\YiiSensorModel */
+/* @var $model app\models\yiiModels\YiiVocabularyModel */
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Annotation} other{Annotations}}', ['n' => 2]), 'url' => ['index']];
@@ -32,9 +33,24 @@ $this->params['breadcrumbs'][] = $this->title;
     DetailView::widget([
         'model' => $model,
         'attributes' => [
-            YiiAnnotationModel::URI,
-            YiiAnnotationModel::CREATOR,
-            YiiAnnotationModel::MOTIVATED_BY,
+            [
+                'attribute' => YiiAnnotationModel::URI,
+                'value' => function($model) {
+                    return RDF::prettyUri($model->uri);
+                }
+            ],
+            [
+                'attribute' => YiiAnnotationModel::CREATOR,
+                'value' => function($model) {
+                    return RDF::prettyUri($model->creator);
+                }
+            ],
+            [
+                'attribute' => YiiAnnotationModel::MOTIVATED_BY,
+                'value' => function($model) {
+                    return RDF::prettyUri($model->motivatedBy);
+                }
+            ],
             YiiAnnotationModel::CREATION_DATE,
             YiiAnnotationModel::COMMENTS => [
                 'attribute' => YiiAnnotationModel::COMMENTS,
