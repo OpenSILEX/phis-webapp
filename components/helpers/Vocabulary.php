@@ -1,7 +1,7 @@
 <?php
 
 //******************************************************************************
-//                                       RDF.php
+//                                       Vocabulary.php
 //
 // Author(s): Arnaud Charleroy <arnaud.charleroy@inra.fr>
 // PHIS-SILEX version 1.0
@@ -21,7 +21,7 @@ use app\models\yiiModels\YiiVocabularyModel;
  * A helper used to format RDF
  * @author Arnaud Charleroy<arnaud.charleroy@inra.fr>
  */
-class RDF {
+class Vocabulary {
 
     const NAMESPACES_SESSION_LABEL = "namespaces_session";
 
@@ -36,7 +36,7 @@ class RDF {
      */
     public static function prettyUri($uri, $removePrefix = false) {
         $shortenUri = $uri;
-        foreach (RDF::getNamespaces() as $pkey => $pvalue) {
+        foreach (Vocabulary::getNamespaces() as $pkey => $pvalue) {
             $shortenUri = str_replace($pvalue, $pkey . ':', $uri);
             // Break to assure we only replace once
             if ($shortenUri != $uri) {
@@ -57,15 +57,15 @@ class RDF {
      */
     public static function getNamespaces() {
         // Use session to prevent multiple triplestore calls
-        if (isset(Yii::$app->session[RDF::NAMESPACES_SESSION_LABEL]) && !empty(Yii::$app->session[RDF::NAMESPACES_SESSION_LABEL])) {
-            return Yii::$app->session[RDF::NAMESPACES_SESSION_LABEL];
+        if (isset(Yii::$app->session[Vocabulary::NAMESPACES_SESSION_LABEL]) && !empty(Yii::$app->session[Vocabulary::NAMESPACES_SESSION_LABEL])) {
+            return Yii::$app->session[Vocabulary::NAMESPACES_SESSION_LABEL];
         }
 
         $vocabularyModel = new YiiVocabularyModel();
         $requestRes = $vocabularyModel->getNamespaces(Yii::$app->session['access_token'], ["pageSize" => 100]);
         if ($requestRes) {
-            Yii::$app->session[RDF::NAMESPACES_SESSION_LABEL] = $vocabularyModel->namespaces;
-            return Yii::$app->session[RDF::NAMESPACES_SESSION_LABEL];
+            Yii::$app->session[Vocabulary::NAMESPACES_SESSION_LABEL] = $vocabularyModel->namespaces;
+            return Yii::$app->session[Vocabulary::NAMESPACES_SESSION_LABEL];
         } else {
             return $requestRes;
         }

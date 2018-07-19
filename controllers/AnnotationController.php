@@ -19,7 +19,7 @@ use yii\web\Controller;
 use app\models\yiiModels\YiiAnnotationModel;
 use app\models\wsModels\WSUriModel;
 use app\models\yiiModels\YiiUserModel;
-use app\components\helpers\RDF;
+use app\components\helpers\Vocabulary;
 
 require_once '../config/config.php';
 
@@ -74,10 +74,9 @@ class AnnotationController extends Controller {
                 return $this->redirect(['view', 'id' => $annotationModel->uri]);
             }
         } else {
-            return $this->render(
-                            'create', [
-                        'model' => $annotationModel,
-                        AnnotationController::MOTIVATION_INSTANCES => $motivationInstances,
+            return $this->render('create', [
+                                'model' => $annotationModel,
+                                AnnotationController::MOTIVATION_INSTANCES => $motivationInstances,
                             ]
             );
         }
@@ -127,7 +126,7 @@ class AnnotationController extends Controller {
                 return \app\models\wsModels\WSConstants::TOKEN;
             } else {
                 foreach ($requestRes as $motivation) {
-                    $motivationInstances[$motivation->uri] = RDF::prettyUri($motivation->uri);
+                    $motivationInstances[$motivation->uri] = Vocabulary::prettyUri($motivation->uri);
                 }
                 Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES] = $motivationInstances;
                 return $motivationInstances;

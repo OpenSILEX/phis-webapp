@@ -17,7 +17,7 @@ use yii\grid\GridView;
 use app\models\yiiModels\YiiAnnotationModel;
 use app\controllers\AnnotationController;
 use kartik\select2\Select2;
-use app\components\helpers\RDF;
+use app\components\helpers\Vocabulary;
 use yii\bootstrap\BaseHtml;
 
 /* @var $this yii\web\View */
@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
             YiiAnnotationModel::MOTIVATED_BY => [
                 'attribute' => YiiAnnotationModel::MOTIVATED_BY,
                 'value' => function($model) {
-                    return RDF::prettyUri($model->motivatedBy);
+                    return Vocabulary::prettyUri($model->motivatedBy);
                 },
                 'filter' => Select2::widget([
                     'attribute' => YiiAnnotationModel::MOTIVATED_BY,

@@ -15,7 +15,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\models\yiiModels\YiiAnnotationModel;
-use app\components\helpers\RDF;
+use app\components\helpers\Vocabulary;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\yiiModels\YiiVocabularyModel */
@@ -36,19 +36,19 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => YiiAnnotationModel::URI,
                 'value' => function($model) {
-                    return RDF::prettyUri($model->uri);
+                    return Vocabulary::prettyUri($model->uri);
                 }
             ],
             [
                 'attribute' => YiiAnnotationModel::CREATOR,
                 'value' => function($model) {
-                    return RDF::prettyUri($model->creator);
+                    return Vocabulary::prettyUri($model->creator);
                 }
             ],
             [
                 'attribute' => YiiAnnotationModel::MOTIVATED_BY,
                 'value' => function($model) {
-                    return RDF::prettyUri($model->motivatedBy);
+                    return Vocabulary::prettyUri($model->motivatedBy);
                 }
             ],
             YiiAnnotationModel::CREATION_DATE,
