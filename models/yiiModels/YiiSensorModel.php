@@ -255,6 +255,5 @@ class YiiSensorModel extends WSActiveRecord {
         } else {
             return $requestRes;
         }
-       
     }
 }

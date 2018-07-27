@@ -15,11 +15,14 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
+use kartik\date\DatePicker;
+use kartik\select2\Select2;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiSensorModel */
 /* @var $sensorsTypes array */
 /* @var $sensorsUris array */
+/* @var $users array */
 ?>
 <script>
     /**
@@ -118,7 +121,7 @@ use yii\helpers\Url;
 
 <div class="characterize-form">
     <?php $form = ActiveForm::begin(); ?>
-    <?= $form->field($model, 'rdfType')->widget(\kartik\select2\Select2::classname(), [
+    <?= $form->field($model, 'rdfType')->widget(Select2::classname(), [
                     'data' =>$sensorsTypes,
                     'size' => \kartik\select2\Select2::MEDIUM,
                     'options' => [
@@ -131,7 +134,7 @@ use yii\helpers\Url;
                     ]
                 ]); ?>
  
-    <?= $form->field($model, 'uri')->widget(\kartik\select2\Select2::classname(), [
+    <?= $form->field($model, 'uri')->widget(Select2::classname(), [
                     'data' => $sensorsUris,
                     'size' => \kartik\select2\Select2::MEDIUM,
                     'options' => [
@@ -156,19 +159,86 @@ use yii\helpers\Url;
         <?= Html::textInput('pixelSize', null, ['type' => 'number', 'class' => 'form-control']); ?>
     </div>
     
-    <div class="wavelength" style="display:none">
-        TODO
+    <div id="wavelength" style="display:none">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">1</th>
+              <th scope="col">2</th>
+              <th scope="col">3</th>
+              <th scope="col">4</th>
+              <th scope="col">5</th>
+              <th scope="col">6</th>
+            </tr>
+            <tbody>
+                <tr>
+                  <th scope="row"><?= Yii::t('app', 'Wavelength') ?> (nm)</th>
+                  <td><?= Html::textInput('wavelength1', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('wavelength2', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('wavelength3', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('wavelength4', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('wavelength5', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('wavelength6', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                </tr>
+                <tr>
+                  <th scope="row"><?= Yii::t('app', 'Focal Length') ?> (nm)</th>
+                  <td><?= Html::textInput('focalLength1', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('focalLength2', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('focalLength3', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('focalLength4', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('focalLength5', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('focalLength6', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                </tr>
+                <tr>
+                  <th scope="row"><?= Yii::t('app', 'Attenuator Filter') ?></th>
+                  <td><?= Html::textInput('attenuatorFilter1', null, ['class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter2', null, ['class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter3', null, ['class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter4', null, ['class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter5', null, ['class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter6', null, ['class' => 'form-control']); ?></td>
+                </tr>
+            </tbody>
+          </thead>
+        </table>
     </div>
     
     <div id="lens" style="display:none">
+       
+        <h3><?= Yii::t('app', 'Lens') ?></h3>
+        <hr>
+        
+        <?= Html::label(Yii::t('app', 'Label'), 'lensLabel') ?>
+        <?= Html::textInput('lensLabel', null, ['class' => 'form-control']); ?>
+        
         <?= Html::label(Yii::t('app', 'Brand'), 'lensBrand') ?>
         <?= Html::textInput('lensBrand', null, ['class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Brand'), 'lensPersonInCharge') ?>
-        <?= Html::textInput('lensPersonInCharge', "", ['class' => 'form-control']); ?>
+        <?= Html::label(Yii::t('app', 'Person In Charge'), 'lensPersonInCharge') ?>
+        <?= Select2::widget([
+            'name' => 'lensPersonInCharge',
+            'data' => $users,
+            'options' => [
+                'id' => 'lensPersonInCharge',
+                'multiple' => false,
+                'prompt' => ''],
+            'pluginOptions' => [
+                'allowClear' => true,
+            ],
+        ]); ?>
         
-        <?= Html::label(Yii::t('app', 'Brand'), 'lensInServiceDate') ?>
-        <?= Html::textInput('lensInServiceDate', "", ['class' => 'form-control']); ?>
+        <?= Html::label(Yii::t('app', 'In Service Date'), 'lensInServiceDate') ?>
+        <?= DatePicker::widget([
+            'name' => 'lensInServiceDate',
+            'options' => [
+                'placeholder' => 'Enter in service date', 
+                'id' => 'lensInServiceDate'],            
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'yyyy-mm-dd'
+            ]
+        ]); ?>
         
         <?= Html::label(Yii::t('app', 'Focal Length') . '(mm)', 'lensFocalLength') ?>
         <?= Html::textInput('lensFocalLength', null, ['type' => 'number', 'class' => 'form-control']); ?>

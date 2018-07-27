@@ -29,7 +29,7 @@ use app\models\yiiModels\YiiSensorModel;
 class SensorController extends Controller {
     
     const APERTURE = "aperture";
-    const FOCAL_LENS = "focalLength";
+    const FOCAL_LENGTH = "focalLength";
     const LENS = "Lens";
     const PROPERTIES = "properties";
     const RELATION = "relation";
@@ -300,17 +300,19 @@ class SensorController extends Controller {
         return $sensors;
     }
     
-    private function insertLensAndGetLensUri($post) {
+    private function insertLensAndGetUri($post) {
         //1. insert the basic metadata
         $lensModel = new YiiSensorModel();
-        $lensModel->rdfType = Yii::$app->params[LENS];
+        $lensModel->rdfType = Yii::$app->params[SensorController::LENS];
         $lensModel->label = $post["lensLabel"];
         $lensModel->brand = $post["lensBrand"];
         $lensModel->inServiceDate = $post["lensInServiceDate"];
         $lensModel->personInCharge = $post["lensPersonInCharge"];
         
-        $requestRes = $lensModel->insert(Yii::$app->session['access_token'], $lensModel->attributesToArray());
+        $forWebService[] = $lensModel->attributesToArray();
         
+        $requestRes = $lensModel->insert(Yii::$app->session['access_token'], $forWebService);
+                
         $lensUri = $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
         
         //2. insert the lens profile
@@ -327,9 +329,10 @@ class SensorController extends Controller {
         $lensProfileProperties[] = $focalLengthProperty;
         
         $lensProfile[SensorController::PROPERTIES] = $lensProfileProperties;
+        $lensProfiles[] = $lensProfile;
         
-        $lensModel->insertProfile(Yii::$app->session['access_token'], $lensProfile);
-        
+        $lensModel->insertProfile(Yii::$app->session['access_token'], $lensProfiles);
+                
         return $lensUri;
     }
     
@@ -349,7 +352,7 @@ class SensorController extends Controller {
             return Yii::$app->params["width"];
         } elseif ($key === "pixelSize") {
             return Yii::$app->params["pixelSize"];
-        } elseif ($key === "wavelength") {
+        } elseif (strstr($key, "wavelength")) {
             return Yii::$app->params["wavelength"];
         } elseif ($key === "scanningAngularRange") {
             return Yii::$app->params["scanningAngularRange"];
@@ -369,6 +372,10 @@ class SensorController extends Controller {
             return Yii::$app->params["spectralSamplingInterval"];
         } elseif ($key === "lensUri") {
             return Yii::$app->params["hasLens"];
+        } elseif (strstr($key, "focalLength")) {
+            return Yii::$app->params["focalLength"];
+        } elseif (strstr($key, "attenuatorFilter")) {
+            return Yii::$app->params["attenuatorFilter"];
         }
         
         return null;
@@ -377,15 +384,13 @@ class SensorController extends Controller {
     private function getSensorProfileArrayFromPost($post) {
         $sensorProfile[SensorController::URI] = $post["YiiSensorModel"]["uri"];
         $sensorProperties = null;
-        foreach(Yii::$app->request->post() as $key => $value) {
-            
+        foreach($post as $key => $value) {
             if ($value !== "" && $value !== null && is_string($value)) {
-                echo "key : " . $key . " - value : " . $value . "<br/>";
                 //if it is not a lens property
                 if (!$this->isLensProperty($key)) {
                     $sensorProperty = null;
                     if ($key === "lensUri") {
-                        $sensorProperty[SensorController::RDF_TYPE] = Yii::$app->params[LENS];
+                        $sensorProperty[SensorController::RDF_TYPE] = Yii::$app->params[SensorController::LENS];
                     }
                     
                     if ($this->getRelationFromKey($key) !== null) {
@@ -393,8 +398,6 @@ class SensorController extends Controller {
                         $sensorProperty[SensorController::VALUE] = $value;
                         $sensorProperties[] = $sensorProperty;
                     }
-                } else {
-                    echo "lenProperty : " . $key . "<br/>";
                 }
             }
         }
@@ -402,6 +405,19 @@ class SensorController extends Controller {
         $sensorProfile[SensorController::PROPERTIES] = $sensorProperties;
         
         return $sensorProfile;
+    }
+    
+    /**
+     * 
+     * @param mixed $users users list
+     * @return ArrayHelper of the users email => email
+     */
+    private function usersToMap($users) {
+        if ($users !== null) {
+            return \yii\helpers\ArrayHelper::map($users, 'email', 'email');            
+        } else {
+            return null;
+        }
     }
     
     public function actionCharacterize() {
@@ -413,8 +429,8 @@ class SensorController extends Controller {
             
             //1. if needed, create lens first and get it's uri
             $lensUri = null;
-            if (isset(Yii::$app->request->post()["aperture"])) {
-                $lensUri = $this->insertLens($post);
+            if (isset(Yii::$app->request->post()["lensBrand"]) && Yii::$app->request->post()["lensBrand"] !== "") {
+                $lensUri = $this->insertLensAndGetUri($post);
             }
             
             if ($lensUri !== null) {
@@ -424,8 +440,15 @@ class SensorController extends Controller {
             $sensorProfileToAdd[] = $this->getSensorProfileArrayFromPost($post);
             $requestRes = $sensorModel->insertProfile(Yii::$app->session['access_token'], $sensorProfileToAdd);
             
-            var_dump($requestRes);
-            //TODO
+            if (is_string($requestRes) && $requestRes === "token") { //user must log in
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else if (is_string($requestRes)) { //server error
+                return $this->render('/site/error', [
+                        'name' => 'Internal error',
+                        'message' => $requestRes]);
+            } else {                
+                return $this->redirect(['view', 'id' => $requestRes[0]]);
+            }
             
         } else {
             //get all the sensors types 
@@ -434,6 +457,10 @@ class SensorController extends Controller {
 
             //get all the sensors uris (with labels)
             $sensors = $this->getSensorsUrisAndLabels();
+            
+            //get all users emails (for the person in charge if a lens needs to be created)
+           $searchUsersModel = new \app\models\yiiModels\UserSearch();
+           $users = $this->usersToMap($searchUsersModel->find(Yii::$app->session['access_token'], []));
 
             if (is_string($sensorsTypes) && $sensorsTypes === "token") { //user must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -445,7 +472,8 @@ class SensorController extends Controller {
                 return $this->render('characterize', [
                    'model' => $sensorModel,
                    'sensorsTypes' => $sensorsTypes,
-                   'sensorsUris' => $sensors
+                   'sensorsUris' => $sensors,
+                   'users' => $users
                 ]);
             }
         }

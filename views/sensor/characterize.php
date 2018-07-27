@@ -28,6 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $this->render('_form-characterize', [
         'model' => $model,
         'sensorsTypes' => $sensorsTypes,
-        'sensorsUris' => $sensorsUris
+        'sensorsUris' => $sensorsUris,
+        'users' => $users
     ]) ?>    
 </div>
