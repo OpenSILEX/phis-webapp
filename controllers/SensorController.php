@@ -111,6 +111,15 @@ class SensorController extends Controller {
         return $sensorsTypes;
     }
     
+    /**
+     * 
+     * @return array the list of the sensors types with the sensor type label and the uri. 
+     * e.g. 
+     * [
+     *  "http://sensor/type/uri" => "Sensor",
+     *  ...
+     * ]
+     */
     public function getSensorsTypesSimpleAndUri() {
         $model = new YiiSensorModel();
         
@@ -270,6 +279,16 @@ class SensorController extends Controller {
         
     }
     
+    /**
+     * 
+     * @param string $rdfType (default null)
+     * @return array the list of the sensors uris with their labels
+     * e.g. 
+     * [
+     *      "sensor/uri" => "air_03",
+     *      ...
+     * ]
+     */
     public function getSensorsUrisAndLabels($rdfType = null) {
         $sessionToken = Yii::$app->session['access_token'];
         $sensorSearchModel = new \app\models\yiiModels\SensorSearch();
@@ -300,6 +319,11 @@ class SensorController extends Controller {
         return $sensors;
     }
     
+    /**
+     * insert a lens in the database and return it's uri
+     * @param array $post array with the caracteristics of the lens
+     * @return string the lens uri inserted
+     */
     private function insertLensAndGetUri($post) {
         //1. insert the basic metadata
         $lensModel = new YiiSensorModel();
@@ -336,6 +360,12 @@ class SensorController extends Controller {
         return $lensUri;
     }
     
+    /**
+     * check if a given string is part of the list of the lens properties 
+     * provided by the form view
+     * @param string $propertyLabel
+     * @return boolean
+     */
     private function isLensProperty($propertyLabel) {
         return $propertyLabel == "lensLabel" 
             || $propertyLabel == "lensBrand"
@@ -345,6 +375,12 @@ class SensorController extends Controller {
             || $propertyLabel == "lensFocalLength";
     }
     
+    /**
+     * if the key has a "relation" correspondance in the ontology, 
+     * return the relation uri else return null
+     * @param string $key
+     * @return string e.g. http://www.phenome-fppn.fr/vocabulary/2017#width
+     */
     private function getRelationFromKey($key) {
         if ($key === "height") {
             return Yii::$app->params["height"];
@@ -381,6 +417,12 @@ class SensorController extends Controller {
         return null;
     }
     
+    /**
+     * extract the informations corresponding to the sensor profile from a given 
+     * post and return an array with the sensor profile
+     * @param array $post
+     * @return array
+     */
     private function getSensorProfileArrayFromPost($post) {
         $sensorProfile[SensorController::URI] = $post["YiiSensorModel"]["uri"];
         $sensorProperties = null;
@@ -420,6 +462,10 @@ class SensorController extends Controller {
         }
     }
     
+    /**
+     * add a sensor profile 
+     * @return mixed
+     */
     public function actionCharacterize() {
         $sensorModel = new YiiSensorModel();
         
@@ -479,6 +525,11 @@ class SensorController extends Controller {
         }
     }
     
+    /**
+     * get the list of the sensors (uri) for a given sensor type ($rdfType)
+     * @param string $rdfType
+     * @return json
+     */
     public function actionGetSensorsUriByRdfType($rdfType) {   
         $sensorsUrisAndLabels = $this->getSensorsUrisAndLabels(urldecode($rdfType));
 
