@@ -28,8 +28,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('yii', 'Create') . ' ' . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) ?>
-         <?= Html::a('Characterize Sensors', ['characterize'], ['class' => 'btn btn-success']) ?>
+        <?php
+            if (Yii::$app->session['isAdmin']) {
+                echo Html::a(Yii::t('yii', 'Create') . ' ' . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) . "\t";
+                echo Html::a('Characterize Sensors', ['characterize'], ['class' => 'btn btn-success']);
+            }
+        ?>
     </p>
     
    <?= GridView::widget([
