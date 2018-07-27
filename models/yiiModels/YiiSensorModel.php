@@ -121,7 +121,7 @@ class YiiSensorModel extends WSActiveRecord {
     public function rules() {
        return [ 
            [['rdfType', 'uri'], 'required'], 
-          [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents',
+           [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents',
               'brand', 'label', 'inServiceDate', 'personInCharge'], 'safe']
         ]; 
     }
@@ -166,7 +166,7 @@ class YiiSensorModel extends WSActiveRecord {
      * Used for the web service for example
      * @return array with the attributes. 
      */
-    public function attributesToArray() {        
+    public function attributesToArray() {
         $elementForWebService[YiiModelsConstants::PAGE] = $this->page <= 0 ? 0 : $this->page - 1;
         $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
         $elementForWebService[YiiSensorModel::URI] = $this->uri;
@@ -245,6 +245,12 @@ class YiiSensorModel extends WSActiveRecord {
         }
     }
     
+    /**
+     * insert a sensor profile in the database (by calling web service)
+     * @param string $sessionToken
+     * @param array $sensorProfile
+     * @return the query result
+     */
     public function insertProfile($sessionToken, $sensorProfile) {
         $requestRes = $this->wsModel->postSensorProfile($sessionToken, $sensorProfile);
         
