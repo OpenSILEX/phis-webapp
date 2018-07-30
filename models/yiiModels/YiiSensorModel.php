@@ -100,6 +100,20 @@ class YiiSensorModel extends WSActiveRecord {
      * @var string
      */
     public $documents;
+    /**
+     * properties of the sensor (corresponding to the sensor profile)
+     * e.g.
+     * [
+     *      "relation" => "value",
+     *      "relation => "value",
+     *      ...
+     * ]
+     * @var array 
+     */
+    public $properties;
+    const PROPERTIES = "properties";
+    const RELATION = "relation";
+    const VALUE = "value";
     
     /**
      * Initialize wsModels. In this class, as there is no dedicated service, there 
@@ -122,7 +136,7 @@ class YiiSensorModel extends WSActiveRecord {
        return [ 
            [['rdfType', 'uri'], 'required'], 
            [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents',
-              'brand', 'label', 'inServiceDate', 'personInCharge'], 'safe']
+              'brand', 'label', 'inServiceDate', 'personInCharge', 'properties'], 'safe']
         ]; 
     }
     
@@ -140,7 +154,8 @@ class YiiSensorModel extends WSActiveRecord {
             'inServiceDate' => Yii::t('app', 'In Service Date'),
             'dateOfPurchase' => Yii::t('app', 'Date Of Purchase'),
             'dateOfLastCalibration' => Yii::t('app', 'Date Of Last Calibration'),
-            'personInCharge' => Yii::t('app', 'Person In Charge')
+            'personInCharge' => Yii::t('app', 'Person In Charge'),
+            'properties' => Yii::t('app', 'Sensor Profile')
         ];
     }
     
@@ -159,6 +174,23 @@ class YiiSensorModel extends WSActiveRecord {
         $this->dateOfLastCalibration = $array[YiiSensorModel::DATE_OF_LAST_CALIBRATION];
         $this->dateOfPurchase = $array[YiiSensorModel::DATE_OF_PURCHASE];
         $this->personInCharge = $array[YiiSensorModel::PERSON_IN_CHARGE];
+    }
+    
+    /**
+     * allows to fill the property attribute with the information of the given array
+     * @param array $array array key => value with the properties of a sensor 
+     * (corresponding to a sensor profile)
+     */
+    protected function propertiesArrayToAttributes($array) {
+        if ($array[YiiSensorModel::PROPERTIES] !== null) {
+            foreach ($array[YiiSensorModel::PROPERTIES] as $property) {
+                $propertyToAdd = null;
+                $propertyToAdd[YiiSensorModel::RELATION] = $property->relation; 
+                $propertyToAdd[YiiSensorModel::VALUE] = $property->value;
+                $propertyToAdd[YiiSensorModel::RDF_TYPE] = $property->rdfType;
+                $this->properties[] = $property;
+            }
+        }
     }
 
     /**
@@ -188,7 +220,7 @@ class YiiSensorModel extends WSActiveRecord {
         
         return $elementForWebService;
     }
-    
+
     /**
      * calls web service and return the list of sensors types of the ontology
      * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
@@ -238,6 +270,34 @@ class YiiSensorModel extends WSActiveRecord {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);
+                return true;
+            }
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * get a sensor's profile by uri
+     * @param string $sessionToken
+     * @param string $uri
+     * @return mixed
+     */
+    public function getSensorProfile($sessionToken, $uri) {
+        $params = [];
+        if ($this->pageSize !== null) {
+           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+        }
+        if ($this->page !== null) {
+            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+        }
+        $requestRes = $this->wsModel->getSensorProfile($sessionToken, $uri, $params);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                return $requestRes;
+            } else {
+                $this->propertiesArrayToAttributes($requestRes);
                 return true;
             }
         } else {

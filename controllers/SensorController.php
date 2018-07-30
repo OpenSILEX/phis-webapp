@@ -263,11 +263,26 @@ class SensorController extends Controller {
     }
     
     /**
+     * return the profile of a sensor
+     * @param string $uri
+     * @return array array corresponding to a sensor profile
+     */
+    private function getSensorProfile($uri) {
+        $sensorModel = new YiiSensorModel();
+        $sensorModel->getSensorProfile(Yii::$app->session['access_token'], $uri);
+        
+        return $sensorModel->properties;
+    }
+    
+    /**
      * @action Displays a single sensor model
      * @return mixed
      */
     public function actionView($id) {
         $res = $this->findModel($id);
+        
+        //get sensor profile
+        $res["properties"] = $this->getSensorProfile($id);
         
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
