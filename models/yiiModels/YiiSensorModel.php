@@ -101,15 +101,19 @@ class YiiSensorModel extends WSActiveRecord {
      */
     public $documents;
     /**
-     * corresponds to the WSTripletModel, used for the insertions of the sensor
-     * @var WSTripletModel
+     * properties of the sensor (corresponding to the sensor profile)
+     * e.g.
+     * [
+     *      "relation" => "value",
+     *      "relation => "value",
+     *      ...
+     * ]
+     * @var array 
      */
-    private $wsTripletModel;
-    /**
-     * corresponds to the WSUriModel, used for the gets of the sensor
-     * @var WSUriModel
-     */
-    private $wsUriModel;
+    public $properties;
+    const PROPERTIES = "properties";
+    const RELATION = "relation";
+    const VALUE = "value";
     
     /**
      * Initialize wsModels. In this class, as there is no dedicated service, there 
@@ -119,8 +123,6 @@ class YiiSensorModel extends WSActiveRecord {
      * @param string $page number of the current page 
      */
     public function __construct($pageSize = null, $page = null) {
-        $this->wsTripletModel = new WSTripletModel();
-        $this->wsUriModel = new WSUriModel();
         $this->wsModel = new WSSensorModel();
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize : $this->pageSize = null;
         ($page !== null || $page !== "") ? $this->page = $page : $this->page = null;
@@ -131,9 +133,10 @@ class YiiSensorModel extends WSActiveRecord {
      * @return array the rules of the attributes
      */
     public function rules() {
-       return [
-          [['rdfType', 'brand', 'label', 'inServiceDate', 'personInCharge'], 'required'],  
-          [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents'], 'safe']
+       return [ 
+           [['rdfType', 'uri'], 'required'], 
+           [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents',
+              'brand', 'label', 'inServiceDate', 'personInCharge', 'properties'], 'safe']
         ]; 
     }
     
@@ -151,7 +154,8 @@ class YiiSensorModel extends WSActiveRecord {
             'inServiceDate' => Yii::t('app', 'In Service Date'),
             'dateOfPurchase' => Yii::t('app', 'Date Of Purchase'),
             'dateOfLastCalibration' => Yii::t('app', 'Date Of Last Calibration'),
-            'personInCharge' => Yii::t('app', 'Person In Charge')
+            'personInCharge' => Yii::t('app', 'Person In Charge'),
+            'properties' => Yii::t('app', 'Sensor Profile')
         ];
     }
     
@@ -171,6 +175,23 @@ class YiiSensorModel extends WSActiveRecord {
         $this->dateOfPurchase = $array[YiiSensorModel::DATE_OF_PURCHASE];
         $this->personInCharge = $array[YiiSensorModel::PERSON_IN_CHARGE];
     }
+    
+    /**
+     * allows to fill the property attribute with the information of the given array
+     * @param array $array array key => value with the properties of a sensor 
+     * (corresponding to a sensor profile)
+     */
+    protected function propertiesArrayToAttributes($array) {
+        if ($array[YiiSensorModel::PROPERTIES] !== null) {
+            foreach ($array[YiiSensorModel::PROPERTIES] as $property) {
+                $propertyToAdd = null;
+                $propertyToAdd[YiiSensorModel::RELATION] = $property->relation; 
+                $propertyToAdd[YiiSensorModel::VALUE] = $property->value;
+                $propertyToAdd[YiiSensorModel::RDF_TYPE] = $property->rdfType;
+                $this->properties[] = $property;
+            }
+        }
+    }
 
     /**
      * Create an array representing the sensor
@@ -178,7 +199,7 @@ class YiiSensorModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $elementForWebService[YiiModelsConstants::PAGE] = $this->page - 1;
+        $elementForWebService[YiiModelsConstants::PAGE] = $this->page <= 0 ? 0 : $this->page - 1;
         $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
         $elementForWebService[YiiSensorModel::URI] = $this->uri;
         $elementForWebService[YiiSensorModel::RDF_TYPE] = $this->rdfType;
@@ -199,7 +220,7 @@ class YiiSensorModel extends WSActiveRecord {
         
         return $elementForWebService;
     }
-    
+
     /**
      * calls web service and return the list of sensors types of the ontology
      * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
@@ -230,26 +251,6 @@ class YiiSensorModel extends WSActiveRecord {
     }
     
     /**
-     * 
-     * @param string $sessionToken
-     * @param array $sensors
-     * @return string|array 
-     */
-    public function createSensors($sessionToken, $sensors) {
-        $requestRes = $this->wsTripletModel->post($sessionToken, "", $sensors);
-        
-        if (!is_string($requestRes)) {
-            if (isset($requestRes->{\app\models\wsModels\WSConstants::TOKEN})) {
-                return $requestRes;
-            } else {
-                return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
-            }
-        } else {
-            return $requestRes;
-        }
-    }
-    
-    /**
      * get sensor's informations by uri
      * @param string $sessionToken user session token
      * @param string $uri sensor's uri
@@ -271,6 +272,52 @@ class YiiSensorModel extends WSActiveRecord {
                 $this->arrayToAttributes($requestRes);
                 return true;
             }
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * get a sensor's profile by uri
+     * @param string $sessionToken
+     * @param string $uri
+     * @return mixed
+     */
+    public function getSensorProfile($sessionToken, $uri) {
+        $params = [];
+        if ($this->pageSize !== null) {
+           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+        }
+        if ($this->page !== null) {
+            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+        }
+        $requestRes = $this->wsModel->getSensorProfile($sessionToken, $uri, $params);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                return $requestRes;
+            } else {
+                $this->propertiesArrayToAttributes($requestRes);
+                return true;
+            }
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * insert a sensor profile in the database (by calling web service)
+     * @param string $sessionToken
+     * @param array $sensorProfile
+     * @return the query result
+     */
+    public function insertProfile($sessionToken, $sensorProfile) {
+        $requestRes = $this->wsModel->postSensorProfile($sessionToken, $sensorProfile);
+        
+        if (is_string($requestRes) && $requestRes === "token") {
+                return $requestRes;
+        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES})) {
+            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
         } else {
             return $requestRes;
         }

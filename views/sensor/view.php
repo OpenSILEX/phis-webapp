@@ -56,6 +56,39 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Html::a($model->personInCharge, ['user/view', 'id' => $model->personInCharge]);
                 },
             ],
+            [
+              'attribute' => 'properties',
+              'format' => 'raw',
+              'value' => function ($model) {
+                    $toReturn = "<ul>";
+                    foreach ($model->properties as $property) {
+                        $propertyLabel = explode("#", $property->relation)[1];
+                        if ($propertyLabel !== "type"
+                                && $propertyLabel !== "label"
+                                && $propertyLabel !== "inServiceDate"
+                                && $propertyLabel !== "personInCharge"
+                                && $propertyLabel !== "serialNumber"
+                                && $propertyLabel !== "dateOfPurchase"
+                                && $propertyLabel !== "dateOfLastCalibration"
+                                && $propertyLabel !== "hasBrand"
+                                && $propertyLabel !== "hasLens") {
+                            $toReturn .= "<li>"
+                                    . "<b>" . explode("#", $property->relation)[1] . "</b>"
+                                    . " : "
+                                    . $property->value
+                                    . "</li>";
+                        } else if ($propertyLabel === "hasLens") {
+                            $toReturn .= "<li>"
+                                    . "<b>" . explode("#", $property->relation)[1] . "</b>"
+                                    . " : "
+                                    . Html::a($property->value, ['view', 'id' => $property->value])
+                                    . "</li>";
+                        }
+                    }
+                    $toReturn .= "</ul>";
+                    return $toReturn;
+                },
+            ]
         ]
     ]);
     ?>
