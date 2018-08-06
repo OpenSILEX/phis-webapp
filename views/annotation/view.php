@@ -18,10 +18,10 @@ use app\models\yiiModels\YiiAnnotationModel;
 use app\components\helpers\Vocabulary;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\yiiModels\YiiVocabularyModel */
+/* @var $model app\models\yiiModels\YiiAnnotationModel */
 
-$this->title = $model->label;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Annotation} other{Annotations}}', ['n' => 2]), 'url' => ['index']];
+$this->title = YiiAnnotationModel::LABEL;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{' . YiiAnnotationModel::LABEL . '} other{' . YiiAnnotationModel::LABEL . 's}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

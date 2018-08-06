@@ -32,7 +32,7 @@ class AnnotationSearch extends YiiAnnotationModel {
      */
     public function rules() {
         return [
-            [['uri', 'creator', 'motivatedBy', 'comment', 'targets'], 'safe']
+            [[AnnotationSearch::URI, AnnotationSearch::CREATOR, AnnotationSearch::MOTIVATED_BY, AnnotationSearch::COMMENTS, AnnotationSearch::TARGETS], 'safe']
         ];
     }
 

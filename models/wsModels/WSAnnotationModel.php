@@ -23,14 +23,12 @@ include_once '../config/web_services.php';
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class WSAnnotationModel extends \openSILEX\guzzleClientPHP\WSModel {
-    public static $ANNOTATION_SERVICE_NAME = "annotations";
-
 
     /**
      * initialize access to the annotations service. Calls super constructor
      */
     public function __construct() {
-        parent::__construct(WS_PHIS_PATH, static::$ANNOTATION_SERVICE_NAME);
+        parent::__construct(WS_PHIS_PATH, "annotations");
     }
     
     /**

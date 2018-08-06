@@ -204,7 +204,7 @@ class YiiUserModel extends WSActiveRecord {
      * Return user searched by uri
      * @param string $sessionToken
      * @param string $uri
-     * @return mixed l'objet s'il existe, un message sinon
+     * @return mixed the searched object if it exists or a message if not
      */
     public function findByUri($sessionToken, $uri) {
         $params = [];

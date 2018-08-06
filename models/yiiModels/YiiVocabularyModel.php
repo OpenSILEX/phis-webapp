@@ -68,7 +68,7 @@ class YiiVocabularyModel extends WSActiveRecord {
      * Return namespaces list
      * @param string $sessionToken
      * @param string $uri
-     * @return mixed l'objet s'il existe, un message sinon
+     * @return mixed the searched object if it exists or a message if not
      */
     public function getNamespaces($sessionToken) {
         $params = [];

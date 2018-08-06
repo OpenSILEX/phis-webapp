@@ -67,7 +67,7 @@ class AnnotationController extends Controller {
             $dataToSend[] = $annotationModel->attributesToArray();
             // send data
             $requestRes = $annotationModel->insert($sessionToken, $dataToSend);
-            if (is_string($requestRes) && $requestRes === \app\models\wsModels\WSConstants::TOKEN) { //L'utilisateur doit se connecter
+            if (is_string($requestRes) && $requestRes === \app\models\wsModels\WSConstants::TOKEN) { // User must be connected
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 $annotationModel->uri = $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];

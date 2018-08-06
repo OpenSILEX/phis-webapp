@@ -29,7 +29,7 @@ use Yii;
  */
 class YiiAnnotationModel extends WSActiveRecord {
 
-    public $label = "Annotation";
+    const LABEL = "Annotation";
 
     /**
      * uri of the annotation
@@ -127,9 +127,8 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * Permet de remplir les attributs en fonction des informations 
-     * comprises dans le tableau passé en paramètre
-     * @param array $array tableau clé => valeur contenant les valeurs des attributs du projet
+     * Permits to fill model parameters from webservice data array 
+     * @param array $array key => value with annotation data value
      */
     protected function arrayToAttributes($array) {
         $this->uri = $array[YiiAnnotationModel::URI];
@@ -140,9 +139,9 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * @return array contenant l'élément à enregistrer en base de données
-     *         cette méthode est publique pour que l'utilisateur puisse choisir de l'utiliser 
-     *         ou d'envoyer lui-même son propre tableau (dans le cas où il souhaite enregistrer plusieurs instances)
+     * @return array used to send to the webservice in order to create a new annotation
+     *        this is a public method in case that the user want to save these annotation data 
+     *        in multiple instances
      */
     public function attributesToArray() {
         $elementForWebService[YiiAnnotationModel::CREATOR] = $this->creator;
@@ -162,7 +161,7 @@ class YiiAnnotationModel extends WSActiveRecord {
      * Find an annotation by this uri
      * @param string $sessionToken
      * @param string $uri
-     * @return mixed l'objet s'il existe, un message sinon
+     * @return mixed the searched object if it exists or a message if not
      */
     public function findByURI($sessionToken, $uri) {
         $params = [];
