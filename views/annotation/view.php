@@ -56,14 +56,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => YiiAnnotationModel::COMMENTS,
                 'format' => 'html',
                 'value' => function ($model) {
-                    return implode(('<br>,'), $model->comments);
+                    return implode((', '), $model->comments);
                 }
             ],
             YiiAnnotationModel::TARGETS => [
                 'attribute' => YiiAnnotationModel::TARGETS,
                 'format' => 'html',
                 'value' => function ($model) {
-                    return implode(('<br>,'), $model->targets);
+                    return implode((', '), $model->targets);
                 }
             ],
         ]

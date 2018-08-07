@@ -36,7 +36,7 @@ require_once '../config/config.php';
 class AnnotationController extends Controller {
 
     /**
-     * Php motivation instanaces session values name
+     * Php motivation instances session values name
      * Use e.g. Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES];
      */
     const MOTIVATION_INSTANCES = "motivation_instances";
