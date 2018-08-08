@@ -49,7 +49,7 @@ return [
     'Dataset' => 'Jeux de données',
     'Dataset Creation Date' => 'Données Insérées',
     'Date End' => 'Date de fin',
-    'Date Of Last Calibration' => 'Date de Dernière Calibration',
+    'Date Of Last Calibration' => 'Date de Dernier Étalonnage',
     'Date Of Purchase' => 'Date d\'Achat',
     'Date Start' => 'Date de début',
     'Document Type' => 'Type du Document',
