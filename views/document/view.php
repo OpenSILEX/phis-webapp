@@ -71,6 +71,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 return $toReturn;
               }
             ],
+            [
+              'attribute' => 'concernedSensors',
+              'format' => 'raw',
+              'value' => function ($model) {
+                $toReturn = "";
+                if (count($model->concernedSensors) > 0) {
+                    foreach($model->concernedSensors as $concernedSensor) {
+                        $toReturn .= Html::a($concernedSensor, ['sensor/view', 'id' => $concernedSensor]);
+                        $toReturn .= ", ";
+                    }
+                    $toReturn = rtrim($toReturn, ", ");
+                }
+                return $toReturn;
+              }
+            ],
         ],
     ]) ?>
     

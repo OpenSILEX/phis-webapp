@@ -119,6 +119,12 @@ class YiiDocumentModel extends WSActiveRecord {
      */
     public $concernedProjects;
     /**
+     * list of the uris of the sensors concerned by the document. 
+     * (used for the user interface)
+     * @var array<string>
+     */
+    public $concernedSensors;
+    /**
      * the file md5sum
      * @var string
      */
@@ -158,7 +164,7 @@ class YiiDocumentModel extends WSActiveRecord {
     public function rules() {
         return [
           [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate'], 'required'],
-          [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate', 'format', 'concernedItems', 'status', 'concernedExperiments', 'concernedProjects', 'file', 'comment'], 'safe'],
+          [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate', 'format', 'concernedItems', 'status', 'concernedExperiments', 'concernedProjects', 'concernedSensors', 'file', 'comment'], 'safe'],
           [['uri', 'creator', 'language', 'title', 'creationDate', 'format', 'comment'], 'string'],
           [['file'], 'file', 'skipOnEmpty' => false]
         ];
@@ -181,6 +187,7 @@ class YiiDocumentModel extends WSActiveRecord {
           'file' => Yii::t('app', 'File'),
           'concernedExperiments' => Yii::t('app', 'Concerned Experimentations'),
           'concernedProjects' => Yii::t('app', 'Concerned Projects'),
+          'concernedSensors' => Yii::t('app', 'Concerned Sensors'),
           'comment' => Yii::t('app', 'Comment'),
           'status' => Yii::t('app', 'Status') 
         ];
@@ -239,6 +246,15 @@ class YiiDocumentModel extends WSActiveRecord {
             foreach ($this->concernedExperiments as $concernedExperiment) {
                 $item[YiiDocumentModel::URI] = $concernedExperiment;
                 $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = YiiDocumentModel::CONCERNED_ITEM_EXPERIMENT_RDF_TYPE;
+                $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
+            }
+        }
+        if ($this->concernedSensors != null) {
+            foreach ($this->concernedSensors as $concernedSensor) {
+                $item[YiiDocumentModel::URI] = $concernedSensor;
+                $sensorModel = new YiiSensorModel();
+                $sensorModel->findByURI(Yii::$app->session['access_token'], $concernedSensor);       
+                $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = $sensorModel->rdfType;
                 $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
             }
         }

@@ -32,6 +32,7 @@ require_once '../config/config.php';
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiDocumentModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @update [Morgane Vidal] add link documents to sensors
  */
 class DocumentController extends Controller {
     
@@ -76,7 +77,20 @@ class DocumentController extends Controller {
         }
     }
     
-     /**
+    /**
+     * generates a sensor map uri => alias
+     * @param mixed $sensors 
+     * @return ArrayHelper uri => alias
+     */
+    private function sensorsToMap($sensors) {
+        if ($sensors !== null) {
+            return \yii\helpers\ArrayHelper::map($sensors, 'uri', 'label');
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * 
      * @param mixed $documentsTypes
      * @return ArrayHelper uri => type
@@ -119,7 +133,13 @@ class DocumentController extends Controller {
                 if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Experiment") {
                     $documentModel->concernedExperiments[] = $concernedItem->uri;
                 } else if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Project") {
-                  $documentModel->concernedProjects[] = $concernedItem->uri;
+                    $documentModel->concernedProjects[] = $concernedItem->uri;
+                } else { 
+                    //SILEX:warning 
+                    // in this version, there are only the sensors so if it is not an experiment and not a project, this is a sensor
+                    //\SILEX:warning
+                    $documentModel->concernedSensors[] = $concernedItem->uri;
+                    
                 }
                 $documentModel->concernedItems[] = $concernedItem;
             }
@@ -236,24 +256,32 @@ class DocumentController extends Controller {
             $searchProjectModel = new ProjectSearch();
             $projects = $searchProjectModel->find($sessionToken,[]);
             
-            //4. get actual concerned item (if there is already a concerned document)
+            //4. get sensors
+            $searchSensorModel = new \app\models\yiiModels\SensorSearch();
+            $sensors = $searchSensorModel->find($sessionToken, []);
+            
+            //5. get actual concerned item (if there is already a concerned document)
             $actualConcernedItem[] = $concernedItem;
             
-            if (is_string($projects) || is_string($experiments)) {
+            if (is_string($projects) 
+                    || is_string($experiments) 
+                    || is_string($sensors)) {
                 return $this->render('/site/error', [
                     'name' => 'Internal error',
                     'message' => is_string($projects) ? $projects : $experiments]);
             } else if (is_array($projects) && isset($projects["token"]) 
-                    || is_array($experiments) && isset($experiments["token"])) {
+                    || is_array($experiments) && isset($experiments["token"])
+                    || is_array($sensors) && isset($sensors["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 $projects = $this->projectsToMap($projects);
                 $experiments = $this->experimentsToMap($experiments);
+                $sensors = $this->sensorsToMap($sensors);
                 $documentsTypes = $this->documentsTypesToMap($documentsTypes);
                 $this->view->params['listProjects'] = $projects;
                 $this->view->params['listExperiments'] = $experiments;
                 $this->view->params['listDocumentsTypes'] = $documentsTypes;
-//                $this->view->params['concernedItem'] = $concernedItem;
+                $this->view->params['listSensors'] = $sensors;
                 $this->view->params['actualConcernedItem'] = $actualConcernedItem;
                 $documentModel->isNewRecord = true;
                                 

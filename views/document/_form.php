@@ -27,8 +27,6 @@ require_once '../config/config.php';
 <div class="document-form">
     <?php $form = ActiveForm::begin(); ?>
     
-
-        
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]); ?>
     
     <?= $form->field($model, 'creator')->textInput(['maxlength' => true]); ?>
@@ -70,6 +68,19 @@ require_once '../config/config.php';
                            'allowClear' => true
                        ],
                    ]); 
+            
+            echo $form->field($model, 'concernedSensors')->widget(\kartik\select2\Select2::classname(),[
+                'data' => $this->params['listSensors'],
+                'options' => [
+                    'placeholder' => 'Select sensor(s) ...',
+                    'value' => $this->params['actualConcernedItem'],
+                    'multiple' => true
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]); 
+            
         } else {
             echo $form->field($model, 'concernedProjects')->widget(\kartik\select2\Select2::classname(),[
                 'data' => $this->params['listProjects'],

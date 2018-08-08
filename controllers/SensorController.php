@@ -19,12 +19,14 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 
 use app\models\yiiModels\YiiSensorModel;
+use app\models\yiiModels\DocumentSearch;
 
 /**
  * CRUD actions for SensorModel
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiSensorModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @update [Morgane Vidal] add link documents to sensors
  */
 class SensorController extends Controller {
     
@@ -284,11 +286,18 @@ class SensorController extends Controller {
         //get sensor profile
         $res["properties"] = $this->getSensorProfile($id);
         
+        //get sensor's linked documents
+        //2. Get experiment's linked documents 
+        $searchDocumentModel = new DocumentSearch();
+        $searchDocumentModel->concernedItem = $id;
+        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+        
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
             return $this->render('view', [
                 'model' => $res,
+                'dataDocumentsProvider' => $documents,
             ]);
         }
         
