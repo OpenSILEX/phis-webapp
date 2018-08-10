@@ -34,9 +34,12 @@ require_once '../config/config.php';
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiDocumentModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
- * @update [Morgane Vidal] add link documents to sensors
+ * @update [Morgane Vidal] 10 August, 2018 : add link documents to sensors and vectors
  */
 class DocumentController extends Controller {
+    
+    const PROJECT = "Project";
+    const EXPERIMENT = "Experiment";
     
     /**
      * define the behaviors
@@ -145,9 +148,9 @@ class DocumentController extends Controller {
             $documentModel->format = $res[0]->format;
             $documentModel->comment = $res[0]->comment;
             foreach ($res[0]->concernedItems as $concernedItem) {
-                if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Experiment") {
+                if ($concernedItem->typeURI === Yii::$app->params[DocumentController::EXPERIMENT]) {
                     $documentModel->concernedExperiments[] = $concernedItem->uri;
-                } else if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Project") {
+                } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::PROJECT]) {
                     $documentModel->concernedProjects[] = $concernedItem->uri;
                 } else { 
                     //1. check if it is a sensor (call to web service)
@@ -292,13 +295,15 @@ class DocumentController extends Controller {
             
             if (is_string($projects) 
                     || is_string($experiments) 
-                    || is_string($sensors)) {
+                    || is_string($sensors)
+                    || is_string($vectors)) {
                 return $this->render('/site/error', [
                     'name' => 'Internal error',
                     'message' => is_string($projects) ? $projects : $experiments]);
             } else if (is_array($projects) && isset($projects["token"]) 
                     || is_array($experiments) && isset($experiments["token"])
-                    || is_array($sensors) && isset($sensors["token"])) {
+                    || is_array($sensors) && isset($sensors["token"])
+                    || is_array($vectors) && isset($vectors["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 $projects = $this->projectsToMap($projects);
@@ -363,9 +368,9 @@ class DocumentController extends Controller {
             $documentModel->comment = $res[0]->comment;
             $documentModel->status = $res[0]->status;
             foreach ($res[0]->concernedItems as $concernedItem) {
-                if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Experiment") {
+                if ($concernedItem->typeURI === Yii::$app->params[DocumentController::EXPERIMENT]) {
                     $documentModel->concernedExperiments[] = $concernedItem->uri;
-                } else if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Project") {
+                } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::PROJECT]) {
                     $documentModel->concernedProjects[] = $concernedItem->uri;
                 } else { 
                     //1. check if it is a sensor (call to web service)
@@ -374,6 +379,7 @@ class DocumentController extends Controller {
                     if ($requestRes && $sensorModel->uri === $concernedItem->uri) {
                         $documentModel->concernedSensors[] = $concernedItem->uri;
                     } else {
+                        //2. check if it is a vector (call to web service)
                         $vectorModel = new YiiVectorModel();
                         $requestRes = $vectorModel->findByURI($sessionToken, $concernedItem->uri);
                         if ($requestRes && $vectorModel->uri === $concernedItem->uri) {
