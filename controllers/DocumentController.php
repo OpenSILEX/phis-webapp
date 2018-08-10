@@ -163,9 +163,6 @@ class DocumentController extends Controller {
                         }
                     }
                     
-                    //2. check if it is a subclass of vector
-                    $documentModel->concernedSensors[] = $concernedItem->uri;
-                    
                 }
                 $documentModel->concernedItems[] = $concernedItem;
             }
@@ -369,8 +366,23 @@ class DocumentController extends Controller {
                 if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Experiment") {
                     $documentModel->concernedExperiments[] = $concernedItem->uri;
                 } else if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Project") {
-                  $documentModel->concernedProjects[] = $concernedItem->uri;
+                    $documentModel->concernedProjects[] = $concernedItem->uri;
+                } else { 
+                    //1. check if it is a sensor (call to web service)
+                    $sensorModel = new YiiSensorModel();
+                    $requestRes = $sensorModel->findByURI($sessionToken, $concernedItem->uri);
+                    if ($requestRes && $sensorModel->uri === $concernedItem->uri) {
+                        $documentModel->concernedSensors[] = $concernedItem->uri;
+                    } else {
+                        $vectorModel = new YiiVectorModel();
+                        $requestRes = $vectorModel->findByURI($sessionToken, $concernedItem->uri);
+                        if ($requestRes && $vectorModel->uri === $concernedItem->uri) {
+                            $documentModel->concernedVectors[] = $concernedItem->uri;
+                        }
+                    }
+                    
                 }
+                $documentModel->concernedItems[] = $concernedItem;
             }
             //\SILEX:todo
             
@@ -385,6 +397,14 @@ class DocumentController extends Controller {
             $searchProjectModel = new ProjectSearch();
             $projects = $searchProjectModel->find($sessionToken,[]);
             
+            //4. get sensors
+            $searchSensorModel = new \app\models\yiiModels\SensorSearch();
+            $sensors = $searchSensorModel->find($sessionToken, []);
+            
+            //5. get vectors
+            $searchVectorModel = new \app\models\yiiModels\VectorSearch();
+            $vectors = $searchVectorModel->find($sessionToken, []);
+            
             if (is_string($projects) || is_string($experiments)) {
                 return $this->render('/site/error', [
                     'name' => 'Internal error',
@@ -395,10 +415,14 @@ class DocumentController extends Controller {
             } else {
                 $projects = $this->projectsToMap($projects);
                 $experiments = $this->experimentsToMap($experiments);
+                $sensors = $this->sensorsToMap($sensors);
+                $vectors = $this->vectorsToMap($vectors);
                 $documentsTypes = $this->documentsTypesToMap($documentsTypes);
                 $this->view->params['listProjects'] = $projects;
                 $this->view->params['listExperiments'] = $experiments;
                 $this->view->params['listDocumentsTypes'] = $documentsTypes;
+                $this->view->params['listSensors'] = $sensors;
+                $this->view->params['listVectors'] = $vectors;
                 $this->view->params['concernedItem'] = null;
                 $documentModel->isNewRecord = false;
                         
