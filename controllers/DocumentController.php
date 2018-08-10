@@ -21,6 +21,8 @@ use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
 use app\models\yiiModels\YiiDocumentModel;
+use app\models\yiiModels\YiiSensorModel;
+use app\models\yiiModels\YiiVectorModel;
 use app\models\yiiModels\ProjectSearch;
 use app\models\yiiModels\ExperimentSearch;
 use app\models\yiiModels\DocumentSearch;
@@ -91,6 +93,19 @@ class DocumentController extends Controller {
     }
     
     /**
+     * generates a vector map uri => alias
+     * @param mixed $vectors 
+     * @return ArrayHelper uri => alias
+     */
+    private function vectorsToMap($vectors) {
+        if ($vectors !== null) {
+            return \yii\helpers\ArrayHelper::map($vectors, 'uri', 'label');
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * 
      * @param mixed $documentsTypes
      * @return ArrayHelper uri => type
@@ -135,9 +150,20 @@ class DocumentController extends Controller {
                 } else if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Project") {
                     $documentModel->concernedProjects[] = $concernedItem->uri;
                 } else { 
-                    //SILEX:warning 
-                    // in this version, there are only the sensors so if it is not an experiment and not a project, this is a sensor
-                    //\SILEX:warning
+                    //1. check if it is a sensor (call to web service)
+                    $sensorModel = new YiiSensorModel();
+                    $requestRes = $sensorModel->findByURI($sessionToken, $concernedItem->uri);
+                    if ($requestRes && $sensorModel->uri === $concernedItem->uri) {
+                        $documentModel->concernedSensors[] = $concernedItem->uri;
+                    } else {
+                        $vectorModel = new YiiVectorModel();
+                        $requestRes = $vectorModel->findByURI($sessionToken, $concernedItem->uri);
+                        if ($requestRes && $vectorModel->uri === $concernedItem->uri) {
+                            $documentModel->concernedVectors[] = $concernedItem->uri;
+                        }
+                    }
+                    
+                    //2. check if it is a subclass of vector
                     $documentModel->concernedSensors[] = $concernedItem->uri;
                     
                 }
@@ -260,7 +286,11 @@ class DocumentController extends Controller {
             $searchSensorModel = new \app\models\yiiModels\SensorSearch();
             $sensors = $searchSensorModel->find($sessionToken, []);
             
-            //5. get actual concerned item (if there is already a concerned document)
+            //5. get vectors
+            $searchVectorModel = new \app\models\yiiModels\VectorSearch();
+            $vectors = $searchVectorModel->find($sessionToken, []);
+            
+            //6. get actual concerned item (if there is already a concerned document)
             $actualConcernedItem[] = $concernedItem;
             
             if (is_string($projects) 
@@ -277,11 +307,13 @@ class DocumentController extends Controller {
                 $projects = $this->projectsToMap($projects);
                 $experiments = $this->experimentsToMap($experiments);
                 $sensors = $this->sensorsToMap($sensors);
+                $vectors = $this->vectorsToMap($vectors);
                 $documentsTypes = $this->documentsTypesToMap($documentsTypes);
                 $this->view->params['listProjects'] = $projects;
                 $this->view->params['listExperiments'] = $experiments;
                 $this->view->params['listDocumentsTypes'] = $documentsTypes;
                 $this->view->params['listSensors'] = $sensors;
+                $this->view->params['listVectors'] = $vectors;
                 $this->view->params['actualConcernedItem'] = $actualConcernedItem;
                 $documentModel->isNewRecord = true;
                                 

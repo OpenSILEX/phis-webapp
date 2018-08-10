@@ -86,6 +86,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 return $toReturn;
               }
             ],
+            [
+              'attribute' => 'concernedVectors',
+              'format' => 'raw',
+              'value' => function ($model) {
+                $toReturn = "";
+                if (count($model->concernedVectors) > 0) {
+                    foreach($model->concernedVectors as $concernedVector) {
+                        $toReturn .= Html::a($concernedVector, ['vector/view', 'id' => $concernedVector]);
+                        $toReturn .= ", ";
+                    }
+                    $toReturn = rtrim($toReturn, ", ");
+                }
+                return $toReturn;
+              }
+            ],
         ],
     ]) ?>
     

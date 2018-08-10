@@ -79,6 +79,18 @@ require_once '../config/config.php';
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
+            ]);
+            
+            echo $form->field($model, 'concernedVectors')->widget(\kartik\select2\Select2::classname(),[
+                'data' => $this->params['listVectors'],
+                'options' => [
+                    'placeholder' => 'Select vector(s) ...',
+                    'value' => $this->params['actualConcernedItem'],
+                    'multiple' => true
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
             ]); 
             
         } else {
@@ -103,6 +115,28 @@ require_once '../config/config.php';
                            'allowClear' => true
                        ],
                    ]); 
+            
+            echo $form->field($model, 'concernedSensors')->widget(\kartik\select2\Select2::classname(),[
+                'data' => $this->params['listSensors'],
+                'options' => [
+                    'placeholder' => 'Select sensor(s) ...',
+                    'multiple' => true
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+            
+            echo $form->field($model, 'concernedVectors')->widget(\kartik\select2\Select2::classname(),[
+                'data' => $this->params['listVectors'],
+                'options' => [
+                    'placeholder' => 'Select vector(s) ...',
+                    'multiple' => true
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]); 
         }
     ?>
     

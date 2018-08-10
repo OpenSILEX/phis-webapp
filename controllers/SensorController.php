@@ -287,7 +287,6 @@ class SensorController extends Controller {
         $res["properties"] = $this->getSensorProfile($id);
         
         //get sensor's linked documents
-        //2. Get experiment's linked documents 
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItem = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);

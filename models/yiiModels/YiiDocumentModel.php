@@ -125,6 +125,12 @@ class YiiDocumentModel extends WSActiveRecord {
      */
     public $concernedSensors;
     /**
+     * list of the uris of the vectors concerned by the document. 
+     * (used for the user interface)
+     * @var array<string>
+     */
+    public $concernedVectors;
+    /**
      * the file md5sum
      * @var string
      */
@@ -164,7 +170,10 @@ class YiiDocumentModel extends WSActiveRecord {
     public function rules() {
         return [
           [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate'], 'required'],
-          [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate', 'format', 'concernedItems', 'status', 'concernedExperiments', 'concernedProjects', 'concernedSensors', 'file', 'comment'], 'safe'],
+          [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate', 
+              'format', 'concernedItems', 'status', 'concernedExperiments', 
+              'concernedProjects', 'concernedSensors', 'file', 'comment',
+              'concernedVectors'], 'safe'],
           [['uri', 'creator', 'language', 'title', 'creationDate', 'format', 'comment'], 'string'],
           [['file'], 'file', 'skipOnEmpty' => false]
         ];
@@ -188,6 +197,7 @@ class YiiDocumentModel extends WSActiveRecord {
           'concernedExperiments' => Yii::t('app', 'Concerned Experimentations'),
           'concernedProjects' => Yii::t('app', 'Concerned Projects'),
           'concernedSensors' => Yii::t('app', 'Concerned Sensors'),
+          'concernedVectors' => Yii::t('app', 'Concerned Vectors'),
           'comment' => Yii::t('app', 'Comment'),
           'status' => Yii::t('app', 'Status') 
         ];
@@ -255,6 +265,15 @@ class YiiDocumentModel extends WSActiveRecord {
                 $sensorModel = new YiiSensorModel();
                 $sensorModel->findByURI(Yii::$app->session['access_token'], $concernedSensor);       
                 $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = $sensorModel->rdfType;
+                $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
+            }
+        }
+        if ($this->concernedVectors != null) {
+            foreach ($this->concernedVectors as $concernedVector) {
+                $item[YiiDocumentModel::URI] = $concernedVector;
+                $vectorModel = new YiiVectorModel();
+                $vectorModel->findByURI(Yii::$app->session['access_token'], $concernedVector);       
+                $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = $vectorModel->rdfType;
                 $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
             }
         }
