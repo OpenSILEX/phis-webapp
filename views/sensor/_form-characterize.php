@@ -111,6 +111,9 @@ use kartik\select2\Select2;
             if (rdfType === "RGBCamera" || rdfType === "TIRCamera") {
                 $('#lens').show();
             }
+            if (rdfType === "TIRCamera") {
+                $('#waveband').show();
+            }
         } else if (rdfType === "LiDAR") {
             $("#lidar").show();
             $('#characterizeButton').show();
@@ -215,6 +218,11 @@ use kartik\select2\Select2;
             </tbody>
           </thead>
         </table>
+    </div>
+    
+    <div id="waveband" style="display:none">
+        <?= Html::label(Yii::t('app', 'Waveband') . ' (nm)', 'waveband') ?>
+        <?= Html::textInput('waveband', null, ['type' => 'number', 'class' => 'form-control']); ?>
     </div>
     
     <div id="lens" style="display:none">

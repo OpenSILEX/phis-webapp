@@ -427,6 +427,8 @@ class SensorController extends Controller {
             return Yii::$app->params["focalLength"];
         } elseif (strstr($key, "attenuatorFilter")) {
             return Yii::$app->params["attenuatorFilter"];
+        } elseif (strstr($key, "waveband")) {
+            return Yii::$app->params["waveband"];
         }
         
         return null;
