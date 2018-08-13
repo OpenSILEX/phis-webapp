@@ -99,23 +99,36 @@ use kartik\select2\Select2;
                  || rdfType === "HyperspectralCamera" || rdfType === "MultispectralCamera"
                  || rdfType === "RGBCamera" || rdfType === "TIRCamera") {
             $('#camera').show();
-        }
-        
-        if (rdfType === "MultispectralCamera") {
-            $('#wavelength').show();
-        }
-        
-        if (rdfType === "RGBCamera" || rdfType === "TIRCamera") {
-            $('#lens').show();
-        }
-        
-        if (rdfType === "LiDAR") {
+            $('#characterizeButton').show();
+            $("#lidar").hide();
+            $('#spectrometer').hide();
+            $('#noCharacterization').hide();
+            
+            if (rdfType === "MultispectralCamera") {
+                $('#wavelength').show();
+                $('#lens').hide();
+            } 
+            if (rdfType === "RGBCamera" || rdfType === "TIRCamera") {
+                $('#lens').show();
+            }
+        } else if (rdfType === "LiDAR") {
             $("#lidar").show();
-        }
-        
-        if (rdfType === "Spectrometer") {
+            $('#characterizeButton').show();
+            $('#spectrometer').hide();
+            $('#noCharacterization').hide();
+            $('#wavelength').hide();
+            $('#lens').hide();
+        } else if (rdfType === "Spectrometer") {
+            $("#lidar").hide();
+            $('#characterizeButton').show();
             $('#spectrometer').show();
-        }
+            $('#noCharacterization').hide();
+            $('#wavelength').hide();
+            $('#lens').hide();
+        } else {
+            $('#noCharacterization').show();
+            $('#characterizeButton').hide();
+        }        
     }
 </script>
 
@@ -277,8 +290,13 @@ use kartik\select2\Select2;
         <?= Html::label(Yii::t('app', 'Spectral Sampling Interval'), 'spectralSamplingInterval') ?>
         <?= Html::textInput('spectralSamplingInterval', null, ['class' => 'form-control']); ?>
     </div>
+    
+    <div id="noCharacterization" style="display:none">
+        <p>The selected sensor cannot be characterized. Please select another sensor.</p>
+    </div>
+    
     <br/>
-    <div class="form-group">
+    <div class="form-group" id="characterizeButton">
         <?= Html::submitButton(Yii::t('yii', 'Characterize Sensor'), ['class' => 'btn btn-success']) ?>
     </div>
     
