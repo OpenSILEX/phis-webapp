@@ -292,7 +292,7 @@ use kartik\select2\Select2;
     </div>
     
     <div id="noCharacterization" style="display:none">
-        <p>The selected sensor cannot be characterized. Please select another sensor.</p>
+        <p>The selected sensor cannot be characterized. Please select another sensor among cameras (all camera types : RGB, multispectral, etc.), spectrometers and LiDAR.</p>
     </div>
     
     <br/>
