@@ -213,6 +213,7 @@ class SensorController extends Controller {
         if (count($sensors) > 0) {
             $sensorsUris = null;
             foreach ($sensors as $sensor) {
+              $forWebService = null;
               $sensorModel = new YiiSensorModel();
               $sensorModel->rdfType = $this->getSensorTypeCompleteUri($sensor[2]);
               $sensorModel->label = $sensor[1];
@@ -235,7 +236,6 @@ class SensorController extends Controller {
               
               $sensorsUris[] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
             }
-            
             return json_encode($sensorsUris, JSON_UNESCAPED_SLASHES); 
         }
         return true;
