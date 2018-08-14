@@ -165,13 +165,13 @@ use kartik\select2\Select2;
     
     
     <div class="characterize-attributes" id="camera" style="display:none">
-        <?= Html::label(Yii::t('app', 'Height') . '(pixels)', 'height') ?>
+        <?= Html::label(Yii::t('app', 'Height') . ' (pixels)', 'height') ?>
         <?= Html::textInput('height', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Width') . '(pixels)', 'width') ?>
+        <?= Html::label(Yii::t('app', 'Width') . ' (pixels)', 'width') ?>
         <?= Html::textInput('width', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Pixel Size') . '(µm)', 'pixelSize') ?>
+        <?= Html::label(Yii::t('app', 'Pixel Size') . ' (µm)', 'pixelSize') ?>
         <?= Html::textInput('pixelSize', null, ['type' => 'number', 'class' => 'form-control']); ?>
     </div>
     
@@ -261,38 +261,38 @@ use kartik\select2\Select2;
             ]
         ]); ?>
         
-        <?= Html::label(Yii::t('app', 'Focal Length') . '(mm)', 'lensFocalLength') ?>
+        <?= Html::label(Yii::t('app', 'Focal Length') . ' (mm)', 'lensFocalLength') ?>
         <?= Html::textInput('lensFocalLength', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Aperture') . '(fnumber)', 'lensAperture') ?>
+        <?= Html::label(Yii::t('app', 'Aperture') . ' (fnumber)', 'lensAperture') ?>
         <?= Html::textInput('lensAperture', null, ['type' => 'number', 'class' => 'form-control']); ?>
     </div>
     
     <div id="lidar" style="display:none">
-        <?= Html::label(Yii::t('app', 'Wavelength') . '(nm)', 'wavelength') ?>
+        <?= Html::label(Yii::t('app', 'Wavelength') . ' (nm)', 'wavelength') ?>
         <?= Html::textInput('wavelength', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Scanning Angular Range') . '(°)', 'scanningAngularRange') ?>
+        <?= Html::label(Yii::t('app', 'Scanning Angular Range') . ' (°)', 'scanningAngularRange') ?>
         <?= Html::textInput('scanningAngularRange', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Scan Angular Resolution') . '(°)', 'scanAngularResolution') ?>
+        <?= Html::label(Yii::t('app', 'Scan Angular Resolution') . ' (°)', 'scanAngularResolution') ?>
         <?= Html::textInput('scanAngularResolution', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Spot width') . '(°)', 'spotWidth') ?>
+        <?= Html::label(Yii::t('app', 'Spot width') . ' (°)', 'spotWidth') ?>
         <?= Html::textInput('spotWidth', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Spot height') . '(°)', 'spotHeight') ?>
+        <?= Html::label(Yii::t('app', 'Spot height') . ' (°)', 'spotHeight') ?>
         <?= Html::textInput('spotHeight', null, ['type' => 'number', 'class' => 'form-control']); ?>
     </div>
     
     <div id="spectrometer" style="display:none">
-        <?= Html::label(Yii::t('app', 'Half Field Of View') . '(°)', 'halfFieldOfView') ?>
+        <?= Html::label(Yii::t('app', 'Half Field Of View') . ' (°)', 'halfFieldOfView') ?>
         <?= Html::textInput('halfFieldOfView', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Minimum Wavelength') . '(°)', 'minWavelength') ?>
+        <?= Html::label(Yii::t('app', 'Minimum Wavelength') . ' (°)', 'minWavelength') ?>
         <?= Html::textInput('minWavelength', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Maximum Wavelength') . '(°)', 'maxWavelength') ?>
+        <?= Html::label(Yii::t('app', 'Maximum Wavelength') . ' (°)', 'maxWavelength') ?>
         <?= Html::textInput('maxWavelength', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
         <?= Html::label(Yii::t('app', 'Spectral Sampling Interval'), 'spectralSamplingInterval') ?>
