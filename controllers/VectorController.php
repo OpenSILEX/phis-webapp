@@ -152,7 +152,9 @@ class VectorController extends Controller {
         
         $vectorsUris = null;
         if (count($vectors) > 0) {
+            $vectorsUris = null;
             foreach ($vectors as $vector) {
+                $forWebService = null;
                 $vectorModel = new YiiVectorModel();
                 $vectorModel->rdfType = $this->getVectorTypeCompleteUri($vector[2]);
                 $vectorModel->label = $vector[1];
@@ -171,7 +173,6 @@ class VectorController extends Controller {
                 
                 $vectorsUris[] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
             }
-            
             return json_encode($vectorsUris, JSON_UNESCAPED_SLASHES); 
         }
         
