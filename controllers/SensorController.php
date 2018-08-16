@@ -547,7 +547,7 @@ class SensorController extends Controller {
      * @param string $rdfType
      * @return json
      */
-    public function actionGetSensorsUriByRdfType($rdfType) {   
+    public function actionGetSensorsUriByRdfType($rdfType) {
         $sensorsUrisAndLabels = $this->getSensorsUrisAndLabels(urldecode($rdfType));
 
         $sensors = null;
@@ -559,6 +559,21 @@ class SensorController extends Controller {
             }
 
             return json_encode($sensors, JSON_UNESCAPED_SLASHES);
+        } else {
+            return json_encode(null);
+        }
+    }
+    
+    /**
+     * Get the rdfType of the given sensor uri
+     * @param string $uri the sensor's uri
+     * @return json the uri of the rdfType of the sensor
+     */
+    public function actionGetSensorsTypeByUri($uri) {        
+        $sensorModel = $this->findModel($uri);
+        
+        if ($sensorModel->rdfType !== null) {
+            return json_encode($sensorModel->rdfType, JSON_UNESCAPED_SLASHES);
         } else {
             return json_encode(null);
         }
