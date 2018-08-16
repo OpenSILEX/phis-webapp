@@ -25,27 +25,27 @@ use kartik\select2\Select2;
 /* @var $users array */
 ?>
 <script>
+    var rdfType = null;
     /**
-     * get the rdfType of the input rdfType and update the uri list with the 
-     * list of the sensor's uris corresponding to the rdfType
-     * @returns {undefined}
+     * Get the rdfType of the input rdfType and update the uri list with the 
+     * list of the sensor's uris corresponding to the rdfType.
      */
     function updateSensorsUris() {
-        //1. get the rdfType
-        var rdfType = $('#rdfType').val();
+        //1. Get the rdfType
+        var rdfTypeSensor = $('#rdfType').val();
         
-        //2. get the sensors
+        //2. Get the sensors
         $.ajax({
            url: '<?= Url::to(['sensor/get-sensors-uri-by-rdf-type']) ?>',
            type: 'GET',
-           data: 'rdfType=' + escape(rdfType),
+           data: 'rdfType=' + escape(rdfTypeSensor),
            datatype: 'json'
         }).done(function(data) {
             sensors = JSON.parse(data);
             
             var options = "<option value=\"\"></option>";
             
-            //3. update the list
+            //3. Update the list
             if (sensors !== null) {
                 for (i = 0; i < sensors.length; i++) {
                     options += "<option value=\"" + sensors[i].uri + "\">" + sensors[i].label + "</option>";
@@ -59,8 +59,7 @@ use kartik\select2\Select2;
     /**
      * Show the characterization form for the sensor. 
      * The form showed depends on the sensor rdfType.
-     * The form's labels are updated by querying the web service.
-     * @returns {undefined}     
+     * The form's labels are updated by querying the web service.  
      */
     function showForm() {
         //1. Show the right form        
@@ -71,7 +70,7 @@ use kartik\select2\Select2;
            data: 'uri=' + encodeURIComponent($('#uri').val()),
            datatype: 'json'
         }).done(function(data) {
-            var rdfType = JSON.parse(data).split("#")[1];
+            rdfType = JSON.parse(data).split("#")[1];
             //All subtypes of cameras
             if (rdfType === "Camera" || rdfType === "HemisphericalCamera"
                  || rdfType === "HyperspectralCamera" || rdfType === "MultispectralCamera"
@@ -135,7 +134,7 @@ use kartik\select2\Select2;
      *                    false if required fields are missing    
      */
     function validateMultispectralCamera() {
-        //1. check wavelenght
+        //1. Check wavelenght
         if (($('#wavelength1').val() === null || $('#wavelength1').val() === "")
                 || ($('#wavelength2').val() === null || $('#wavelength2').val() === "")
                 || ($('#wavelength3').val() === null || $('#wavelength3').val() === "")
@@ -145,7 +144,7 @@ use kartik\select2\Select2;
             return false;
         }
         
-        //2. check focalLength
+        //2. Check focalLength
         if (($('#focalLength1').val() === null || $('#focalLength1').val() === "")
                 || ($('#focalLength2').val() === null || $('#focalLength2').val() === "")
                 || ($('#focalLength3').val() === null || $('#focalLength3').val() === "")
@@ -155,7 +154,7 @@ use kartik\select2\Select2;
             return false;
         }
         
-        //3. check attenuatorFilter
+        //3. Check attenuatorFilter
         if (($('#attenuatorFilter1').val() === null || $('#attenuatorFilter1').val() === "")
                 || ($('#attenuatorFilter2').val() === null || $('#attenuatorFilter2').val() === "")
                 || ($('#attenuatorFilter3').val() === null || $('#attenuatorFilter3').val() === "")
@@ -233,11 +232,8 @@ use kartik\select2\Select2;
      * @returns {Boolean} true if the required field are filled
      *                    false if required fields are missing
      */
-    function validateRequiredFields() {
-        //1. get the rdfType
-        var rdfType = $('#rdfType').val().split("#")[1];
-        
-        //2. validate required fields
+    function validateRequiredFields() {        
+        // Validate required fields
         var validation = true;
         if (rdfType === "Camera" || rdfType === "HemisphericalCamera"
                  || rdfType === "HyperspectralCamera" || rdfType === "MultispectralCamera"
