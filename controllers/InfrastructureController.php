@@ -51,13 +51,12 @@ class InfrastructureController extends Controller {
         //1. Fill the infrastructure model with the information.
         $infrastructure = new YiiInfrastructureModel();
         $infrastructure->uri = $uri;
-        $infrastructure->alias = "Diaphen";
+        $infrastructure->alias = Yii::$app->params['platform'];
         $infrastructure->rdfType = "oepo:Installation";
 
         //2. Get documents.
         $searchDocumentsModel = new \app\models\yiiModels\DocumentSearch();
         
-        var_dump(["concernedItem" => $uri]);
         $searchDocumentsModel->concernedItem = $uri;
         $documentsSearch = $searchDocumentsModel->search(Yii::$app->session['access_token'], ["concernedItem" => $uri]);
 

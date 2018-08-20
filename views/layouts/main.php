@@ -40,6 +40,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     
+    $infrastructureUri = substr(Yii::$app->params['baseURI'], 0, -1);
     
     NavBar::begin([
         'brandLabel' => 'PHIS <i> ' . Yii::$app->params['platform'] . '</i>',
@@ -52,14 +53,12 @@ AppAsset::register($this);
     //Cas d'un utilisateur non connecté (invité)
     if (Yii::$app->session['isGuest'] || Yii::$app->session['isGuest'] === null) {
         $menuItems = [['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']]];
-        
-        
     } else if (Yii::$app->session['isAdmin']) { //Cas d'un admin
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
                                 'label' => '<span class="glyphicon glyphicon-home" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
-                                'url' => ['/infrastructure/view', 'uri' => "http://www.phenome-fppn.fr/diaphen"],
+                                'url' => ['/infrastructure/view', 'uri' => $infrastructureUri],
                             ],
                             [
                                 'label' => '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
@@ -128,7 +127,7 @@ AppAsset::register($this);
                         'items' => [
                             [
                                 'label' => '<span class="glyphicon glyphicon-home" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
-                                'url' => ['/infrastructure/view', 'uri' => "http://www.phenome-fppn.fr/diaphen"],
+                                'url' => ['/infrastructure/view', 'uri' => $infrastructureUri],
                             ],
                             [
                                 'label' => '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
