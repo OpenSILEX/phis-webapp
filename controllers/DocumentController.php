@@ -21,6 +21,8 @@ use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
 use app\models\yiiModels\YiiDocumentModel;
+use app\models\yiiModels\YiiSensorModel;
+use app\models\yiiModels\YiiVectorModel;
 use app\models\yiiModels\ProjectSearch;
 use app\models\yiiModels\ExperimentSearch;
 use app\models\yiiModels\DocumentSearch;
@@ -32,8 +34,12 @@ require_once '../config/config.php';
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiDocumentModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @update [Morgane Vidal] 10 August, 2018 : add link documents to sensors and vectors
  */
 class DocumentController extends Controller {
+    
+    const PROJECT = "Project";
+    const EXPERIMENT = "Experiment";
     
     /**
      * define the behaviors
@@ -76,7 +82,33 @@ class DocumentController extends Controller {
         }
     }
     
-     /**
+    /**
+     * generates a sensor map uri => alias
+     * @param mixed $sensors 
+     * @return ArrayHelper uri => alias
+     */
+    private function sensorsToMap($sensors) {
+        if ($sensors !== null) {
+            return \yii\helpers\ArrayHelper::map($sensors, 'uri', 'label');
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * generates a vector map uri => alias
+     * @param mixed $vectors 
+     * @return ArrayHelper uri => alias
+     */
+    private function vectorsToMap($vectors) {
+        if ($vectors !== null) {
+            return \yii\helpers\ArrayHelper::map($vectors, 'uri', 'label');
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * 
      * @param mixed $documentsTypes
      * @return ArrayHelper uri => type
@@ -116,10 +148,24 @@ class DocumentController extends Controller {
             $documentModel->format = $res[0]->format;
             $documentModel->comment = $res[0]->comment;
             foreach ($res[0]->concernedItems as $concernedItem) {
-                if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Experiment") {
+                if ($concernedItem->typeURI === Yii::$app->params[DocumentController::EXPERIMENT]) {
                     $documentModel->concernedExperiments[] = $concernedItem->uri;
-                } else if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Project") {
-                  $documentModel->concernedProjects[] = $concernedItem->uri;
+                } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::PROJECT]) {
+                    $documentModel->concernedProjects[] = $concernedItem->uri;
+                } else { 
+                    //1. check if it is a sensor (call to web service)
+                    $sensorModel = new YiiSensorModel();
+                    $requestRes = $sensorModel->findByURI($sessionToken, $concernedItem->uri);
+                    if ($requestRes && $sensorModel->uri === $concernedItem->uri) {
+                        $documentModel->concernedSensors[] = $concernedItem->uri;
+                    } else {
+                        $vectorModel = new YiiVectorModel();
+                        $requestRes = $vectorModel->findByURI($sessionToken, $concernedItem->uri);
+                        if ($requestRes && $vectorModel->uri === $concernedItem->uri) {
+                            $documentModel->concernedVectors[] = $concernedItem->uri;
+                        }
+                    }
+                    
                 }
                 $documentModel->concernedItems[] = $concernedItem;
             }
@@ -236,24 +282,40 @@ class DocumentController extends Controller {
             $searchProjectModel = new ProjectSearch();
             $projects = $searchProjectModel->find($sessionToken,[]);
             
-            //4. get actual concerned item (if there is already a concerned document)
+            //4. get sensors
+            $searchSensorModel = new \app\models\yiiModels\SensorSearch();
+            $sensors = $searchSensorModel->find($sessionToken, []);
+            
+            //5. get vectors
+            $searchVectorModel = new \app\models\yiiModels\VectorSearch();
+            $vectors = $searchVectorModel->find($sessionToken, []);
+            
+            //6. get actual concerned item (if there is already a concerned document)
             $actualConcernedItem[] = $concernedItem;
             
-            if (is_string($projects) || is_string($experiments)) {
+            if (is_string($projects) 
+                    || is_string($experiments) 
+                    || is_string($sensors)
+                    || is_string($vectors)) {
                 return $this->render('/site/error', [
                     'name' => 'Internal error',
                     'message' => is_string($projects) ? $projects : $experiments]);
             } else if (is_array($projects) && isset($projects["token"]) 
-                    || is_array($experiments) && isset($experiments["token"])) {
+                    || is_array($experiments) && isset($experiments["token"])
+                    || is_array($sensors) && isset($sensors["token"])
+                    || is_array($vectors) && isset($vectors["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 $projects = $this->projectsToMap($projects);
                 $experiments = $this->experimentsToMap($experiments);
+                $sensors = $this->sensorsToMap($sensors);
+                $vectors = $this->vectorsToMap($vectors);
                 $documentsTypes = $this->documentsTypesToMap($documentsTypes);
                 $this->view->params['listProjects'] = $projects;
                 $this->view->params['listExperiments'] = $experiments;
                 $this->view->params['listDocumentsTypes'] = $documentsTypes;
-//                $this->view->params['concernedItem'] = $concernedItem;
+                $this->view->params['listSensors'] = $sensors;
+                $this->view->params['listVectors'] = $vectors;
                 $this->view->params['actualConcernedItem'] = $actualConcernedItem;
                 $documentModel->isNewRecord = true;
                                 
@@ -306,11 +368,27 @@ class DocumentController extends Controller {
             $documentModel->comment = $res[0]->comment;
             $documentModel->status = $res[0]->status;
             foreach ($res[0]->concernedItems as $concernedItem) {
-                if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Experiment") {
+                if ($concernedItem->typeURI === Yii::$app->params[DocumentController::EXPERIMENT]) {
                     $documentModel->concernedExperiments[] = $concernedItem->uri;
-                } else if ($concernedItem->typeURI === "http://www.phenome-fppn.fr/vocabulary/2017#Project") {
-                  $documentModel->concernedProjects[] = $concernedItem->uri;
+                } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::PROJECT]) {
+                    $documentModel->concernedProjects[] = $concernedItem->uri;
+                } else { 
+                    //1. check if it is a sensor (call to web service)
+                    $sensorModel = new YiiSensorModel();
+                    $requestRes = $sensorModel->findByURI($sessionToken, $concernedItem->uri);
+                    if ($requestRes && $sensorModel->uri === $concernedItem->uri) {
+                        $documentModel->concernedSensors[] = $concernedItem->uri;
+                    } else {
+                        //2. check if it is a vector (call to web service)
+                        $vectorModel = new YiiVectorModel();
+                        $requestRes = $vectorModel->findByURI($sessionToken, $concernedItem->uri);
+                        if ($requestRes && $vectorModel->uri === $concernedItem->uri) {
+                            $documentModel->concernedVectors[] = $concernedItem->uri;
+                        }
+                    }
+                    
                 }
+                $documentModel->concernedItems[] = $concernedItem;
             }
             //\SILEX:todo
             
@@ -325,6 +403,14 @@ class DocumentController extends Controller {
             $searchProjectModel = new ProjectSearch();
             $projects = $searchProjectModel->find($sessionToken,[]);
             
+            //4. get sensors
+            $searchSensorModel = new \app\models\yiiModels\SensorSearch();
+            $sensors = $searchSensorModel->find($sessionToken, []);
+            
+            //5. get vectors
+            $searchVectorModel = new \app\models\yiiModels\VectorSearch();
+            $vectors = $searchVectorModel->find($sessionToken, []);
+            
             if (is_string($projects) || is_string($experiments)) {
                 return $this->render('/site/error', [
                     'name' => 'Internal error',
@@ -335,10 +421,14 @@ class DocumentController extends Controller {
             } else {
                 $projects = $this->projectsToMap($projects);
                 $experiments = $this->experimentsToMap($experiments);
+                $sensors = $this->sensorsToMap($sensors);
+                $vectors = $this->vectorsToMap($vectors);
                 $documentsTypes = $this->documentsTypesToMap($documentsTypes);
                 $this->view->params['listProjects'] = $projects;
                 $this->view->params['listExperiments'] = $experiments;
                 $this->view->params['listDocumentsTypes'] = $documentsTypes;
+                $this->view->params['listSensors'] = $sensors;
+                $this->view->params['listVectors'] = $vectors;
                 $this->view->params['concernedItem'] = null;
                 $documentModel->isNewRecord = false;
                         
