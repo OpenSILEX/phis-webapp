@@ -17,7 +17,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/0.37.0/handsontable.full.min.js"></script>
 
 <div class="dataset-form">
-    <div id="sensors-created" class="alert alert-success">Sensors Created</div>
+    <div id="sensors-created" class="alert alert-success"><?= Yii::t('app', 'Sensors Created') ?></div>
     <!--<button type = "button" id="export" id="exportButton">Export</button>-->
     <div id="sensors-creation">
         <div id="dataset-multiple-insert-table"></div>
@@ -167,15 +167,15 @@
             ],
             rowHeaders: true,
             colHeaders: [
-                '<b><?= Yii::t('app', 'Generated URI') ?></b>',
-                '<b><?= Yii::t('app', 'Alias') ?></b>',
-                '<b><?= Yii::t('app', 'Type') ?></b>',
-                '<b><?= Yii::t('app', 'Brand') ?></b>',
-                '<b><?= Yii::t('app', 'Serial Number') ?></b>',
-                '<b><?= Yii::t('app', 'Date Of Purchase') ?></b>',
-                '<b><?= Yii::t('app', 'In Service Date') ?></b>',
-                '<b><?= Yii::t('app', 'Date Of Last Calibration') ?></b>',
-                '<b><?= Yii::t('app', 'Person In Charge') ?></b>' 
+                "<b><?= Yii::t('app', 'Generated URI') ?></b>",
+                "<b><?= Yii::t('app', 'Alias') ?></b>",
+                "<b><?= Yii::t('app', 'Type') ?></b>",
+                "<b><?= Yii::t('app', 'Brand') ?></b>",
+                "<b><?= Yii::t('app', 'Serial Number') ?></b>",
+                "<b><?= Yii::t('app', 'Date Of Purchase') ?></b>",
+                "<b><?= Yii::t('app', 'In Service Date') ?></b>",
+                "<b><?= Yii::t('app', 'Date Of Last Calibration') ?></b>",
+                "<b><?= Yii::t('app', 'Person In Charge') ?></b>" 
             ],
             manualRowMove: true,
             manualColumnMove: true,
