@@ -21,6 +21,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     
+    <p>
+        <?php 
+            if (Yii::$app->session['isAdmin'] || $this->params['canUpdate']) {
+                echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItem' => $model->uri], ['class' => $model->documents->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
+            }
+          ?>
+    </p>
+    
+    
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
