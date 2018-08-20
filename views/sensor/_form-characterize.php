@@ -70,11 +70,14 @@ use kartik\select2\Select2;
            data: 'uri=' + encodeURIComponent($('#uri').val()),
            datatype: 'json'
         }).done(function(data) {
-            rdfType = JSON.parse(data).split("#")[1];
+            rdfType = JSON.parse(data);
             //All subtypes of cameras
-            if (rdfType === "Camera" || rdfType === "HemisphericalCamera"
-                 || rdfType === "HyperspectralCamera" || rdfType === "MultispectralCamera"
-                 || rdfType === "RGBCamera" || rdfType === "TIRCamera") {
+            if (rdfType === "<?= Yii::$app->params["Camera"] ?>"
+                 || rdfType ==="<?= Yii::$app->params["HemisphericalCamera"] ?>"
+                 || rdfType === "<?= Yii::$app->params["HyperspectralCamera"] ?>"
+                 || rdfType === "<?= Yii::$app->params["MultispectralCamera"] ?>"
+                 || rdfType === "<?= Yii::$app->params["RGBCamera"] ?>"
+                 || rdfType === "<?= Yii::$app->params["TIRCamera"] ?>") {
                 $('#camera').show();
                 $('#characterizeButton').show();
                 $("#lidar").hide();
@@ -82,26 +85,27 @@ use kartik\select2\Select2;
                 $('#noCharacterization').hide();
                 
                 //Multispectral cameras
-                if (rdfType === "MultispectralCamera") {
+                if (rdfType === "<?= Yii::$app->params["MultispectralCamera"] ?>") {
                     $('#wavelengthMS').show();
                     $('#lens').hide();
                 }
                 //RGB and TIR Cameras
-                if (rdfType === "RGBCamera" || rdfType === "TIRCamera") {
+                if (rdfType === "<?= Yii::$app->params["RGBCamera"] ?>" 
+                        || rdfType === "<?= Yii::$app->params["TIRCamera"] ?>") {
                     $('#lens').show();
                 }
                 //TIR Cameras
-                if (rdfType === "TIRCamera") {
+                if (rdfType === "<?= Yii::$app->params["TIRCamera"] ?>") {
                     $('#waveband').show();
                 }
-            } else if (rdfType === "LiDAR") { //LiDAR
+            } else if (rdfType === "<?= Yii::$app->params["LiDAR"] ?>") { //LiDAR
                 $("#lidar").show();
                 $('#characterizeButton').show();
                 $('#spectrometer').hide();
                 $('#noCharacterization').hide();
                 $('#wavelengthMS').hide();
                 $('#lens').hide();
-            } else if (rdfType === "Spectrometer") { //Spectrometer
+            } else if (rdfType === "<?= Yii::$app->params["Spectrometer"] ?>") { //Spectrometer
                 $("#lidar").hide();
                 $('#characterizeButton').show();
                 $('#spectrometer').show();
@@ -235,40 +239,43 @@ use kartik\select2\Select2;
     function validateRequiredFields() {        
         // Validate required fields
         var validation = true;
-        if (rdfType === "Camera" || rdfType === "HemisphericalCamera"
-                 || rdfType === "HyperspectralCamera" || rdfType === "MultispectralCamera"
-                 || rdfType === "RGBCamera" || rdfType === "TIRCamera") {
+        if (rdfType === "<?= Yii::$app->params["Camera"] ?>"  
+                || rdfType === "<?= Yii::$app->params["HemisphericalCamera"] ?>"
+                || rdfType === "<?= Yii::$app->params["HyperspectralCamera"] ?>"
+                || rdfType === "<?= Yii::$app->params["MultispectralCamera"] ?>"
+                || rdfType === "<?= Yii::$app->params["RGBCamera"] ?>"
+                || rdfType === "<?= Yii::$app->params["TIRCamera"] ?>") {
             if (!validateCamera()) {
                 validation = false;
             }
 
-            if (rdfType === "MultispectralCamera") {
+            if (rdfType === "<?= Yii::$app->params["MultispectralCamera"] ?>") {
                 if (!validateMultispectralCamera()) {
                     validation = false;
                 }
             } 
-            if (rdfType === "RGBCamera") {
+            if (rdfType === "<?= Yii::$app->params["RGBCamera"] ?>") {
                 if (!validateTIRorRGBCamera() || !validateLens()) {
                     validation = false;
                 }
             }
-            if (rdfType === "TIRCamera") {
+            if (rdfType === "<?= Yii::$app->params["TIRCamera"] ?>") {
                 if (!validateTIRCamera()) {
                     validation = false;
                 }
             }
-        } else if (rdfType === "LiDAR") {
+        } else if (rdfType === "<?= Yii::$app->params["LiDAR"] ?>") {
             if (!validateLiDAR()) {
                 validation = false;
             }
-        } else if (rdfType === "Spectrometer") {
+        } else if (rdfType === "<?= Yii::$app->params["Spectrometer"] ?>") {
             if (!validateSpectrometer()) {
                 validation = false;
             }
         }
         
         if (!validation) {
-            alert("Some required fields are missings");
+            alert("<?= Yii::t('app/messages', 'Some required fields are missings') ?>");
         }
         
         return validation;
@@ -329,7 +336,7 @@ use kartik\select2\Select2;
             </tr>
             <tbody>
                 <tr>
-                  <th scope="row"><?= Yii::t('app', 'Wavelength <font color="red">*</font>') ?> (nm)</th>
+                  <th scope="row"><?= Yii::t('app', 'Wavelength') ?> (nm) <font color="red">*</font></th>
                   <td><?= Html::textInput('wavelength1', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('wavelength2', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('wavelength3', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
@@ -338,7 +345,7 @@ use kartik\select2\Select2;
                   <td><?= Html::textInput('wavelength6', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                 </tr>
                 <tr>
-                  <th scope="row"><?= Yii::t('app', 'Focal Length <font color="red">*</font>') ?> (nm)</th>
+                  <th scope="row"><?= Yii::t('app', 'Focal Length') ?> (nm) <font color="red">*</font></th>
                   <td><?= Html::textInput('focalLength1', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('focalLength2', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('focalLength3', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
@@ -347,7 +354,7 @@ use kartik\select2\Select2;
                   <td><?= Html::textInput('focalLength6', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                 </tr>
                 <tr>
-                  <th scope="row"><?= Yii::t('app', 'Attenuator Filter <font color="red">*</font>') ?></th>
+                  <th scope="row"><?= Yii::t('app', 'Attenuator Filter') ?> <font color="red">*</font></th>
                   <td><?= Html::textInput('attenuatorFilter1', null, ['class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('attenuatorFilter2', null, ['class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('attenuatorFilter3', null, ['class' => 'form-control']); ?></td>
@@ -367,7 +374,7 @@ use kartik\select2\Select2;
     
     <div id="lens" style="display:none">
        
-        <h3><?= Yii::t('app', 'Lens <font color="red">*</font>') ?></h3>
+        <h3><?= Yii::t('app', 'Lens') ?> <font color="red">*</font></h3>
         <hr>
         
         <?= Html::label(Yii::t('app', 'Label') . ' <font color="red">*</font>', 'lensLabel') ?>
@@ -393,7 +400,7 @@ use kartik\select2\Select2;
         <?= DatePicker::widget([
             'name' => 'lensInServiceDate',
             'options' => [
-                'placeholder' => 'Enter in service date', 
+                'placeholder' => Yii::t('app/messages','Enter in service date'), 
                 'id' => 'lensInServiceDate'],            
             'pluginOptions' => [
                 'autoclose' => true,
@@ -440,7 +447,7 @@ use kartik\select2\Select2;
     </div>
     
     <div id="noCharacterization" style="display:none">
-        <p>The selected sensor cannot be characterized. Please select another sensor among cameras (all camera types : RGB, multispectral, etc.), spectrometers and LiDAR.</p>
+        <p> <?= Yii::t('app/messages', 'The selected sensor cannot be characterized. Please select another sensor among cameras (all camera types : RGB, multispectral, etc.), spectrometers and LiDAR.') ?></p>
     </div>
     
     <br/>
