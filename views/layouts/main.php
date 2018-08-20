@@ -58,6 +58,10 @@ AppAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
+                                'label' => '<span class="glyphicon glyphicon-home" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
+                                'url' => ['/infrastructure/view', 'uri' => "http://www.phenome-fppn.fr/diaphen"],
+                            ],
+                            [
                                 'label' => '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
                                 'url' => ['/project/index'],
                             ],
@@ -122,6 +126,10 @@ AppAsset::register($this);
     } else { // Cas d'un utilisateur simple connecté
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
+                            [
+                                'label' => '<span class="glyphicon glyphicon-home" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
+                                'url' => ['/infrastructure/view', 'uri' => "http://www.phenome-fppn.fr/diaphen"],
+                            ],
                             [
                                 'label' => '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
                                 'url' => ['/project/index'],
@@ -227,7 +235,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; INRA MISTEA 2014-2018 (SILEX-PHIS v.2.3 - 04 May 2018)</p>
+        <p class="pull-left">&copy; INRA MISTEA 2014-2018 (SILEX-PHIS v.2.4 - 01 August 2018)</p>
     </div> 
 </footer> 
 
