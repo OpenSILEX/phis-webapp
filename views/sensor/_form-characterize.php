@@ -312,6 +312,7 @@ use kartik\select2\Select2;
     
     
     <div class="characterize-attributes" id="camera" style="display:none">
+
         <?= Html::label(Yii::t('app', 'Height') . ' (pixels) <font color="red">*</font>', 'height') ?>
         <?= Html::textInput('height', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
@@ -433,6 +434,7 @@ use kartik\select2\Select2;
     </div>
     
     <div id="spectrometer" style="display:none">
+
         <?= Html::label(Yii::t('app', 'Half Field Of View') . ' (°)  <font color="red">*</font>', 'halfFieldOfView') ?>
         <?= Html::textInput('halfFieldOfView', null, ['type' => 'number', 'class' => 'form-control']); ?>
         

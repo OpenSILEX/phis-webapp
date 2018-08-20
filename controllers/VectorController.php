@@ -20,11 +20,13 @@ use yii\filters\VerbFilter;
 
 use app\models\yiiModels\YiiVectorModel;
 use app\models\yiiModels\UserSearch;
+use app\models\yiiModels\DocumentSearch;
 
 /**
  * CRUD actions for vector model
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiVectorModel
+ * @update [Morgane Vidal] 10 August, 2018 : add link documents to vectors
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class VectorController extends Controller {
@@ -229,11 +231,17 @@ class VectorController extends Controller {
     public function actionView($id) {
         $res = $this->findModel($id);
         
+        //get vector's linked documents
+        $searchDocumentModel = new DocumentSearch();
+        $searchDocumentModel->concernedItem = $id;
+        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+        
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
             return $this->render('view', [
                 'model' => $res,
+                'dataDocumentsProvider' => $documents,
             ]);
         }
         
