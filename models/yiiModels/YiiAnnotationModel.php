@@ -93,7 +93,7 @@ class YiiAnnotationModel extends WSActiveRecord {
 
     public function __construct($pageSize = null, $page = null) {
         $date = new \DateTime();
-        $this->creationDate = $date->format('Y-m-d H:i:sP');
+        $this->creationDate = $date->format(\DateTime::ATOM);
         $this->wsModel = new WSAnnotationModel();
         $this->pageSize = ($pageSize !== null || $pageSize === "") ? $pageSize : null;
         $this->page = ($page !== null || $pageSize === "") ? $page : null;

@@ -20,6 +20,7 @@ use app\models\yiiModels\YiiAnnotationModel;
 use app\models\wsModels\WSUriModel;
 use app\models\yiiModels\YiiUserModel;
 use app\components\helpers\Vocabulary;
+use app\controllers\UserController;
 
 require_once '../config/config.php';
 
@@ -90,7 +91,11 @@ class AnnotationController extends Controller {
         // initialize annotation search model
         $searchModel = new \app\models\yiiModels\AnnotationSearch();
         $searchResult = $searchModel->search(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], Yii::$app->request->queryParams);
-        // load motivation instances list
+        
+        // load user instances list
+        $userInstances = UserController::getUsersUriNameInstances();
+       
+        // load once motivation instances list
         $motivationInstances = $this->getMotivationInstances();
         if (is_string($searchResult)) {
             return $this->render('/site/error', [
@@ -102,7 +107,8 @@ class AnnotationController extends Controller {
             return $this->render('index', [
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
-                        AnnotationController::MOTIVATION_INSTANCES => $motivationInstances
+                        AnnotationController::MOTIVATION_INSTANCES => $motivationInstances,
+                        'userInstances' => $userInstances
             ]);
         }
     }

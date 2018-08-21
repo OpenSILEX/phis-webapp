@@ -56,14 +56,19 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => YiiAnnotationModel::COMMENTS,
                 'format' => 'html',
                 'value' => function ($model) {
-                    return implode((', '), $model->comments);
+                     if($model->comments != null){
+                         return implode((', '), $model->comments);
+                     }
+                     return "";
                 }
             ],
             YiiAnnotationModel::TARGETS => [
                 'attribute' => YiiAnnotationModel::TARGETS,
                 'format' => 'html',
                 'value' => function ($model) {
-                    return implode((', '), $model->targets);
+                    // Format targets uri
+                    $targets = array_map("app\components\helpers\Vocabulary::prettyUri", $model->targets);
+                    return implode((', '), $targets);
                 }
             ],
         ]

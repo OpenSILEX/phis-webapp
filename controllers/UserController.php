@@ -221,4 +221,30 @@ class UserController extends Controller {
             }
         }
     }
+    
+    /**
+     * Return user instances list.
+     * Format [user uri => user name]
+     * e.g. ["http://www.phenome-fppn.fr/platform/agent/marie-emilie-jolie_dupont-prad" => "Marie-émilie jolie  Dupont-Prad"]
+     * @return array users instances list
+     */
+    public static function getUsersUriNameInstances() {
+        $searchUserModel = new UserSearch();
+        $requestRes = $searchUserModel->find(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], ["pageSize" => 10000]);
+        
+        if ($requestRes !== null) {
+            if (!is_string($requestRes)) {
+                foreach ($requestRes as $user) {
+                    $userInstances[$user->uri] = $user->firstName . " " . $user->familyName;
+                }
+                return $userInstances;
+            } else {
+                if ($requestRes === \app\models\wsModels\WSConstants::TOKEN) { //L'utilisateur doit se connecter
+                    return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+                }
+                return $requestRes;
+            }
+        } 
+        return $requestRes;
+    }
 }

@@ -19,6 +19,7 @@ use app\controllers\AnnotationController;
 use kartik\select2\Select2;
 use app\components\helpers\Vocabulary;
 use yii\bootstrap\BaseHtml;
+use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AnnotationSearch */
@@ -44,7 +45,23 @@ $this->params['breadcrumbs'][] = $this->title;
                     return implode(('<br>,'), $model->comments);
                 }
             ],
-            YiiAnnotationModel::CREATOR,
+            YiiAnnotationModel::CREATOR =>
+                [
+                'attribute' => YiiAnnotationModel::CREATOR,
+                'value' => function($model) {
+                    return Vocabulary::prettyUri($model->creator);
+                },
+                'filter' => Select2::widget([
+                    'attribute' => YiiAnnotationModel::CREATOR,
+                    'model' => $searchModel,
+                    'name' => 'users_instances_filter',
+                    'data' => $userInstances,
+                    'options' => ['multiple' => false, 'placeholder' => 'Creator of the annotation'],
+                    'pluginOptions' => [
+                        'allowClear' => true,
+                    ],
+                ])   
+                ],
             YiiAnnotationModel::MOTIVATED_BY => [
                 'attribute' => YiiAnnotationModel::MOTIVATED_BY,
                 'value' => function($model) {
@@ -55,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'model' => $searchModel,
                     'name' => 'motivation_instances_filter',
                     'data' => ${AnnotationController::MOTIVATION_INSTANCES},
-                    'options' => ['multiple' => false, 'placeholder' => 'Select motivation'],
+                    'options' => ['multiple' => false, 'placeholder' => 'Motivation of the annotation'],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
