@@ -12,6 +12,17 @@ return [
     'Plot' => 'http://www.phenome-fppn.fr/vocabulary/2017#Plot',
     'Species' => 'http://www.phenome-fppn.fr/vocabulary/2017#Species',
     'Variety' => 'http://www.phenome-fppn.fr/vocabulary/2017#Variety',
+    'Experiment' => "http://www.phenome-fppn.fr/vocabulary/2017#Experiment",
+    'Project' => "http://www.phenome-fppn.fr/vocabulary/2017#Project",
+    'Camera' => "http://www.phenome-fppn.fr/vocabulary/2017#Camera",
+    'HemisphericalCamera' => "http://www.phenome-fppn.fr/vocabulary/2017#HemisphericalCamera",
+    'HyperspectralCamera' => "http://www.phenome-fppn.fr/vocabulary/2017#HyperspectralCamera",
+    'MultispectralCamera' => "http://www.phenome-fppn.fr/vocabulary/2017#MultispectralCamera",
+    'RGBCamera' => "http://www.phenome-fppn.fr/vocabulary/2017#RGBCamera",
+    'TIRCamera' => "http://www.phenome-fppn.fr/vocabulary/2017#TIRCamera",
+    'LiDAR' => "http://www.phenome-fppn.fr/vocabulary/2017#LiDAR",
+    'Spectrometer' => "http://www.phenome-fppn.fr/vocabulary/2017#Spectrometer",
+    'Installation' => "http://www.phenome-fppn.fr/vocabulary/2017#Installation",
     
     //-------- Relations
     'aperture' => 'http://www.phenome-fppn.fr/vocabulary/2017#aperture',
@@ -41,6 +52,7 @@ return [
     'spotHeight' => 'http://www.phenome-fppn.fr/vocabulary/2017#spotHeight',
     'spotWidth' => 'http://www.phenome-fppn.fr/vocabulary/2017#spotWidth',
     'type' => 'rdf:type',
+    'waveband' => 'http://www.phenome-fppn.fr/vocabulary/2017#waveband',
     'wavelength' => 'http://www.phenome-fppn.fr/vocabulary/2017#wavelength',
     'width' => 'http://www.phenome-fppn.fr/vocabulary/2017#width'
 ];

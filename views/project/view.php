@@ -30,18 +30,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItem' => $model->uri], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
-        <!--add annotation button-->
         <?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
-        <?php
-        //Html::a('Delete', ['delete', 'id' => $model->uri], [
-//            'class' => 'btn btn-danger',
-//            'data' => [
-//                'confirm' => 'Are you sure you want to delete this item?',
-//                'method' => 'post',
-//            ],
-//        ]) 
-        ?>
+        <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->acronyme, 'concernRdfType' => Yii::$app->params["Project"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
     </p>
 
     <?=

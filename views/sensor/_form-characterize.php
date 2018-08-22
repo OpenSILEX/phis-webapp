@@ -25,27 +25,27 @@ use kartik\select2\Select2;
 /* @var $users array */
 ?>
 <script>
+    var rdfType = null;
     /**
-     * get the rdfType of the input rdfType and update the uri list with the 
-     * list of the sensor's uris corresponding to the rdfType
-     * @returns {undefined}
+     * Get the rdfType of the input rdfType and update the uri list with the 
+     * list of the sensor's uris corresponding to the rdfType.
      */
     function updateSensorsUris() {
-        //1. get the rdfType
-        var rdfType = $('#rdfType').val();
+        //1. Get the rdfType
+        var rdfTypeSensor = $('#rdfType').val();
         
-        //2. get the sensors
+        //2. Get the sensors
         $.ajax({
            url: '<?= Url::to(['sensor/get-sensors-uri-by-rdf-type']) ?>',
            type: 'GET',
-           data: 'rdfType=' + escape(rdfType),
+           data: 'rdfType=' + escape(rdfTypeSensor),
            datatype: 'json'
         }).done(function(data) {
             sensors = JSON.parse(data);
             
             var options = "<option value=\"\"></option>";
             
-            //3. update the list
+            //3. Update the list
             if (sensors !== null) {
                 for (i = 0; i < sensors.length; i++) {
                     options += "<option value=\"" + sensors[i].uri + "\">" + sensors[i].label + "</option>";
@@ -57,69 +57,232 @@ use kartik\select2\Select2;
     }
     
     /**
-     * show the characterization form for the sensor. 
+     * Show the characterization form for the sensor. 
      * The form showed depends on the sensor rdfType.
-     * The form's labels are updated by querying the web service
-     * @returns {undefined}     
+     * The form's labels are updated by querying the web service.  
      */
     function showForm() {
-        //1. hide all the forms
-        $('.characterize-attributes').hide();
-        //1. show the right form
-        //SILEX:warning 
-        //for the first test, I use the rdfType of the form. In the next step 
-        //I'll have to get the rdfType from the webservice
-        //\SILEX:warning
-        var rdfType = $('#rdfType').val().split("#")[1];
-        
-        //1.1 get the rdfType of the uri
+        //1. Show the right form        
+        //1.1 Get the rdfType of the uri
         $.ajax({
-           url: '<?= Url::to(['sensor/get-sensors-uri-by-rdf-type']) ?>',
+           url: '<?= Url::to(['sensor/get-sensors-type-by-uri']) ?>',
            type: 'GET',
-           data: 'uri=' + $('#uri').val(),
+           data: 'uri=' + encodeURIComponent($('#uri').val()),
            datatype: 'json'
         }).done(function(data) {
-            
-            //1.2 update the rdfType field and show the right form
             rdfType = JSON.parse(data);
-            
-            var options = "<option value=\"\"></option>";
-            
-            //3. update the list
-            if (sensors !== null) {
-                for (i = 0; i < sensors.length; i++) {
-                    options += "<option value=\"" + sensors[i].uri + "\">" + sensors[i].label + "</option>";
+            //All subtypes of cameras
+            if (rdfType === "<?= Yii::$app->params["Camera"] ?>"
+                 || rdfType ==="<?= Yii::$app->params["HemisphericalCamera"] ?>"
+                 || rdfType === "<?= Yii::$app->params["HyperspectralCamera"] ?>"
+                 || rdfType === "<?= Yii::$app->params["MultispectralCamera"] ?>"
+                 || rdfType === "<?= Yii::$app->params["RGBCamera"] ?>"
+                 || rdfType === "<?= Yii::$app->params["TIRCamera"] ?>") {
+                $('#camera').show();
+                $('#characterizeButton').show();
+                $("#lidar").hide();
+                $('#spectrometer').hide();
+                $('#noCharacterization').hide();
+                
+                //Multispectral cameras
+                if (rdfType === "<?= Yii::$app->params["MultispectralCamera"] ?>") {
+                    $('#wavelengthMS').show();
+                    $('#lens').hide();
+                }
+                //RGB and TIR Cameras
+                if (rdfType === "<?= Yii::$app->params["RGBCamera"] ?>" 
+                        || rdfType === "<?= Yii::$app->params["TIRCamera"] ?>") {
+                    $('#lens').show();
+                }
+                //TIR Cameras
+                if (rdfType === "<?= Yii::$app->params["TIRCamera"] ?>") {
+                    $('#waveband').show();
+                }
+            } else if (rdfType === "<?= Yii::$app->params["LiDAR"] ?>") { //LiDAR
+                $("#lidar").show();
+                $('#characterizeButton').show();
+                $('#spectrometer').hide();
+                $('#noCharacterization').hide();
+                $('#wavelengthMS').hide();
+                $('#lens').hide();
+            } else if (rdfType === "<?= Yii::$app->params["Spectrometer"] ?>") { //Spectrometer
+                $("#lidar").hide();
+                $('#characterizeButton').show();
+                $('#spectrometer').show();
+                $('#noCharacterization').hide();
+                $('#wavelengthMS').hide();
+                $('#lens').hide();
+            } else { //Sensor which doesn't need to be characterized
+                $('#noCharacterization').show();
+                $('#characterizeButton').hide();
+            }
+        });
+    }
+    
+    /**
+     * Validates that the required fields for a camera sensor are filled.
+     * List of the required params : height, width, pixelSize
+     * @returns {Boolean} true if the required field are filled
+     *                    false if required fields are missing
+     */
+    function validateCamera() {
+       return ($('#height').val() === null || $('#height').val() === "")
+            && ($('#width').val() === null || $('#width').val() === "")
+            && ($('#pixelSize').val() === null || $('#pixelSize').val() === "");
+    }
+    
+    /**
+     * Validates that the required fields for a multispectral camera sensor are filled.
+     * List of the required params : wavelength, focalLength, attenuatorFilter x6
+     * @returns {Boolean} true if the required field are filled
+     *                    false if required fields are missing    
+     */
+    function validateMultispectralCamera() {
+        //1. Check wavelenght
+        if (($('#wavelength1').val() === null || $('#wavelength1').val() === "")
+                || ($('#wavelength2').val() === null || $('#wavelength2').val() === "")
+                || ($('#wavelength3').val() === null || $('#wavelength3').val() === "")
+                || ($('#wavelength4').val() === null || $('#wavelength4').val() === "")
+                || ($('#wavelength5').val() === null || $('#wavelength5').val() === "")
+                || ($('#wavelength6').val() === null || $('#wavelength6').val() === "")) {
+            return false;
+        }
+        
+        //2. Check focalLength
+        if (($('#focalLength1').val() === null || $('#focalLength1').val() === "")
+                || ($('#focalLength2').val() === null || $('#focalLength2').val() === "")
+                || ($('#focalLength3').val() === null || $('#focalLength3').val() === "")
+                || ($('#focalLength4').val() === null || $('#focalLength4').val() === "")
+                || ($('#focalLength5').val() === null || $('#focalLength5').val() === "")
+                || ($('#focalLength6').val() === null || $('#focalLength6').val() === "")) {
+            return false;
+        }
+        
+        //3. Check attenuatorFilter
+        if (($('#attenuatorFilter1').val() === null || $('#attenuatorFilter1').val() === "")
+                || ($('#attenuatorFilter2').val() === null || $('#attenuatorFilter2').val() === "")
+                || ($('#attenuatorFilter3').val() === null || $('#attenuatorFilter3').val() === "")
+                || ($('#attenuatorFilter4').val() === null || $('#attenuatorFilter4').val() === "")
+                || ($('#attenuatorFilter5').val() === null || $('#attenuatorFilter5').val() === "")
+                || ($('#attenuatorFilter6').val() === null || $('#attenuatorFilter6').val() === "")) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Validates that the required fields for a lens are filled.
+     * List of the required params : lensLabel, lensBrand, lensPersonInCharge,
+     *                               lensInServiceDate, lensFocalLength, lensAperture
+     * @returns {Boolean} true if the required field are filled
+     *                    false if required fields are missing
+     */
+    function validateLens() {
+        if (($('#lensLabel').val() === null || $('#lensLabel').val() === "")
+                || ($('#lensBrand').val() === null || $('#lensBrand').val() === "")
+                || ($('#lensPersonInCharge').val() === null || $('#lensPersonInCharge').val() === "")
+                || ($('#lensInServiceDate').val() === null || $('#lensInServiceDate').val() === "")
+                || ($('#lensFocalLength').val() === null || $('#lensFocalLength').val() === "")
+                || ($('#lensAperture').val() === null || $('#lensAperture').val() === "")) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Validates that the required fields for a TIR Camera are filled.
+     * List of the required params : waveband
+     * @returns {Boolean} true if the required field are filled
+     *                    false if required fields are missing   
+     */
+    function validateTIRCamera() {
+        return ($('#waveband').val() !== null || $('#waveband').val() !== "");
+    }
+    
+    /**
+     * Validates that the required fields for a LiDAR are filled.
+     * List of the required params : wavelength, scanningAngularRange
+     * @returns {Boolean} true if the required field are filled
+     *                    false if required fields are missing   
+     */
+    function validateLiDAR() {        
+        if (($('#wavelength').val() === null || $('#wavelength').val() === "")
+                || ($('#scanningAngularRange').val() === null || $('#scanningAngularRange').val() === "")) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Validates that the required fields for a Spectrometer are filled.
+     * List of the required params : halfFieldOfView, minWavelength, 
+     *                               maxWavelength, spectralSamplingInterval
+     * @returns {Boolean} true if the required field are filled
+     *                    false if required fields are missing   
+     */
+    function validateSpectrometer() {
+        if (($('#halfFieldOfView').val() === null || $('#halfFieldOfView').val() === "")
+                || ($('#minWavelength').val() === null || $('#minWavelength').val() === "")
+                || ($('#maxWavelength').val() === null || $('#maxWavelength').val() === "")
+                || ($('#spectralSamplingInterval').val() === null || $('#spectralSamplingInterval').val() === "")) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Validate that the required fields of the form are filled 
+     * @returns {Boolean} true if the required field are filled
+     *                    false if required fields are missing
+     */
+    function validateRequiredFields() {        
+        // Validate required fields
+        var validation = true;
+        if (rdfType === "<?= Yii::$app->params["Camera"] ?>"  
+                || rdfType === "<?= Yii::$app->params["HemisphericalCamera"] ?>"
+                || rdfType === "<?= Yii::$app->params["HyperspectralCamera"] ?>"
+                || rdfType === "<?= Yii::$app->params["MultispectralCamera"] ?>"
+                || rdfType === "<?= Yii::$app->params["RGBCamera"] ?>"
+                || rdfType === "<?= Yii::$app->params["TIRCamera"] ?>") {
+            if (!validateCamera()) {
+                validation = false;
+            }
+
+            if (rdfType === "<?= Yii::$app->params["MultispectralCamera"] ?>") {
+                if (!validateMultispectralCamera()) {
+                    validation = false;
+                }
+            } 
+            if (rdfType === "<?= Yii::$app->params["RGBCamera"] ?>") {
+                if (!validateTIRorRGBCamera() || !validateLens()) {
+                    validation = false;
                 }
             }
-            
-            $("#uri").html(options);
-        });
-        
-        if (rdfType === "Camera" || rdfType === "HemisphericalCamera"
-                 || rdfType === "HyperspectralCamera" || rdfType === "MultispectralCamera"
-                 || rdfType === "RGBCamera" || rdfType === "TIRCamera") {
-            $('#camera').show();
+            if (rdfType === "<?= Yii::$app->params["TIRCamera"] ?>") {
+                if (!validateTIRCamera()) {
+                    validation = false;
+                }
+            }
+        } else if (rdfType === "<?= Yii::$app->params["LiDAR"] ?>") {
+            if (!validateLiDAR()) {
+                validation = false;
+            }
+        } else if (rdfType === "<?= Yii::$app->params["Spectrometer"] ?>") {
+            if (!validateSpectrometer()) {
+                validation = false;
+            }
         }
         
-        if (rdfType === "MultispectralCamera") {
-            $('#wavelength').show();
+        if (!validation) {
+            alert("<?= Yii::t('app/messages', 'Some required fields are missings') ?>");
         }
         
-        if (rdfType === "RGBCamera" || rdfType === "TIRCamera") {
-            $('#lens').show();
-        }
-        
-        if (rdfType === "LiDAR") {
-            $("#lidar").show();
-        }
-        
-        if (rdfType === "Spectrometer") {
-            $('#spectrometer').show();
-        }
+        return validation;
     }
 </script>
 
-<div class="characterize-form">
+<div class="characterize-form" onSubmit="return validateRequiredFields();">
     <?php $form = ActiveForm::begin(); ?>
     <?= $form->field($model, 'rdfType')->widget(Select2::classname(), [
                     'data' =>$sensorsTypes,
@@ -149,17 +312,18 @@ use kartik\select2\Select2;
     
     
     <div class="characterize-attributes" id="camera" style="display:none">
-        <?= Html::label(Yii::t('app', 'Height') . '(pixels)', 'height') ?>
+
+        <?= Html::label(Yii::t('app', 'Height') . ' (pixels) <font color="red">*</font>', 'height') ?>
         <?= Html::textInput('height', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Width') . '(pixels)', 'width') ?>
+        <?= Html::label(Yii::t('app', 'Width') . ' (pixels) <font color="red">*</font>', 'width') ?>
         <?= Html::textInput('width', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Pixel Size') . '(µm)', 'pixelSize') ?>
+        <?= Html::label(Yii::t('app', 'Pixel Size') . ' (µm) <font color="red">*</font>', 'pixelSize') ?>
         <?= Html::textInput('pixelSize', null, ['type' => 'number', 'class' => 'form-control']); ?>
     </div>
     
-    <div id="wavelength" style="display:none">
+    <div id="wavelengthMS" style="display:none">
         <table class="table table-hover">
             <thead>
             <tr>
@@ -173,7 +337,7 @@ use kartik\select2\Select2;
             </tr>
             <tbody>
                 <tr>
-                  <th scope="row"><?= Yii::t('app', 'Wavelength') ?> (nm)</th>
+                  <th scope="row"><?= Yii::t('app', 'Wavelength') ?> (nm) <font color="red">*</font></th>
                   <td><?= Html::textInput('wavelength1', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('wavelength2', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('wavelength3', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
@@ -182,7 +346,7 @@ use kartik\select2\Select2;
                   <td><?= Html::textInput('wavelength6', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                 </tr>
                 <tr>
-                  <th scope="row"><?= Yii::t('app', 'Focal Length') ?> (nm)</th>
+                  <th scope="row"><?= Yii::t('app', 'Focal Length') ?> (nm) <font color="red">*</font></th>
                   <td><?= Html::textInput('focalLength1', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('focalLength2', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('focalLength3', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
@@ -191,7 +355,7 @@ use kartik\select2\Select2;
                   <td><?= Html::textInput('focalLength6', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                 </tr>
                 <tr>
-                  <th scope="row"><?= Yii::t('app', 'Attenuator Filter') ?></th>
+                  <th scope="row"><?= Yii::t('app', 'Attenuator Filter') ?> <font color="red">*</font></th>
                   <td><?= Html::textInput('attenuatorFilter1', null, ['class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('attenuatorFilter2', null, ['class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('attenuatorFilter3', null, ['class' => 'form-control']); ?></td>
@@ -204,18 +368,23 @@ use kartik\select2\Select2;
         </table>
     </div>
     
+    <div id="waveband" style="display:none">
+        <?= Html::label(Yii::t('app', 'Waveband') . ' (nm) <font color="red">*</font>', 'waveband') ?>
+        <?= Html::textInput('waveband', null, ['type' => 'number', 'class' => 'form-control']); ?>
+    </div>
+    
     <div id="lens" style="display:none">
        
-        <h3><?= Yii::t('app', 'Lens') ?></h3>
+        <h3><?= Yii::t('app', 'Lens') ?> <font color="red">*</font></h3>
         <hr>
         
-        <?= Html::label(Yii::t('app', 'Label'), 'lensLabel') ?>
+        <?= Html::label(Yii::t('app', 'Label') . ' <font color="red">*</font>', 'lensLabel') ?>
         <?= Html::textInput('lensLabel', null, ['class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Brand'), 'lensBrand') ?>
+        <?= Html::label(Yii::t('app', 'Brand') . ' <font color="red">*</font>', 'lensBrand') ?>
         <?= Html::textInput('lensBrand', null, ['class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Person In Charge'), 'lensPersonInCharge') ?>
+        <?= Html::label(Yii::t('app', 'Person In Charge') . ' <font color="red">*</font>', 'lensPersonInCharge') ?>
         <?= Select2::widget([
             'name' => 'lensPersonInCharge',
             'data' => $users,
@@ -228,11 +397,11 @@ use kartik\select2\Select2;
             ],
         ]); ?>
         
-        <?= Html::label(Yii::t('app', 'In Service Date'), 'lensInServiceDate') ?>
+        <?= Html::label(Yii::t('app', 'In Service Date') . ' <font color="red">*</font>', 'lensInServiceDate') ?>
         <?= DatePicker::widget([
             'name' => 'lensInServiceDate',
             'options' => [
-                'placeholder' => 'Enter in service date', 
+                'placeholder' => Yii::t('app/messages','Enter in service date'), 
                 'id' => 'lensInServiceDate'],            
             'pluginOptions' => [
                 'autoclose' => true,
@@ -240,45 +409,51 @@ use kartik\select2\Select2;
             ]
         ]); ?>
         
-        <?= Html::label(Yii::t('app', 'Focal Length') . '(mm)', 'lensFocalLength') ?>
+        <?= Html::label(Yii::t('app', 'Focal Length') . ' (mm)  <font color="red">*</font>', 'lensFocalLength') ?>
         <?= Html::textInput('lensFocalLength', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Aperture') . '(fnumber)', 'lensAperture') ?>
+        <?= Html::label(Yii::t('app', 'Aperture') . ' (fnumber)  <font color="red">*</font>', 'lensAperture') ?>
         <?= Html::textInput('lensAperture', null, ['type' => 'number', 'class' => 'form-control']); ?>
     </div>
     
     <div id="lidar" style="display:none">
-        <?= Html::label(Yii::t('app', 'Wavelength') . '(nm)', 'wavelength') ?>
+        <?= Html::label(Yii::t('app', 'Wavelength') . ' (nm)  <font color="red">*</font>', 'wavelength') ?>
         <?= Html::textInput('wavelength', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Scanning Angular Range') . '(°)', 'scanningAngularRange') ?>
+        <?= Html::label(Yii::t('app', 'Scanning Angular Range') . ' (°)  <font color="red">*</font>', 'scanningAngularRange') ?>
         <?= Html::textInput('scanningAngularRange', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Scan Angular Resolution') . '(°)', 'scanAngularResolution') ?>
+        <?= Html::label(Yii::t('app', 'Scan Angular Resolution') . ' (°)', 'scanAngularResolution') ?>
         <?= Html::textInput('scanAngularResolution', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Spot width') . '(°)', 'spotWidth') ?>
+        <?= Html::label(Yii::t('app', 'Spot width') . ' (°)', 'spotWidth') ?>
         <?= Html::textInput('spotWidth', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Spot height') . '(°)', 'spotHeight') ?>
+        <?= Html::label(Yii::t('app', 'Spot height') . ' (°)', 'spotHeight') ?>
         <?= Html::textInput('spotHeight', null, ['type' => 'number', 'class' => 'form-control']); ?>
     </div>
     
     <div id="spectrometer" style="display:none">
-        <?= Html::label(Yii::t('app', 'Half Field Of View') . '(°)', 'halfFieldOfView') ?>
+
+        <?= Html::label(Yii::t('app', 'Half Field Of View') . ' (°)  <font color="red">*</font>', 'halfFieldOfView') ?>
         <?= Html::textInput('halfFieldOfView', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Minimum Wavelength') . '(°)', 'minWavelength') ?>
+        <?= Html::label(Yii::t('app', 'Minimum Wavelength') . ' (nm)  <font color="red">*</font>', 'minWavelength') ?>
         <?= Html::textInput('minWavelength', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Maximum Wavelength') . '(°)', 'maxWavelength') ?>
+        <?= Html::label(Yii::t('app', 'Maximum Wavelength') . ' (nm)  <font color="red">*</font>', 'maxWavelength') ?>
         <?= Html::textInput('maxWavelength', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
-        <?= Html::label(Yii::t('app', 'Spectral Sampling Interval'), 'spectralSamplingInterval') ?>
+        <?= Html::label(Yii::t('app', 'Spectral Sampling Interval') . ' <font color="red">*</font>', 'spectralSamplingInterval') ?>
         <?= Html::textInput('spectralSamplingInterval', null, ['class' => 'form-control']); ?>
     </div>
+    
+    <div id="noCharacterization" style="display:none">
+        <p> <?= Yii::t('app/messages', 'The selected sensor cannot be characterized. Please select another sensor among cameras (all camera types : RGB, multispectral, etc.), spectrometers and LiDAR.') ?></p>
+    </div>
+    
     <br/>
-    <div class="form-group">
+    <div class="form-group" id="characterizeButton">
         <?= Html::submitButton(Yii::t('yii', 'Characterize Sensor'), ['class' => 'btn btn-success']) ?>
     </div>
     

@@ -17,8 +17,8 @@ namespace app\components\widgets;
 use yii\base\Widget;
 use yii\helpers\Html;
 use Yii;
-use rmrevin\yii\fontawesome\FAS;
 use app\models\yiiModels\YiiAnnotationModel;
+use kartik\icons\Icon;
 
 /**
  *  A widget used to generate a customizable annotation interface button
@@ -54,11 +54,13 @@ class AnnotationWidget extends Widget {
      * @return string the string rendered
      */
     public function run() {
+        //To use the fontawesome glyphicons on the page
+        Icon::map($this, Icon::FA);
         //SILEX:conception
         // Maybe create a bar widget and put buttons in it
         //\SILEX:conception
         return Html::a(
-                        FAS::icon('comment') . ' ' . Yii::t('app', 'Add annotation'), [
+                        Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Add annotation'), [
                     'annotation/create',
                     YiiAnnotationModel::TARGETS => $this->targets,
                         ], [
