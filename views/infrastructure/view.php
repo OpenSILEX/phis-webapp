@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <p>
         <?php 
-            if (Yii::$app->session['isAdmin'] || $this->params['canUpdate']) {
+            if (Yii::$app->session['isAdmin']) {
                 echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->alias, 'concernRdfType' => Yii::$app->params["Installation"]], ['class' => $model->documents->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
             }
           ?>
