@@ -141,7 +141,7 @@ AppAsset::register($this);
                             'url' => ['/variable/index']
                         ],
                         [
-                            'label' => '<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> ' . Yii::t('app', 'Annotations'),
+                            'label' => FAS::icon('comment') . ' ' . Yii::t('app', 'Annotations'),
                             'url' => ['/annotation/index']
                         ]
                 ]];

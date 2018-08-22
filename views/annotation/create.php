@@ -5,7 +5,7 @@ use app\controllers\AnnotationController;
 
 /**
  * @var yii\web\View $this
- * @var app\models\Annotation $model
+ * @var app\models\yiiModels\YiiAnnotationModel $model
  */
 
 $this->title = Yii::t(

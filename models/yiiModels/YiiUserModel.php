@@ -3,12 +3,12 @@
 //**********************************************************************************************
 //                                       YiiUserModel.php 
 //
-// Author(s): Morgane VIDAL
+// Author(s): Morgane VIDAL, Arnaud Charleroy <arnaud.charleroy>
 // PHIS-SILEX version 1.0
 // Copyright © - INRA - 2017
 // Creation date: April 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  April, 2017
+// Last modification date:  August 22th 2018, Required user family name and fist name 
 // Subject: The Yii model for the users. Used with web services
 //***********************************************************************************************
 
@@ -91,7 +91,7 @@ class YiiUserModel extends WSActiveRecord {
 
     public function rules() {
         return [
-            [['email', 'affiliation', 'available'], 'required'],
+            [['email', 'affiliation', 'available','firstName', 'familyName'], 'required'],
             [['address', 'password', 'phone', 'orcid', 'affiliation', 'uri'], 'string', 'max' => 255],
             ['email', 'email'],
             [['firstName', 'familyName'], 'string', 'max' => 50],
