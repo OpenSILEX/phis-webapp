@@ -41,6 +41,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     
+    Icon::map($this, Icon::FA);
     
     NavBar::begin([
         'brandLabel' => 'PHIS <i> ' . Yii::$app->params['platform'] . '</i>',
@@ -59,11 +60,11 @@ AppAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
-                                'label' => '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
+                                'label' => Icon::show('folder-open', [], Icon::BSG) . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
                                 'url' => ['/project/index'],
                             ],
                             [
-                                'label' => '<span class="glyphicon glyphicon-grain" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]),
+                                'label' => Icon::show('flask', [], Icon::FA) . Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]),
                                 'url' => ['/experiment/index']
                             ],
                             [
@@ -208,7 +209,6 @@ AppAsset::register($this);
     <div class="container">
         
         <div class="pull-right">
-            
             <?php
                 $urlFlag = \config::path()['basePath'] . '/images/icons/flags/';
                 $urlLangage = \config::path()['baseIndexPath'] . '?r=site%2Flanguage&flag=';
