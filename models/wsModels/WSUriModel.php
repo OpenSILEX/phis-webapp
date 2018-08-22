@@ -24,7 +24,7 @@ include_once '../config/web_services.php';
 class WSUriModel extends \openSILEX\guzzleClientPHP\WSModel {
     
     /**
-     * initialize access to the traits service. Calls super constructor
+     * Initialize access to the traits service. Calls super constructor
      */
     public function __construct() {
         parent::__construct(WS_PHIS_PATH, "uri");
@@ -32,9 +32,9 @@ class WSUriModel extends \openSILEX\guzzleClientPHP\WSModel {
     
     /**
      * 
-     * @param String $sessionToken connection user token
-     * @param String $uri uri of the concept whom descendants are wanted
-     * @param Array $params contains the data to send to the get service 
+     * @param String $sessionToken Connection user token
+     * @param String $uri URI of the concept whom descendants are wanted
+     * @param Array $params Contains the data to send to the get service 
      * e.g.
      * [
      *  "page" => "0",
@@ -58,9 +58,9 @@ class WSUriModel extends \openSILEX\guzzleClientPHP\WSModel {
     
     /**
      * 
-     * @param String $sessionToken connection user token
-     * @param String $uri uri of the concept whom siblings are wanted
-     * @param Array $params contains the data to send to the get service 
+     * @param String $sessionToken Connection user token
+     * @param String $uri URI of the concept whom siblings are wanted
+     * @param Array $params Contains the data to send to the get service 
      * e.g.
      * [
      *  "page" => "0",
@@ -82,9 +82,9 @@ class WSUriModel extends \openSILEX\guzzleClientPHP\WSModel {
     
     /**
      * 
-     * @param String $sessionToken connection user token
-     * @param String $uri uri of the concept whom ancestors are wanted
-     * @param Array $params contains the data to send to the get service 
+     * @param String $sessionToken Connection user token
+     * @param String $uri URI of the concept whom ancestors are wanted
+     * @param Array $params Contains the data to send to the get service 
      * e.g.
      * [
      *  "page" => "0",
@@ -106,9 +106,9 @@ class WSUriModel extends \openSILEX\guzzleClientPHP\WSModel {
     
     /**
      * 
-     * @param String $sessionToken connection user token
-     * @param String $uri uri of the concept whom instances are wanted
-     * @param Array $params contains the data to send to the get service 
+     * @param String $sessionToken Connection user token
+     * @param String $uri URI of the concept whom instances are wanted
+     * @param Array $params Contains the data to send to the get service 
      * e.g.
      * [
      *  "page" => "0",
@@ -130,9 +130,9 @@ class WSUriModel extends \openSILEX\guzzleClientPHP\WSModel {
     
     /**
      * 
-     * @param String $sessionToken connection user token
-     * @param String $uri uri of the concept whom type is wanted
-     * @param Array $params contains the data to send to the get service 
+     * @param String $sessionToken Connection user token
+     * @param String $uri URI of the concept whom type is wanted
+     * @param Array $params Contains the data to send to the get service 
      * e.g.
      * [
      *  "page" => "0",
@@ -153,17 +153,40 @@ class WSUriModel extends \openSILEX\guzzleClientPHP\WSModel {
     }
     
     /**
-     * 
-     * @param String $sessionToken connection user token
-     * @param String $uri uri of the concept whom type is wanted
-     * @param Array $params contains the data to send to the get service 
+     * Ask to the web service the rdf type of the given uri
+     * @param String $sessionToken Connection user token
+     * @param String $uri URI of the concept whom type is wanted
+     * @param Array $params Contains the data to send to the get service 
      * e.g.
      * [
      *  "page" => "0",
      *  "pageSize" => "1000"
      * ]
-     * @return mixed the given uri data if it exist
-     *         mixed error (unknwon, web service error, ...)
+     * @return string The rdfType of the given uri
+     */
+    public function getUriType($sessionToken, $uri, $params) {
+        $subService = "/" . urlencode($uri) . "/type";
+        $requestRes = $this->get($sessionToken, $subService, $params);
+        
+        if (isset($requestRes->{WSConstants::RESULT}->{WSConstants::DATA}))  {
+            return $requestRes->{WSConstants::RESULT}->{WSConstants::DATA}[0]->{'rdfType'};
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * 
+     * @param String $sessionToken Connection user token
+     * @param String $uri URI of the concept whom type is wanted
+     * @param Array $params Contains the data to send to the get service 
+     * e.g.
+     * [
+     *  "page" => "0",
+     *  "pageSize" => "1000"
+     * ]
+     * @return mixed The given uri data if it exist
+     *         mixed Error (unknwon, web service error, ...)
      */
     public function getByUri($sessionToken, $uri, $params) {
         $subService = "/" . urlencode($uri);
