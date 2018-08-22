@@ -18,6 +18,7 @@ return [
             du Web sémantique. SILEX-PHIS est développé pour gérer trois types de données : les mesures dites en ligne, les mesures
             hors ligne et les mesures complexes.",
     'Acquisition date of the data' => 'Date d\'acquisition de la donnée',
+    'An error occurred.' => "Une erreur est apparue",
     'Bad date format.' => 'Mauvais format de date.',     
     'Bad geometry given' => 'Mauvaise géométrie donnée',
     'Bad value : float expected.' => 'Mauvaise valeur : un float est attendu.',

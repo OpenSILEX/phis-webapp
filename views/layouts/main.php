@@ -58,7 +58,7 @@ AppAsset::register($this);
                         'items' => [
                             [
                                 'label' => '<span class="glyphicon glyphicon-home" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
-                                'url' => ['/infrastructure/view', 'uri' => $infrastructureUri],
+                                'url' => ['/infrastructure/view', 'id' => $infrastructureUri],
                             ],
                             [
                                 'label' => '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
@@ -127,7 +127,7 @@ AppAsset::register($this);
                         'items' => [
                             [
                                 'label' => '<span class="glyphicon glyphicon-home" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
-                                'url' => ['/infrastructure/view', 'uri' => $infrastructureUri],
+                                'url' => ['/infrastructure/view', 'id' => $infrastructureUri],
                             ],
                             [
                                 'label' => '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 

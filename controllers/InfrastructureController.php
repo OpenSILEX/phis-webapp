@@ -39,10 +39,10 @@ class InfrastructureController extends Controller {
     
     /**
      * Render the view page of the infrascture corresponding to the given uri.
-     * @param string $uri the uri of the infrastructure
+     * @param string $id The uri of the infrastructure
      * @return mixed
      */
-    public function actionView($uri) {
+    public function actionView($id) {
         //SILEX:warning
         //In this first version of infrastructure, there is only one infrastructure and it's data is in the code. 
         //There is no call to the infrastructure service
@@ -50,15 +50,15 @@ class InfrastructureController extends Controller {
 
         //1. Fill the infrastructure model with the information.
         $infrastructure = new YiiInfrastructureModel();
-        $infrastructure->uri = $uri;
+        $infrastructure->uri = $id;
         $infrastructure->alias = Yii::$app->params['platform'];
         $infrastructure->rdfType = "oepo:Installation";
 
         //2. Get documents.
         $searchDocumentsModel = new \app\models\yiiModels\DocumentSearch();
         
-        $searchDocumentsModel->concernedItem = $uri;
-        $documentsSearch = $searchDocumentsModel->search(Yii::$app->session['access_token'], ["concernedItem" => $uri]);
+        $searchDocumentsModel->concernedItem = $id;
+        $documentsSearch = $searchDocumentsModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
 
         //3. Render the view of the infrastructure.
         if (is_string($documentsSearch)) {
