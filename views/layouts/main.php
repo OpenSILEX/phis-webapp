@@ -14,6 +14,7 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use kartik\icons\Icon;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
