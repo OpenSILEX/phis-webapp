@@ -2,13 +2,10 @@
 //**********************************************************************************************
 //                                       main.php 
 //
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
+// SILEX-PHIS
+// Copyright © INRA 2017
 // Creation date: February 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  October, 3 2017 (add dataset creation link)
-// Subject: the main view page
 //***********************************************************************************************
 
 /* @var $this \yii\web\View */
