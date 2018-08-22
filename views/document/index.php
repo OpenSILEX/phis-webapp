@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('yii', 'Create') . ' '. Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) ?>
+        <?php //echo Html::a(Yii::t('yii', 'Create') . ' '. Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     
     <?= GridView::widget([

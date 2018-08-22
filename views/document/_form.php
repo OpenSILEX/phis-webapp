@@ -43,100 +43,14 @@ require_once '../config/config.php';
     ]) ?>
     
     <?php 
-//    if ($this->params['actualConcernedItem'] == null) {
-        if ($model->isNewRecord) {
-            echo $form->field($model, 'concernedProjects')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['listProjects'],
-                'options' => [
-                    'placeholder' => 'Select project(s) ...',
-                    'value' => $this->params['actualConcernedItem'],
-                    'multiple' => true
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); 
-            
-            echo $form->field($model, 'concernedExperiments')->widget(\kartik\select2\Select2::classname(),[
-                       'data' => $this->params['listExperiments'],
-                       'options' => [
-                           'placeholder' => 'Select Experiment(s) ...',
-                           'value' => $this->params['actualConcernedItem'],
-                           'multiple' => true
-                       ],
-                       'pluginOptions' => [
-                           'allowClear' => true
-                       ],
-                   ]); 
-            
-            echo $form->field($model, 'concernedSensors')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['listSensors'],
-                'options' => [
-                    'placeholder' => 'Select sensor(s) ...',
-                    'value' => $this->params['actualConcernedItem'],
-                    'multiple' => true
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
+        if ($model->isNewRecord) {            
+            echo $form->field($model, 'concernedItems')->widget(\kartik\select2\Select2::classname(),[
+                'data' =>$this->params['actualConcerns'],
+                'readonly' => true,
+                'pluginOptions' => [                    
+                    'multiple' => false,
                 ],
             ]);
-            
-            echo $form->field($model, 'concernedVectors')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['listVectors'],
-                'options' => [
-                    'placeholder' => 'Select vector(s) ...',
-                    'value' => $this->params['actualConcernedItem'],
-                    'multiple' => true
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); 
-            
-        } else {
-            echo $form->field($model, 'concernedProjects')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['listProjects'],
-                'options' => [
-                    'placeholder' => 'Select project(s) ...',
-                    'multiple' => true
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); 
-            
-            echo $form->field($model, 'concernedExperiments')->widget(\kartik\select2\Select2::classname(),[
-                       'data' => $this->params['listExperiments'],
-                       'options' => [
-                           'placeholder' => 'Select Experiment(s) ...',
-                           'multiple' => true
-                       ],
-                       'pluginOptions' => [
-                           'allowClear' => true
-                       ],
-                   ]); 
-            
-            echo $form->field($model, 'concernedSensors')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['listSensors'],
-                'options' => [
-                    'placeholder' => 'Select sensor(s) ...',
-                    'multiple' => true
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
-            
-            echo $form->field($model, 'concernedVectors')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['listVectors'],
-                'options' => [
-                    'placeholder' => 'Select vector(s) ...',
-                    'multiple' => true
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); 
         }
     ?>
     

@@ -107,30 +107,6 @@ class YiiDocumentModel extends WSActiveRecord {
      */
     public $file;
     /**
-     * list of the uris of the experiments concerned by the document.
-     * (used for the user interface)
-     * @var array<string>
-     */
-    public $concernedExperiments;
-    /**
-     * list of the uris of the projects concerned by the document. 
-     * (used for the user interface)
-     * @var array<string>
-     */
-    public $concernedProjects;
-    /**
-     * list of the uris of the sensors concerned by the document. 
-     * (used for the user interface)
-     * @var array<string>
-     */
-    public $concernedSensors;
-    /**
-     * list of the uris of the vectors concerned by the document. 
-     * (used for the user interface)
-     * @var array<string>
-     */
-    public $concernedVectors;
-    /**
      * the file md5sum
      * @var string
      */
@@ -171,9 +147,7 @@ class YiiDocumentModel extends WSActiveRecord {
         return [
           [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate'], 'required'],
           [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate', 
-              'format', 'concernedItems', 'status', 'concernedExperiments', 
-              'concernedProjects', 'concernedSensors', 'file', 'comment',
-              'concernedVectors'], 'safe'],
+              'format', 'concernedItems', 'status', 'file', 'comment'], 'safe'],
           [['uri', 'creator', 'language', 'title', 'creationDate', 'format', 'comment'], 'string'],
           [['file'], 'file', 'skipOnEmpty' => false]
         ];
@@ -192,12 +166,9 @@ class YiiDocumentModel extends WSActiveRecord {
           'title' => Yii::t('app', 'Title'),
           'creationDate'=> Yii::t('app', 'Creation Date'),
           'format' => Yii::t('app', 'Format'),
-//          'concernedItems' => Yii::t('app', 'Concerned Elements'),
+          'concernedItem' => Yii::t('app', 'Concern'),
+          'concernedItems' => Yii::t('app', 'Concern'),
           'file' => Yii::t('app', 'File'),
-          'concernedExperiments' => Yii::t('app', 'Concerned Experimentations'),
-          'concernedProjects' => Yii::t('app', 'Concerned Projects'),
-          'concernedSensors' => Yii::t('app', 'Concerned Sensors'),
-          'concernedVectors' => Yii::t('app', 'Concerned Vectors'),
           'comment' => Yii::t('app', 'Comment'),
           'status' => Yii::t('app', 'Status') 
         ];
@@ -218,13 +189,7 @@ class YiiDocumentModel extends WSActiveRecord {
         $this->comment = $array[YiiDocumentModel::COMMENT];
         
         if (isset($array[YiiDocumentModel::CONCERNED_ITEMS_URIS])) {
-            foreach ($array[YiiDocumentModel::CONCERNED_ITEMS_URIS] as $concernedItem) {
-                if ($concernedItem[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] === YiiDocumentModel::CONCERNED_ITEM_EXPERIMENT_RDF_TYPE) {
-                    $this->concernedExperiments[] = $concernedItem[YiiDocumentModel::URI];
-                } else if ($concernedItem[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] === YiiDocumentModel::CONCERNED_ITEM_PROJECT_RDF_TYPE) {
-                  $this->concernedProjects[] = $concernedItem[YiiDocumentModel::URI];
-                }
-            }
+            $this->concernedItem = $array[YiiDocumentModel::CONCERNED_ITEMS_URIS];
         }
     }
 
@@ -245,52 +210,18 @@ class YiiDocumentModel extends WSActiveRecord {
         $elementForWebService[YiiDocumentModel::COMMENT] = $this->comment;
         $elementForWebService[YiiDocumentModel::STATUS] = $this->status;
         
-        if ($this->concernedProjects != null) {
-            foreach ($this->concernedProjects as $concernedProject) {
-                $item[YiiDocumentModel::URI] = $concernedProject;
-                $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = YiiDocumentModel::CONCERNED_ITEM_PROJECT_RDF_TYPE;
-                $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
-            }
-        }
-        if ($this->concernedExperiments != null) {
-            foreach ($this->concernedExperiments as $concernedExperiment) {
-                $item[YiiDocumentModel::URI] = $concernedExperiment;
-                $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = YiiDocumentModel::CONCERNED_ITEM_EXPERIMENT_RDF_TYPE;
-                $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
-            }
-        }
-        if ($this->concernedSensors != null) {
-            foreach ($this->concernedSensors as $concernedSensor) {
-                $item[YiiDocumentModel::URI] = $concernedSensor;
-                $sensorModel = new YiiSensorModel();
-                $sensorModel->findByURI(Yii::$app->session['access_token'], $concernedSensor);       
-                $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = $sensorModel->rdfType;
-                $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
-            }
-        }
-        if ($this->concernedVectors != null) {
-            foreach ($this->concernedVectors as $concernedVector) {
-                $item[YiiDocumentModel::URI] = $concernedVector;
-                $vectorModel = new YiiVectorModel();
-                $vectorModel->findByURI(Yii::$app->session['access_token'], $concernedVector);       
-                $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = $vectorModel->rdfType;
-                $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
-            }
-        }
-        
-        //SILEX:refactor
-        //code to check : is that block really usefull ?
         if ($this->concernedItems !== null) {
-            foreach ($this->concernedItems as $concernedItem) {
-                $item[YiiDocumentModel::URI] = $concernedItem;
+            foreach ($this->concernedItems as $concern) {
+                $item[YiiDocumentModel::URI] = $concern->uri;
+                $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = $concern->rdfType;
                 $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
             }
         }
         
+        //Used for the search
         if ($this->concernedItem !== null) {
             $elementForWebService[YiiDocumentModel::CONCERNED_ITEM] = $this->concernedItem;
         }
-        //\SILEX:refactor
         
         return $elementForWebService;
     }
@@ -369,11 +300,10 @@ class YiiDocumentModel extends WSActiveRecord {
         $this->format = $res[0]->format;
         $this->comment = $res[0]->comment;
         foreach ($res[0]->concernedItems as $concernedItem) {
-            if ($concernedItem->typeURI === YiiDocumentModel::CONCERNED_ITEM_EXPERIMENT_RDF_TYPE) {
-                $this->concernedExperiments[] = $concernedItem->uri;
-            } else if ($concernedItem->typeURI === YiiDocumentModel::CONCERNED_ITEM_PROJECT_RDF_TYPE) {
-              $this->concernedProjects[] = $concernedItem->uri;
-            }
+            $concern = null;
+            $concern->rdfType = $concernedItem->typeURI;
+            $concern->uri = $concernedItem->uri;
+            $this->concernedItems[] = $concern;
         }
     }
 }
