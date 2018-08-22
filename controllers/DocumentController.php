@@ -36,6 +36,8 @@ require_once '../config/config.php';
  */
 class DocumentController extends Controller {
     
+    //The following constants are used to get some concepts URI from the Yii params.
+    // (e.g. Yii::$app->params[DocumentController::PROJECT])
     const PROJECT = "Project";
     const EXPERIMENT = "Experiment";
     const INSTALLATION = "Installation";
