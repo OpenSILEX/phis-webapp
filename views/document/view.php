@@ -28,7 +28,6 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <p>
     <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri, 'concernedItems' => json_encode($this->params['listRealConcernedItems'], JSON_UNESCAPED_SLASHES)], ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> ' . Yii::t('app', 'Download'), ['download', 'id' => $model->uri, 'format' => $model->format], ['class' => 'btn btn-primary']) ?>
     </p>
     
     <?= DetailView::widget([
@@ -58,5 +57,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]) ?>
+    
+    <center>
+        <?php
+            $urlDownload = \config::path()['basePath'] . '/images/icons/view_64.png';
+            echo Html::a('<img title="' . yii::t('app', 'View / Download') . '" alt="download", src="' . $urlDownload . '">', ['download', 'id' => $model->uri, 'format' => $model->format], []);
+        ?>
+        <p><?= yii::t('app', 'View / Download') ?></p>
+    </center>
     
 </div>
