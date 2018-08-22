@@ -37,6 +37,7 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 <div class="wrap">
     <?php
+    //To use the fontawesome glyphicons on the page
     Icon::map($this, Icon::FA);
     $infrastructureUri = substr(Yii::$app->params['baseURI'], 0, -1);
     
