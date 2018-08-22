@@ -42,6 +42,7 @@ AppAsset::register($this);
     <?php
     
     Icon::map($this, Icon::FA);
+    $infrastructureUri = substr(Yii::$app->params['baseURI'], 0, -1);
     
     NavBar::begin([
         'brandLabel' => 'PHIS <i> ' . Yii::$app->params['platform'] . '</i>',
@@ -54,13 +55,15 @@ AppAsset::register($this);
     //Cas d'un utilisateur non connecté (invité)
     if (Yii::$app->session['isGuest'] || Yii::$app->session['isGuest'] === null) {
         $menuItems = [['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']]];
-        
-        
     } else if (Yii::$app->session['isAdmin']) { //Cas d'un admin
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
-                                'label' => Icon::show('folder-open', [], Icon::BSG) . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
+                                'label' => '<span class="glyphicon glyphicon-home" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
+                                'url' => ['/infrastructure/view', 'id' => $infrastructureUri],
+                            ],
+                            [
+                                'label' => Icon::show('folder-open', [], Icon::BSG) . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]),
                                 'url' => ['/project/index'],
                             ],
                             [
@@ -124,6 +127,10 @@ AppAsset::register($this);
     } else { // Cas d'un utilisateur simple connecté
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
+                            [
+                                'label' => '<span class="glyphicon glyphicon-home" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
+                                'url' => ['/infrastructure/view', 'id' => $infrastructureUri],
+                            ],
                             [
                                 'label' => '<span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span> ' . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
                                 'url' => ['/project/index'],
@@ -228,7 +235,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; INRA MISTEA 2014-2018 (SILEX-PHIS v.2.3 - 04 May 2018)</p>
+        <p class="pull-left">&copy; INRA MISTEA 2014-2018 (SILEX-PHIS v.2.5 - 22 August 2018)</p>
     </div> 
 </footer> 
 
