@@ -4,6 +4,7 @@
 //                                       view.php
 // SILEX-PHIS
 // Copyright © INRA 2018
+// Creation date: 21 Aug, 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -29,7 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
           ?>
     </p>
     
-    
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
@@ -39,7 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ]); ?>
     
-    <?php if ($model->documents->getCount() > 0) {
+    <?php 
+        if ($model->documents->getCount() > 0) {
             echo json_encode($model->documents->getCount());
         
             echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
@@ -62,6 +63,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ]
             ]);
-          } 
+        } 
     ?>
 </div>

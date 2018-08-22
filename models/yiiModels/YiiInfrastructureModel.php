@@ -4,6 +4,7 @@
 //                                       YiiInfrastructureModel.php
 // SILEX-PHIS
 // Copyright © INRA 2018
+// Creation date: 21 Aug, 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -94,10 +95,22 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
         ];
     }
 
+    /**
+     * Not implemented yet. Override WSActiveRecord::attributesToArray($array)
+     * @see \app\models\wsModels\WSActiveRecord::arrayToAttributes($array)
+     * @param array $array
+     * @throws Exception
+     */
     protected function arrayToAttributes($array) {
         throw new Exception('Not implemented yet.');
     }
 
+    /**
+     * Not implemented yet. Override WSActiveRecord::attributesToArray($array)
+     * @see \app\models\wsModels\WSActiveRecord::attributesToArray($array)
+     * @param array $array
+     * @throws Exception
+     */
     public function attributesToArray() {
         throw new Exception('Not implemented yet.');
     }

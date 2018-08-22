@@ -186,8 +186,13 @@ class DocumentController extends Controller {
     }
     
     /**
-     * @action creates a document
-     * @return mixed
+     * Creates a document
+     * @param $concernUri The URI of the target concerned by the document.
+     * @param $concernLabel The label of the target concerned by the document. 
+     *                      Used for the create document interface.
+     * @param $concernRdfType The type of the target concerned by the document.
+     * @return mixed the creation form, the message error or the view of the 
+     *               document created
      */
     public function actionCreate($concernUri = null, $concernLabel = null, $concernRdfType = null) {
         $sessionToken = Yii::$app->session['access_token'];

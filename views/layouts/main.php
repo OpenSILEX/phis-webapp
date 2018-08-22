@@ -234,7 +234,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; INRA MISTEA 2014-2018 (SILEX-PHIS v.2.4 - 01 August 2018)</p>
+        <p class="pull-left">&copy; INRA MISTEA 2014-2018 (SILEX-PHIS v.2.5 - 22 August 2018)</p>
     </div> 
 </footer> 
 
