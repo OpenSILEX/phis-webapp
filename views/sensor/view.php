@@ -3,12 +3,12 @@
 //******************************************************************************
 //                                       view.php
 //
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
+// Author(s): Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
 // PHIS-SILEX version 1.0
 // Copyright © - INRA - 2018
 // Creation date: 30 mars 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  30 mars 2018
+// Last modification date:  22 august 2018 (add annotation functionnality)
 // Subject: implements the view page for a sensor
 //******************************************************************************
 

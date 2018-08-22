@@ -3,17 +3,18 @@
 //******************************************************************************
 //                                       view.php
 //
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
+// Author(s): Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
 // PHIS-SILEX version 1.0
 // Copyright © - INRA - 2018
 // Creation date: 6 avr. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  6 avr. 2018
+// Last modification date:  22 august 2018 (add annotation functionnality)
 // Subject: implements the view page for a vector
 //******************************************************************************
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use app\components\widgets\AnnotationWidget;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiVectorModel */
@@ -22,6 +23,9 @@ $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
+<!--add annotation button-->
+<?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
 
 <div class="vector-view">
 
