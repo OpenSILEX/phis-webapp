@@ -16,6 +16,7 @@ namespace app\components\helpers;
 
 use Yii;
 use app\models\yiiModels\YiiVocabularyModel;
+use app\models\wsModels\WSConstants;
 
 /**
  * A helper used to format RDF
@@ -36,6 +37,7 @@ class Vocabulary {
      */
     public static function prettyUri($uri, $removePrefix = false) {
         $shortenUri = $uri;
+        
         foreach (Vocabulary::getNamespaces() as $pkey => $pvalue) {
             $shortenUri = str_replace($pvalue, $pkey . ':', $uri);
             // Break to assure we only replace once
@@ -62,7 +64,7 @@ class Vocabulary {
         }
 
         $vocabularyModel = new YiiVocabularyModel();
-        $requestRes = $vocabularyModel->getNamespaces(Yii::$app->session['access_token'], ["pageSize" => 100]);
+        $requestRes = $vocabularyModel->getNamespaces(Yii::$app->session[WSConstants::ACCESS_TOKEN], [WSConstants::PAGE_SIZE => 100]);
         if ($requestRes) {
             Yii::$app->session[Vocabulary::NAMESPACES_SESSION_LABEL] = $vocabularyModel->namespaces;
             return Yii::$app->session[Vocabulary::NAMESPACES_SESSION_LABEL];

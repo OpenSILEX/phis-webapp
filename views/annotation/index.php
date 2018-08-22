@@ -19,7 +19,6 @@ use app\controllers\AnnotationController;
 use kartik\select2\Select2;
 use app\components\helpers\Vocabulary;
 use yii\bootstrap\BaseHtml;
-use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AnnotationSearch */
