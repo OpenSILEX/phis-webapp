@@ -35,7 +35,7 @@ use app\models\wsModels\WSConstants;
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ExperimentController extends Controller {
-    CONST ANNOTATION_DATA = "experimentAnnotations";
+    CONST ANNOTATIONS_DATA = "experimentAnnotations";
     
     /**
      * define the behaviors
