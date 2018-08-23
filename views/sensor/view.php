@@ -1,15 +1,10 @@
 <?php
-
 //******************************************************************************
-//                                       view.php
-//
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 30 mars 2018
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  22 august 2018 (add annotation functionnality)
-// Subject: implements the view page for a sensor
+//                           view.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 6 Apr, 2017
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 use yii\helpers\Html;
@@ -21,13 +16,13 @@ use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiSensorModel */
+/* Implements the view page for a sensor */
+/* @update [Arnaud Charleroy] 22 august, 2018 (add annotation functionality) */
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-
-
 
 <div class="sensor-view">
 

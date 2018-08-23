@@ -1,16 +1,11 @@
 <?php
-
-//**********************************************************************************************
-//                                       YiiUserModel.php 
-//
-// Author(s): Morgane VIDAL, Arnaud Charleroy <arnaud.charleroy>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
-// Creation date: April 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  August 22th 2018, Required user family name and fist name 
-// Subject: The Yii model for the users. Used with web services
-//***********************************************************************************************
+//******************************************************************************
+//                          YiiUserModel.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: Apr, 2017
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 
 namespace app\models\yiiModels;
 
@@ -21,7 +16,7 @@ use Yii;
 class YiiUserModel extends WSActiveRecord {
 
     /**
-     *
+     * The Yii model for the users. Used with web services
      * @var string email
      * @var string password
      * @var string firstName
@@ -33,6 +28,9 @@ class YiiUserModel extends WSActiveRecord {
      * @var string available
      * @var string isAdmin
      * @var string groups La liste des groupes auxquels l'utilisateur appartient
+     * @author Morgane Vidal <morgane.vidal@inra.fr>
+     * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
+     * @update [Arnaud Charleroy] 23 august, 2018 : Update coding style and add user uri feature
      */
     public $email;
 

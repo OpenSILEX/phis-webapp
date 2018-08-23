@@ -1,12 +1,11 @@
 <?php
 //******************************************************************************
-//                         AnnotationWidget.php
+//                         AnnotationButtonWidget.php
 // SILEX-PHIS
-// Copyright © INRA  Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// Creation date: 10 july 2018
+// Copyright © INRA 2018
+// Creation date: 10 Jul, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\components\widgets;
 
 use yii\base\Widget;
@@ -16,7 +15,8 @@ use app\models\yiiModels\YiiAnnotationModel;
 use kartik\icons\Icon;
 
 /**
- *  A widget used to generate a customizable annotation interface button
+ * A widget used to generate a customizable annotation interface button
+ * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class AnnotationButtonWidget extends Widget {
 
@@ -60,7 +60,7 @@ class AnnotationButtonWidget extends Widget {
                         YiiAnnotationModel::TARGETS => $this->targets,
                     ], 
                     [
-                    'class' => 'btn btn-default',
+                        'class' => 'btn btn-default',
                     ] 
                 );
     }

@@ -2,8 +2,8 @@
 //******************************************************************************
 //                         AnnotationSearch.php
 // SILEX-PHIS
-// Copyright © INRA  Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// Creation date: 9 july 2018
+// Copyright © INRA 2018
+// Creation date: 9 Jul, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 

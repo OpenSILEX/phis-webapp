@@ -1,16 +1,11 @@
 <?php
-
-//**********************************************************************************************
-//                                       view.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
-// Creation date: February 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  February, 2017
-// Subject: implements the view page for an Experiment
-//***********************************************************************************************
+//******************************************************************************
+//                           view.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: Feb, 2017
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -21,6 +16,8 @@ use app\controllers\AgronomicalObjectController;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiExperimentModel */
+/* Implements the view page for an Experiment */
+/* @update [Arnaud Charleroy] 23 august, 2018 (add annotation functionality) */
 
 $this->title = $model->uri;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['index']];

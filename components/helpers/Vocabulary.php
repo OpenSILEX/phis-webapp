@@ -1,10 +1,9 @@
 <?php
-
 //******************************************************************************
 //                         Vocabulary.php
 // SILEX-PHIS
-// Copyright © INRA  Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// Creation date: 13 july 2018
+// Copyright © INRA 2018
+// Creation date: 13 Jul, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -16,7 +15,7 @@ use app\models\wsModels\WSConstants;
 
 /**
  * A helper used to format RDF
- * @author Arnaud Charleroy<arnaud.charleroy@inra.fr>
+ * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class Vocabulary {
 
@@ -26,7 +25,6 @@ class Vocabulary {
      * Static public function to shorten an uri by a prefix table
      * @author Guilhem Heinrich
      * @param string $uri The uri to shorten
-     *
      * @return string The shortened uri if possible
      * @see    completeUri()
      * @see    $prefix

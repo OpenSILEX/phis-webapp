@@ -3,8 +3,8 @@
 //******************************************************************************
 //                         AnnotationGridViewWidget.php
 // SILEX-PHIS
-// Copyright © INRA  Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// Creation date: 23 august 2018
+// Copyright © INRA 2018
+// Creation date: 23 Aug, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -19,7 +19,8 @@ use app\components\helpers\Vocabulary;
 use kartik\icons\Icon;
 
 /**
- *  A widget used to generate a customizable annotation gridview interface 
+ * A widget used to generate a customizable annotation gridview interface
+ * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class AnnotationGridViewWidget extends Widget {
 

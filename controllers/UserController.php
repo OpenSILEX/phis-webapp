@@ -1,16 +1,11 @@
 <?php
-
-//**********************************************************************************************
-//                                       UserController.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
-// Creation date: April 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  April, 2017
-// Subject: implements the CRUD for the users (WSUserModel)
-//***********************************************************************************************
+//******************************************************************************
+//                          UserController.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: Jun, 2018
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 
 namespace app\controllers;
 
@@ -24,10 +19,12 @@ use app\models\yiiModels\UserSearch;
 use app\models\yiiModels\GroupSearch;
 
 /**
- * CRUD actions for YiiUserModel
+ * Implements the CRUD actions for YiiUserModel
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiUserModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
+ * @update [Arnaud Charleroy] 23 August, 2018 : add annotations list linked to instance view and update coding style
  */
 class UserController extends Controller {
     
@@ -232,17 +229,22 @@ class UserController extends Controller {
         $searchUserModel = new UserSearch();
         $requestRes = $searchUserModel->find(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], ["pageSize" => 10000]);
         
-        if ($requestRes !== null) {
-            if (!is_string($requestRes)) {
+        //SILEX:info
+        // if WS return a response
+        //\SILEX:info
+        if ($requestRes !== null) { 
+            if (!is_string($requestRes)) { 
                 foreach ($requestRes as $user) {
                     $userInstances[$user->uri] = $user->firstName . " " . $user->familyName;
                 }
                 return $userInstances;
-            } else {
+            } else { 
+                //SILEX:info
+                // token invalid case
+                //\SILEX:info
                 if ($requestRes === \app\models\wsModels\WSConstants::TOKEN) { //L'utilisateur doit se connecter
                     return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
                 }
-                return $requestRes;
             }
         } 
         return $requestRes;

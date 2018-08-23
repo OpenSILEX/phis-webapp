@@ -1,15 +1,10 @@
 <?php
-
 //******************************************************************************
-//                                       view.php
-//
-// Author(s): Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 6 july 2018
+//                           view.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 6 Apr, 2017
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  6 july 2018
-// Subject: implements the view page for a annotation
 //******************************************************************************
 
 use yii\helpers\Html;
@@ -19,6 +14,8 @@ use app\components\helpers\Vocabulary;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\yiiModels\YiiAnnotationModel */
+/* Implements the view page for an annotation */
+/* @update [Arnaud Charleroy] 23 august, 2018 (add annotation functionality) */
 
 $this->title = YiiAnnotationModel::LABEL;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{' . YiiAnnotationModel::LABEL . '} other{' . YiiAnnotationModel::LABEL . 's}}', ['n' => 2]), 'url' => ['index']];
