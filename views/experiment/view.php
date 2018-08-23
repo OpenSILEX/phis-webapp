@@ -12,7 +12,7 @@ use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\controllers\AgronomicalObjectController;
+use app\controllers\ExperimentController;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiExperimentModel */
@@ -205,7 +205,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- AO Linked Annotation-->
     <?= app\components\widgets\AnnotationGridViewWidget::widget(
             [
-                 AnnotationGridViewWidget::ANNOTATIONS => ${AgronomicalObjectController::ANNOTATIONS_DATA}
+                 AnnotationGridViewWidget::ANNOTATIONS => ${ExperimentController::ANNOTATIONS_DATA}
             ]
         ); 
     ?>
