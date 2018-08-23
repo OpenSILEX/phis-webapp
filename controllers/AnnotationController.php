@@ -1,15 +1,11 @@
 <?php
 
 //******************************************************************************
-//                                       AnnotationController.php
-//
-// Author(s): Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 10 july 2018
+//                          AnnotationController.php
+// SILEX-PHIS
+// Copyright © INRA  Arnaud Charleroy <arnaud.charleroy@inra.fr>
+// Creation date: 13 july 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  10 july 2018
-// Subject: implements the CRUD actions for Annotation Model
 //******************************************************************************
 
 namespace app\controllers;
@@ -21,8 +17,6 @@ use app\models\wsModels\WSUriModel;
 use app\models\yiiModels\YiiUserModel;
 use app\components\helpers\Vocabulary;
 use app\controllers\UserController;
-
-require_once '../config/config.php';
 
 /**
  * Controller for Annotation model.
@@ -75,10 +69,11 @@ class AnnotationController extends Controller {
                 return $this->redirect(['view', 'id' => $annotationModel->uri]);
             }
         } else {
-            return $this->render('create', [
-                                'model' => $annotationModel,
-                                AnnotationController::MOTIVATION_INSTANCES => $motivationInstances,
-                            ]
+            return $this->render('create', 
+                    [
+                        'model' => $annotationModel,
+                        AnnotationController::MOTIVATION_INSTANCES => $motivationInstances,
+                    ]
             );
         }
     }
@@ -98,18 +93,23 @@ class AnnotationController extends Controller {
         // load once motivation instances list
         $motivationInstances = $this->getMotivationInstances();
         if (is_string($searchResult)) {
-            return $this->render('/site/error', [
+            return $this->render('/site/error', 
+                    [
                         'name' => 'Internal error',
-                        'message' => $searchResult]);
+                        'message' => $searchResult
+                    ]
+                );
         } else if (is_array($searchResult) && isset($searchResult["token"])) { //user must log in
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
-            return $this->render('index', [
+            return $this->render('index', 
+                    [
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
                         AnnotationController::MOTIVATION_INSTANCES => $motivationInstances,
                         'userInstances' => $userInstances
-            ]);
+                    ]
+                );
         }
     }
 
@@ -155,9 +155,11 @@ class AnnotationController extends Controller {
         if ($res === \app\models\wsModels\WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
-            return $this->render('view', [
+            return $this->render('view', 
+                    [
                         'model' => $res,
-            ]);
+                    ]
+                );
         }
     }
 

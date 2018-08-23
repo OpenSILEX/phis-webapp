@@ -75,10 +75,13 @@ AppAsset::register($this);
                                 'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'), 
                                 'url' => ['/variable/index']
                             ],
-                            [
-                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
-                                'url' => ['/annotation/index']
-                            ]
+                            //SILEX:info
+                            //Uncomment this code if you want to allow access to annotation index
+//                            [
+//                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
+//                                'url' => ['/annotation/index']
+//                            ]
+                            //\SILEX:info
                         ]];
         $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
         $menuItems[] = ['label' => Yii::t('app', 'Installation'),
@@ -148,10 +151,13 @@ AppAsset::register($this);
                                 'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'), 
                                 'url' => ['/variable/index']
                             ],
-                            [
-                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
-                                'url' => ['/annotation/index']
-                            ]
+                            //SILEX:info
+                            //Uncomment this code if you want to allow access to annotation index
+//                            [
+//                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
+//                                'url' => ['/annotation/index']
+//                            ]
+                            //\SILEX:info
                         ]];
         $menuItems[] = ['label' => Yii::t('app', 'Installation'),
                         'items' => [

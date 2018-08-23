@@ -14,7 +14,9 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use app\components\widgets\AnnotationWidget;
+use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\AnnotationGridViewWidget;
+use app\controllers\SensorController;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
@@ -33,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <p>
         <!--add annotation button-->
-        <?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
+        <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
         <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
     </p>
 
@@ -97,6 +99,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ]
         ]
     ]); ?>
+    
+    <!-- Sensor Linked Annotation-->
+    <?= AnnotationGridViewWidget::widget(
+            [
+                 AnnotationGridViewWidget::ANNOTATIONS => ${SensorController::ANNOTATIONS_DATA}
+            ]
+        ); 
+    ?>
     
     <?php if ($dataDocumentsProvider->getCount() > 0) {
             echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";

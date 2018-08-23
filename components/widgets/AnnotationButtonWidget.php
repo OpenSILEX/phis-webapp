@@ -1,15 +1,10 @@
 <?php
-
 //******************************************************************************
-//                                       AnnotationWidget.php
-//
-// Author(s): Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
+//                         AnnotationWidget.php
+// SILEX-PHIS
+// Copyright © INRA  Arnaud Charleroy <arnaud.charleroy@inra.fr>
 // Creation date: 10 july 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  10 july 2018
-// Subject: A widget used to generate a customizable annotation interface button
 //******************************************************************************
 
 namespace app\components\widgets;
@@ -23,8 +18,9 @@ use kartik\icons\Icon;
 /**
  *  A widget used to generate a customizable annotation interface button
  */
-class AnnotationWidget extends Widget {
+class AnnotationButtonWidget extends Widget {
 
+    CONST ADD_ANNOTATION_LABEL = 'Add an annotation';
     /**
      * Define the model which will be annoted
      * @var mixed
@@ -54,19 +50,19 @@ class AnnotationWidget extends Widget {
      * @return string the string rendered
      */
     public function run() {
-        //To use the fontawesome glyphicons on the page
-        Icon::map($this, Icon::FA);
         //SILEX:conception
-        // Maybe create a bar widget and put buttons in it
+        // Maybe create a widget bar and put buttons in it to use the same style
         //\SILEX:conception
         return Html::a(
-                        Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Add annotation'), [
-                    'annotation/create',
-                    YiiAnnotationModel::TARGETS => $this->targets,
-                        ], [
+                    Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', self::ADD_ANNOTATION_LABEL),
+                    [
+                        'annotation/create',
+                        YiiAnnotationModel::TARGETS => $this->targets,
+                    ], 
+                    [
                     'class' => 'btn btn-default',
-                        ]
-        );
+                    ] 
+                );
     }
 
 }

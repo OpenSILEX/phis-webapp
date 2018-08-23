@@ -15,7 +15,10 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
-use app\components\widgets\AnnotationWidget;
+use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\AnnotationGridViewWidget;
+use app\controllers\ProjectController;
+
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiProjectModel */
@@ -30,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
-        <?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
+        <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
         <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->acronyme, 'concernRdfType' => Yii::$app->params["Project"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
     </p>
 
@@ -120,7 +123,14 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ])
     ?>
-
+    <!-- Project Linked Annotation-->
+    <?= AnnotationGridViewWidget::widget(
+            [
+                 AnnotationGridViewWidget::ANNOTATIONS => ${ProjectController::ANNOTATIONS_DATA}
+            ]
+        ); 
+    ?>
+    
     <?php
     if ($dataDocumentsProvider->getCount() > 0) {
         echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";

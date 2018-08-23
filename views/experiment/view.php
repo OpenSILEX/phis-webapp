@@ -15,7 +15,9 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
-use app\components\widgets\AnnotationWidget;
+use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\AnnotationGridViewWidget;
+use app\controllers\AgronomicalObjectController;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiExperimentModel */
@@ -43,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
             }
          ?>
         <!--add annotation button-->
-        <?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
+        <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
     </p>
 
     <?php
@@ -203,7 +205,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => $attributes
     ]);
     ?>
-
+    <!-- AO Linked Annotation-->
+    <?= app\components\widgets\AnnotationGridViewWidget::widget(
+            [
+                 AnnotationGridViewWidget::ANNOTATIONS => ${AgronomicalObjectController::ANNOTATIONS_DATA}
+            ]
+        ); 
+    ?>
+    
     <?php
     if ($dataDocumentsProvider->getCount() > 0) {
         echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";

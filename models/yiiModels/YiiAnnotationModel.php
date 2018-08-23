@@ -1,16 +1,11 @@
 <?php
-
-//**********************************************************************************************
-//                                       YiiAnnotationModel.php 
-//
-// Author(s): Arnaud Charleroy
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: June 2018
-// Contact: arnaud.charleroy@.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  June, 2018
-// Subject: The Yii model for the Annotation. Used with web services
-//***********************************************************************************************
+//******************************************************************************
+//                         YiiAnnotationModel.php
+// SILEX-PHIS
+// Copyright © INRA  Arnaud Charleroy <arnaud.charleroy@inra.fr>
+// Creation date: 9 july 2018
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 
 namespace app\models\yiiModels;
 
@@ -19,7 +14,7 @@ use app\models\wsModels\WSActiveRecord;
 use Yii;
 
 /**
- * The yii model for the annotation. 
+ * The Yii model for the Annotation. Used with web services
  * Implements a customized Active Record
  *  (WSActiveRecord, for the web services access)
  * @see app\models\wsModels\WSAnnotationModel
@@ -29,6 +24,9 @@ use Yii;
  */
 class YiiAnnotationModel extends WSActiveRecord {
 
+    /**
+     * Label name used in annotation view
+     */
     const LABEL = "Annotation";
 
     /**
@@ -90,6 +88,7 @@ class YiiAnnotationModel extends WSActiveRecord {
 
     const TARGETS = "targets";
     const TARGETS_LABEL = "Targets";
+    const TARGET_SEARCH_LABEL = "target";
 
     public function __construct($pageSize = null, $page = null) {
         $date = new \DateTime();

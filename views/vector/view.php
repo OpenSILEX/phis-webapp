@@ -14,8 +14,10 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use app\components\widgets\AnnotationWidget;
 use yii\grid\GridView;
+use app\controllers\VectorController;
+use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\AnnotationGridViewWidget;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiVectorModel */
@@ -25,8 +27,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Vecto
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<!--add annotation button-->
-<?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
+
 
 <div class="vector-view">
 
@@ -38,7 +39,9 @@ $this->params['breadcrumbs'][] = $this->title;
             echo Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']);
         }
     ?>
-        <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']); ?>
+    <!--add annotation button-->
+    <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
+    <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']); ?>
     </p>
 
 <?= DetailView::widget([
@@ -66,6 +69,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]
     ]); ?>
+    
+    <!-- Vector Linked Annotation-->
+    <?= AnnotationGridViewWidget::widget(
+            [
+                 AnnotationGridViewWidget::ANNOTATIONS => ${VectorController::ANNOTATIONS_DATA}
+            ]
+        ); 
+    ?>
     
     <?php if ($dataDocumentsProvider->getCount() > 0) {
             echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";

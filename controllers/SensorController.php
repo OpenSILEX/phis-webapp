@@ -20,7 +20,8 @@ use yii\filters\VerbFilter;
 
 use app\models\yiiModels\YiiSensorModel;
 use app\models\yiiModels\DocumentSearch;
-
+use app\models\yiiModels\AnnotationSearch;
+use app\models\wsModels\WSConstants;
 /**
  * CRUD actions for SensorModel
  * @see yii\web\Controller
@@ -39,6 +40,7 @@ class SensorController extends Controller {
     const RDF_TYPE = "rdfType";
     const URI = "uri";
     
+    CONST ANNOTATIONS_DATA = "sensorAnnotations";
     /**
      * define the behaviors
      * @return array
@@ -291,12 +293,19 @@ class SensorController extends Controller {
         $searchDocumentModel->concernedItem = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
+        //3. get sensor annotations
+        $searchAnnotationModel = new AnnotationSearch();
+        $searchAnnotationModel->targets[0] = $id;
+        $sensorAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+     
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
             return $this->render('view', [
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
+                self::ANNOTATIONS_DATA => $sensorAnnotations
+
             ]);
         }
         

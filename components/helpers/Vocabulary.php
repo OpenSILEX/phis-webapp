@@ -1,15 +1,11 @@
 <?php
 
 //******************************************************************************
-//                                       Vocabulary.php
-//
-// Author(s): Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
+//                         Vocabulary.php
+// SILEX-PHIS
+// Copyright © INRA  Arnaud Charleroy <arnaud.charleroy@inra.fr>
 // Creation date: 13 july 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  13 july 2018
-// Subject: A helper used to format RDF
 //******************************************************************************
 
 namespace app\components\helpers;
@@ -58,7 +54,7 @@ class Vocabulary {
      * @return list of triplestore namespaces 
      */
     public static function getNamespaces() {
-        // Use session to prevent multiple triplestore calls
+        // Use session storage variable to prevent multiple triplestore calls
         if (isset(Yii::$app->session[Vocabulary::NAMESPACES_SESSION_LABEL]) && !empty(Yii::$app->session[Vocabulary::NAMESPACES_SESSION_LABEL])) {
             return Yii::$app->session[Vocabulary::NAMESPACES_SESSION_LABEL];
         }
