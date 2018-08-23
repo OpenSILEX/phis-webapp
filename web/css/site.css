@@ -1,11 +1,11 @@
-html,
+pull request #77 from niio972/annotationhtml,
 body {
     height: 100%;
 }
 
-/*SILEX:required
+/*SILEX:info
 use for all DetailView
-\SILEX:required*/
+\SILEX:info*/
 table {
     background-color: #FFF;
 }
