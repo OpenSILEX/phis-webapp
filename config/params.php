@@ -36,6 +36,7 @@ return [
     'hasAlias' => 'http://www.phenome-fppn.fr/vocabulary/2017#hasAlias',
     'hasBrand' => 'http://www.phenome-fppn.fr/vocabulary/2017#hasBrand',
     'hasExperimentModalities' => 'http://www.phenome-fppn.fr/vocabulary/2017#hasExperimentModalities',
+    'Motivation' => 'http://www.w3.org/ns/oa#Motivation',
     'hasLens' => 'http://www.phenome-fppn.fr/vocabulary/2017#hasLens',
     'hasRepetition' => 'http://www.phenome-fppn.fr/vocabulary/2017#hasRepetition',
     'height' => 'http://www.phenome-fppn.fr/vocabulary/2017#height',

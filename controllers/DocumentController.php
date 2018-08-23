@@ -208,7 +208,7 @@ class DocumentController extends Controller {
             $concerns = null;
 
             //SILEX:info
-            //Code to uncomment when the functionnality of adding multiple concern to a document will be done
+            //Code to uncomment when the functionality of adding multiple concern to a document will be done
 //            foreach ($documentModel->concernedItems as $concern) {
 //                $item = new \app\models\yiiModels\YiiInstanceDefinitionModel();
 //                $item->uri = $concern;
@@ -317,7 +317,7 @@ class DocumentController extends Controller {
         if ($documentModel->load(Yii::$app->request->post())) {
             //SILEX:info
             //Remove the following code and update with the list of the concerned 
-            //items when the functionnality will be added
+            //items when the functionality will be added
             //The list of the concerned items cannot be updated yet
             $concernedDecode = json_decode($concernedItems, JSON_UNESCAPED_SLASHES);
             foreach ($concernedDecode as $concern) {

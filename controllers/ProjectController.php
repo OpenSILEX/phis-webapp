@@ -23,6 +23,8 @@ use app\models\yiiModels\YiiProjectModel;
 use app\models\yiiModels\ProjectSearch;
 use app\models\yiiModels\UserSearch;
 use app\models\yiiModels\DocumentSearch;
+use app\models\yiiModels\AnnotationSearch;
+use app\models\wsModels\WSConstants;
 
 /**
  * CRUD actions for YiiProjectModel
@@ -31,6 +33,8 @@ use app\models\yiiModels\DocumentSearch;
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ProjectController extends Controller {
+    
+    CONST ANNOTATIONS_DATA = "projectAnnotations";
     
     /**
      * define the behaviors
@@ -103,12 +107,18 @@ class ProjectController extends Controller {
         $searchDocumentModel->concernedItem = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
+        //3. get project annotations
+        $searchAnnotationModel = new AnnotationSearch();
+        $searchAnnotationModel->targets[0] = $id;
+        $projectAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+        
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
             return $this->render('view', [
                 'model' => $res,
-                'dataDocumentsProvider' => $documents
+                'dataDocumentsProvider' => $documents,
+                self::ANNOTATIONS_DATA => $projectAnnotations
             ]);
         }
     }

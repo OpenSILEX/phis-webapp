@@ -1,42 +1,37 @@
 <?php
-
-//**********************************************************************************************
-//                                       UserSearch.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
-// Creation date: April 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  April, 2017
-// Subject: UserSearch represents the model behin the search form about app\models\User
-//          Based on the Yii2 Search basic classes
-//***********************************************************************************************
+//******************************************************************************
+//                         AnnotationSearch.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 9 Jul, 2018
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 
 namespace app\models\yiiModels;
 
-use app\models\yiiModels\YiiUserModel;
+use app\models\yiiModels\YiiAnnotationModel;
 
 /**
- * implements the search action for the users
- *
- * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * AnnotationSearch represents the model behind the search form about
+ * \app\models\Annotation based ont he Yii2 search basic classes
+ * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
-class UserSearch extends YiiUserModel {
-    //SILEX:refactor
-    //create a trait (?) with methods search and jsonListOfArray and use it in 
-    //each class ElementNameSearch
-    //\SILEX:refactor
-    
+class AnnotationSearch extends YiiAnnotationModel {
+
+    public function __construct($pageSize = null, $page = null) {
+        parent::__construct($pageSize,$page);
+         $this->creationDate = null;
+    }
+
     /**
      * @inheritdoc
      */
     public function rules() {
         return [
-          [['email', 'familyName', 'firstName', 'phone', 'affiliation', 'orcid', 'available', 'isAdmin', 'uri'], 'safe']  
+            [[AnnotationSearch::URI, AnnotationSearch::CREATOR, AnnotationSearch::MOTIVATED_BY, AnnotationSearch::COMMENTS, AnnotationSearch::TARGETS], 'safe']
         ];
     }
-    
+
     /**
      * 
      * @param array $sessionToken used for the data access
@@ -55,10 +50,10 @@ class UserSearch extends YiiUserModel {
         if (!$this->validate()) {
             return new \yii\data\ArrayDataProvider();
         }
-        
+
         //3. Request to the web service and return result
         $findResult = $this->find($sessionToken, $this->attributesToArray());
-        
+
         if (is_string($findResult)) {
             return $findResult;
         } else if (isset($findResult[\app\models\wsModels\WSConstants::TOKEN])) {
@@ -78,19 +73,38 @@ class UserSearch extends YiiUserModel {
             ]);
         }
     }
-    
+
     /**
      * transform the json into array
      * @param json jsonList
      * @return array
      */
     private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = []; 
+        $toReturn = [];
         if ($jsonList !== null) {
             foreach ($jsonList as $value) {
                 $toReturn[] = $value;
             }
-        } 
+        }
         return $toReturn;
+    }
+
+    /**
+     * Override inherited method in order to send the right target label parameters name 
+     * to the webService
+     * @return array
+     */
+    public function attributesToArray() {
+        $elementForWebService[YiiAnnotationModel::CREATOR] = $this->creator;
+        $elementForWebService[YiiAnnotationModel::MOTIVATED_BY] = $this->motivatedBy;
+        $elementForWebService[YiiAnnotationModel::CREATION_DATE] = $this->creationDate;
+        // For now one target can be choose
+        if (isset($this->targets) && !empty($this->targets)) {
+            $elementForWebService[YiiAnnotationModel::TARGET_SEARCH_LABEL] = $this->targets[0];
+        }
+        if (isset($this->comments) && !empty($this->comments)) {
+            $elementForWebService[YiiAnnotationModel::COMMENTS] = $this->comments;
+        }
+        return $elementForWebService;
     }
 }

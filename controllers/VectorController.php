@@ -21,6 +21,8 @@ use yii\filters\VerbFilter;
 use app\models\yiiModels\YiiVectorModel;
 use app\models\yiiModels\UserSearch;
 use app\models\yiiModels\DocumentSearch;
+use app\models\yiiModels\AnnotationSearch;
+use app\models\wsModels\WSConstants;
 
 /**
  * CRUD actions for vector model
@@ -30,6 +32,9 @@ use app\models\yiiModels\DocumentSearch;
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class VectorController extends Controller {
+    
+    CONST ANNOTATIONS_DATA = "vectorAnnotations";
+    
     /**
      * define the behaviors
      * @return array
@@ -236,12 +241,18 @@ class VectorController extends Controller {
         $searchDocumentModel->concernedItem = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
+        //2. get vector annotations
+        $searchAnnotationModel = new AnnotationSearch();
+        $searchAnnotationModel->targets[0] = $id;
+        $vectorAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+     
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
             return $this->render('view', [
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
+                 self::ANNOTATIONS_DATA => $vectorAnnotations
             ]);
         }
         
