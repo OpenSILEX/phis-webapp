@@ -3,6 +3,14 @@ body {
     height: 100%;
 }
 
+
+/*SILEX:required
+use for all DetailView
+\SILEX:required*/
+table {
+    background-color: #FFF;
+}
+
 .wrap {
     min-height: 100%;
     height: auto;

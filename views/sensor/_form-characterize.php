@@ -282,7 +282,7 @@ use kartik\select2\Select2;
     }
 </script>
 
-<div class="characterize-form" onSubmit="return validateRequiredFields();">
+<div class="characterize-form well" onSubmit="return validateRequiredFields();">
     <?php $form = ActiveForm::begin(); ?>
     <?= $form->field($model, 'rdfType')->widget(Select2::classname(), [
                     'data' =>$sensorsTypes,

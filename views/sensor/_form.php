@@ -16,7 +16,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/0.37.0/handsontable.full.min.js"></script>
 
-<div class="dataset-form">
+<div class="dataset-form well">
     <div id="sensors-created" class="alert alert-success"><?= Yii::t('app', 'Sensors Created') ?></div>
     <!--<button type = "button" id="export" id="exportButton">Export</button>-->
     <div id="sensors-creation">

@@ -33,7 +33,7 @@ use yii\helpers\Url;
 
 
 
-<div class="dataset-form">
+<div class="dataset-form well">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <?= Yii::$app->session->getFlash('renderArray'); ?>

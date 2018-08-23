@@ -170,7 +170,7 @@ use yii\widgets\ActiveForm;
     }
 </script>
 
-<div class="variable-form">
+<div class="variable-form well">
     <?php $form = ActiveForm::begin(); ?>
     
     <div class="row">

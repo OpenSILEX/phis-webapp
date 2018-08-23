@@ -22,7 +22,7 @@ use borales\extensions\phoneInput\PhoneInput;
 
 ?>
 
-<div class="user-form">
+<div class="user-form well">
     <?php $form = ActiveForm::begin(); ?>
     
     <?php 

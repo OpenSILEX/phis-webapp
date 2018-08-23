@@ -24,7 +24,7 @@ require_once '../config/config.php';
 
 ?>
 
-<div class="document-form">
+<div class="document-form well">
     <?php $form = ActiveForm::begin(); ?>
     
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]); ?>
