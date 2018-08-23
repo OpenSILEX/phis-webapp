@@ -1,5 +1,4 @@
 <?php
-
 //******************************************************************************
 //                         AnnotationGridViewWidget.php
 // SILEX-PHIS
@@ -95,5 +94,4 @@ class AnnotationGridViewWidget extends Widget {
         }
         return $htmlRendered;
     }
-
 }

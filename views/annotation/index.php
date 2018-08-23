@@ -1,15 +1,10 @@
 <?php
-
 //******************************************************************************
-//                                       index.php
-//
-// Author(s): Arnaud Charleroy <arnaud.charleroy>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 9 july 2018
-// Contact: arnaud.charleroy, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  9 july 2018
-// Subject: index of annotations (with search)
+//                           index.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 6 Aug, 2017
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 use yii\helpers\Html;
@@ -20,9 +15,12 @@ use kartik\select2\Select2;
 use app\components\helpers\Vocabulary;
 use yii\bootstrap\BaseHtml;
 
-/* @var $this yii\web\View */
-/* @var $searchModel app\models\AnnotationSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/** 
+ * Index of annotations (with search) 
+ * @var $this yii\web\View 
+ * @var $searchModel app\models\AnnotationSearch 
+ * @var $dataProvider yii\data\ActiveDataProvider 
+ */
 
 $this->title = Yii::t('app', '{n, plural, =1{Annotation} other{Annotations}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;

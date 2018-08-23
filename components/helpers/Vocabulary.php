@@ -66,5 +66,4 @@ class Vocabulary {
             return $requestRes;
         }
     }
-
 }

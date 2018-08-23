@@ -115,7 +115,7 @@ class AnnotationController extends Controller {
      * @return array motivation instances list
      */
     public function getMotivationInstances() {
-        // load once to prevent triplestore request overhead
+        // Use session storage variable to prevent multiple triplestore calls
         if (isset(Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES]) && !empty(Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES])) {
             return Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES];
         }
@@ -178,5 +178,4 @@ class AnnotationController extends Controller {
             throw new NotFoundHttpException('The requested page does not exist');
         }
     }
-
 }

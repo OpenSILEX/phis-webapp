@@ -1,17 +1,11 @@
 <?php
-
-//**********************************************************************************************
-//                                       YiiVocabularyModel.php 
-//
-// Author(s): Arnaud Charleroy
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 13 july 2018
-// Contact: arnaud.charleroy@.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  13 july, 2018
-// Subject: The Yii model for the Vocabulary. Used with web services
-//***********************************************************************************************
-
+//******************************************************************************
+//                          WSVocabularyModel.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 13 Jul, 2018
+// Contact: arnaud.charleroy@inra.fr, morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 namespace app\models\yiiModels;
 
 use app\models\wsModels\WSActiveRecord;
@@ -19,12 +13,13 @@ use app\models\wsModels\WSVocabularyModel;
 use Yii;
 
 /**
- * The yii model for the vocabulary. 
+ * The Yii model for the Vocabulary. Used with web services 
  * Implements a customized Active Record
- *  (WSActiveRecord, for the web services access)
+ * (WSActiveRecord, for the web services access)
  * @see app\models\wsModels\WSAnnotationModel
  * @see app\models\wsModels\WSActiveRecord
  * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class YiiVocabularyModel extends WSActiveRecord {
 
