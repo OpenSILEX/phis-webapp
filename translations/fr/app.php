@@ -22,7 +22,7 @@ return [
     '{n, plural, =1{Vector} other{Vectors}}' => '{n, plural, =1{Vecteur} other{Vecteurs}}',
     '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}' => '{n, plural, =1{Objet Agronomique} other{Objets Agronomiques}}',
     
-    'Add Dataset' => 'Importer un jeux de données',
+    'Add Dataset' => 'Importer un jeu de données',
     'Add Document' => 'Ajouter un document',
     'Add Document Script' => 'Ajouter un script',
     'Add Sensor' => 'Ajouter des Capteurs',
