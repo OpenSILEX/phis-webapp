@@ -39,8 +39,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ['label_la' => 'Populus', 'label_en' => 'Polar', 'label_fr' => 'Peuplier', 'uri' => 'http://www.phenome-fppn.fr/id/species/populus'],
         ['label_la' => 'Sorghum bicolor', 'label_en' => 'Sorghum', 'label_fr' => 'Sorgho', 'uri' => 'http://www.phenome-fppn.fr/id/species/sorghumbicolor'],
         ['label_la' => 'Teosine', 'label_en' => 'Teosintes', 'label_fr' => 'Téosintes', 'uri' => 'http://www.phenome-fppn.fr/id/species/teosine'],
-        ['label_la' => 'Triticum aestivum', 'label_en' => 'Bread wheat', 'label_fr' => 'lé tendre', 'uri' => 'http://www.phenome-fppn.fr/id/species/tritucumaestivum'],
-        ['label_la' => 'Triticum turgidum', 'label_en' => 'Durum wheat', 'label_fr' => 'Blé dur', 'uri' => 'http://www.phenome-fppn.fr/id/species/tritucumturgidum'],
+        ['label_la' => 'Triticum aestivum', 'label_en' => 'Bread wheat', 'label_fr' => 'Blé tendre', 'uri' => 'http://www.phenome-fppn.fr/id/species/triticumaestivum'],
+        ['label_la' => 'Triticum turgidum', 'label_en' => 'Durum wheat', 'label_fr' => 'Blé dur', 'uri' => 'http://www.phenome-fppn.fr/id/species/triticumturgidum'],
     ];
 
     $agronomicalObjects = [

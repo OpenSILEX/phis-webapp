@@ -27,8 +27,6 @@ require_once '../config/config.php';
 <div class="document-form">
     <?php $form = ActiveForm::begin(); ?>
     
-
-        
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]); ?>
     
     <?= $form->field($model, 'creator')->textInput(['maxlength' => true]); ?>
@@ -45,53 +43,14 @@ require_once '../config/config.php';
     ]) ?>
     
     <?php 
-//    if ($this->params['actualConcernedItem'] == null) {
-        if ($model->isNewRecord) {
-            echo $form->field($model, 'concernedProjects')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['listProjects'],
-                'options' => [
-                    'placeholder' => 'Select project(s) ...',
-                    'value' => $this->params['actualConcernedItem'],
-                    'multiple' => true
+        if ($model->isNewRecord) {            
+            echo $form->field($model, 'concernedItems')->widget(\kartik\select2\Select2::classname(),[
+                'data' =>$this->params['actualConcerns'],
+                'readonly' => true,
+                'pluginOptions' => [                    
+                    'multiple' => false,
                 ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); 
-            
-            echo $form->field($model, 'concernedExperiments')->widget(\kartik\select2\Select2::classname(),[
-                       'data' => $this->params['listExperiments'],
-                       'options' => [
-                           'placeholder' => 'Select Experiment(s) ...',
-                           'value' => $this->params['actualConcernedItem'],
-                           'multiple' => true
-                       ],
-                       'pluginOptions' => [
-                           'allowClear' => true
-                       ],
-                   ]); 
-        } else {
-            echo $form->field($model, 'concernedProjects')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['listProjects'],
-                'options' => [
-                    'placeholder' => 'Select project(s) ...',
-                    'multiple' => true
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); 
-            
-            echo $form->field($model, 'concernedExperiments')->widget(\kartik\select2\Select2::classname(),[
-                       'data' => $this->params['listExperiments'],
-                       'options' => [
-                           'placeholder' => 'Select Experiment(s) ...',
-                           'multiple' => true
-                       ],
-                       'pluginOptions' => [
-                           'allowClear' => true
-                       ],
-                   ]); 
+            ]);
         }
     ?>
     

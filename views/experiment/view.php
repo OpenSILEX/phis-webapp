@@ -1,24 +1,23 @@
 <?php
-
-//**********************************************************************************************
-//                                       view.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
-// Creation date: February 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  February, 2017
-// Subject: implements the view page for an Experiment
-//***********************************************************************************************
+//******************************************************************************
+//                           view.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: Feb, 2017
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
-use app\components\widgets\AnnotationWidget;
+use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\AnnotationGridViewWidget;
+use app\controllers\ExperimentController;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiExperimentModel */
+/* Implements the view page for an Experiment */
+/* @update [Arnaud Charleroy] 23 august, 2018 (add annotation functionality) */
 
 $this->title = $model->uri;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['index']];
@@ -34,16 +33,16 @@ $this->params['breadcrumbs'][] = $this->title;
             echo Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']);
         }
         ?>
-        <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItem' => $model->uri], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
-        <?= Html::a(Yii::t('app', 'Map Visualization'), ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'false'], ['class' => 'btn btn-info'])
-        ?>
-        <?php
-        if (Yii::$app->session['isAdmin']) {
-            echo Html::a(Yii::t('app', 'Generate Map'), ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
-        }
-        ?>
+        <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->alias, 'concernRdfType' => Yii::$app->params["Experiment"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+        <?= Html::a(Yii::t('app', 'Map Visualization'), 
+                ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'false'], ['class' => 'btn btn-info']) ?>
+        <?php if (Yii::$app->session['isAdmin']) {
+            echo Html::a(Yii::t('app', 'Generate Map'), 
+                ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
+            }
+         ?>
         <!--add annotation button-->
-        <?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
+        <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
     </p>
 
     <?php
@@ -203,7 +202,14 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => $attributes
     ]);
     ?>
-
+    <!-- AO Linked Annotation-->
+    <?= app\components\widgets\AnnotationGridViewWidget::widget(
+            [
+                 AnnotationGridViewWidget::ANNOTATIONS => ${ExperimentController::ANNOTATIONS_DATA}
+            ]
+        ); 
+    ?>
+    
     <?php
     if ($dataDocumentsProvider->getCount() > 0) {
         echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";

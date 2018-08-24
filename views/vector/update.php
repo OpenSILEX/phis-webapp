@@ -18,8 +18,8 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiVectorModel */
 
-$this->title = Yii::t('yii', 'Update') . ' ' . Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 1]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['index']];
+$this->title = Yii::t('yii', 'Update') . ' ' . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 1]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

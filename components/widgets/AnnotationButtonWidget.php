@@ -1,30 +1,26 @@
 <?php
-
 //******************************************************************************
-//                                       AnnotationWidget.php
-//
-// Author(s): Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 10 july 2018
+//                         AnnotationButtonWidget.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 10 Jul, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  10 july 2018
-// Subject: A widget used to generate a customizable annotation interface button
 //******************************************************************************
-
 namespace app\components\widgets;
 
 use yii\base\Widget;
 use yii\helpers\Html;
 use Yii;
-use rmrevin\yii\fontawesome\FAS;
 use app\models\yiiModels\YiiAnnotationModel;
+use kartik\icons\Icon;
 
 /**
- *  A widget used to generate a customizable annotation interface button
+ * A widget used to generate a customizable annotation interface button
+ * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
-class AnnotationWidget extends Widget {
+class AnnotationButtonWidget extends Widget {
 
+    CONST ADD_ANNOTATION_LABEL = 'Add an annotation';
     /**
      * Define the model which will be annoted
      * @var mixed
@@ -55,16 +51,18 @@ class AnnotationWidget extends Widget {
      */
     public function run() {
         //SILEX:conception
-        // Maybe create a bar widget and put buttons in it
+        // Maybe create a widget bar and put buttons in it to use the same style
         //\SILEX:conception
         return Html::a(
-                        FAS::icon('comment') . ' ' . Yii::t('app', 'Add annotation'), [
-                    'annotation/create',
-                    YiiAnnotationModel::TARGETS => $this->targets,
-                        ], [
-                    'class' => 'btn btn-default',
-                        ]
-        );
+                    Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', self::ADD_ANNOTATION_LABEL),
+                    [
+                        'annotation/create',
+                        YiiAnnotationModel::TARGETS => $this->targets,
+                    ], 
+                    [
+                        'class' => 'btn btn-default',
+                    ] 
+                );
     }
 
 }

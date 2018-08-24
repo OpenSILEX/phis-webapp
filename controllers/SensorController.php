@@ -1,15 +1,10 @@
 <?php
-
 //******************************************************************************
-//                                       SensorController.php
-//
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 13 mars 2018
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  13 mars 2018
-// Subject: implements the CRUD actions for the Sensor model
+//                          SensorController.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: Jun, 2018
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 namespace app\controllers;
@@ -17,14 +12,19 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-
 use app\models\yiiModels\YiiSensorModel;
+use app\models\yiiModels\DocumentSearch;
+use app\models\yiiModels\AnnotationSearch;
+use app\models\wsModels\WSConstants;
 
 /**
  * CRUD actions for SensorModel
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiSensorModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
+ * @update [Morgane Vidal] 13 March, 2018 : add link documents to sensors
+ * @update [Arnaud Charleroy] 23 August, 2018 : add annotations list linked to an instance viewed and update coding style
  */
 class SensorController extends Controller {
     
@@ -37,6 +37,7 @@ class SensorController extends Controller {
     const RDF_TYPE = "rdfType";
     const URI = "uri";
     
+    CONST ANNOTATIONS_DATA = "sensorAnnotations";
     /**
      * define the behaviors
      * @return array
@@ -107,7 +108,6 @@ class SensorController extends Controller {
                 }
             }
         }
-        
         return $sensorsTypes;
     }
     
@@ -138,7 +138,6 @@ class SensorController extends Controller {
                 }
             }
         }
-        
         return $sensorsTypes;
     }
     
@@ -211,6 +210,7 @@ class SensorController extends Controller {
         if (count($sensors) > 0) {
             $sensorsUris = null;
             foreach ($sensors as $sensor) {
+              $forWebService = null;
               $sensorModel = new YiiSensorModel();
               $sensorModel->rdfType = $this->getSensorTypeCompleteUri($sensor[2]);
               $sensorModel->label = $sensor[1];
@@ -233,7 +233,6 @@ class SensorController extends Controller {
               
               $sensorsUris[] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
             }
-            
             return json_encode($sensorsUris, JSON_UNESCAPED_SLASHES); 
         }
         return true;
@@ -270,7 +269,6 @@ class SensorController extends Controller {
     private function getSensorProfile($uri) {
         $sensorModel = new YiiSensorModel();
         $sensorModel->getSensorProfile(Yii::$app->session['access_token'], $uri);
-        
         return $sensorModel->properties;
     }
     
@@ -284,14 +282,26 @@ class SensorController extends Controller {
         //get sensor profile
         $res["properties"] = $this->getSensorProfile($id);
         
+        //get sensor's linked documents
+        $searchDocumentModel = new DocumentSearch();
+        $searchDocumentModel->concernedItem = $id;
+        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+        
+        //3. get sensor annotations
+        $searchAnnotationModel = new AnnotationSearch();
+        $searchAnnotationModel->targets[0] = $id;
+        $sensorAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+     
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
             return $this->render('view', [
                 'model' => $res,
+                'dataDocumentsProvider' => $documents,
+                self::ANNOTATIONS_DATA => $sensorAnnotations
+
             ]);
         }
-        
     }
     
     /**
@@ -427,6 +437,8 @@ class SensorController extends Controller {
             return Yii::$app->params["focalLength"];
         } elseif (strstr($key, "attenuatorFilter")) {
             return Yii::$app->params["attenuatorFilter"];
+        } elseif (strstr($key, "waveband")) {
+            return Yii::$app->params["waveband"];
         }
         
         return null;
@@ -545,7 +557,7 @@ class SensorController extends Controller {
      * @param string $rdfType
      * @return json
      */
-    public function actionGetSensorsUriByRdfType($rdfType) {   
+    public function actionGetSensorsUriByRdfType($rdfType) {
         $sensorsUrisAndLabels = $this->getSensorsUrisAndLabels(urldecode($rdfType));
 
         $sensors = null;
@@ -557,6 +569,21 @@ class SensorController extends Controller {
             }
 
             return json_encode($sensors, JSON_UNESCAPED_SLASHES);
+        } else {
+            return json_encode(null);
+        }
+    }
+    
+    /**
+     * Get the rdfType of the given sensor uri
+     * @param string $uri the sensor's uri
+     * @return json the uri of the rdfType of the sensor
+     */
+    public function actionGetSensorsTypeByUri($uri) {        
+        $sensorModel = $this->findModel($uri);
+        
+        if ($sensorModel->rdfType !== null) {
+            return json_encode($sensorModel->rdfType, JSON_UNESCAPED_SLASHES);
         } else {
             return json_encode(null);
         }

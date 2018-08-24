@@ -1,17 +1,11 @@
 <?php
-
 //******************************************************************************
-//                                       AnnotationController.php
-//
-// Author(s): Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 10 july 2018
+//                          AnnotationController.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 13 Jul, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  10 july 2018
-// Subject: implements the CRUD actions for Annotation Model
 //******************************************************************************
-
 namespace app\controllers;
 
 use Yii;
@@ -19,24 +13,21 @@ use yii\web\Controller;
 use app\models\yiiModels\YiiAnnotationModel;
 use app\models\wsModels\WSUriModel;
 use app\models\yiiModels\YiiUserModel;
-use app\components\helpers\RDF;
-
-require_once '../config/config.php';
+use app\components\helpers\Vocabulary;
+use app\controllers\UserController;
 
 /**
  * Controller for Annotation model.
  * Implements the CRUD actions for Annotation Model
- * 
  * @author Guilhem HEINRICH <guilhem.heinrich@inra.fr>
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
- * @copyright 2011-2018 INRA
- * @license   https://github.com/OpenSILEX/phis2-ws/blob/master/LICENSE GNU Affero General Public License v3.0
- * @link      https://www.w3.org/TR/annotation-vocab
+ * @update [Arnaud Charleroy] 23 august, 2018 : format with right coding style.
+ * @link https://www.w3.org/TR/annotation-vocab
  */
 class AnnotationController extends Controller {
 
     /**
-     * Php motivation instanaces session values name
+     * Php motivation instances session values name
      * Use e.g. Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES];
      */
     const MOTIVATION_INSTANCES = "motivation_instances";
@@ -44,20 +35,18 @@ class AnnotationController extends Controller {
     /**
      * Creates a new Annotation model.
      * If creation is successful, the browser will be redirected to the ObjectRDF 'view' page.
-     * 
      * @param mixed $attributes An array of value to populate the model
-     * 
      * @return mixed
      */
     public function actionCreate($attributes = null) {
         $session = Yii::$app->session;
         $sessionToken = $session[\app\models\wsModels\WSConstants::ACCESS_TOKEN];
         $annotationModel = new YiiAnnotationModel(null, null);
-        // load parameters
+        // Load parameters
         $annotationModel->load(Yii::$app->request->get(), '');
-        // load motivation instances list
+        // Load motivation instances list
         $motivationInstances = $this->getMotivationInstances();
-        //If user as validate form
+        // If user as validate form
         if ($annotationModel->load(Yii::$app->request->post())) {
             // Set model creator 
             $userModel = new YiiUserModel();
@@ -65,46 +54,57 @@ class AnnotationController extends Controller {
             $annotationModel->creator = $userModel->uri;
             $annotationModel->isNewRecord = true;
             $dataToSend[] = $annotationModel->attributesToArray();
-            // send data
+            // Send data
             $requestRes = $annotationModel->insert($sessionToken, $dataToSend);
-            if (is_string($requestRes) && $requestRes === \app\models\wsModels\WSConstants::TOKEN) { //L'utilisateur doit se connecter
+            if (is_string($requestRes) && $requestRes === \app\models\wsModels\WSConstants::TOKEN) { // User must be connected
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 $annotationModel->uri = $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
                 return $this->redirect(['view', 'id' => $annotationModel->uri]);
             }
         } else {
-            return $this->render(
-                            'create', [
+            return $this->render('create', 
+                    [
                         'model' => $annotationModel,
                         AnnotationController::MOTIVATION_INSTANCES => $motivationInstances,
-                            ]
+                    ]
             );
         }
     }
 
     /**
-     * list all annotations
+     * List all annotations
      * @return mixed
      */
     public function actionIndex() {
-        // initialize annotation search model
+        // Initialize annotation search model
         $searchModel = new \app\models\yiiModels\AnnotationSearch();
         $searchResult = $searchModel->search(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], Yii::$app->request->queryParams);
-        // load motivation instances list
+        
+        // Load user instances list
+        $userInstances = UserController::getUsersUriNameInstances();
+       
+        // Load once motivation instances list
         $motivationInstances = $this->getMotivationInstances();
         if (is_string($searchResult)) {
-            return $this->render('/site/error', [
+            return $this->render('/site/error', 
+                    [
                         'name' => 'Internal error',
-                        'message' => $searchResult]);
-        } else if (is_array($searchResult) && isset($searchResult["token"])) { //user must log in
+                        'message' => $searchResult
+                    ]
+                );
+            //User must log in
+        } else if (is_array($searchResult) && isset($searchResult["token"])) { 
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
-            return $this->render('index', [
+            return $this->render('index', 
+                    [
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
-                        AnnotationController::MOTIVATION_INSTANCES => $motivationInstances
-            ]);
+                        AnnotationController::MOTIVATION_INSTANCES => $motivationInstances,
+                        'userInstances' => $userInstances
+                    ]
+                );
         }
     }
 
@@ -115,6 +115,7 @@ class AnnotationController extends Controller {
      * @return array motivation instances list
      */
     public function getMotivationInstances() {
+        // Use session storage variable to prevent multiple triplestore calls
         if (isset(Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES]) && !empty(Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES])) {
             return Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES];
         }
@@ -127,7 +128,7 @@ class AnnotationController extends Controller {
                 return \app\models\wsModels\WSConstants::TOKEN;
             } else {
                 foreach ($requestRes as $motivation) {
-                    $motivationInstances[$motivation->uri] = RDF::prettyUri($motivation->uri);
+                    $motivationInstances[$motivation->uri] = Vocabulary::prettyUri($motivation->uri);
                 }
                 Yii::$app->session[AnnotationController::MOTIVATION_INSTANCES] = $motivationInstances;
                 return $motivationInstances;
@@ -141,7 +142,7 @@ class AnnotationController extends Controller {
     }
 
     /**
-     * @action Displays a single annotation model
+     * Displays a single annotation model.
      * @return mixed
      */
     public function actionView($id) {
@@ -150,14 +151,16 @@ class AnnotationController extends Controller {
         if ($res === \app\models\wsModels\WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
-            return $this->render('view', [
+            return $this->render('view', 
+                    [
                         'model' => $res,
-            ]);
+                    ]
+                );
         }
     }
 
     /**
-     * Get an annotation informations by it's uri
+     * Get an annotation informations by it's uri.
      * @param String $uri searched annotation's uri
      * @return string|YiiAnnotationModel The YiiAnnotationModel representing the group
      *                                "token" is the user must log in
@@ -175,5 +178,4 @@ class AnnotationController extends Controller {
             throw new NotFoundHttpException('The requested page does not exist');
         }
     }
-
 }

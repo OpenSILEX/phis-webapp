@@ -1,4 +1,11 @@
 <?php
+//******************************************************************************
+//                           _form.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 6 Aug, 2017
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -9,8 +16,10 @@ use app\controllers\AnnotationController;
 
 /**
  * @var yii\web\View $this
- * @var app\models\Annotation $model
+ * @var app\models\yiiModels\YiiAnnotationModel $model
  * @var yii\widgets\ActiveForm $form
+ * Implements the create page for an annotation 
+ * @see app\views\annoation\create.php
  */
 ?>
 
@@ -47,6 +56,7 @@ use app\controllers\AnnotationController;
         ],
     ]);
     ?>
+    
     <!--input list of targets-->
     <?php
     foreach ($model->targets as $index => $target) {
@@ -58,7 +68,6 @@ use app\controllers\AnnotationController;
     //\SILEX-->
     <!--First annotation body-->
     <?= $form->field($model, YiiAnnotationModel::COMMENTS . "[0]")->textArea(['rows' => 5]); ?>
-
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Create'), ['class' => 'btn btn-success']); ?>

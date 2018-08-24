@@ -25,6 +25,8 @@ use app\models\yiiModels\ProjectSearch;
 use app\models\yiiModels\GroupSearch;
 use app\models\yiiModels\UserSearch;
 use app\models\yiiModels\DocumentSearch;
+use app\models\yiiModels\AnnotationSearch;
+use app\models\wsModels\WSConstants;
 
 /**
  * CRUD actions for YiiExperimentModel
@@ -33,6 +35,7 @@ use app\models\yiiModels\DocumentSearch;
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ExperimentController extends Controller {
+    CONST ANNOTATIONS_DATA = "experimentAnnotations";
     
     /**
      * define the behaviors
@@ -129,7 +132,12 @@ class ExperimentController extends Controller {
         $searchAgronomicalObject = new \app\models\yiiModels\AgronomicalObjectSearch();
         $searchAgronomicalObject->experiment = $id;
         $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session['access_token'], ["experiment" => $id]);
-        
+         
+        //4. get project annotations
+        $searchAnnotationModel = new AnnotationSearch();
+        $searchAnnotationModel->targets[0] = $id;
+        $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+       
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
@@ -139,7 +147,8 @@ class ExperimentController extends Controller {
             return $this->render('view', [
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
-                'dataAgronomicalObjectsProvider' => $agronomicalObjects
+                'dataAgronomicalObjectsProvider' => $agronomicalObjects,
+                self::ANNOTATIONS_DATA => $experimentAnnotations
             ]);
         }
     }

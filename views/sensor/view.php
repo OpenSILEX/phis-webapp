@@ -1,35 +1,38 @@
 <?php
-
 //******************************************************************************
-//                                       view.php
-//
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 30 mars 2018
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  30 mars 2018
-// Subject: implements the view page for a sensor
+//                           view.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 6 Apr, 2017
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use app\components\widgets\AnnotationWidget;
+use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\AnnotationGridViewWidget;
+use app\controllers\SensorController;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiSensorModel */
+/* Implements the view page for a sensor */
+/* @update [Arnaud Charleroy] 22 august, 2018 (add annotation functionality) */
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<!--add annotation button-->
-<?= AnnotationWidget::widget([AnnotationWidget::TARGETS => [$model->uri]]); ?>
-
 <div class="sensor-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
+    
+    <p>
+        <!--add annotation button-->
+        <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
+        <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+    </p>
 
     <?=
     DetailView::widget([
@@ -90,7 +93,37 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ]
         ]
-    ]);
+    ]); ?>
+    
+    <!-- Sensor Linked Annotation-->
+    <?= AnnotationGridViewWidget::widget(
+            [
+                 AnnotationGridViewWidget::ANNOTATIONS => ${SensorController::ANNOTATIONS_DATA}
+            ]
+        ); 
     ?>
-
+    
+    <?php if ($dataDocumentsProvider->getCount() > 0) {
+            echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
+            echo GridView::widget([
+                'dataProvider' => $dataDocumentsProvider,
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    'title',
+                    'creator',
+                    'creationDate',
+                    'language',
+                    ['class' => 'yii\grid\ActionColumn',
+                        'template' => '{view}',
+                        'buttons' => [
+                            'view' => function($url, $model, $key) {
+                                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
+                                                ['document/view', 'id' => $model->uri]); 
+                            },
+                        ]
+                    ],
+                ]
+            ]);
+          } 
+    ?>
 </div>

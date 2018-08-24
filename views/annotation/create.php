@@ -1,21 +1,31 @@
 <?php
+//******************************************************************************
+//                           create.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 6 Aug, 2017
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 
 use yii\helpers\Html;
 use app\controllers\AnnotationController;
+use app\models\yiiModels\YiiAnnotationModel;
 
 /**
  * @var yii\web\View $this
- * @var app\models\Annotation $model
+ * @var app\models\yiiModels\YiiAnnotationModel $model
+ * Implements the create page for an annotation 
  */
 
 $this->title = Yii::t(
     'app', 'Create an {modelClass}', [
-    'modelClass' => 'Annotation',
+    'modelClass' => YiiAnnotationModel::LABEL,
     ]
 );
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Annotation')];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
 <div class="event-create">
 
     <h1><?php echo Html::encode($this->title) ?></h1><br />

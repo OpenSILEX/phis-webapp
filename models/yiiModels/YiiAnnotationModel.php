@@ -1,16 +1,11 @@
 <?php
-
-//**********************************************************************************************
-//                                       YiiAnnotationModel.php 
-//
-// Author(s): Arnaud Charleroy
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: June 2018
-// Contact: arnaud.charleroy@.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  June, 2018
-// Subject: The Yii model for the Annotation. Used with web services
-//***********************************************************************************************
+//******************************************************************************
+//                         YiiAnnotationModel.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 9 Jul, 2018
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 
 namespace app\models\yiiModels;
 
@@ -19,7 +14,7 @@ use app\models\wsModels\WSActiveRecord;
 use Yii;
 
 /**
- * The yii model for the annotation. 
+ * The Yii model for the Annotation. Used with web services
  * Implements a customized Active Record
  *  (WSActiveRecord, for the web services access)
  * @see app\models\wsModels\WSAnnotationModel
@@ -29,7 +24,10 @@ use Yii;
  */
 class YiiAnnotationModel extends WSActiveRecord {
 
-    public $label = "Annotation";
+    /**
+     * Label name used in annotation view
+     */
+    const LABEL = "Annotation";
 
     /**
      * uri of the annotation
@@ -90,10 +88,11 @@ class YiiAnnotationModel extends WSActiveRecord {
 
     const TARGETS = "targets";
     const TARGETS_LABEL = "Targets";
+    const TARGET_SEARCH_LABEL = "target";
 
     public function __construct($pageSize = null, $page = null) {
         $date = new \DateTime();
-        $this->creationDate = $date->format('Y-m-d H:i:sP');
+        $this->creationDate = $date->format(\DateTime::ATOM);
         $this->wsModel = new WSAnnotationModel();
         $this->pageSize = ($pageSize !== null || $pageSize === "") ? $pageSize : null;
         $this->page = ($page !== null || $pageSize === "") ? $page : null;
@@ -127,9 +126,8 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * Permet de remplir les attributs en fonction des informations 
-     * comprises dans le tableau passé en paramètre
-     * @param array $array tableau clé => valeur contenant les valeurs des attributs du projet
+     * Permits to fill model parameters from webservice data array 
+     * @param array $array key => value with annotation data value
      */
     protected function arrayToAttributes($array) {
         $this->uri = $array[YiiAnnotationModel::URI];
@@ -140,9 +138,9 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * @return array contenant l'élément à enregistrer en base de données
-     *         cette méthode est publique pour que l'utilisateur puisse choisir de l'utiliser 
-     *         ou d'envoyer lui-même son propre tableau (dans le cas où il souhaite enregistrer plusieurs instances)
+     * @return array used to send to the webservice in order to create a new annotation
+     *        this is a public method in case that the user want to save these annotation data 
+     *        in multiple instances
      */
     public function attributesToArray() {
         $elementForWebService[YiiAnnotationModel::CREATOR] = $this->creator;
@@ -162,7 +160,7 @@ class YiiAnnotationModel extends WSActiveRecord {
      * Find an annotation by this uri
      * @param string $sessionToken
      * @param string $uri
-     * @return mixed l'objet s'il existe, un message sinon
+     * @return mixed the searched object if it exists or a message if not
      */
     public function findByURI($sessionToken, $uri) {
         $params = [];

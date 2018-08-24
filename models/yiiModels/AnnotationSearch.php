@@ -1,15 +1,10 @@
 <?php
-
 //******************************************************************************
-//                                       AnnotationSearch.php
-//
-// Author(s): Arnaud Charleroy <arnaud.charleroy@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018// Creation date: 9 july 2018
+//                         AnnotationSearch.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 9 Jul, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  9 july 2018
-// Subject: AnnotationSearch represents the model behind the search form about
-//          \app\models\Annotation based ont he Yii2 search basic classes
 //******************************************************************************
 
 namespace app\models\yiiModels;
@@ -17,7 +12,8 @@ namespace app\models\yiiModels;
 use app\models\yiiModels\YiiAnnotationModel;
 
 /**
- * implements the search action for the annotations
+ * AnnotationSearch represents the model behind the search form about
+ * \app\models\Annotation based ont he Yii2 search basic classes
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class AnnotationSearch extends YiiAnnotationModel {
@@ -32,7 +28,7 @@ class AnnotationSearch extends YiiAnnotationModel {
      */
     public function rules() {
         return [
-            [['uri', 'creator', 'motivatedBy', 'comment', 'targets'], 'safe']
+            [[AnnotationSearch::URI, AnnotationSearch::CREATOR, AnnotationSearch::MOTIVATED_BY, AnnotationSearch::COMMENTS, AnnotationSearch::TARGETS], 'safe']
         ];
     }
 
@@ -49,7 +45,7 @@ class AnnotationSearch extends YiiAnnotationModel {
         if (isset($params[YiiModelsConstants::PAGE])) {
             $this->page = $params[YiiModelsConstants::PAGE];
         }
-
+        
         //2. Check validity of search data
         if (!$this->validate()) {
             return new \yii\data\ArrayDataProvider();
@@ -73,7 +69,7 @@ class AnnotationSearch extends YiiAnnotationModel {
                 //SILEX:info
                 //totalCount must be there too to get the pagination in GridView
                 'totalCount' => $this->totalCount
-                    //\SILEX:info
+                //\SILEX:info
             ]);
         }
     }
@@ -93,4 +89,22 @@ class AnnotationSearch extends YiiAnnotationModel {
         return $toReturn;
     }
 
+    /**
+     * Override inherited method in order to send the right target label parameters name 
+     * to the webService
+     * @return array
+     */
+    public function attributesToArray() {
+        $elementForWebService[YiiAnnotationModel::CREATOR] = $this->creator;
+        $elementForWebService[YiiAnnotationModel::MOTIVATED_BY] = $this->motivatedBy;
+        $elementForWebService[YiiAnnotationModel::CREATION_DATE] = $this->creationDate;
+        // For now one target can be choose
+        if (isset($this->targets) && !empty($this->targets)) {
+            $elementForWebService[YiiAnnotationModel::TARGET_SEARCH_LABEL] = $this->targets[0];
+        }
+        if (isset($this->comments) && !empty($this->comments)) {
+            $elementForWebService[YiiAnnotationModel::COMMENTS] = $this->comments;
+        }
+        return $elementForWebService;
+    }
 }
