@@ -45,7 +45,7 @@ function updateURI(){
 
 </script>
 
-<div class="project-form">
+<div class="project-form well">
 
     <?php $form = ActiveForm::begin(); ?>
 
