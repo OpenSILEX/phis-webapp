@@ -1,17 +1,4 @@
 <?php
-//******************************************************************************
-//                                       view.php
-// SILEX-PHIS
-// Copyright © INRA 2018
-// Creation date: 21 Aug, 2018
-// Contact: morgane.vidal@inra.fr,arnaud.charleroy, anne.tireau@inra.fr, pascal.neveu@inra.fr
-//******************************************************************************
-
-/**
- * Manage log and debug features
- * @update [Arnaud Charleroy] 28 August, 2018 : add debug configuration
- * to fix 404 error resources not found
- */
 
 $params = require(__DIR__ . '/params.php');
 $db = require(__DIR__ . '/db.php');
