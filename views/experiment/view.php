@@ -203,7 +203,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]);
     ?>
     <!-- AO Linked Annotation-->
-    <?= app\components\widgets\AnnotationGridViewWidget::widget(
+    <?= AnnotationGridViewWidget::widget(
             [
                  AnnotationGridViewWidget::ANNOTATIONS => ${ExperimentController::ANNOTATIONS_DATA}
             ]
