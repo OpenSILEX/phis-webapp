@@ -38,17 +38,6 @@ if (YII_ENV_DEV) {
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
     ];
-    //SILEX:Info 
-    // Debug bar configuration
-    //\SILEX:info
-    $config['bootstrap'][] = 'debug';
-    $config['modules']['debug'] = [
-        'debug' => [
-            'class' => 'yii\debug\Module',
-            // uncomment and adjust the following to add your IP if you are not connecting from localhost.
-            'allowedIPs' => ['127.0.0.1', '::1', 'localhost'],
-        ]
-    ];
 }
 
 return $config;
