@@ -23,7 +23,7 @@ require_once '../config/config.php';
 
 ?>
 
-<div class="document-form">
+<div class="document-form well">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
             
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]); ?>

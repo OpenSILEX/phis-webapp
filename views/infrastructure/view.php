@@ -54,8 +54,6 @@ $this->params['breadcrumbs'][] = $this->title;
         
     <?php 
         if ($model->documents->getCount() > 0) {
-            echo json_encode($model->documents->getCount());
-        
             echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
             echo GridView::widget([
                 'dataProvider' => $model->documents,

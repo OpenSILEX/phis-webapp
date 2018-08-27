@@ -19,7 +19,7 @@ use yii\helpers\Html;
 /* @var $model app\models\YiiImageModel */
 ?>
 
-<div class="image-visualization">
+<div class="image-visualization well">
     <h3><?= Yii::t('app', 'Images Visualization') ?> (<?= Yii::t('app', 'On selected plot') ?>)</h3>
     
     <div class="image-visualization-form">

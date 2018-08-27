@@ -37,7 +37,7 @@ function updateURI(){
 }  
 </script>
 
-<div class="experiment-form">
+<div class="experiment-form well">
 
     <?php $form = ActiveForm::begin(); ?>
 

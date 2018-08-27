@@ -24,7 +24,7 @@ $this->title = Yii::t('app', 'Dataset created');
 <?= $handsontable->loadJSLibraries(true) ?>
 <?= $handsontable->loadCSSLibraries() ?>
 
-<div class="dataset-created-render">
+<div class="dataset-created-render well">
     
     <h1><?= Html::encode($this->title) ?></h1>
     <div class="alert alert-success">
