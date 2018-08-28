@@ -3,8 +3,8 @@
 //                                       view.php
 // SILEX-PHIS
 // Copyright © INRA 2018
-// Creation date: 21 Aug, 2018
-// Contact: morgane.vidal@inra.fr,arnaud.charleroy, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Creation date: 28 Aug, 2018
+// Contact: morgane.vidal@inra.fr, arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 use yii\helpers\Html;
@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
    
     <p>
-        <!--add annotation button-->
+        <!-- Add annotation button -->
         <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
         <?php 
             if (Yii::$app->session['isAdmin']) {
@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'rdfType'
         ]
     ]); ?>
-        <!-- AO Linked Annotation-->
+        <!-- Infrastructure linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
                  AnnotationGridViewWidget::ANNOTATIONS => ${InfrastructureController::ANNOTATIONS_DATA}
