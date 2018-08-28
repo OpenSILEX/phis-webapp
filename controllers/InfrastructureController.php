@@ -15,6 +15,8 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 
 use app\models\yiiModels\YiiInfrastructureModel;
+use app\models\yiiModels\AnnotationSearch;
+use app\models\wsModels\WSConstants;
 
 /**
  * CRUD actions for YiiInfrastructureModel
@@ -23,6 +25,9 @@ use app\models\yiiModels\YiiInfrastructureModel;
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class InfrastructureController extends Controller {
+    
+     CONST ANNOTATIONS_DATA = "infrasctructureAnnotations";
+    
     /**
      * Define the behaviors
      * @return array
@@ -57,11 +62,15 @@ class InfrastructureController extends Controller {
 
         //2. Get documents.
         $searchDocumentsModel = new \app\models\yiiModels\DocumentSearch();
-        
         $searchDocumentsModel->concernedItem = $id;
         $documentsSearch = $searchDocumentsModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
 
-        //3. Render the view of the infrastructure.
+        //3. get project annotations
+        $searchAnnotationModel = new AnnotationSearch();
+        $searchAnnotationModel->targets[0] = $id;
+        $infrastructureAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+     
+        //4. Render the view of the infrastructure.
         if (is_string($documentsSearch)) {
             if ($documentsSearch === "token") { //User must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -73,7 +82,8 @@ class InfrastructureController extends Controller {
         } else {
             $infrastructure->documents = $documentsSearch;
             return $this->render('view', [
-               'model' => $infrastructure 
+               'model' => $infrastructure,
+                self::ANNOTATIONS_DATA => $infrastructureAnnotations
             ]);
         }
     } 

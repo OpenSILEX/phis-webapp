@@ -4,7 +4,7 @@
 // SILEX-PHIS
 // Copyright © INRA 2018
 // Creation date: 6 Apr, 2017
-// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Contact: morgane.vidal@inra.fr, arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 use yii\helpers\Html;
@@ -34,7 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             echo Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']);
         }
     ?>
-    <!--add annotation button-->
+    <!-- Add annotation button -->
     <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
     <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']); ?>
     </p>
@@ -65,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ]); ?>
     
-    <!-- Vector Linked Annotation-->
+    <!-- Vector linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
                 AnnotationGridViewWidget::ANNOTATIONS => ${VectorController::ANNOTATIONS_DATA}
