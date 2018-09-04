@@ -121,7 +121,10 @@ class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
         //\SILEX:info
         $getDocumentMetadata = $this->get($sessionToken, null , $params =  ['uri' => $documentURI]);
         $title = $getDocumentMetadata->result->data[0]->title;
-        
+        $title_remove_slash = str_replace("/", "-", $title);
+        //SILEX:info
+        // Find a way to download without saving the file on the server
+        //\SILEX:info
         $this->client = new Client(['base_uri' => $this->basePath,
                                     'headers' => [
                                     'Accept' => self::OCTET_STREAM,
@@ -132,7 +135,7 @@ class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
             $requestRes = $this->client->request(
                 'GET', $this->serviceName . "/" . urlencode($documentURI), ['headers' => [
                 'Authorization' => "Bearer " . $sessionToken],
-                'sink' => \config::path()['documentsUrl'] . urlencode($title) . '.' . $format
+                'sink' => \config::path()['documentsUrl'] . $title_remove_slash . '.' . $format
             ]);
         } catch (\GuzzleHttp\Exception\ClientException $e) { 
             return $this->errorMessage($e->getResponse()->getStatusCode(), 
@@ -148,7 +151,7 @@ class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
         if (is_array($requestRes)) {
             return $requestRes;
         } else {
-            return \config::path()['documentsUrl']. urlencode($title) . '.' . $format;
+            return \config::path()['documentsUrl']. $title_remove_slash . '.' . $format;
         }
     }
 }
