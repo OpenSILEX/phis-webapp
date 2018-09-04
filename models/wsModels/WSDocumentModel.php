@@ -118,6 +118,12 @@ class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
      *               array with the error
      */
     public function getFileByURI($sessionToken, $documentURI, $format) {
+        //SILEX:info
+        // Retreive document associated metadata
+        //\SILEX:info
+        $getDocumentMetadata = $this->get($sessionToken, null , $params =  ['uri' => $documentURI]);
+        $title = $getDocumentMetadata->result->data[0]->title;
+        
         $this->client = new Client(['base_uri' => $this->basePath,
                                     'headers' => [
                                     'Accept' => self::OCTET_STREAM,
@@ -125,15 +131,11 @@ class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
                                     'Authorization' => "Bearer " ]]);
         
         try {
-                $requestRes = $this->client->request(
-                    'GET', 
-                    $this->serviceName . "/" . urlencode($documentURI),
-                    ['headers' => [
-                     'Authorization' => "Bearer " . $sessionToken],
-                      'sink' => \config::path()['documentsUrl'].'file.' . $format
-                        ]);
-            
-            
+            $requestRes = $this->client->request(
+                'GET', $this->serviceName . "/" . urlencode($documentURI), ['headers' => [
+                'Authorization' => "Bearer " . $sessionToken],
+                'sink' => \config::path()['documentsUrl'] . urlencode($title) . '.' . $format
+            ]);
         } catch (\GuzzleHttp\Exception\ClientException $e) { 
             return $this->errorMessage($e->getResponse()->getStatusCode(), 
                                        json_decode($e->getResponse()->getBody()));
@@ -148,7 +150,7 @@ class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
         if (is_array($requestRes)) {
             return $requestRes;
         } else {
-            return \config::path()['documentsUrl'].'file.' . $format;
+            return \config::path()['documentsUrl']. urlencode($title) . '.' . $format;
         }
     }
 }
