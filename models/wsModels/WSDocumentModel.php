@@ -17,7 +17,7 @@ include_once '../config/web_services.php';
 /**
  * Corresponds to the documents service - extends WSModel, encapsulate the documents service
  * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
- * @update [Morgane Vida] June, 2017 : no explanation
+ * @update [Morgane Vidal] June, 2017 : no explanation
  * @update [Arnaud Charleroy] 04 September, 2018 : download file with the right filename 
  */
 class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
