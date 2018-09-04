@@ -125,22 +125,30 @@ class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
         //SILEX:info
         // Find a way to download without saving the file on the server
         //\SILEX:info
-        $this->client = new Client(['base_uri' => $this->basePath,
-                                    'headers' => [
-                                    'Accept' => self::OCTET_STREAM,
-                                    'Content-Type' => REQUEST_CONTENT_TYPE,
-                                    'Authorization' => "Bearer " ]]);
+        $this->client = new Client([
+                'base_uri' => $this->basePath,
+                'headers' => [
+                    'Accept' => self::OCTET_STREAM,
+                    'Content-Type' => REQUEST_CONTENT_TYPE,
+                    'Authorization' => "Bearer " 
+                ]
+            ]
+        );
         
         try {
             $requestRes = $this->client->request(
-                'GET', $this->serviceName . "/" . urlencode($documentURI), ['headers' => [
-                'Authorization' => "Bearer " . $sessionToken],
-                'sink' => \config::path()['documentsUrl'] . $title_remove_slash . '.' . $format
-            ]);
+                'GET', 
+                $this->serviceName . "/" . urlencode($documentURI),
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $sessionToken
+                    ],
+                    'sink' => \config::path()['documentsUrl'] . $title_remove_slash . '.' . $format
+                ]
+            );
         } catch (\GuzzleHttp\Exception\ClientException $e) { 
             return $this->errorMessage($e->getResponse()->getStatusCode(), 
                                        json_decode($e->getResponse()->getBody()));
-            
         } catch (\GuzzleHttp\Exception\ConnectException $e) { //Server connection error
             return WEB_SERVICE_CONNECTION_ERROR_MESSAGE;
         }
