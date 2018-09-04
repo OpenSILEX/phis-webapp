@@ -1,15 +1,11 @@
 <?php
-
 //**********************************************************************************************
 //                                       WSDocumentModel.php 
 //
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
+// SILEX-PHIS
+// Copyright © INRA 2017
 // Creation date: March 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  June, 2017
-// Subject: Corresponds to the documents service - extends WSModel
+// Contact: morgane.vidal@inra.fr, arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //***********************************************************************************************
 
 namespace app\models\wsModels;
@@ -19,8 +15,10 @@ use GuzzleHttp\Client;
 include_once '../config/web_services.php';
 
 /**
- * encapsulate the documents service
- * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * Corresponds to the documents service - extends WSModel, encapsulate the documents service
+ * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
+ * @update [Morgane Vida] June, 2017 : no explanation
+ * @update [Arnaud Charleroy] 04 September, 2018 : download file with the right filename 
  */
 class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
     
