@@ -320,7 +320,7 @@ use kartik\select2\Select2;
         <?= Html::textInput('width', null, ['type' => 'number', 'class' => 'form-control']); ?>
         
         <?= Html::label(Yii::t('app', 'Pixel Size') . ' (µm) <font color="red">*</font>', 'pixelSize') ?>
-        <?= Html::textInput('pixelSize', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('pixelSize', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
     </div>
     
     <div id="wavelengthMS" style="display:none">
@@ -338,30 +338,30 @@ use kartik\select2\Select2;
             <tbody>
                 <tr>
                   <th scope="row"><?= Yii::t('app', 'Wavelength') ?> (nm) <font color="red">*</font></th>
-                  <td><?= Html::textInput('wavelength1', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('wavelength2', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('wavelength3', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('wavelength4', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('wavelength5', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('wavelength6', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('wavelength1', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
+                  <td><?= Html::textInput('wavelength2', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
+                  <td><?= Html::textInput('wavelength3', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
+                  <td><?= Html::textInput('wavelength4', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
+                  <td><?= Html::textInput('wavelength5', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
+                  <td><?= Html::textInput('wavelength6', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
                 </tr>
                 <tr>
                   <th scope="row"><?= Yii::t('app', 'Focal Length') ?> (nm) <font color="red">*</font></th>
-                  <td><?= Html::textInput('focalLength1', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('focalLength2', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('focalLength3', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('focalLength4', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('focalLength5', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('focalLength6', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('focalLength1', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
+                  <td><?= Html::textInput('focalLength2', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
+                  <td><?= Html::textInput('focalLength3', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
+                  <td><?= Html::textInput('focalLength4', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
+                  <td><?= Html::textInput('focalLength5', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
+                  <td><?= Html::textInput('focalLength6', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
                 </tr>
                 <tr>
                   <th scope="row"><?= Yii::t('app', 'Attenuator Filter') ?> <font color="red">*</font></th>
-                  <td><?= Html::textInput('attenuatorFilter1', null, ['class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('attenuatorFilter2', null, ['class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('attenuatorFilter3', null, ['class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('attenuatorFilter4', null, ['class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('attenuatorFilter5', null, ['class' => 'form-control']); ?></td>
-                  <td><?= Html::textInput('attenuatorFilter6', null, ['class' => 'form-control']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter1', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any', 'min' => '0', 'max' => '100']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter2', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any', 'min' => '0', 'max' => '100']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter3', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any', 'min' => '0', 'max' => '100']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter4', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any', 'min' => '0', 'max' => '100']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter5', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any', 'min' => '0', 'max' => '100']); ?></td>
+                  <td><?= Html::textInput('attenuatorFilter6', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any', 'min' => '0', 'max' => '100']); ?></td>
                 </tr>
             </tbody>
           </thead>
@@ -370,7 +370,7 @@ use kartik\select2\Select2;
     
     <div id="waveband" style="display:none">
         <?= Html::label(Yii::t('app', 'Waveband') . ' (nm) <font color="red">*</font>', 'waveband') ?>
-        <?= Html::textInput('waveband', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('waveband', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
     </div>
     
     <div id="lens" style="display:none">
@@ -410,42 +410,42 @@ use kartik\select2\Select2;
         ]); ?>
         
         <?= Html::label(Yii::t('app', 'Focal Length') . ' (mm)  <font color="red">*</font>', 'lensFocalLength') ?>
-        <?= Html::textInput('lensFocalLength', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('lensFocalLength', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
         
         <?= Html::label(Yii::t('app', 'Aperture') . ' (fnumber)  <font color="red">*</font>', 'lensAperture') ?>
-        <?= Html::textInput('lensAperture', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('lensAperture', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
     </div>
     
     <div id="lidar" style="display:none">
         <?= Html::label(Yii::t('app', 'Wavelength') . ' (nm)  <font color="red">*</font>', 'wavelength') ?>
-        <?= Html::textInput('wavelength', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('wavelength', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
         
         <?= Html::label(Yii::t('app', 'Scanning Angular Range') . ' (°)  <font color="red">*</font>', 'scanningAngularRange') ?>
-        <?= Html::textInput('scanningAngularRange', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('scanningAngularRange', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
         
         <?= Html::label(Yii::t('app', 'Scan Angular Resolution') . ' (°)', 'scanAngularResolution') ?>
-        <?= Html::textInput('scanAngularResolution', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('scanAngularResolution', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
         
         <?= Html::label(Yii::t('app', 'Spot width') . ' (°)', 'spotWidth') ?>
-        <?= Html::textInput('spotWidth', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('spotWidth', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
         
         <?= Html::label(Yii::t('app', 'Spot height') . ' (°)', 'spotHeight') ?>
-        <?= Html::textInput('spotHeight', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('spotHeight', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
     </div>
     
     <div id="spectrometer" style="display:none">
 
         <?= Html::label(Yii::t('app', 'Half Field Of View') . ' (°)  <font color="red">*</font>', 'halfFieldOfView') ?>
-        <?= Html::textInput('halfFieldOfView', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('halfFieldOfView', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
         
         <?= Html::label(Yii::t('app', 'Minimum Wavelength') . ' (nm)  <font color="red">*</font>', 'minWavelength') ?>
-        <?= Html::textInput('minWavelength', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('minWavelength', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
         
         <?= Html::label(Yii::t('app', 'Maximum Wavelength') . ' (nm)  <font color="red">*</font>', 'maxWavelength') ?>
-        <?= Html::textInput('maxWavelength', null, ['type' => 'number', 'class' => 'form-control']); ?>
+        <?= Html::textInput('maxWavelength', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
         
         <?= Html::label(Yii::t('app', 'Spectral Sampling Interval') . ' <font color="red">*</font>', 'spectralSamplingInterval') ?>
-        <?= Html::textInput('spectralSamplingInterval', null, ['class' => 'form-control']); ?>
+        <?= Html::textInput('spectralSamplingInterval', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?>
     </div>
     
     <div id="noCharacterization" style="display:none">
