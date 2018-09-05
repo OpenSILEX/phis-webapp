@@ -125,6 +125,7 @@ return [
     'Scientific Contacts' => 'Contacts scientifiques',
     'Scientific Supervisors' => 'Superviseurs scientifiques',
     'Sensor Position' => 'Position du Capteur',
+    'Sensor Profile' => 'Profil du Capteur',
     'Serial Number' => 'Numéro de Série',
     'Server File Path' => 'Lien du Fichier sur le Serveur',
     'Shooting Configuration' => 'Configuration de prise de vue',
