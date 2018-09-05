@@ -355,7 +355,7 @@ use kartik\select2\Select2;
                   <td><?= Html::textInput('focalLength6', null, ['type' => 'number', 'class' => 'form-control']); ?></td>
                 </tr>
                 <tr>
-                  <th scope="row"><?= Yii::t('app', 'Attenuator Filter') ?> <font color="red">*</font></th>
+                  <th scope="row"><?= Yii::t('app', 'Attenuator Filter') ?> (%) <font color="red">*</font></th>
                   <td><?= Html::textInput('attenuatorFilter1', null, ['class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('attenuatorFilter2', null, ['class' => 'form-control']); ?></td>
                   <td><?= Html::textInput('attenuatorFilter3', null, ['class' => 'form-control']); ?></td>
