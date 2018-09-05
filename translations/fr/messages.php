@@ -27,6 +27,7 @@ return [
     'Expected format' => 'Format Attendu',
     'File Rules' => 'Règles concernant le contenu du fichier',
     'No plot selected' => 'Pas de parcelle sélectionnée',
+    'No spaces allowed. Used for the URI. Example : drops' => 'Les espaces ne sont pas autorisés. Utilisé pour créer l\'URI. Exemple: drops',
     'Required column missing (AgronomicalObjectURI, Date or Value)' => "Une des colonnes requises est manquante (AgronomicalObjectURI, Date ou Value)",
     'Required column missing (Geometry or ExperimentURI)' => 'Une des colonnes requises manque (Geometry ou ExperimentURI)',
     'See the folowing list to get all species URI' => 'Regarder dans la liste suivante pour avoir toutes les URI d\'espèces',
