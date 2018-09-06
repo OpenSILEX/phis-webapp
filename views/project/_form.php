@@ -45,7 +45,7 @@ function updateURI(){
 
 </script>
 
-<div class="project-form">
+<div class="project-form well">
 
     <?php $form = ActiveForm::begin(); ?>
 
@@ -77,7 +77,7 @@ function updateURI(){
             'onkeyup' => 'changeSpaces(this.value, this.id);',
             'onChange' => 'updateURI()', 
             'data-toogle' => 'tooltip', 
-            'title' => 'No spaces allowed. Used for the URI, example : drops', 
+            'title' => Yii::t('app/messages','No spaces allowed. Used for the URI. Example : drops'), 
             'data-placement' => 'left']);
     } else {
         echo $form->field($model, 'acronyme')->textInput(['maxlength' => true, 'readOnly' => true, 'style' => 'background-color:#C4DAE7;']);

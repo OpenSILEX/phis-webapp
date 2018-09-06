@@ -23,7 +23,7 @@ use kartik\file\FileInput;
 
 ?>
 
-<div class="agronomicalobject-form">
+<div class="agronomicalobject-form well">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
     
     <?= Yii::$app->session->getFlash('created'); ?>

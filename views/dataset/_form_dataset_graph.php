@@ -20,7 +20,7 @@ use miloschuman\highcharts\Highcharts;
 
 ?>
 
-<div class="dataset-visualisation">
+<div class="dataset-visualisation well">
  <h3><?= Yii::t('app', 'Dataset(s) Visualization') ?> (<?= Yii::t('app', 'On selected plot(s)') ?>)</h3>
  
  

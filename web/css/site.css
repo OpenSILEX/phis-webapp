@@ -1,6 +1,12 @@
-html,
-body {
+html,body {
     height: 100%;
+}
+
+/*SILEX:info
+use for all DetailView
+\SILEX:info*/
+table {
+    background-color: #FFF;
 }
 
 .wrap {

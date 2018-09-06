@@ -21,7 +21,7 @@ use yii\widgets\ActiveForm;
 /* @var $users  array */
 ?>
 
-<div class="vector-form">
+<div class="vector-form well">
     <?php $form = ActiveForm::begin(); ?>
     
         <?= $form->field($model, 'uri')->textInput([
@@ -45,7 +45,7 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'brand')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'serialNumber')->textInput(['maxlength' => true]) ?>
-
+    
         <?= $form->field($model, 'inServiceDate')->widget(\kartik\date\DatePicker::className(), [
             'options' => [
                 'placeholder' => 'yyyy-mm-dd'],            
