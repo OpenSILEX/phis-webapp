@@ -1,34 +1,30 @@
 <?php
-
 //******************************************************************************
 //                                       VectorController.php
-//
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 6 avr. 2018
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  6 avr. 2018
-// Subject:implements the CRUD actions for the Vector model
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 25 Aug, 2018
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
-use Box\Spout\Reader\ReaderFactory;
-use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Common\Type;
+use app\models\yiiModels\YiiDocumentModel;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+
 
 /**
- * CRUD actions for 
+ * CRUD actions for AcquisitionSession
  * @see yii\web\Controller
- * @see app\models\yiiModels\YiiVectorModel
- * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @author Arnaud CHARLEROY <arnaud.charleroy@inra.fr>
  */
 class AcquisitionSessionController extends Controller {
-
+    CONST UAV = "uav";
+    CONST PHENOMOBILE = "phenomobile";
+    
+    
     /**
      * define the behaviors
      * @return array
@@ -43,21 +39,73 @@ class AcquisitionSessionController extends Controller {
             ],
         ];
     }
+    
+    /**
+     * generated the vector creation page
+     * @return mixed
+     */
+    public function actionGeneratePhenomobile() {
+        return $this->generate(self::PHENOMOBILE);
+        
+    }
+    
+    /**
+     * generated the vector creation page
+     * @return mixed
+     */
+    public function actionGenerateUav() {
+        return $this->generate(self::UAV);
+    }
 
     /**
      * generated the vector creation page
      * @return mixed
      */
-    public function actionGenerate() {
+    private function generate($string) {
+        $sessionToken = Yii::$app->session['access_token'];
+        $documentModel = new YiiDocumentModel();
+        
+        //calls search document to get metadata by type
+        $search["documentType"] = $type;
+        $res = $documentModel->find($sessionToken, $search);
+        // get the last document
+        // save it
+        // modify it
         $existingFilePath = Yii::getAlias('@webroot/documents/AcquisitionSessionFiles/Meta_session_UAV_1.7.xlsx');
         $newFilePath = Yii::getAlias('@webroot/documents/AcquisitionSessionFiles/Meta_session_UAV_1.7_test.xlsx');
-       
+        // call ws depend of the pass parameter
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-//        $reader->setLoadSheetsOnly(["HiddenPhis"]);
         $spreadsheet = $reader->load($existingFilePath);
+        $array_metadata = json_decode('[{
+            "Installation": "value",
+            "GroupPlot_type": "value",
+            "GroupPlot_uri": "value",
+            "GroupPlot_alias": "value",
+            "GroupPlot_species": "value",
+            "Pilot": "value",
+            "Camera_type": "value",
+            "Camera_uri": "value",
+            "Camera_alias": "value",
+            "Vector_type": "value",
+            "Vector_uri": "value",
+            "Vector_alias": "value",
+            "RadiometricTarget_uri": "value",
+            "RadiometricTarget_alias": "value"
+        }]',true);
         $spreadsheet->setActiveSheetIndexByName("HiddenPhis");
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('B1', 'Hello World !');
+        $sheetData =[];
+        $firstLine = true;
+        foreach ($array_metadata as $metadata) {
+            if($firstLine){
+                $sheetData[] = array_keys($metadata);
+                $firstLine = false;
+            }
+            $sheetData[] = array_values($metadata);
+        }
+        $sheet->fromArray($sheetData, null, "A1" );
+     
+        
         
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
         $writer->save($newFilePath);
