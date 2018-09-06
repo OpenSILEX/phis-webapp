@@ -1,15 +1,11 @@
 <?php
-
 //**********************************************************************************************
 //                                       WSDocumentModel.php 
 //
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
+// SILEX-PHIS
+// Copyright © INRA 2017
 // Creation date: March 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  June, 2017
-// Subject: Corresponds to the documents service - extends WSModel
+// Contact: morgane.vidal@inra.fr, arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //***********************************************************************************************
 
 namespace app\models\wsModels;
@@ -19,8 +15,10 @@ use GuzzleHttp\Client;
 include_once '../config/web_services.php';
 
 /**
- * encapsulate the documents service
- * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * Corresponds to the documents service - extends WSModel, encapsulate the documents service
+ * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
+ * @update [Morgane Vidal] June, 2017 : no explanation
+ * @update [Arnaud Charleroy] 04 September, 2018 : download file with the right filename 
  */
 class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
     
@@ -118,26 +116,39 @@ class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
      *               array with the error
      */
     public function getFileByURI($sessionToken, $documentURI, $format) {
-        $this->client = new Client(['base_uri' => $this->basePath,
-                                    'headers' => [
-                                    'Accept' => self::OCTET_STREAM,
-                                    'Content-Type' => REQUEST_CONTENT_TYPE,
-                                    'Authorization' => "Bearer " ]]);
+        //SILEX:info
+        // Retreive document associated metadata
+        //\SILEX:info
+        $getDocumentMetadata = $this->get($sessionToken, null , $params =  ['uri' => $documentURI]);
+        $title = $getDocumentMetadata->result->data[0]->title;
+        $title_remove_slash = str_replace("/", "-", $title);
+        //SILEX:info
+        // Find a way to download without saving the file on the server
+        //\SILEX:info
+        $this->client = new Client([
+                'base_uri' => $this->basePath,
+                'headers' => [
+                    'Accept' => self::OCTET_STREAM,
+                    'Content-Type' => REQUEST_CONTENT_TYPE,
+                    'Authorization' => "Bearer " 
+                ]
+            ]
+        );
         
         try {
-                $requestRes = $this->client->request(
-                    'GET', 
-                    $this->serviceName . "/" . urlencode($documentURI),
-                    ['headers' => [
-                     'Authorization' => "Bearer " . $sessionToken],
-                      'sink' => \config::path()['documentsUrl'].'file.' . $format
-                        ]);
-            
-            
+            $requestRes = $this->client->request(
+                'GET', 
+                $this->serviceName . "/" . urlencode($documentURI),
+                [
+                    'headers' => [
+                        'Authorization' => "Bearer " . $sessionToken
+                    ],
+                    'sink' => \config::path()['documentsUrl'] . $title_remove_slash . '.' . $format
+                ]
+            );
         } catch (\GuzzleHttp\Exception\ClientException $e) { 
             return $this->errorMessage($e->getResponse()->getStatusCode(), 
                                        json_decode($e->getResponse()->getBody()));
-            
         } catch (\GuzzleHttp\Exception\ConnectException $e) { //Server connection error
             return WEB_SERVICE_CONNECTION_ERROR_MESSAGE;
         }
@@ -148,7 +159,7 @@ class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
         if (is_array($requestRes)) {
             return $requestRes;
         } else {
-            return \config::path()['documentsUrl'].'file.' . $format;
+            return \config::path()['documentsUrl']. $title_remove_slash . '.' . $format;
         }
     }
 }
