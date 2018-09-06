@@ -33,6 +33,7 @@ return [
     'Administrative Contacts' => 'Contacts administratifs',
     'Affiliation' => 'Affiliation',
     'All Descendants' => 'Tous les Descendants',
+    'Acquisition session template' => 'Gabarit de session d\'aquisition',
     'Available' => 'Disponible',
     'Availability' => 'Disponibilité',
     'Brand' => 'Marque',
