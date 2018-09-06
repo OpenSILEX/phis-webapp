@@ -126,9 +126,9 @@ use kartik\select2\Select2;
      *                    false if required fields are missing
      */
     function validateCamera() {
-       return ($('#height').val() === null || $('#height').val() === "")
-            && ($('#width').val() === null || $('#width').val() === "")
-            && ($('#pixelSize').val() === null || $('#pixelSize').val() === "");
+       return !($('#height').val() === null || $('#height').val() === "")
+            && !($('#width').val() === null || $('#width').val() === "")
+            && !($('#pixelSize').val() === null || $('#pixelSize').val() === "");
     }
     
     /**
@@ -197,7 +197,7 @@ use kartik\select2\Select2;
      *                    false if required fields are missing   
      */
     function validateTIRCamera() {
-        return ($('#waveband').val() !== null || $('#waveband').val() !== "");
+        return !($('#waveband').val() !== null || $('#waveband').val() !== "");
     }
     
     /**
