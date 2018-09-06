@@ -231,7 +231,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; INRA MISTEA 2014-2018 (SILEX-PHIS v.2.5 - 22 August 2018)</p>
+        <p class="pull-left">&copy; OpenSILEX - PHIS v.2.5 - 22 August 2018 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
     </div> 
 </footer> 
 

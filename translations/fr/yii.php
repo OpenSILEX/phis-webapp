@@ -31,6 +31,8 @@
 return [
     ' and ' => ' et ',
     '(not set)' => '(non défini)',
+    'Add Sensors' => 'Ajouter des Capteurs',
+    'Add Vectors' => 'Ajouter des Vecteurs',
     'An internal server error occurred.' => 'Une erreur de serveur interne s\'est produite.',
     'Are you sure you want to delete this item?' => 'Voulez-vous réellement supprimer cet élément ?',
     'Create' => 'Créer',
