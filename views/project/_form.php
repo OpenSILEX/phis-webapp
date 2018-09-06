@@ -77,7 +77,7 @@ function updateURI(){
             'onkeyup' => 'changeSpaces(this.value, this.id);',
             'onChange' => 'updateURI()', 
             'data-toogle' => 'tooltip', 
-            'title' => Yii::t('message','No spaces allowed. Used for the URI. Example : drops'), 
+            'title' => Yii::t('app/messages','No spaces allowed. Used for the URI. Example : drops'), 
             'data-placement' => 'left']);
     } else {
         echo $form->field($model, 'acronyme')->textInput(['maxlength' => true, 'readOnly' => true, 'style' => 'background-color:#C4DAE7;']);
