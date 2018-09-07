@@ -53,6 +53,17 @@ class YiiTokenModel extends WSActiveRecord {
     }
     
     /**
+     * @see http://www.yiiframework.com/doc-2.0/guide-structure-models.html#attribute-labels
+     * @return array the labels of the attributes
+     */
+    public function attributeLabels() {
+        return [
+            'email' => Yii::t('app', 'Email'),
+            'password' => Yii::t('app', 'Password')
+        ];
+    }
+
+    /**
      * @action affecte à la variable de session isAdmin true si le compte est admin, false sinon
      * @param string $email
      */

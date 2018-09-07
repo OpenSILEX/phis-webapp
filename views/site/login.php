@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
-/* @var $model app\models\LoginForm */
+/* @var $model app\models\YiiTokenModel */
 
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
@@ -14,8 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?php echo Yii::t('app/messages','Please fill out the following fields to login:')
-                ?>
+        <?= Yii::t('app/messages','Please fill out the following fields to login:') ?>
     </p>
     
     <p style="color:red;"><b><?= Yii::$app->session->getFlash('error'); ?></b></p>
