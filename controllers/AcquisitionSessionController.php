@@ -1,9 +1,9 @@
 <?php
 //******************************************************************************
-//                                       VectorController.php
+//                                       AcquisitionSessionController.php
 // SILEX-PHIS
 // Copyright © INRA 2018
-// Creation date: 25 Aug, 2018
+// Creation date: 07 Sept, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -14,21 +14,32 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\yiiModels\YiiDocumentModel;
 use app\models\wsModels\WSConstants;
+use app\models\wsModels\WSAcquisitionSession;
+use app\components\helpers\SiteMessages;
 
 require_once '../config/config.php';
 
 /**
- * CRUD actions for AcquisitionSession
+ * CRUD actions for Acquisition Session Metadata File
  * @see yii\web\Controller
  * @author Arnaud CHARLEROY <arnaud.charleroy@inra.fr>
  */
 class AcquisitionSessionController extends Controller {
-
-    CONST UAV_URI_PART = "AcquisitionSessionUAV";
-    CONST PHENOMOBILE_URI_PART = "AcquisitionSessionPhenomobile";
+    
+    /**
+     *
+     * @var string Type uri of the document file     
+     */
+    private $documentFileType;
+    
+    /**
+     *
+     * @var string Vector type uri 
+     */
+    private $vectorRdfType;
 
     /**
-     * define the behaviors
+     * Define the behaviors
      * @return array
      */
     public function behaviors() {
@@ -43,152 +54,188 @@ class AcquisitionSessionController extends Controller {
     }
 
     /**
-     * generated the vector creation page
-     * @return mixed
+     * Set the right uris for robot field acquisition session metadata
+     * @return Reponse
      */
-    public function actionGeneratePhenomobile() {
+    public function actionGenerateFieldRobot() {
+        $this->vectorRdfType = Yii::$app->params['FieldRobot'];
+        $this->documentFileType = Yii::$app->params['FieldRobotDocument'];
+
         return $this->generateFile(self::PHENOMOBILE_URI_PART);
     }
 
     /**
-     * generated the vector creation page
-     * @return mixed
+     * Set the right uris for uav acquisition session metadata
+     * @return Reponse
      */
     public function actionGenerateUav() {
-        return $this->generateFile(self::UAV_URI_PART);
+        $this->vectorRdfType = Yii::$app->params['UAV'];
+        $this->documentFileType = Yii::$app->params['UAVDocument'];
+
+        return $this->generateFile();
     }
 
     /**
-     * generated the vector creation page
-     * @return mixed
+     * Generated the session acquisition file 
+     * @return Reponse
      */
-    private function generateFile($documentType) {
-        // get the last document and save it on the
-        $existingFilePath = $this->getTemplateFile($documentType);
-        // modify it
+    private function generateFile() {
+        // get the last document and save it on the server
+        $existingFilePath = $this->getTemplateFile();
+        // add data retreive from the ws
         $newFilePath = $this->addHiddenphisSheetData($existingFilePath);
-
+        // save the new file and send it to the user
         $this->sendTemplateFile($newFilePath);
     }
 
-    private function getTemplateFile($documentType) {
+    /**
+     * Retreive the saved document linked to the document type required
+     * @return mixed an error response or a string with the file path
+     */
+    private function getTemplateFile() {
+        // 1. Get installation uri
         $infrastructureUri = substr(Yii::$app->params['baseURI'], 0, -1);
+        
+        // 2. Get the last acquisition template for the document type required
         $sessionToken = Yii::$app->session['access_token'];
         $documentModel = new YiiDocumentModel();
-
-        //Get document's types
-        $documentsTypes = $documentModel->findDocumentsTypes($sessionToken);
-
-        if (is_string($documentsTypes)) {
-            return $this->render(
-                            '/site/error', [
-                        'name' => 'Internal error',
-                        'message' => $documentsTypes
-                            ]
-            );
-        } else if (is_array($documentsTypes) && isset($documentsTypes["token"])) {
-            return $this->redirect(Yii::$app->urlManager->createUrl(WSConstants::TOKEN));
-        } else {
-
-
-            $documentTypeURIArray = preg_grep("/$documentType/", $documentsTypes);
+        $search["documentType"] = $this->documentFileType;
+        $search["concernedItem"] = $infrastructureUri;
+        //SILEX:info
+        // Order is "desc" by default
+        //\SILEX:info
+        $wsResult = $documentModel->find($sessionToken, $search);
+        
+        // 3. Get the last acquisition template saved for the document type required
+        if ($wsResult != null && isset($wsResult[0])) {
+            $acquistionDocMetadata = $wsResult[0];
+            $existingFilePath = $documentModel->getDocument($sessionToken, $acquistionDocMetadata->uri, $acquistionDocMetadata->format);
             //SILEX:info
-            // For example, you can get this kind of result below, so you need to sort the array
-            // before use it
-            // array(1) { [1]=> string(72) "http://www.phenome-fppn.fr/vocabulary/2017#AcquisitionSessionUAVDocument" }
-            //SILEX:info 
-            // get right array index
-            sort($documentTypeURIArray);
-            //calls search document to get metadata by type
-            $search["documentType"] = $documentTypeURIArray[0];
-            $search["concernedItem"] = $infrastructureUri;
-            $wsResult = $documentModel->find($sessionToken, $search);
-
-            if ($wsResult != null && isset($wsResult[0])) {
-                $acquistionDocMetadata = $wsResult[0];
-                $existingFilePath = $documentModel->getDocument($sessionToken, $acquistionDocMetadata->uri, $acquistionDocMetadata->format);
-                if ($existingFilePath == WSConstants::TOKEN) {
-                    return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-                }
-                $realPath = str_replace(\config::path()['documentsUrl'], Yii::getAlias('@webroot/documents/') , $existingFilePath );
-                return $realPath;
-            } else {
-                return $this->render(
-                                '/site/error', [
-                            'name' => 'Internal error',
-                            'message' => "Can't fetch the file"
-                                ]
-                );
+            // Find a way to send a generic response
+            //\SILEX:info
+            if ($existingFilePath == WSConstants::TOKEN) {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             }
+            // 4. Return the physical path of the file
+            $realPath = str_replace(\config::path()['documentsUrl'], Yii::getAlias('@webroot/documents/') , $existingFilePath );
+            return $realPath;
+        } else {
+            // 4. Return an warning if no file present
+            return $this->render(
+                    SiteMessages::SITE_WARNING_PAGE_ROUTE, [
+                            SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
+                            SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_FETCH_FILE
+                        ]
+            );
         }
     }
-
+    /**
+     * 
+     * @param type $existingFilePath the server physical path of the retrieved file 
+     * @return string
+     */
     private function addHiddenphisSheetData($existingFilePath) {
+        // 1. Create save file path
         $filename = basename($existingFilePath);
         $file_name = pathinfo($filename, PATHINFO_FILENAME);
         $file_ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $newFilePath = Yii::getAlias('@webroot/documents/') . $file_name . '_with_hiddenPhis.' . $file_ext;
+        
+        // 2. Read existing file
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-        // call ws depend of the pass parameter
         $spreadsheet = $reader->load($existingFilePath);
-        $array_metadata = json_decode('[{
-            "Installation": "value",
-            "GroupPlot_type": "value",
-            "GroupPlot_uri": "value",
-            "GroupPlot_alias": "value",
-            "GroupPlot_species": "value",
-            "Pilot": "value",
-            "Camera_type": "value",
-            "Camera_uri": "value",
-            "Camera_alias": "value",
-            "Vector_type": "value",
-            "Vector_uri": "value",
-            "Vector_alias": "value",
-            "RadiometricTarget_uri": "value",
-            "RadiometricTarget_alias": "value"
-        }]', true);
+       
+        // 3. Get information from the webservice
+        /** @example for RobotField document type
+         * [
+         *   {
+         *     "Installation": null,
+         *     "GroupPlot_type": "http://www.phenome-fppn.fr/vocabulary/2017#Experiment",
+         *     "GroupPlot_alias": "tes",
+         *     "GroupPlot_uri": "http://www.phenome-fppn.fr/phis/PHS2018-1",
+         *     "GroupPlot_species": "",
+         *     "Pilot": "test.test@inra.fr"
+         *   }
+         * ]
+         */
+        $sessionToken = Yii::$app->session['access_token'];
+        $wsAcquisitionSession = new WSAcquisitionSession();
+        $fileMetadataByURI = $wsAcquisitionSession->getFileMetadataByURI($sessionToken, $this->vectorRdfType, [WSConstants::PAGE_SIZE => 100]);
+        if (!is_string($fileMetadataByURI)) {
+            if (isset($fileMetadataByURI[\app\models\wsModels\WSConstants::TOKEN])) {
+                 return $this->render(
+                 SiteMessages::SITE_ERROR_PAGE_ROUTE,
+                        [
+                            SiteMessages::SITE_PAGE_NAME =>  SiteMessages::NOT_CONNECTED,
+                            SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
+                        ]
+                    );
+            } 
+        } else {
+             return $this->render(
+                        SiteMessages::SITE_ERROR_PAGE_ROUTE,
+                        [
+                            SiteMessages::SITE_PAGE_NAME => SiteMessages::ERROR_WHILE_FETCHING_DATA,
+                            SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
+                        ]
+                    );
+        }
+        // 4. Save information in hiddenPhis Sheet
+        // 4.1 Select sheet or create if not
+        if(!$spreadsheet->sheetNameExists('HiddenPhis')){
+            $HiddenPhisWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'HiddenPhis');
+            // Create a new worksheet called "HiddenPhis" at the end 
+            $spreadsheet->addSheet($HiddenPhisWorkSheet);
+        }
         $spreadsheet->setActiveSheetIndexByName("HiddenPhis");
         $sheet = $spreadsheet->getActiveSheet();
+        // 4.2 Fill this sheet with data from 'A1' cell
+        /** 
+         * @link https://phpspreadsheet.readthedocs.io/en/develop/topics/accessing-cells/#setting-a-range-of-cells-from-an-array 
+         */
         $sheetData = [];
         $firstLine = true;
-        foreach ($array_metadata as $metadata) {
+        foreach ($fileMetadataByURI as $metadata) {
             if ($firstLine) {
-                $sheetData[] = array_keys($metadata);
+                $sheetData[] = array_keys((array) $metadata);
                 $firstLine = false;
             }
-            $sheetData[] = array_values($metadata);
+            $sheetData[] = array_values((array) $metadata);
         }
         $sheet->fromArray($sheetData, null, "A1");
 
+        // 4.3 Save modified worksheet
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-         $saved = true;
         try{
             $writer->save($newFilePath);
             return $newFilePath;
         } catch (Exception $ex) {
             return $this->render(
-                        '/site/error',
-                        [
-                            'name' => 'Internal error',
-                            'message' => $ex->getMessage()
+                    SiteMessages::SITE_WARNING_PAGE_ROUTE, [
+                            SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
+                            SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
                         ]
-                    );
+            );
         }
     }
 
+    /**
+     * Send the file to the user.
+     * @param string $newFilePath the path of the modified template
+     * @return Response send a file to the user
+     *                  or send an error
+     */
     private function sendTemplateFile($newFilePath) {
         if (file_exists($newFilePath)) {
             Yii::$app->response->sendFile($newFilePath)->send();
             unlink($newFilePath);
         } else {
             return $this->render(
-                    '/site/error', 
-                    [
-                        'name' => 'Internal error',
-                        'message' => "Can't send the file"
-                    ]
+                    SiteMessages::SITE_WARNING_PAGE_ROUTE, [
+                            SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
+                            SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_SEND_FILE
+                        ]
             );
         }
     }
-
 }

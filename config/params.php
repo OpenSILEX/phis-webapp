@@ -23,6 +23,10 @@ return [
     'LiDAR' => "http://www.phenome-fppn.fr/vocabulary/2017#LiDAR",
     'Spectrometer' => "http://www.phenome-fppn.fr/vocabulary/2017#Spectrometer",
     'Installation' => "http://www.phenome-fppn.fr/vocabulary/2017#Installation",
+    'UAV' => 'http://www.phenome-fppn.fr/vocabulary/2017#UAV',
+    'UAVDocument' => 'http://www.phenome-fppn.fr/vocabulary/2017#AcquisitionSessionUAVDocument',
+    'FieldRobot' => 'http://www.phenome-fppn.fr/vocabulary/2017#FieldRobot',
+    'FieldRobotDocument' => 'http://www.phenome-fppn.fr/vocabulary/2017#AcquisitionSessionPhenomobileDocument',
     
     //-------- Relations
     'aperture' => 'http://www.phenome-fppn.fr/vocabulary/2017#aperture',
