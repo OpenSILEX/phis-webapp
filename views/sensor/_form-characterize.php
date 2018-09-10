@@ -346,7 +346,7 @@ use kartik\select2\Select2;
                   <td><?= Html::textInput('wavelength6', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
                 </tr>
                 <tr>
-                  <th scope="row"><?= Yii::t('app', 'Focal Length') ?> (nm) <font color="red">*</font></th>
+                  <th scope="row"><?= Yii::t('app', 'Focal Length') ?> (mm) <font color="red">*</font></th>
                   <td><?= Html::textInput('focalLength1', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
                   <td><?= Html::textInput('focalLength2', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
                   <td><?= Html::textInput('focalLength3', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
@@ -355,7 +355,7 @@ use kartik\select2\Select2;
                   <td><?= Html::textInput('focalLength6', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any']); ?></td>
                 </tr>
                 <tr>
-                  <th scope="row"><?= Yii::t('app', 'Attenuator Filter') ?> <font color="red">*</font></th>
+                  <th scope="row"><?= Yii::t('app', 'Attenuator Filter') ?> (%) <font color="red">*</font> [0 - 100]</th>
                   <td><?= Html::textInput('attenuatorFilter1', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any', 'min' => '0', 'max' => '100']); ?></td>
                   <td><?= Html::textInput('attenuatorFilter2', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any', 'min' => '0', 'max' => '100']); ?></td>
                   <td><?= Html::textInput('attenuatorFilter3', null, ['type' => 'number', 'class' => 'form-control', 'step' => 'any', 'min' => '0', 'max' => '100']); ?></td>
