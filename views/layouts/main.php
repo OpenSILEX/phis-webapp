@@ -104,7 +104,7 @@ AppAsset::register($this);
                                     ],
                                     [
                                         'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "Phenomobile"), 
-                                        'url' => ['/acquisition-session/generate-phenomobile']
+                                        'url' => ['/acquisition-session/generate-field-robot']
                                     ],
                                 ]
                             ]

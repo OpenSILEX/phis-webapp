@@ -27,6 +27,11 @@ require_once '../config/config.php';
 class AcquisitionSessionController extends Controller {
     
     /**
+     * The name of the worksheet
+     */
+    CONST PHIS_SHEET_NAME = "HiddenPhis";
+    
+    /**
      *
      * @var string Type uri of the document file     
      */
@@ -37,6 +42,12 @@ class AcquisitionSessionController extends Controller {
      * @var string Vector type uri 
      */
     private $vectorRdfType;
+    
+    /**
+     *
+     * @var string Retreive error
+     */
+    private $error;
 
     /**
      * Define the behaviors
@@ -61,7 +72,7 @@ class AcquisitionSessionController extends Controller {
         $this->vectorRdfType = Yii::$app->params['FieldRobot'];
         $this->documentFileType = Yii::$app->params['FieldRobotDocument'];
 
-        return $this->generateFile(self::PHENOMOBILE_URI_PART);
+        return $this->generateFile();
     }
 
     /**
@@ -74,7 +85,7 @@ class AcquisitionSessionController extends Controller {
 
         return $this->generateFile();
     }
-
+    
     /**
      * Generated the session acquisition file 
      * @return Reponse
@@ -82,10 +93,19 @@ class AcquisitionSessionController extends Controller {
     private function generateFile() {
         // get the last document and save it on the server
         $existingFilePath = $this->getTemplateFile();
+        if ($this->error != null) {
+            return $this->error;
+        }
         // add data retreive from the ws
         $newFilePath = $this->addHiddenphisSheetData($existingFilePath);
+        if ($this->error != null) {
+            return $this->error;
+        }
         // save the new file and send it to the user
         $this->sendTemplateFile($newFilePath);
+        if ($this->error != null) {
+            return $this->error;
+        }
     }
 
     /**
@@ -119,15 +139,16 @@ class AcquisitionSessionController extends Controller {
             // 4. Return the physical path of the file
             $realPath = str_replace(\config::path()['documentsUrl'], Yii::getAlias('@webroot/documents/') , $existingFilePath );
             return $realPath;
-        } else {
-            // 4. Return an warning if no file present
-            return $this->render(
-                    SiteMessages::SITE_WARNING_PAGE_ROUTE, [
-                            SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
-                            SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_FETCH_FILE
-                        ]
-            );
-        }
+        } 
+        
+        // 4. Return an warning if no file present
+        $this->error = $this->render(
+            SiteMessages::SITE_WARNING_PAGE_ROUTE, [
+                   SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
+                   SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_FETCH_FILE_AQUI_SESS
+            ]
+        );
+        
     }
     /**
      * 
@@ -139,11 +160,22 @@ class AcquisitionSessionController extends Controller {
         $filename = basename($existingFilePath);
         $file_name = pathinfo($filename, PATHINFO_FILENAME);
         $file_ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        $newFilePath = Yii::getAlias('@webroot/documents/') . $file_name . '_with_hiddenPhis.' . $file_ext;
+        $newFilePath = Yii::getAlias('@webroot/documents/') . $file_name . '_with_' . self::PHIS_SHEET_NAME . '.' . $file_ext;
         
         // 2. Read existing file
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-        $spreadsheet = $reader->load($existingFilePath);
+        // try if the file can be read
+        try{
+            $spreadsheet = $reader->load($existingFilePath);
+        } catch (Exception $ex) {
+            $this->error = $this->render(
+                SiteMessages::SITE_WARNING_PAGE_ROUTE, [
+                       SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
+                       SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_READ_FILE
+                ]
+            );
+            return;
+        }
        
         // 3. Get information from the webservice
         /** @example for RobotField document type
@@ -163,31 +195,33 @@ class AcquisitionSessionController extends Controller {
         $fileMetadataByURI = $wsAcquisitionSession->getFileMetadataByURI($sessionToken, $this->vectorRdfType, [WSConstants::PAGE_SIZE => 100]);
         if (!is_string($fileMetadataByURI)) {
             if (isset($fileMetadataByURI[\app\models\wsModels\WSConstants::TOKEN])) {
-                 return $this->render(
-                 SiteMessages::SITE_ERROR_PAGE_ROUTE,
-                        [
-                            SiteMessages::SITE_PAGE_NAME =>  SiteMessages::NOT_CONNECTED,
-                            SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
-                        ]
-                    );
+                $this->error = $this->render(
+                                        SiteMessages::SITE_ERROR_PAGE_ROUTE,
+                                        [
+                                            SiteMessages::SITE_PAGE_NAME =>  SiteMessages::NOT_CONNECTED,
+                                            SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
+                                        ]
+                                    );
+                return;
             } 
         } else {
-             return $this->render(
-                        SiteMessages::SITE_ERROR_PAGE_ROUTE,
-                        [
-                            SiteMessages::SITE_PAGE_NAME => SiteMessages::ERROR_WHILE_FETCHING_DATA,
-                            SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
-                        ]
-                    );
+            $this->error = $this->render(
+                                    SiteMessages::SITE_ERROR_PAGE_ROUTE,
+                                    [
+                                        SiteMessages::SITE_PAGE_NAME => SiteMessages::ERROR_WHILE_FETCHING_DATA,
+                                        SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
+                                    ]
+                                );
+            return;
         }
         // 4. Save information in hiddenPhis Sheet
         // 4.1 Select sheet or create if not
-        if(!$spreadsheet->sheetNameExists('HiddenPhis')){
-            $HiddenPhisWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'HiddenPhis');
-            // Create a new worksheet called "HiddenPhis" at the end 
+        if(!$spreadsheet->sheetNameExists(self::PHIS_SHEET_NAME)){
+            $HiddenPhisWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, self::PHIS_SHEET_NAME);
+            // Create a new worksheet called "HiddenPhis" for example at the end 
             $spreadsheet->addSheet($HiddenPhisWorkSheet);
         }
-        $spreadsheet->setActiveSheetIndexByName("HiddenPhis");
+        $spreadsheet->setActiveSheetIndexByName(self::PHIS_SHEET_NAME);
         $sheet = $spreadsheet->getActiveSheet();
         // 4.2 Fill this sheet with data from 'A1' cell
         /** 
@@ -210,12 +244,14 @@ class AcquisitionSessionController extends Controller {
             $writer->save($newFilePath);
             return $newFilePath;
         } catch (Exception $ex) {
-            return $this->render(
-                    SiteMessages::SITE_WARNING_PAGE_ROUTE, [
-                            SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
-                            SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
-                        ]
-            );
+            $this->error = $this->render(
+                                SiteMessages::SITE_WARNING_PAGE_ROUTE, 
+                                [
+                                    SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
+                                    SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
+                                ]
+                            );
+            return;
         }
     }
 
@@ -230,12 +266,13 @@ class AcquisitionSessionController extends Controller {
             Yii::$app->response->sendFile($newFilePath)->send();
             unlink($newFilePath);
         } else {
-            return $this->render(
+            $this->render(
                     SiteMessages::SITE_WARNING_PAGE_ROUTE, [
                             SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
                             SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_SEND_FILE
                         ]
             );
+            return;
         }
     }
 }

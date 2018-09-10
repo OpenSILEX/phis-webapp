@@ -14,18 +14,18 @@ namespace app\components\helpers;
  * @author Arnaud Charleroy<arnaud.charleroy@inra.fr>
  */
 class SiteMessages {
-
-    // pages route
+    // Page routes
     CONST SITE_ERROR_PAGE_ROUTE = '/site/error';
     CONST SITE_WARNING_PAGE_ROUTE = '/site/warning';
-    // pages variables
+    // Page variables
     CONST SITE_PAGE_NAME = "name";
     CONST SITE_PAGE_MESSAGE = "message";
-    //pages messages
+    // Page messages
     CONST INTERNAL_ERROR = 'Internal Error';
     CONST CANT_FETCH_FILE = 'Can\'t fetch the file';
+    CONST CANT_FETCH_FILE_AQUI_SESS = self::CANT_FETCH_FILE . '. You must send a template from the "Infrastructure" submenu before.';
+    CONST CANT_READ_FILE = 'Can\'t read the file';
     CONST NOT_CONNECTED = 'Not connected';
     CONST ERROR_WHILE_FETCHING_DATA = "Error while fetching data";
     CONST CANT_SEND_FILE = 'Error occured when sending the file';
-
 }
