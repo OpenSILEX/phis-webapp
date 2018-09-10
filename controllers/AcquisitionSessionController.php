@@ -164,7 +164,7 @@ class AcquisitionSessionController extends Controller {
          $saved = true;
         try{
             $writer->save($newFilePath);
-             return $newFilePath;
+            return $newFilePath;
         } catch (Exception $ex) {
             return $this->render(
                         '/site/error',
