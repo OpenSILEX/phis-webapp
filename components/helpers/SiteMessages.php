@@ -11,7 +11,7 @@ namespace app\components\helpers;
 
 /**
  * SiteMessages a class which defines errors messages
- * @author Arnaud Charleroy<arnaud.charleroy@inra.fr>
+ * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class SiteMessages {
     // Page routes

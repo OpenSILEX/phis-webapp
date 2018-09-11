@@ -21,7 +21,7 @@ include_once '../config/web_services.php';
 class WSAcquisitionSession extends \openSILEX\guzzleClientPHP\WSModel {
 
     /**
-     * initialize access to the annotations service. Calls super constructor
+     * initialize access to the acquisition session service. Calls super constructor
      */
     public function __construct() {
         parent::__construct(WS_PHIS_PATH, "acquisitionSessions");
@@ -29,7 +29,7 @@ class WSAcquisitionSession extends \openSILEX\guzzleClientPHP\WSModel {
     
     /**
      * Finds and returns the metadata linked to a particular type
-     * of acquisition session excel file
+     * of acquisition session excel document
      * @param String $sessionToken connection user token
      * @param String $vectorRdfTypeUri uri of the vector type
      * @example http://www.phenome-fppn.fr/vocabulary/2017#UAV

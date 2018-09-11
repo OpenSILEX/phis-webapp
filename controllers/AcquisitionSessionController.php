@@ -22,30 +22,31 @@ require_once '../config/config.php';
 /**
  * CRUD actions for Acquisition Session Metadata File
  * @see yii\web\Controller
- * @author Arnaud CHARLEROY <arnaud.charleroy@inra.fr>
+ * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class AcquisitionSessionController extends Controller {
     
     /**
-     * The name of the worksheet
+     * The name of the worksheet which will be modified
      */
     CONST PHIS_SHEET_NAME = "HiddenPhis";
     
     /**
-     *
-     * @var string Type uri of the document file     
+     * The type of the document file  
+     * @var string    
      */
     private $documentFileType;
     
     /**
-     *
-     * @var string Vector type uri 
+     * The type of the vector required 
+     * @var string 
      */
     private $vectorRdfType;
     
     /**
-     *
-     * @var string Retreive error
+     * This variable store the lasted error 
+     * which has occurred
+     * @var string 
      */
     private $error;
 
@@ -87,7 +88,7 @@ class AcquisitionSessionController extends Controller {
     }
     
     /**
-     * Generated the session acquisition file 
+     * Generate the  acquisition session file 
      * @return Reponse
      */
     private function generateFile() {
@@ -96,7 +97,7 @@ class AcquisitionSessionController extends Controller {
         if ($this->error != null) {
             return $this->error;
         }
-        // add data retreive from the ws
+        // add data retreive from the ws to the worksheet choosen
         $newFilePath = $this->addHiddenphisSheetData($existingFilePath);
         if ($this->error != null) {
             return $this->error;
@@ -109,8 +110,10 @@ class AcquisitionSessionController extends Controller {
     }
 
     /**
-     * Retreive the saved document linked to the document type required
-     * @return mixed an error response or a string with the file path
+     * Retreive the latest saved document which matches
+     * with the choosen document type
+     * @return mixed null
+     *               or a string with the saved document path
      */
     private function getTemplateFile() {
         // 1. Get installation uri
@@ -123,16 +126,19 @@ class AcquisitionSessionController extends Controller {
         $search["concernedItem"] = $infrastructureUri;
         //SILEX:info
         // Order is "desc" by default
+        // $search["order"] = "desc"; can be used but it's not required
+        // in this case
         //\SILEX:info
         $wsResult = $documentModel->find($sessionToken, $search);
         
-        // 3. Get the last acquisition template saved for the document type required
+        // 3. Get the lastest acquisition session template saved
+        //    for the required document type
         if ($wsResult != null && isset($wsResult[0])) {
             $acquistionDocMetadata = $wsResult[0];
             $existingFilePath = $documentModel->getDocument($sessionToken, $acquistionDocMetadata->uri, $acquistionDocMetadata->format);
-            //SILEX:info
-            // Find a way to send a generic response
-            //\SILEX:info
+            //SILEX:conception
+            // Find a way to send a generic response when the user is disconnected
+            //\SILEX:conception
             if ($existingFilePath == WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             }
@@ -148,10 +154,10 @@ class AcquisitionSessionController extends Controller {
                    SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_FETCH_FILE_AQUI_SESS
             ]
         );
-        
     }
+    
     /**
-     * 
+     * Put data retreived from the ws into the choosen worksheet
      * @param type $existingFilePath the server physical path of the retrieved file 
      * @return string
      */
@@ -169,7 +175,7 @@ class AcquisitionSessionController extends Controller {
             $spreadsheet = $reader->load($existingFilePath);
         } catch (Exception $ex) {
             $this->error = $this->render(
-                SiteMessages::SITE_WARNING_PAGE_ROUTE, [
+                SiteMessages::SITE_ERROR_PAGE_ROUTE, [
                        SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
                        SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_READ_FILE
                 ]
@@ -214,11 +220,11 @@ class AcquisitionSessionController extends Controller {
                                 );
             return;
         }
-        // 4. Save information in hiddenPhis Sheet
+        // 4. Save information in the worksheet
         // 4.1 Select sheet or create if not
         if(!$spreadsheet->sheetNameExists(self::PHIS_SHEET_NAME)){
             $HiddenPhisWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, self::PHIS_SHEET_NAME);
-            // Create a new worksheet called "HiddenPhis" for example at the end 
+            // Create a new worksheet called "HiddenPhis" for example at the end of the file
             $spreadsheet->addSheet($HiddenPhisWorkSheet);
         }
         $spreadsheet->setActiveSheetIndexByName(self::PHIS_SHEET_NAME);
@@ -226,26 +232,33 @@ class AcquisitionSessionController extends Controller {
         // 4.2 Fill this sheet with data from 'A1' cell
         /** 
          * @link https://phpspreadsheet.readthedocs.io/en/develop/topics/accessing-cells/#setting-a-range-of-cells-from-an-array 
+         * @example 
+         * [
+         *     ['Installation', 'GroupPlot_type', 'GroupPlot_alias', 'GroupPlot_uri'],
+         *     [null, "http://www.phenome-fppn.fr/vocabulary/2017#Experiment", "tes",  "http://www.phenome-fppn.fr/phis/PHS2018-1"]
+         * ]
          */
         $sheetData = [];
         $firstLine = true;
         foreach ($fileMetadataByURI as $metadata) {
+            // the headers (keys of associative array)
             if ($firstLine) {
                 $sheetData[] = array_keys((array) $metadata);
                 $firstLine = false;
             }
             $sheetData[] = array_values((array) $metadata);
         }
+        // fill the worksheet
         $sheet->fromArray($sheetData, null, "A1");
 
-        // 4.3 Save modified worksheet
+        // 4.3 Save modified document
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
         try{
             $writer->save($newFilePath);
             return $newFilePath;
         } catch (Exception $ex) {
             $this->error = $this->render(
-                                SiteMessages::SITE_WARNING_PAGE_ROUTE, 
+                                SiteMessages::SITE_ERROR_PAGE_ROUTE, 
                                 [
                                     SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
                                     SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
@@ -267,7 +280,7 @@ class AcquisitionSessionController extends Controller {
             unlink($newFilePath);
         } else {
             $this->render(
-                    SiteMessages::SITE_WARNING_PAGE_ROUTE, [
+                    SiteMessages::SITE_ERROR_PAGE_ROUTE, [
                             SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
                             SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_SEND_FILE
                         ]

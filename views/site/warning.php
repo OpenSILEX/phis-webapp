@@ -1,4 +1,13 @@
 <?php
+//******************************************************************************
+//                                       warning.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 11 Sept, 2018
+// Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
+
+// help to show warnings
 
 /* @var $this yii\web\View */
 /* @var $name string */
