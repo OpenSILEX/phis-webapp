@@ -64,6 +64,7 @@ return [
     'Download' => 'Télécharger',
     'Download Search Result' => 'Télécharger le Résultat de la Recherche',
     'Download Template' => 'Télécharger le Gabarit',
+    'Email' => 'Adresse email',
     'Entity' => 'Entité',
     'Error' => 'Erreur',
     'Experimental Organization' => 'Organisation expérimentale',

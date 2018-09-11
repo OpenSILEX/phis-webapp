@@ -97,7 +97,7 @@ class SiteController extends Controller
                 $this->getLoggedUsersGroups();
                 return $this->goHome();
              } else {
-                 Yii::$app->getSession()->setFlash('error', 'Bad email / password');
+                 Yii::$app->getSession()->setFlash('error', Yii::t('app/messages','Bad email / password'));
              }
         }
         
