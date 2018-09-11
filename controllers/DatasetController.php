@@ -674,7 +674,7 @@ class DatasetController extends Controller {
                         
                         if (is_string($requestRes)) {//Request error
                             return $this->render('/site/error', [
-                                'name' => 'Internal error',
+                                'name' => Yii::t('app/messages','Internal error'),
                                 'message' => $requestRes]);
                         } else if (is_array($requestRes) && isset($requestRes["token"])) { //user must log in
                             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));

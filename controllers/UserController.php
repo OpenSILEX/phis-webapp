@@ -74,7 +74,7 @@ class UserController extends Controller {
        
         if (is_string($searchResult)) {
             return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $searchResult]);
         } else if (is_array($searchResult) && isset($searchResult["token"])) { //user must log in
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -143,7 +143,7 @@ class UserController extends Controller {
             
             if (is_string($groups)) {
                 return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $groups]);
             } else if (is_array ($groups) && isset($groups["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -202,7 +202,7 @@ class UserController extends Controller {
             
             if (is_string($groups)) {
                 return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $groups]);
             } else if (is_array ($groups) && isset($groups["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));

@@ -81,7 +81,7 @@ class VariableController extends Controller {
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
         if (is_string($searchResult)) {
             return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $searchResult]);
         } else if (is_array($searchResult) && isset($searchResult["token"])) { //user must log in
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -228,7 +228,7 @@ class VariableController extends Controller {
             
             if (is_string($traits) || is_string($methods) || is_string($units)) {
                 return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => "Request error while getting existing traits, methods and units"]);
             } else if (is_array($units) && isset($units["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));

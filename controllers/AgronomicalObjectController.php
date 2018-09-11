@@ -392,7 +392,7 @@ require_once '../config/config.php';
                 
                 if (is_string($requestRes)) {//Request error
                     return $this->render('/site/error', [
-                        'name' => 'Internal error',
+                        'name' => Yii::t('app/messages','Internal error'),
                         'message' => $requestRes]);
                 } else if (is_array($requestRes) && isset($requestRes["token"])) { //Unlogged user
                     return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -435,7 +435,7 @@ require_once '../config/config.php';
         
         if (is_string($searchResult)) {
             return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $searchResult]);
         } else if (is_array($searchResult) && isset($searchResult["token"])) { //L'utilisateur doit se connecter
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -472,7 +472,7 @@ require_once '../config/config.php';
         
         if (is_string($searchResult)) {
             return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $searchResult]);
         } else if (is_array($searchResult) && isset($searchResult["token"])) { 
             //User must login
