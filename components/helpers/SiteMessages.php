@@ -23,7 +23,9 @@ class SiteMessages {
     // Page messages
     CONST INTERNAL_ERROR = 'Internal Error';
     CONST CANT_FETCH_FILE = 'Can\'t fetch the file';
-    CONST CANT_FETCH_FILE_AQUI_SESS = self::CANT_FETCH_FILE . '. You must send a template from the "Infrastructure" submenu before.';
+    CONST CANT_FETCH_FILE_AQUI_SESS = self::CANT_FETCH_FILE . '.No file of the required type is linked with your installation.'
+            . ' Add a document of the type AcquisitionSessionUAVDocument or AcquisitionSessionPhenomobileDocument'
+            . ' to your installation from the Infrastructures menu.';
     CONST CANT_READ_FILE = 'Can\'t read the file';
     CONST NOT_CONNECTED = 'Not connected';
     CONST ERROR_WHILE_FETCHING_DATA = "Error while fetching data";
