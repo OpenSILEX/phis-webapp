@@ -91,7 +91,7 @@ class LayerController extends Controller {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else if (is_string($layerModel)) {
                 return $this->render('/site/error', [
-                        'name' => 'Internal error',
+                        'name' => Yii::t('app/messages','Internal error'),
                         'message' => $layerModel]);
         } else {
             return $this->render('view', [
