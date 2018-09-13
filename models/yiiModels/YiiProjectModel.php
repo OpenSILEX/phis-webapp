@@ -180,7 +180,9 @@ class YiiProjectModel extends WSActiveRecord {
         $elementForWebService[YiiProjectModel::DESCRIPTION] = $this->description;
         $elementForWebService[YiiProjectModel::OBJECTIVE] = $this->objective;
         $elementForWebService[YiiProjectModel::PARENT_PROJECT] = $this->parentProject;
-        $elementForWebService[YiiProjectModel::WEBSITE] = $this->website;
+        // If website is empty or blank we must be send a null element
+        // else @URL will raise an error
+        $elementForWebService[YiiProjectModel::WEBSITE] = ($this->website === "") ? null : $this->website;
         
         if ($this->administrativeContacts != null) {
             foreach ($this->administrativeContacts as $administrativeContact) {
