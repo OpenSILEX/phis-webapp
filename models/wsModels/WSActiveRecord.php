@@ -16,7 +16,8 @@ namespace app\models\wsModels;
  * See Yii2 ActiveRecord documentation for more details
  * @see http://www.yiiframework.com/doc-2.0/guide-db-active-record.html
  * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
- * @update [Arnaud Charleroy] 14 September, 2018 : Fix TotalCount when only one element is returned 
+ * @update [Arnaud Charleroy] 14 September, 2018 : Fix totalCount attribute when only 
+ *                                                 one element is returned 
  */
 abstract class WSActiveRecord extends \yii\base\Model {
     
