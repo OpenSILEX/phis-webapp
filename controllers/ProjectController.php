@@ -22,7 +22,7 @@ use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
 
 /**
- * Implements the CRUD for the projects (ws project model : YiiProjectModel)
+ * Implements the controller for the Projects and according YiiProjectModel
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiProjectModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
