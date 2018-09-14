@@ -11,7 +11,14 @@
 // Last modification date:  March, 2017
 // Subject: implements the CRUD for the projects (ws project model)
 //***********************************************************************************************
-
+//******************************************************************************
+//                            UserResourceService.java
+// SILEX-PHIS
+// Copyright © INRA 2017
+// Creation date: Mar, 2017
+// Contact: morgane.vidal@inra.fr,arnaud.charleroy@inra.fr, anne.tireau@inra.fr, 
+//          pascal.neveu@inra.fr
+//******************************************************************************
 namespace app\controllers;
 
 use Yii;
@@ -27,10 +34,10 @@ use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
 
 /**
- * CRUD actions for YiiProjectModel
+ * Implements the CRUD for the projects (ws project model : YiiProjectModel) 
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiProjectModel
- * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class ProjectController extends Controller {
     
@@ -172,11 +179,17 @@ class ProjectController extends Controller {
             
         } else { //Sinon c'est qu'il faut afficher ce formulaire
             //Récupération de la liste des projets existants pour la dropdownList
+            //SILEX:conception
+            // This quick fix is used to show all users available in the 
+            // dropdown list but we need to implements an autocompletion
+            // search linked to the web service instead of load all
+            // users in a list
+            //SILEX:conception
             $searchModel = new ProjectSearch();
-            $projects = $searchModel->find($sessionToken,[]);
+            $projects = $searchModel->find($sessionToken, ["pageSize" => 100]);
             
             $searchUserModel = new UserSearch();
-            $contacts = $searchUserModel->find($sessionToken, []);
+            $contacts = $searchUserModel->find($sessionToken, ["pageSize" => 200]);
             
             if (is_string($projects)) {
                 return $this->render('/site/error', [
