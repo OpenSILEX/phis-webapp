@@ -1,17 +1,12 @@
 <?php
-
-//**********************************************************************************************
-//                                       YiiProjectModel.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
-// Creation date: March 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  March, 2017
-// Subject: The Yii model for the Projects. Used with web services
-//***********************************************************************************************
-
+//******************************************************************************
+//                            YiiProjectModel.java
+// SILEX-PHIS
+// Copyright © INRA 2017
+// Creation date: Mar, 2017
+// Contact: morgane.vidal@inra.fr,arnaud.charleroy@inra.fr, anne.tireau@inra.fr, 
+//          pascal.neveu@inra.fr
+//******************************************************************************
 namespace app\models\yiiModels;
 
 use app\models\wsModels\WSActiveRecord;
@@ -20,12 +15,16 @@ use app\models\wsModels\WSProjectModel;
 use Yii;
 
 /**
- * The yii model for the projects. 
+ * The Yii model for the Projects. Used with web services
  * Implements a customized Active Record
  *  (WSActiveRecord, for the web services access)
  * @see app\models\wsModels\WSProjectModel
  * @see app\models\wsModels\WSActiveRecord
- * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
+ * @update [Arnaud Charleroy] 14 September, 2018 : change the value of website attribute
+ *                                                 when is empty from "" to null
+ *                                                 on project creation because of the 
+ *                                                 webservice rules validation
  */
 class YiiProjectModel extends WSActiveRecord {
 

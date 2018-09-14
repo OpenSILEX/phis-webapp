@@ -1,18 +1,6 @@
 <?php
-
-//**********************************************************************************************
-//                                       ProjectController.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
-// Creation date: March 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  March, 2017
-// Subject: implements the CRUD for the projects (ws project model)
-//***********************************************************************************************
 //******************************************************************************
-//                            UserResourceService.java
+//                            ProjectController.java
 // SILEX-PHIS
 // Copyright © INRA 2017
 // Creation date: Mar, 2017
@@ -38,6 +26,7 @@ use app\models\wsModels\WSConstants;
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiProjectModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
+ * @update [Arnaud Charleroy] 14 September, 2018 : increase list of users displayed
  */
 class ProjectController extends Controller {
     
