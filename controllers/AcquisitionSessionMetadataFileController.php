@@ -93,6 +93,8 @@ class AcquisitionSessionMetadataFileController extends Controller {
 
     /**
      * Set the right uris for robot field acquisition session metadata
+     * in order to create the right metadata file with generateMetadataFile
+     * method
      * @return Reponse
      */
     public function actionGenerateFieldRobotMetadataFile() {
@@ -104,6 +106,8 @@ class AcquisitionSessionMetadataFileController extends Controller {
 
     /**
      * Set the right uris for uav acquisition session metadata
+     * in order to create the right metadata file with generateMetadataFile
+     * method
      * @return Reponse
      */
     public function actionGenerateUavMetadataFile() {
@@ -160,9 +164,7 @@ class AcquisitionSessionMetadataFileController extends Controller {
         // 3. Get the lastest acquisition session template saved
         //    for the required document type
         //SILEX:info
-        // sortByDate is "desc" by default
-        // $search["sortByDate"] = "desc"; can be used but it's not required
-        // in this case
+        // the list of document is descending by default
         //\SILEX:info
         if ($wsResult != null && isset($wsResult[0])) {
             $acquistionDocMetadata = $wsResult[0];
