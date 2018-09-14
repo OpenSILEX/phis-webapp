@@ -21,10 +21,8 @@ use Yii;
  * @see app\models\wsModels\WSProjectModel
  * @see app\models\wsModels\WSActiveRecord
  * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
- * @update [Arnaud Charleroy] 14 September, 2018 : change the value of website attribute
- *                                                 when is empty from "" to null
- *                                                 on project creation because of the 
- *                                                 webservice rules validation
+ * @update [Arnaud Charleroy] 14 September, 2018 : change the value of website attribute from ""  
+ *                                                 to null because of the webservice rules validation
  */
 class YiiProjectModel extends WSActiveRecord {
 
@@ -179,6 +177,9 @@ class YiiProjectModel extends WSActiveRecord {
         $elementForWebService[YiiProjectModel::DESCRIPTION] = $this->description;
         $elementForWebService[YiiProjectModel::OBJECTIVE] = $this->objective;
         $elementForWebService[YiiProjectModel::PARENT_PROJECT] = $this->parentProject;
+        //SILEX:conception
+        // use a getter
+        //\SILEX:conception
         // If website is empty or blank we must be send a null element
         // else @URL will raise an error (bad url)
         $elementForWebService[YiiProjectModel::WEBSITE] = ($this->website === "") ? null : $this->website;
