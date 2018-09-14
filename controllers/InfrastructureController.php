@@ -76,7 +76,7 @@ class InfrastructureController extends Controller {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else { //An error occurred
                 return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $documentsSearch]);
             }
         } else {

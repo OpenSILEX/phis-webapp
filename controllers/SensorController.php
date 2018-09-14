@@ -249,7 +249,7 @@ class SensorController extends Controller {
         
         if (is_string($searchResult)) {
             return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $searchResult]);
         } else if (is_array($searchResult) && isset($searchResult["token"])) { //user must log in
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -330,7 +330,7 @@ class SensorController extends Controller {
             
             if (is_string($searchResult)) {
                 return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $searchResult]);
             } else {
                 $models = $searchResult->getmodels();
@@ -517,7 +517,7 @@ class SensorController extends Controller {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else if (is_string($requestRes)) { //server error
                 return $this->render('/site/error', [
-                        'name' => 'Internal error',
+                        'name' => Yii::t('app/messages','Internal error'),
                         'message' => $requestRes]);
             } else {                
                 return $this->redirect(['view', 'id' => $requestRes[0]]);
@@ -539,7 +539,7 @@ class SensorController extends Controller {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else if (is_string($sensorsTypes)) { //server error
                 return $this->render('/site/error', [
-                        'name' => 'Internal error',
+                        'name' => Yii::t('app/messages','Internal error'),
                         'message' => $sensorsTypes]);
             } else {
                 return $this->render('characterize', [

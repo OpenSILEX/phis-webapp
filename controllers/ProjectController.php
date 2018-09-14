@@ -78,7 +78,7 @@ class ProjectController extends Controller {
         
         if (is_string($searchResult)) {
             return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $searchResult]);
         } else if (is_array($searchResult) && isset($searchResult["token"])) { //user must log in
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -182,7 +182,7 @@ class ProjectController extends Controller {
             
             if (is_string($projects)) {
                 return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $projects]);
             } else if (is_array ($projects) && isset($projects["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -256,7 +256,7 @@ class ProjectController extends Controller {
 
             if (is_string($projects)) {
                 return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $projects]);
             } else if (is_array ($projects) && isset($projects["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));

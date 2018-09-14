@@ -75,7 +75,7 @@ class GroupController extends Controller {
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
         if (is_string($searchResult)) {
             return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $searchResult]);
         } else if (is_array($searchResult) && isset($searchResult["token"])) { //L'utilisateur doit se connecter
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));

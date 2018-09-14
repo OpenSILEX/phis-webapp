@@ -83,7 +83,7 @@ class ExperimentController extends Controller {
        
         if (is_string($searchResult)) {
             return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => $searchResult]);
         } else if (is_array($searchResult) && isset($searchResult["token"])) { //L'utilisateur doit se connecter
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -243,7 +243,7 @@ class ExperimentController extends Controller {
 
             if (is_string($projects) || is_string($groups)) {
                 return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => is_string($projects) ? $projects : $groups]);
             } else if (is_array($projects) && isset($projects["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -328,7 +328,7 @@ class ExperimentController extends Controller {
 
             if (is_string($projects) || is_string($groups)) {
                 return $this->render('/site/error', [
-                    'name' => 'Internal error',
+                    'name' => Yii::t('app/messages','Internal error'),
                     'message' => is_string($projects) ? $projects : $groups]);
             } else if (is_array($projects) && isset($projects["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
