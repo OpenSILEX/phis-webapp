@@ -126,7 +126,12 @@ class YiiInstanceDefinitionModel extends \app\models\wsModels\WSActiveRecord {
     public function attributesToArray() { 
         $toReturn = null;
         $toReturn[YiiInstanceDefinitionModel::LABEL] = $this->label;
-        $toReturn[YiiInstanceDefinitionModel::COMMENT] = $this->comment;
+        
+        if (isset($this->comment) 
+                && $this->comment !== null
+                && $this->comment !== "") {
+            $toReturn[YiiInstanceDefinitionModel::COMMENT] = $this->comment;
+        }
         
         if (isset($this->ontologiesReferences) && $this->ontologiesReferences !== null) {
             foreach($this->ontologiesReferences as $ontologyReference) {

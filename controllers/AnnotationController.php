@@ -89,7 +89,7 @@ class AnnotationController extends Controller {
         if (is_string($searchResult)) {
             return $this->render('/site/error', 
                     [
-                        'name' => 'Internal error',
+                        'name' => Yii::t('app/messages','Internal error'),
                         'message' => $searchResult
                     ]
                 );
