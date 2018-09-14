@@ -100,11 +100,11 @@ AppAsset::register($this);
                                 'items' => [
                                     [
                                         'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "UAV"), 
-                                        'url' => ['/acquisition-session/generate-uav']
+                                        'url' => ['/acquisition-session-metadata-file/generate-uav-metadata-file']
                                     ],
                                     [
                                         'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "Phenomobile"), 
-                                        'url' => ['/acquisition-session/generate-field-robot']
+                                        'url' => ['/acquisition-session-metadata-file/generate-field-robot-metadata-file']
                                     ],
                                 ]
                             ]

@@ -14,6 +14,7 @@
 /* @var $message string */
 /* @var $exception Exception */
 
+use Yii;
 use yii\helpers\Html;
 
 $this->title = $name;
@@ -23,14 +24,14 @@ $this->title = $name;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <div class="alert alert-warning">
-        <?= nl2br(Html::encode($message)) ?>
+        <?= nl2br(Html::encode(Yii::t('app',$message))) ?>
     </div>
 
     <p>
-        The above warning occurred while the Web server was processing your request.
+       <?= Yii::t('app','The above warning occurred while the Web server was processing your request.') ?>
     </p>
     <p>
-        Please contact us if you think this is a server error. Thank you.
+        <?= Yii::t('app','Please contact us if you think this is a server error. Thank you.') ?>
     </p>
 
 </div>

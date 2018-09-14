@@ -1,6 +1,6 @@
 <?php
 //******************************************************************************
-//                                       AcquisitionSessionController.php
+//                  AcquisitionSessionMetadataFileController.php
 // SILEX-PHIS
 // Copyright © INRA 2018
 // Creation date: 07 Sept, 2018
@@ -24,24 +24,50 @@ require_once '../config/config.php';
  * @see yii\web\Controller
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
-class AcquisitionSessionController extends Controller {
+class AcquisitionSessionMetadataFileController extends Controller {
     
     /**
      * The name of the worksheet which will be modified
      */
-    CONST PHIS_SHEET_NAME = "HiddenPhis";
+    const PHIS_SHEET_NAME = "HiddenPhis";
     
     /**
-     * The type of the document file  
+     * The params label for robot field document
+     * @see config/params.php
+     */
+    const FIELD_ROBOT_DOCUMENT_LABEL =  "AcquisitionSessionPhenomobileDocument";
+    
+    /**
+     * The params label for uav document
+     * @see config/params.php
+     */
+    const UAV_DOCUMENT_LABEL =  "AcquisitionSessionUAVDocument";
+    
+    /**
+     * The params label for uav vector
+     * @see config/params.php
+     */
+    const UAV_VECTOR_LABEL =  "UAV";
+    
+    /**
+     * The params label for field robot
+     * @see config/params.php
+     */
+    const FIELD_ROBOT_VECTOR_LABEL =  "FieldRobot";
+    
+    /**
+     * The type of the document
+     * @example http://www.phenome-fppn.fr/vocabulary/2017#AcquisitionSessionUAVDocument  
      * @var string    
      */
-    private $documentFileType;
+    private $documentType;
     
     /**
-     * The type of the vector required 
+     * The type of the vector required
+     * @example http://www.phenome-fppn.fr/vocabulary/2017#AcquisitionSessionPhenomobileDocument 
      * @var string 
      */
-    private $vectorRdfType;
+    private $vectorType;
     
     /**
      * This variable store the lasted error 
@@ -69,41 +95,41 @@ class AcquisitionSessionController extends Controller {
      * Set the right uris for robot field acquisition session metadata
      * @return Reponse
      */
-    public function actionGenerateFieldRobot() {
-        $this->vectorRdfType = Yii::$app->params['FieldRobot'];
-        $this->documentFileType = Yii::$app->params['FieldRobotDocument'];
+    public function actionGenerateFieldRobotMetadataFile() {
+        $this->vectorType = Yii::$app->params[self::FIELD_ROBOT_VECTOR_LABEL];
+        $this->documentType = Yii::$app->params[self::FIELD_ROBOT_DOCUMENT_LABEL];
 
-        return $this->generateFile();
+        return $this->generateMetadataFile();
     }
 
     /**
      * Set the right uris for uav acquisition session metadata
      * @return Reponse
      */
-    public function actionGenerateUav() {
-        $this->vectorRdfType = Yii::$app->params['UAV'];
-        $this->documentFileType = Yii::$app->params['UAVDocument'];
+    public function actionGenerateUavMetadataFile() {
+        $this->vectorType = Yii::$app->params[self::UAV_VECTOR_LABEL];
+        $this->documentType = Yii::$app->params[self::UAV_DOCUMENT_LABEL];
 
-        return $this->generateFile();
+        return $this->generateMetadataFile();
     }
     
     /**
      * Generate the  acquisition session file 
      * @return Reponse
      */
-    private function generateFile() {
-        // get the last document and save it on the server
-        $existingFilePath = $this->getTemplateFile();
+    private function generateMetadataFile() {
+        // Get the last document and save it on the server
+        $existingFilePath = $this->getMetadataFileTemplate();
         if ($this->error != null) {
             return $this->error;
         }
-        // add data retreive from the ws to the worksheet choosen
+        // Add data retreive from the ws to the worksheet choosen
         $newFilePath = $this->addHiddenphisSheetData($existingFilePath);
         if ($this->error != null) {
             return $this->error;
         }
-        // save the new file and send it to the user
-        $this->sendTemplateFile($newFilePath);
+        // Save the new file and send it to the user
+        $this->sendMetadataFileTemplate($newFilePath);
         if ($this->error != null) {
             return $this->error;
         }
@@ -115,24 +141,29 @@ class AcquisitionSessionController extends Controller {
      * @return mixed null
      *               or a string with the saved document path
      */
-    private function getTemplateFile() {
+    private function getMetadataFileTemplate() {
+        //SILEXinfo
+        // A service will be created to retreive specific
+        // infrastructure informations
+        //\SILEX:info
         // 1. Get installation uri
         $infrastructureUri = substr(Yii::$app->params['baseURI'], 0, -1);
         
         // 2. Get the last acquisition template for the document type required
         $sessionToken = Yii::$app->session['access_token'];
         $documentModel = new YiiDocumentModel();
-        $search["documentType"] = $this->documentFileType;
+        $search["documentType"] = $this->documentType;
         $search["concernedItem"] = $infrastructureUri;
-        //SILEX:info
-        // Order is "desc" by default
-        // $search["order"] = "desc"; can be used but it's not required
-        // in this case
-        //\SILEX:info
+        
         $wsResult = $documentModel->find($sessionToken, $search);
         
         // 3. Get the lastest acquisition session template saved
         //    for the required document type
+        //SILEX:info
+        // sortByDate is "desc" by default
+        // $search["sortByDate"] = "desc"; can be used but it's not required
+        // in this case
+        //\SILEX:info
         if ($wsResult != null && isset($wsResult[0])) {
             $acquistionDocMetadata = $wsResult[0];
             $existingFilePath = $documentModel->getDocument($sessionToken, $acquistionDocMetadata->uri, $acquistionDocMetadata->format);
@@ -142,6 +173,7 @@ class AcquisitionSessionController extends Controller {
             if ($existingFilePath == WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             }
+            
             // 4. Return the physical path of the file
             $realPath = str_replace(\config::path()['documentsUrl'], Yii::getAlias('@webroot/documents/') , $existingFilePath );
             return $realPath;
@@ -158,8 +190,10 @@ class AcquisitionSessionController extends Controller {
     
     /**
      * Put data retreived from the ws into the choosen worksheet
-     * @param type $existingFilePath the server physical path of the retrieved file 
-     * @return string
+     * @param string $existingFilePath the server physical path of the retrieved file
+     * @example /var/www/html/phis-webapp/documents/excelfilev
+     * @return string $newFilePath is the absolute path of the modified file, for example
+     *                            /var/www/html/phis-webapp/documents/excelfile_with_HiddenPhis.xlsx
      */
     private function addHiddenphisSheetData($existingFilePath) {
         // 1. Create save file path
@@ -170,7 +204,7 @@ class AcquisitionSessionController extends Controller {
         
         // 2. Read existing file
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-        // try if the file can be read
+        // Try if the file can be read
         try{
             $spreadsheet = $reader->load($existingFilePath);
         } catch (Exception $ex) {
@@ -184,7 +218,7 @@ class AcquisitionSessionController extends Controller {
         }
        
         // 3. Get information from the webservice
-        /** @example for RobotField document type
+        /** @example for Robot Field document type
          * [
          *   {
          *     "Installation": null,
@@ -198,7 +232,7 @@ class AcquisitionSessionController extends Controller {
          */
         $sessionToken = Yii::$app->session['access_token'];
         $wsAcquisitionSession = new WSAcquisitionSession();
-        $fileMetadataByURI = $wsAcquisitionSession->getFileMetadataByURI($sessionToken, $this->vectorRdfType, [WSConstants::PAGE_SIZE => 100]);
+        $fileMetadataByURI = $wsAcquisitionSession->getFileMetadataByURI($sessionToken, $this->vectorType, [WSConstants::PAGE_SIZE => 100]);
         if (!is_string($fileMetadataByURI)) {
             if (isset($fileMetadataByURI[\app\models\wsModels\WSConstants::TOKEN])) {
                 $this->error = $this->render(
@@ -220,6 +254,7 @@ class AcquisitionSessionController extends Controller {
                                 );
             return;
         }
+        
         // 4. Save information in the worksheet
         // 4.1 Select sheet or create if not
         if(!$spreadsheet->sheetNameExists(self::PHIS_SHEET_NAME)){
@@ -229,6 +264,7 @@ class AcquisitionSessionController extends Controller {
         }
         $spreadsheet->setActiveSheetIndexByName(self::PHIS_SHEET_NAME);
         $sheet = $spreadsheet->getActiveSheet();
+        
         // 4.2 Fill this sheet with data from 'A1' cell
         /** 
          * @link https://phpspreadsheet.readthedocs.io/en/develop/topics/accessing-cells/#setting-a-range-of-cells-from-an-array 
@@ -253,10 +289,11 @@ class AcquisitionSessionController extends Controller {
 
         // 4.3 Save modified document
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        
         try{
             $writer->save($newFilePath);
-            return $newFilePath;
         } catch (Exception $ex) {
+            $newFilePath = null;
             $this->error = $this->render(
                                 SiteMessages::SITE_ERROR_PAGE_ROUTE, 
                                 [
@@ -264,8 +301,8 @@ class AcquisitionSessionController extends Controller {
                                     SiteMessages::SITE_PAGE_MESSAGE => $ex->getMessage()
                                 ]
                             );
-            return;
         }
+        return $newFilePath;
     }
 
     /**
@@ -274,7 +311,7 @@ class AcquisitionSessionController extends Controller {
      * @return Response send a file to the user
      *                  or send an error
      */
-    private function sendTemplateFile($newFilePath) {
+    private function sendMetadataFileTemplate($newFilePath) {
         if (file_exists($newFilePath)) {
             Yii::$app->response->sendFile($newFilePath)->send();
             unlink($newFilePath);

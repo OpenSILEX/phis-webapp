@@ -47,4 +47,6 @@ return [
     'Unknown experiment' => 'Expérimentation inconnue',
     'Unknown species' => 'Espèce inconnue',    
     'You <b>cannot modify already existing</b> traits, methods and units.' => 'Vous ne pouvez pas modifier de traits, méthodes et unités déjà existantes.',
+    'Please contact us if you think this is a server error. Thank you.' => 'Contactez l\'administrateur si vous pensez que c\'est une erreur',
+    'The above warning occurred while the Web server was processing your request.' => 'Un incident est survenu au moment du traitement de votre requête par le serveur',
 ];

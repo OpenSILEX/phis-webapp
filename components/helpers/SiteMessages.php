@@ -15,19 +15,19 @@ namespace app\components\helpers;
  */
 class SiteMessages {
     // Page routes
-    CONST SITE_ERROR_PAGE_ROUTE = '/site/error';
-    CONST SITE_WARNING_PAGE_ROUTE = '/site/warning';
+    const SITE_ERROR_PAGE_ROUTE = '/site/error';
+    const SITE_WARNING_PAGE_ROUTE = '/site/warning';
     // Page variables
-    CONST SITE_PAGE_NAME = "name";
-    CONST SITE_PAGE_MESSAGE = "message";
+    const SITE_PAGE_NAME = "name";
+    const SITE_PAGE_MESSAGE = "message";
     // Page messages
-    CONST INTERNAL_ERROR = 'Internal Error';
-    CONST CANT_FETCH_FILE = 'Can\'t fetch the file';
-    CONST CANT_FETCH_FILE_AQUI_SESS = self::CANT_FETCH_FILE . '.No file of the required type is linked with your installation.'
+    const INTERNAL_ERROR = 'Internal Error';
+    const CANT_FETCH_FILE = 'Can\'t fetch the file';
+    const CANT_FETCH_FILE_AQUI_SESS = self::CANT_FETCH_FILE . '.No file of the required type is linked with your installation.'
             . ' Add a document of the type AcquisitionSessionUAVDocument or AcquisitionSessionPhenomobileDocument'
             . ' to your installation from the Infrastructures menu.';
-    CONST CANT_READ_FILE = 'Can\'t read the file';
-    CONST NOT_CONNECTED = 'Not connected';
-    CONST ERROR_WHILE_FETCHING_DATA = "Error while fetching data";
-    CONST CANT_SEND_FILE = 'Error occured when sending the file';
+    const CANT_READ_FILE = 'Can\'t read the file';
+    const NOT_CONNECTED = 'Not connected';
+    const ERROR_WHILE_FETCHING_DATA = "Error while fetching data";
+    const CANT_SEND_FILE = 'Error occured when sending the file';
 }
