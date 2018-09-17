@@ -12,10 +12,13 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\base\ErrorException;
 use app\models\yiiModels\YiiDocumentModel;
 use app\models\wsModels\WSConstants;
 use app\models\wsModels\WSAcquisitionSession;
 use app\components\helpers\SiteMessages;
+
+
 
 require_once '../config/config.php';
 
@@ -209,7 +212,7 @@ class AcquisitionSessionMetadataFileController extends Controller {
         // Try if the file can be read
         try{ 
             $spreadsheet = $reader->load($existingFilePath);
-        } catch( \PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
+        } catch( \PhpOffice\PhpSpreadsheet\Reader\Exception $e ) {
             // Error during xlsx reading
             $this->error = $this->render(
                 SiteMessages::SITE_ERROR_PAGE_ROUTE, [
@@ -218,7 +221,7 @@ class AcquisitionSessionMetadataFileController extends Controller {
                 ]
             );
             return;
-        } catch(ErrorException $e) { 
+        } catch( ErrorException $e ) { 
             //SILEX:info
             // Error during file loading example "test.no" file will not
             // be recognize by the excel library
@@ -272,11 +275,14 @@ class AcquisitionSessionMetadataFileController extends Controller {
         
         // 4. Save information in the worksheet
         // 4.1 Select sheet or create if not
-        if(!$spreadsheet->sheetNameExists(self::PHIS_SHEET_NAME)){
-            $HiddenPhisWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, self::PHIS_SHEET_NAME);
-            // Create a new worksheet called "HiddenPhis" for example at the end of the file
-            $spreadsheet->addSheet($HiddenPhisWorkSheet);
+        if($spreadsheet->sheetNameExists(self::PHIS_SHEET_NAME)){
+            $sheetIndex = $spreadsheet->getIndex( $spreadsheet->getSheetByName(self::PHIS_SHEET_NAME));
+            $spreadsheet->removeSheetByIndex($sheetIndex);
         }
+        // remove sheet and create a new one if it doesn't exists
+        $HiddenPhisWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, self::PHIS_SHEET_NAME);
+        // Create a new worksheet called "HiddenPhis" for example at the end of the file
+        $spreadsheet->addSheet($HiddenPhisWorkSheet);
         $spreadsheet->setActiveSheetIndexByName(self::PHIS_SHEET_NAME);
         $sheet = $spreadsheet->getActiveSheet();
         
