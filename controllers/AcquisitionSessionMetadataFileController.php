@@ -207,13 +207,26 @@ class AcquisitionSessionMetadataFileController extends Controller {
         // 2. Read existing file
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
         // Try if the file can be read
-        try{
+        try{ 
             $spreadsheet = $reader->load($existingFilePath);
-        } catch (Exception $ex) {
+        } catch( \PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
+            // Error during xlsx reading
             $this->error = $this->render(
                 SiteMessages::SITE_ERROR_PAGE_ROUTE, [
                        SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
-                       SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_READ_FILE
+                       SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_READ_FILE . ' named ' . $filename
+                ]
+            );
+            return;
+        } catch(ErrorException $e) { 
+            //SILEX:info
+            // Error during file loading example "test.no" file will not
+            // be recognize by the excel library
+            //\SILEX:info
+            $this->error = $this->render(
+                SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                       SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
+                       SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_READ_FILE . ' named ' . $filename
                 ]
             );
             return;
