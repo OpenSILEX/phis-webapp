@@ -12,6 +12,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\base\ErrorException;
 use app\models\yiiModels\YiiDocumentModel;
 use app\models\wsModels\WSConstants;
 use app\models\wsModels\WSAcquisitionSession;
@@ -209,11 +210,27 @@ class AcquisitionSessionMetadataFileController extends Controller {
         // Try if the file can be read
         try{
             $spreadsheet = $reader->load($existingFilePath);
-        } catch (Exception $ex) {
+        } catch( \PhpOffice\PhpSpreadsheet\Reader\Exception $e ) {
+             //SILEX:info
+            // Error during xlsx reading catched by the reader
+            //\SILEX:info
             $this->error = $this->render(
                 SiteMessages::SITE_ERROR_PAGE_ROUTE, [
                        SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
-                       SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_READ_FILE
+                       SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_READ_FILE . ' named ' . $filename
+                ]
+            );
+            return;
+        } catch( ErrorException $e ) { 
+            //SILEX:info
+            // Error during file loading, example "test.no" file will not
+            // be recognize by the excel library
+            // Yii2 exception throw
+            //\SILEX:info
+            $this->error = $this->render(
+                SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                       SiteMessages::SITE_PAGE_NAME =>  SiteMessages::INTERNAL_ERROR,
+                       SiteMessages::SITE_PAGE_MESSAGE => SiteMessages::CANT_READ_FILE . ' named ' . $filename
                 ]
             );
             return;
@@ -259,12 +276,16 @@ class AcquisitionSessionMetadataFileController extends Controller {
         
         // 4. Save information in the worksheet
         // 4.1 Select sheet or create if not
-        if(!$spreadsheet->sheetNameExists(self::PHIS_SHEET_NAME)){
-            $HiddenPhisWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, self::PHIS_SHEET_NAME);
-            // Create a new worksheet called "HiddenPhis" for example at the end of the file
-            $spreadsheet->addSheet($HiddenPhisWorkSheet);
+        // Remove the sheet if it exists
+        if($spreadsheet->sheetNameExists(self::PHIS_SHEET_NAME)){
+            $sheetIndex = $spreadsheet->getIndex( $spreadsheet->getSheetByName(self::PHIS_SHEET_NAME));
+            $spreadsheet->removeSheetByIndex($sheetIndex);
         }
+        // Create a new worksheet called "HiddenPhis" for example at the end of the file
+        $HiddenPhisWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, self::PHIS_SHEET_NAME);
+        $spreadsheet->addSheet($HiddenPhisWorkSheet);
         $spreadsheet->setActiveSheetIndexByName(self::PHIS_SHEET_NAME);
+        // Retreive the sheet
         $sheet = $spreadsheet->getActiveSheet();
         
         // 4.2 Fill this sheet with data from 'A1' cell
