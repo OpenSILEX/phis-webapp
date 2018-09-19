@@ -110,10 +110,14 @@ abstract class WSActiveRecord extends \yii\base\Model {
             $this->totalCount = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_COUNT};
             $this->page = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::CURRENT_PAGE};
             $this->pageSize = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::PAGE_SIZE};
+        }else{
+            //SILEX:info
+            // A null pagination means only one result
+            //\SILEX:info
+            $this->totalCount = 1;
         }
         
         if (isset($requestRes->{WSConstants::RESULT}->{WSConstants::DATA}))  {
-            $this->totalCount = 1;
             return (array) $requestRes->{WSConstants::RESULT}->{WSConstants::DATA};
             
         } else {
