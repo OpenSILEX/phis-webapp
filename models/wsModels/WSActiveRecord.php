@@ -143,6 +143,4 @@ abstract class WSActiveRecord extends \yii\base\Model {
         }
         return ($this->page - 1);
     }
-
-
 }
