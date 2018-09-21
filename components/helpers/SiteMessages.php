@@ -23,7 +23,7 @@ class SiteMessages {
     // Page messages
     const INTERNAL_ERROR = 'Internal Error';
     const CANT_FETCH_FILE = 'Can\'t fetch the file';
-    const CANT_FETCH_FILE_AQUI_SESS = self::CANT_FETCH_FILE . '.No file of the required type is linked with your installation.'
+    const CANT_FETCH_FILE_AQUI_SESS = self::CANT_FETCH_FILE . '. No file of the required type is linked with your installation.'
             . ' Add a document of the type AcquisitionSessionUAVDocument or AcquisitionSessionPhenomobileDocument'
             . ' to your installation from the Infrastructures menu.';
     const CANT_READ_FILE = 'Can\'t read the file';

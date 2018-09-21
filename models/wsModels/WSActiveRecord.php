@@ -1,20 +1,23 @@
 <?php
-//**********************************************************************************************
-//                                       WSActiveRecord.java 
+//******************************************************************************
+//                         WSActiveRecord.php
 // SILEX-PHIS
 // Copyright © INRA 2017
-// Creation date: Feb, 2017
-// Contact: morgane.vidal@inra.fr, arnaud.charleroy@inra.fr, anne.tireau@inra.fr,
-//          pascal.neveu@inra.fr 
-//***********************************************************************************************
+// Creation date:  Feb, 2017
+// Contact: arnaud.charleroy@inra.fr,  morgane.vidal@inra.fr, anne.tireau@inra.fr,
+//          pascal.neveu@inra.fr
+//******************************************************************************
 namespace app\models\wsModels;
 
 /**
- * An adapted Active Record based to request web services. 
- * Adapted from the Yii2's ActiveRecord developped for relational databases
+ * An active record for the web services. 
+ * An adapted Active Record based to request web services
+ * Based on the Yii Active Record of relational databases
+ * See Yii2 ActiveRecord documentation for more details
  * @see http://www.yiiframework.com/doc-2.0/guide-db-active-record.html
  * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
- * @update [Arnaud Charleroy] 19 September, 2018 : Pagination fixed
+ * @update [Arnaud Charleroy] 14 September, 2018 : Fix totalCount attribute when only 
+ *                                                 one element is returned 
  */
 abstract class WSActiveRecord extends \yii\base\Model {
     
@@ -107,6 +110,11 @@ abstract class WSActiveRecord extends \yii\base\Model {
             $this->totalCount = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_COUNT};
             $this->page = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::CURRENT_PAGE};
             $this->pageSize = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::PAGE_SIZE};
+        } else {
+            //SILEX:info
+            // A null pagination means only one result
+            //\SILEX:info
+            $this->totalCount = 1;
         }
         
         if (isset($requestRes->{WSConstants::RESULT}->{WSConstants::DATA}))  {
