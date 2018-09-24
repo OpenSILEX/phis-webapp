@@ -137,4 +137,18 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @param array $array array key => value which contains the metadata of an image
      */
     abstract protected function arrayToAttributes($array);
+    
+    /**
+     * Return the number of the ws page
+     * @return int
+     */
+    public function getPageForWS() {
+        if($this->page == null){
+             return $this->page = 0;
+        }
+        if($this->page === 0){
+             return $this->page;
+        }
+        return ($this->page - 1);
+    }
 }
