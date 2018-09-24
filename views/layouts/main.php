@@ -39,7 +39,6 @@ AppAsset::register($this);
     <?php
     //To use the fontawesome glyphicons on the page
     Icon::map($this, Icon::FA);
-    $infrastructureUri = substr(Yii::$app->params['baseURI'], 0, -1);
     
     NavBar::begin([
         'brandLabel' => 'PHIS <i> ' . Yii::$app->params['platform'] . '</i>',
@@ -57,7 +56,7 @@ AppAsset::register($this);
                         'items' => [
                             [
                                 'label' => Icon::show('home', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
-                                'url' => ['/infrastructure/view', 'id' => $infrastructureUri],
+                                'url' => ['/infrastructure'],
                             ],
                             [
                                 'label' => Icon::show('folder-open', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]),

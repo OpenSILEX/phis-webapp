@@ -1,79 +1,88 @@
 <?php
+
 //******************************************************************************
 //                                       view.php
 // SILEX-PHIS
 // Copyright © INRA 2018
 // Creation date: 28 Aug, 2018
-// Contact: morgane.vidal@inra.fr, arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Contact: vincent.migot@inra.fr, morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 use yii\helpers\Html;
-use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\controllers\InfrastructureController;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\PropertiesWidget;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiInfrastructureModel */
-/* @update [Arnaud Charleroy] 28 August, 2018 : adding annotation 
- * linked to this infrastructure model*/
+/* @var $dataDocumentsProvider yii\data\DataProviderInterface */
+/* @update [Arnaud Charleroy] 28 August, 2018 : adding annotation linked to this infrastructure model */
+/* @update [Vincent Migot] 20 Sept, 2018: implement view details from service
+ */
 
-$this->title = $model->alias;
+$this->title = $model->label;
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="infrastructure-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-   
+
     <p>
         <!-- Add annotation button -->
         <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
-        <?php 
-            if (Yii::$app->session['isAdmin']) {
-                echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->alias, 'concernRdfType' => Yii::$app->params["Installation"]], ['class' => $model->documents->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
-            }
-          ?>
+        <?php
+        if (Yii::$app->session['isAdmin']) {
+            echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->label, 'concernRdfType' => Yii::$app->params["Installation"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
+        }
+        ?>
     </p>
-    
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'alias',
-            'uri',
-            'rdfType'
+    <!-- Infrastructure properties detail-->
+    <?=
+    PropertiesWidget::widget([
+        'uri' => $model->uri,
+        'properties' => $model->properties,
+        'aliasProperty' => "http://www.w3.org/2000/01/rdf-schema#label",
+        'relationOrder' => [
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+            "http://www.phenome-fppn.fr/vocabulary/2017#isPartOf",
+            "http://www.phenome-fppn.fr/vocabulary/2017#hasPart"
         ]
-    ]); ?>
-        <!-- Infrastructure linked Annotation-->
-    <?= AnnotationGridViewWidget::widget(
-            [
-                 AnnotationGridViewWidget::ANNOTATIONS => ${InfrastructureController::ANNOTATIONS_DATA}
-            ]
-        ); 
+    ]);
     ?>
-        
-    <?php 
-        if ($model->documents->getCount() > 0) {
-            echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
-            echo GridView::widget([
-                'dataProvider' => $model->documents,
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-                    'title',
-                    'creator',
-                    'creationDate',
-                    'language',
-                    ['class' => 'yii\grid\ActionColumn',
-                        'template' => '{view}',
-                        'buttons' => [
-                            'view' => function($url, $model, $key) {
-                                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
-                                                ['document/view', 'id' => $model->uri]); 
-                            },
-                        ]
-                    ],
-                ]
-            ]);
-        } 
+
+    <!-- Infrastructure linked Annotation-->
+    <?=
+    AnnotationGridViewWidget::widget(
+            [
+                AnnotationGridViewWidget::ANNOTATIONS => ${InfrastructureController::ANNOTATIONS_DATA}
+            ]
+    );
+    ?>
+
+    <?php
+    if ($dataDocumentsProvider->getCount() > 0) {
+        echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
+        echo GridView::widget([
+            'dataProvider' => $dataDocumentsProvider,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                'title',
+                'creator',
+                'creationDate',
+                'language',
+                ['class' => 'yii\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function($url, $model, $key) {
+                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['document/view', 'id' => $model->uri]);
+                        },
+                    ]
+                ],
+            ]
+        ]);
+    }
     ?>
 </div>
