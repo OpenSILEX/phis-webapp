@@ -46,7 +46,7 @@ class InfrastructureController extends Controller {
     }
 
     /**
-     * List all Experiments
+     * List all infrastructures
      * @return mixed
      */
     public function actionIndex() {
