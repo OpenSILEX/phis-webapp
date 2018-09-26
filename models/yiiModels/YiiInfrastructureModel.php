@@ -127,7 +127,11 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
                 $propertyToAdd[self::RDF_TYPE] = $property->rdfType;
                 $propertyToAdd[self::RELATION_LABELS] = $property->relationLabels; 
                 $propertyToAdd[self::VALUE_LABELS] = $property->valueLabels;
-                $propertyToAdd[self::RDF_TYPE_LABELS] = $property->rdfTypeLabels;                
+                $propertyToAdd[self::RDF_TYPE_LABELS] = $property->rdfTypeLabels;     
+                
+                if ($property->relation == Yii::$app->params["rdfsLabel"]) {
+                    $this->label = $property->value;
+                }
                 $this->properties[] = $property;
             }
         }

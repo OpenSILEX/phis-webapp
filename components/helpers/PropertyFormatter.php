@@ -11,6 +11,7 @@
 namespace app\components\helpers;
 
 use yii\helpers\Html;
+use Yii;
 
 /**
  * Helper to regroup all formatters used by the PropertiesWidget
@@ -20,21 +21,21 @@ use yii\helpers\Html;
 class PropertyFormatter {
 
     // Formatter const used to render a link based on a property
-    const LINK = "link";
+    const EXTERNAL_LINK = "externalLink";
     /**
-     * Render a link based on a property uri, it will use the property label 
-     * as label if exist or the uri itself.
+     * Render an external link based on a property uri, it will use the
+     * property label as title if exist or the uri itself.
      * @param array $value
      * @return string Html rendering
      */
-    static function link($value) {
+    static function externalLink($value) {
         $title = $value['uri'];
 
         if ($value['label']) {
             $title = $value['label'];
         }
 
-        return Html::a($title, $value['uri']);
+        return Html::a($title, $value['uri'], ["target" => "_blank"]);
     }
 
     // Formatter const used to render a link to the infrastructure details view

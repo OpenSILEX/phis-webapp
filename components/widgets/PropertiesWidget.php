@@ -14,6 +14,7 @@ use yii\base\Widget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use app\components\helpers\PropertyFormatter;
+use Yii;
 
 /**
  * A widget used to generate a customizable object properties grid
@@ -35,22 +36,20 @@ class PropertiesWidget extends Widget {
     public $template = '<tr><th>{label}</th><td>{value}</td></tr>';
     // Basic table options
     public $options = ['class' => 'table table-striped table-bordered properties-widget'];
-    
     // Alias of the main object determined from aliasProperty options
     private $alias = "";
     // Internal representation of fields array, corresponding to $relationOrder option
     private $fields = [];
     // Internal representation of extrafields array, corresponding to properties not described in $relationOrder otpion
     private $extraFields = [];
-    
     // Mapping of formatters based on rdf type value
-    protected $propertyFormaters = [
-        "http://www.phenome-fppn.fr/vocabulary/2017#Infrastructure" => PropertyFormatter::INFRASTRUCTURE,
-        "http://www.phenome-fppn.fr/vocabulary/2017#LocalInfrastructure" => PropertyFormatter::INFRASTRUCTURE,
-        "http://www.phenome-fppn.fr/vocabulary/2017#NationalInfrastructure" => PropertyFormatter::INFRASTRUCTURE,
-        "http://www.phenome-fppn.fr/vocabulary/2017#EuropeanInfrastructure" => PropertyFormatter::INFRASTRUCTURE,
-        "http://www.phenome-fppn.fr/vocabulary/2017#Installation" => PropertyFormatter::INFRASTRUCTURE,
-        "http://purl.org/dc/terms/source" => PropertyFormatter::LINK
+    protected $propertyFormatters = [
+        "Infrastructure" => PropertyFormatter::INFRASTRUCTURE,
+        "LocalInfrastructure" => PropertyFormatter::INFRASTRUCTURE,
+        "NationalInfrastructure" => PropertyFormatter::INFRASTRUCTURE,
+        "EuropeanInfrastructure" => PropertyFormatter::INFRASTRUCTURE,
+        "Installation" => PropertyFormatter::INFRASTRUCTURE,
+        "source" => PropertyFormatter::EXTERNAL_LINK
     ];
 
     /**
@@ -59,6 +58,16 @@ class PropertiesWidget extends Widget {
      */
     public function init() {
         parent::init();
+
+        $formatters = [];
+        foreach ($this->propertyFormatters as $key => $property) {
+            if (array_key_exists($key, Yii::$app->params)) {
+                $formatters[Yii::$app->params[$key]] = $property;
+            } else {
+                $formatters[$key] = $property;
+            }
+        }
+        $this->propertyFormatters = $formatters;
 
         // must be not null
         if ($this->uri === null) {
@@ -230,10 +239,10 @@ class PropertiesWidget extends Widget {
      * @return string
      */
     protected function renderValue($value) {
-        if ($value['relation'] && array_key_exists($value['relation'], $this->propertyFormaters)) {
-            return call_user_func(array("app\components\helpers\PropertyFormatter", $this->propertyFormaters[$value['relation']]), $value);
-        } elseif ($value['type'] && array_key_exists($value['type'], $this->propertyFormaters)) {
-            return call_user_func(array("app\components\helpers\PropertyFormatter", $this->propertyFormaters[$value['type']]), $value);
+        if ($value['relation'] && array_key_exists($value['relation'], $this->propertyFormatters)) {
+            return call_user_func(array("app\components\helpers\PropertyFormatter", $this->propertyFormatters[$value['relation']]), $value);
+        } elseif ($value['type'] && array_key_exists($value['type'], $this->propertyFormatters)) {
+            return call_user_func(array("app\components\helpers\PropertyFormatter", $this->propertyFormatters[$value['type']]), $value);
         } else {
             return PropertyFormatter::defaultFormat($value);
         }

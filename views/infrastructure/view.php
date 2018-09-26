@@ -44,11 +44,11 @@ $this->params['breadcrumbs'][] = $this->title;
     PropertiesWidget::widget([
         'uri' => $model->uri,
         'properties' => $model->properties,
-        'aliasProperty' => "http://www.w3.org/2000/01/rdf-schema#label",
+        'aliasProperty' =>  Yii::$app->params["rdfsLabel"],
         'relationOrder' => [
-            "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-            "http://www.phenome-fppn.fr/vocabulary/2017#isPartOf",
-            "http://www.phenome-fppn.fr/vocabulary/2017#hasPart"
+            Yii::$app->params["rdfType"],
+            Yii::$app->params["isPartOf"],
+            Yii::$app->params["hasPart"],
         ]
     ]);
     ?>
