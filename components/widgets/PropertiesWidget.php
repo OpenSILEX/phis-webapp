@@ -230,10 +230,10 @@ class PropertiesWidget extends Widget {
      * @return string
      */
     protected function renderValue($value) {
-        if ($value['type'] && array_key_exists($value['type'], $this->propertyFormaters)) {
-            return call_user_func(array("app\components\helpers\PropertyFormatter", $this->propertyFormaters[$value['type']]), $value);
-        } elseif ($value['relation'] && array_key_exists($value['relation'], $this->propertyFormaters)) {
+        if ($value['relation'] && array_key_exists($value['relation'], $this->propertyFormaters)) {
             return call_user_func(array("app\components\helpers\PropertyFormatter", $this->propertyFormaters[$value['relation']]), $value);
+        } elseif ($value['type'] && array_key_exists($value['type'], $this->propertyFormaters)) {
+            return call_user_func(array("app\components\helpers\PropertyFormatter", $this->propertyFormaters[$value['type']]), $value);
         } else {
             return PropertyFormatter::defaultFormat($value);
         }
