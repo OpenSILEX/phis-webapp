@@ -146,7 +146,7 @@ AppAsset::register($this);
                         'items' => [
                             [
                                 'label' => Icon::show('home', ['class' => 'fas'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
-                                'url' => ['/infrastructure/view', 'id' => $infrastructureUri],
+                                'url' => ['/infrastructure'],
                             ],
                             [
                                 'label' => Icon::show('folder-open', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
