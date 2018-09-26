@@ -46,9 +46,13 @@ class PropertyFormatter {
      * @return string Html rendering
      */
     static function infrastructure($value) {
-        $title = $value['label'] . ' (' . $value['typeLabel'] . ')';
+        $strValue = $value['label'];
 
-        return Html::a($title, ['infrastructure/view', 'id' => $value['uri']]);
+        if ($value['typeLabel']) {
+            $strValue .= " (" . $value['typeLabel'] . ")";
+        }
+        
+        return Html::a($strValue, ['infrastructure/view', 'id' => $value['uri']]);
 
     }
     
