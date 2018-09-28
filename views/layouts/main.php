@@ -93,6 +93,10 @@ AppAsset::register($this);
                                 'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
                                 'url' => ['/vector/index']
                             ],
+                            [
+                                'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 
+                                'url' => ['/radiometric-target/index']
+                            ],
                             Html::tag('li','',['class' => 'divider']),
                             [
                                 'label' => Yii::t('app', 'Acquisition session template'),
@@ -181,7 +185,11 @@ AppAsset::register($this);
                             [
                                 'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
                                 'url' => ['/vector/index']
-                            ]
+                            ],
+                            [
+                                'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 
+                                'url' => ['/radiometric-target/index']
+                            ],
                         ]];
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
