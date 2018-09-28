@@ -159,7 +159,7 @@ class YiiVectorModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $elementForWebService[YiiModelsConstants::PAGE] = $this->page - 1;
+        $elementForWebService[YiiModelsConstants::PAGE] = $this->page;
         $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
         $elementForWebService[YiiVectorModel::URI] = $this->uri;
         $elementForWebService[YiiVectorModel::RDF_TYPE] = $this->rdfType;

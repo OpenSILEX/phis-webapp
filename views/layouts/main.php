@@ -13,10 +13,10 @@
 
 use kartik\icons\Icon;
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use kartik\nav\NavX;
 
 require_once(__DIR__ . '/../../config/config.php');
 require_once(__DIR__ . '/../../config/web_services.php');
@@ -93,6 +93,20 @@ AppAsset::register($this);
                             [
                                 'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
                                 'url' => ['/vector/index']
+                            ],
+                            Html::tag('li','',['class' => 'divider']),
+                            [
+                                'label' => Yii::t('app', 'Acquisition session template'),
+                                'items' => [
+                                    [
+                                        'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "UAV"), 
+                                        'url' => ['/acquisition-session-metadata-file/generate-uav-metadata-file']
+                                    ],
+                                    [
+                                        'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "Phenomobile"), 
+                                        'url' => ['/acquisition-session-metadata-file/generate-field-robot-metadata-file']
+                                    ],
+                                ]
                             ]
                         ]];
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
@@ -201,10 +215,11 @@ AppAsset::register($this);
                         ];
     }
     
-    echo Nav::widget([
+    echo NavX::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'encodeLabels' => false,
-        'items' => $menuItems 
+        'items' => $menuItems,
+        'activateParents' => true,
     ]);
     NavBar::end();
     ?>
@@ -231,7 +246,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; OpenSILEX - PHIS v.2.5 - 22 August 2018 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
+        <p class="pull-left">&copy; OpenSILEX - PHIS v.2.6 - 20 September 2018 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
     </div> 
 </footer> 
 
