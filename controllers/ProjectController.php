@@ -22,7 +22,7 @@ use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
 
 /**
- * Implements the controller for the Projects and according YiiProjectModel
+ * Implements the controller for the Projects and according to YiiProjectModel
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiProjectModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
@@ -175,10 +175,10 @@ class ProjectController extends Controller {
             // users in a list
             //SILEX:conception
             $searchModel = new ProjectSearch();
-            $projects = $searchModel->find($sessionToken, []);
+            $projects = $searchModel->find($sessionToken,[]);
             
             $searchUserModel = new UserSearch();
-            $contacts = $searchUserModel->find($sessionToken, ["pageSize" => 200]);
+            $contacts = $searchUserModel->find($sessionToken, ["pageSize" => 100]);
             
             if (is_string($projects)) {
                 return $this->render('/site/error', [

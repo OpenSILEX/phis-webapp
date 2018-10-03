@@ -180,8 +180,6 @@ class YiiProjectModel extends WSActiveRecord {
         //SILEX:conception
         // use a getter
         //\SILEX:conception
-        // If website is empty or blank we must be send a null element
-        // else @URL will raise an error (bad url)
         $elementForWebService[YiiProjectModel::WEBSITE] = ($this->website === "") ? null : $this->website;
         
         if ($this->administrativeContacts != null) {
