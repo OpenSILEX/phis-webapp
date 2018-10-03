@@ -1,5 +1,4 @@
 <?php
-
 //******************************************************************************
 //                         FullScreenImageSliderWidget.php
 // SILEX-PHIS
@@ -7,7 +6,6 @@
 // Creation date: 03 Oct, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\components\widgets;
 
 use yii\base\Widget;
@@ -151,5 +149,4 @@ class FullScreenImageSliderWidget extends Widget {
                     animation: titleAnimation " . $totalDuration . "s linear infinite 0s;
                 }";
     }
-
 }
