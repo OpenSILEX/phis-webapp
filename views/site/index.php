@@ -1,9 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 $this->title = 'PHIS';
-
 ?>
-
 <div class="site-index">
     <div class="jumbotron">
         <img src="images/logos/phis_logo10.png" alt="logos_phis"/>
