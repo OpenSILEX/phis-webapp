@@ -160,7 +160,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'campaign',
             'place',
             [
-                'attribute' => 'scientificSupervisorContact',
+                'attribute' => 'scientificSupervisorContacts',
                 'format' => 'raw',
                 'value' => function ($model) {
                     $toReturn = "";
@@ -175,7 +175,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute' => 'technicalSupervisorContact',
+                'attribute' => 'technicalSupervisorContacts',
                 'format' => 'raw',
                 'value' => function ($model) {
                     $toReturn = "";
