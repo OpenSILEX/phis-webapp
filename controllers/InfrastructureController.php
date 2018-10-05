@@ -18,6 +18,7 @@ use app\models\yiiModels\InfrastructureSearch;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
 use app\models\yiiModels\DocumentSearch;
+use app\components\helpers\SiteMessages;
 
 /**
  * CRUD actions for YiiInfrastructureModel
@@ -51,13 +52,13 @@ class InfrastructureController extends Controller {
      */
     public function actionIndex() {
         $infrastructuresModel = new InfrastructureSearch();
-        $searchResult = $infrastructuresModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        $searchResult = $infrastructuresModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], Yii::$app->request->queryParams);
 
         if (is_string($searchResult)) {
-            return $this->render('/site/error', [
-                        'name' => 'Internal error',
-                        'message' => $searchResult]);
-        } else if (is_array($searchResult) && isset($searchResult["token"])) { //L'utilisateur doit se connecter
+            return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                        SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
+                        SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
+        } else if (is_array($searchResult) && isset($searchResult[WSConstants::TOKEN])) { 
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
             return $this->render('index', [

@@ -40,7 +40,7 @@ class PropertiesWidget extends Widget {
     private $alias = "";
     // Internal representation of fields array, corresponding to $relationOrder option
     private $fields = [];
-    // Internal representation of extrafields array, corresponding to properties not described in $relationOrder otpion
+    // Internal representation of extrafields array, corresponding to properties not described in $relationOrder option
     private $extraFields = [];
     // Mapping of formatters based on rdf type value
     protected $propertyFormatters = [
@@ -108,7 +108,7 @@ class PropertiesWidget extends Widget {
                 }
             }
         }
-
+        
         // Construct extra fields attribute based on unknown remaing properties
         foreach ($props as $i => $property) {
             $this->extraFields = $this->constructFields($this->extraFields, $property, $property->relation);
@@ -116,20 +116,57 @@ class PropertiesWidget extends Widget {
     }
 
     /**
-     * Construct a "fields" array indexed by relation uri
-     * @param array $fields
+     * Construct a "fields" array indexed according to $relationIndex
+     * @param array $fields the initial array which will be modified and returned
      * @param object $property
      * @param string $relationIndex
      * @return Array modified fields array
-     *      
+     * @example
+     * [
+     *   [0] => [
+     *       [label] => "type"
+     *       [values] => [
+     *           [0] => [
+     *               [relation] => http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+     *               [uri] => http://www.phenome-fppn.fr/vocabulary/2017#Installation
+     *               [label] => installation
+     *               [type] => http://www.w3.org/2002/07/owl#Class
+     *               [typeLabel] => 
+     *           ]
+     *       ]
+     *    ],
+     *   [1] => [
+     *       [label] => "has part"
+     *       [values] => [
+     *               [0] => [
+     *                       [relation] => http://www.phenome-fppn.fr/vocabulary/2017#hasPart
+     *                       [uri] => http://www.phenome-fppn.fr/m3p/eo/es2/roof
+     *                       [label] => PhenoArch: roof
+     *                       [type] => http://www.phenome-fppn.fr/vocabulary/2017#Greenhouse
+     *                       [typeLabel] => greenhouse
+     *               ],
+     *               [1] => [
+     *                       [relation] => http://www.phenome-fppn.fr/vocabulary/2017#hasPart
+     *                       [uri] => http://www.phenome-fppn.fr/m3p/es2
+     *                       [label] => PhenoArch: greenhouse
+     *                       [type] => http://www.phenome-fppn.fr/vocabulary/2017#Greenhouse
+     *                       [typeLabel] => greenhouse
+     *               ]
+     *       ]
+     *    ]
      * ]
      */
     private function constructFields($fields, $property, $relationIndex) {
+        // If the given relationIndex doesn't exists in fields array, initialize it.
         if (!isset($fields[$relationIndex])) {
             $label = null;
+
             if (count($property->relationLabels) > 0) {
+                // If property has at least one relation label, use the first one
+                // It may be the prefered label or the first of standart (rdf) label
                 $label = $property->relationLabels[0];
             } else {
+                // Otherwise use the last part of the relation uri as label (after # sign)
                 $parts = explode('#', $property->relation);
                 if (count($parts) == 1) {
                     $parts = explode('/', $property->relation);
@@ -137,16 +174,22 @@ class PropertiesWidget extends Widget {
                 $label = end($parts);
             }
 
+            // Initialize the fields index with the label and an empty array as values
             $fields[$relationIndex] = [
                 "label" => $label,
                 "values" => []
             ];
         }
 
+        // Initialize value label with raw value as default
         $valueLabel = $property->value;
         if (count($property->valueLabels) > 0) {
+            // If property has at least one value label, use the first one
+            // It may be the prefered label or the first of standart (rdf) label            
             $valueLabel = $property->valueLabels[0];
         } else {
+            // Otherwise use the last part of the value uri as label (after # sign)
+            // If there is no #, it will use the full value
             $parts = explode('#', $property->value);
             if (count($parts) == 1) {
                 $parts = explode('/', $property->value);
@@ -156,9 +199,12 @@ class PropertiesWidget extends Widget {
 
         $typeLabel = null;
         if (count($property->rdfTypeLabels) > 0) {
+            // If property has at least one rdf type label, use the first one
+            // It may be the prefered label or the first of standart (rdf) label  
             $typeLabel = $property->rdfTypeLabels[0];
         }
 
+        // Add the constructed value on the relation index
         $fields[$relationIndex]["values"][] = [
             "relation" => $property->relation,
             "uri" => $property->value,
