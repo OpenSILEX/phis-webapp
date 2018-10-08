@@ -12,8 +12,8 @@ use yii\base\Widget;
 use yii\helpers\Html;
 
 /**
- * A widget used to generate a simple customizable background image slider.
- * To get more animation, go to see the link below
+ * A widget used to generate a simple customizable background image css slider.
+ * To get more animation, go to see the link below.
  * @see https://tympanus.net/Tutorials/CSS3FullscreenSlideshow/index.html
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
@@ -23,7 +23,7 @@ class FullScreenImageSliderWidget extends Widget {
     const IMAGES_URL_LINK = "imagesUrlsLinks";
 
     /**
-     * the number of second between two images.
+     * The number of seconds elapsed between two images.
      * @var int 
      */
     public $durationPerImage = 6;
@@ -31,6 +31,8 @@ class FullScreenImageSliderWidget extends Widget {
     /**
      * The images links need to be showed.
      * The path start from web directory but it's a relative path.
+     * It means that "background/wallpaper_green_house.jpg" equals to
+     * "{app_directory}/web/background/wallpaper_green_house.jpg"
      * @example ["background/wallpaper_green_house.jpg"]
      * @var array
      */
@@ -42,20 +44,29 @@ class FullScreenImageSliderWidget extends Widget {
         if ($this->imagesUrlsLinks === null && count($this->imagesUrlsLinks) > 2) {
             throw new \Exception("Images aren't set");
         }
-        // durationPerImage need to be an integer and greater than 1
+        // DurationPerImage need to be an integer and greater than 1
         if (!is_int($this->durationPerImage) && $this->durationPerImage > 1) {
             throw new \Exception("Wrong duration per image");
         }
     }
 
     /**
-     * Render the annotation button
+     * Render the slider item list and the css associated
      * @return string the string rendered
      */
     public function run() {
-        // set slider animation configuration
+        // Set the configuration of slider css animation 
         $this->getView()->registerCssFile('@web/css/full-slider.css');
-        // create html tempalte
+        /**
+         * Create html template
+         * @example 
+         * <ul class="cb-slideshow">
+         *   <li><span>Image 0</span></li>
+         *   <li><span>Image 1</span></li>
+         *   <li><span>Image 2</span></li>
+         *   <li><span>Image 3</span></li>
+         * </ul>
+         */
         $html = Html::ul($this->imagesUrlsLinks, 
                 [
                 'item' => function($item, $index) {
@@ -65,19 +76,29 @@ class FullScreenImageSliderWidget extends Widget {
                 'class' => 'cb-slideshow'
                 ]
             );
-        // generate right css information
+        // Generate css according to the background images setted and the duration setted
         $css = "";            
         foreach ($this->imagesUrlsLinks as $index => $item) {
             $css .= $this->addImageToCss($item, $index);
         }
         $css .= $this->getWholeCssDuration();
-        // register css
+        // Register css
         $this->getView()->registerCss($css);
 
         return $html;
     }
     /**
-     * Generate css to render the behaviour per image
+     * Generate css to render the behaviour (duration) of each image
+     * @example 
+     * .cb-slideshow li:nth-child(1) span { background-image: url(background/wallpaper_grapes_vine.jpg) }
+     * .cb-slideshow li:nth-child(2) span {
+     *                   background-image: url(background/wallpaper_leaf.jpg);
+     *                   -webkit-animation-delay: 6s;
+     *                   -moz-animation-delay: 6s;
+     *                   -o-animation-delay: 6s;
+     *                   -ms-animation-delay: 6s;
+     *                   animation-delay: 6s;
+     *               }
      * @param string $item the relative path of the image
      * @param string $index the index of the image in the array
      * @return string the rendered css
