@@ -7,10 +7,16 @@
 //******************************************************************************
 Allow to generate full background css slider
 */
+/*Remove existing default background and replace it by a transparent layer*/
 .wrap {
     background : inherit !important;
     background-color: rgba(255, 255, 255, 0.4)!important;
 }
+/*
+Slider configuration begins.
+To get more animation, go to see the link below.
+@see https://tympanus.net/Tutorials/CSS3FullscreenSlideshow/index.html
+*/
 .cb-slideshow,
 .cb-slideshow:after {
     position: fixed;

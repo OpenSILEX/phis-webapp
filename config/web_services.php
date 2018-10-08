@@ -12,6 +12,6 @@
 // Subject: Contains the web services access
 //***********************************************************************************************
 
-define('WS_PHIS_PATH', 'http://localhost:8084/phis-ws/rest/');
-define('WS_PHIS_PATH_DOC', 'http://localhost:8084/phis2ws');
+define('WS_PHIS_PATH', 'http://localhost:8080/phis2ws/rest/');
+define('WS_PHIS_PATH_DOC', 'http://localhost:8080/phis2ws');
 

@@ -13,8 +13,8 @@ $this->title = 'PHIS';
 //    If you want to activate animated multiple background images 
 //    feature uncomment these lines below and add
 //    'use app\components\widgets\FullScreenImageSliderWidget;'
-//    in the import. you can also see full-slider.css to set different 
-//    annimation style.
+//    at the beginning of the file. You can also see full-slider.css
+//    file to set different annimation style.
 //    \SILEX:info
 //        echo FullScreenImageSliderWidget::widget([
 //            FullScreenImageSliderWidget::IMAGES_URL_LINK => [
