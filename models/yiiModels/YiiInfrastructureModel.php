@@ -5,7 +5,7 @@
 // SILEX-PHIS
 // Copyright © INRA 2018
 // Creation date: 21 Aug, 2018
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Contact: morgane.vidal@inra.fr, vincent.migot@inra.fr,  anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 namespace app\models\yiiModels;
@@ -13,9 +13,6 @@ namespace app\models\yiiModels;
 use Yii;
 
 /**
- * SILEX:warning
- * In this first version, there are no access to the web service. Data is static.
- * \SILEX:warning
  * The Yii model for the infrastructures. Implements a customized Active Record
  * (WSActiveRecord, for the web service access).
  * @see app\models\wsModels\WSActiveRecord
@@ -35,8 +32,8 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
      *  (e.g. Diaphen)
      * @var string
      */
-    public $alias;
-    const ALIAS = "alias";
+    public $label;
+    const ALIAS = "label";
     const ALIAS_LABEL = "Alias";
     /**
      * The type of the infrastructure. It is an uri corresponding to an ontology concept.
@@ -44,7 +41,7 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
      * @var string
      */
     public $rdfType;
-    const RDF_TYPE = "type";
+    const RDF_TYPE = "rdfType";
     const RDF_TYPE_LABEL = "Type";
     /**
      * The documents associated to the infrastructure.
@@ -53,6 +50,17 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
      */
     public $documents;
     const DOCUMENTS = "documents";
+    /**
+     * The properties of the infrastructure
+     * @var array 
+     */
+    public $properties;
+    const PROPERTIES = "properties";
+    const RELATION = "relation";
+    const VALUE = "value";
+    const RDF_TYPE_LABELS = "rdfTypeLabels";
+    const RELATION_LABELS = "relationLabels";
+    const VALUE_LABELS = "valueLabels";
     
     /**
      * Initialize wsModel. In the first version of this class, there is no WSModel.
@@ -61,11 +69,8 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
      * @param string $page number of the current page 
      */
     public function __construct($pageSize = null, $page = null) {
-        //SILEX:info
-        //Uncomment the following line when the infrastructure service will be 
-        //deployed and the WSInfrastructureModel created.
-        //$this->wsModel = new WSInfrastructureModel();
-        //\SILEX:info
+        $this->wsModel = new \app\models\wsModels\WSInfrastructureModel();
+        
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize : $this->pageSize = null;
         ($page !== null || $page !== "") ? $this->page = $page : $this->page = null;
     }
@@ -82,6 +87,56 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
         ];
     }
     
+    public function getDetails($sessionToken, $uri, $lang) {
+        $params = [];
+        if ($this->pageSize !== null) {
+           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+        }
+        if ($this->page !== null) {
+            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+        }
+        
+        $params[\app\models\wsModels\WSConstants::LANG] = $lang;
+                
+        $requestRes = $this->wsModel->getInfrastructureDetails($sessionToken, $uri, $params);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                return $requestRes;
+            } else {
+                $this->uri = $uri;
+                $this->propertiesArrayToAttributes($requestRes);
+                return $this;
+            }
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * allows to fill the property attribute with the information of the given array
+     * @param array $array array key => value with the properties of an object 
+     * (corresponding to a sensor profile)
+     */
+    protected function propertiesArrayToAttributes($array) {
+        if ($array[self::PROPERTIES] !== null) {
+            foreach ($array[self::PROPERTIES] as $property) {
+                $propertyToAdd = null;
+                $propertyToAdd[self::RELATION] = $property->relation; 
+                $propertyToAdd[self::VALUE] = $property->value;
+                $propertyToAdd[self::RDF_TYPE] = $property->rdfType;
+                $propertyToAdd[self::RELATION_LABELS] = $property->relationLabels; 
+                $propertyToAdd[self::VALUE_LABELS] = $property->valueLabels;
+                $propertyToAdd[self::RDF_TYPE_LABELS] = $property->rdfTypeLabels;     
+                
+                if ($property->relation == Yii::$app->params["rdfsLabel"]) {
+                    $this->label = $property->value;
+                }
+                $this->properties[] = $property;
+            }
+        }
+    }
+    
     /**
      * @see yii\base\Model::attributeLabels()
      * @see https://www.yiiframework.com/doc/api/2.0/yii-base-model#attributeLabels()-detail
@@ -94,24 +149,30 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
             YiiInfrastructureModel::RDF_TYPE => Yii::t('app', YiiInfrastructureModel::RDF_TYPE_LABEL),
         ];
     }
-
+    
     /**
-     * Not implemented yet. Override WSActiveRecord::attributesToArray($array)
+     * Map Array to Object
      * @see \app\models\wsModels\WSActiveRecord::arrayToAttributes($array)
      * @param array $array
      * @throws Exception
      */
     protected function arrayToAttributes($array) {
-        throw new Exception('Not implemented yet.');
+        $this->uri = $array[self::URI];
+        $this->label = $array[self::ALIAS];
+        $this->rdfType = $array[self::RDF_TYPE];
     }
 
     /**
-     * Not implemented yet. Override WSActiveRecord::attributesToArray($array)
+     *  Map Object to Array
      * @see \app\models\wsModels\WSActiveRecord::attributesToArray($array)
      * @param array $array
      * @throws Exception
      */
     public function attributesToArray() {
-        throw new Exception('Not implemented yet.');
+        $elementForWebService[self::URI] = $this->uri;
+        $elementForWebService[self::ALIAS] = $this->label;
+        $elementForWebService[self::RDF_TYPE] = $this->rdfType;
+        
+        return $elementForWebService;
     }
 }

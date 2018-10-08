@@ -164,3 +164,7 @@ form div.required label.control-label:after {
   100% { transform: rotate(360deg); }
 }
 /*\SILEX:loader*/
+
+table.properties-widget > tbody > tr > th:first-letter {
+    text-transform: capitalize;
+}
