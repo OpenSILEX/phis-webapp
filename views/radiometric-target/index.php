@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\SensorSearch */
@@ -22,4 +23,23 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </p>
     
+    <?=
+    GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            'label',
+            'uri',
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view}',
+                'buttons' => [
+                    'view' => function($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['radiometric-target/view', 'id' => $model->uri]);
+                    },
+                ]
+            ],
+        ],
+    ]);
+    ?>
 </div>

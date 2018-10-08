@@ -41,6 +41,7 @@ class DocumentController extends Controller {
     const PROJECT = "Project";
     const EXPERIMENT = "Experiment";
     const INSTALLATION = "Installation";
+    const RADIOMETRIC_TARGET = "RadiometricTarget";
     
     /**
      * define the behaviors
@@ -119,7 +120,9 @@ class DocumentController extends Controller {
                     $concern["type"] = "project";
                 } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::INSTALLATION]) {
                     $concern["type"] = "infrastructure";
-                } else {
+                } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::RADIOMETRIC_TARGET]) {
+                    $concern["type"] = "radiometric-target";
+                }else {
                     //check if a sensor or a vector 
                     $sensorModel = new YiiSensorModel();
                     $requestRes = $sensorModel->findByURI($sessionToken, $concernedItem->uri);

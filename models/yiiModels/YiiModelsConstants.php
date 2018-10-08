@@ -17,4 +17,5 @@ namespace app\models\yiiModels;
 class YiiModelsConstants  {
     const PAGE = 'page';
     const PAGE_SIZE = 'pageSize';
+    const PROPERTIES = 'properties';
 }
