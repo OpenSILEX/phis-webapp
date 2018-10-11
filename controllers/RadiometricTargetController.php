@@ -117,17 +117,17 @@ class RadiometricTargetController extends Controller {
         $sessionToken = Yii::$app->session['access_token'];
 
         $rtModel = new YiiRadiometricTargetModel();
-        $rtModel->isNewRecord = true;
 
         if ($rtModel->load(Yii::$app->request->post())) {
-
+            // 1. If post data, insert the submitted form
+            $rtModel->isNewRecord = true;
             $dataToSend[] = $rtModel->mapToProperties();
-
             $requestRes = $rtModel->insert($sessionToken, $dataToSend);
 
             if (is_string($requestRes) && $requestRes === "token") { //L'utilisateur doit se connecter
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
+                // 2. Send file associated to the radiometric target
                 $rtModel->uri = $requestRes->metadata->datafiles[0];
                 $fileResponse = $this->sendFile($sessionToken, $rtModel);
 
@@ -138,10 +138,12 @@ class RadiometricTargetController extends Controller {
                 } elseif (is_string($fileResponse) && $fileResponse === "token") { //L'utilisateur doit se connecter
                     return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
                 } else {
+                    // 3. Display the view page of the inserted radiometric target
                     return $this->redirect(['view', 'id' => $rtModel->uri]);
                 }
             }
         } else {
+            // If no post data display the create form
             $searchUserModel = new UserSearch();
             $contactsList = $searchUserModel->find($sessionToken, []);
             $contacts = null;
@@ -162,14 +164,17 @@ class RadiometricTargetController extends Controller {
      * 
      * @param string $sessionToken current session token
      * @param app\models\yiiModels\YiiRadiometricTargetModel $rtModel
-     * @return mixed
+     * @return false if the file is not correctly uploaded
+     *          or the result of the webservice request to post document
      */
     private function sendFile($sessionToken, $rtModel) {
         $file = UploadedFile::getInstance($rtModel, 'reflectanceFile');
 
+        // 1. check if the file is correctly uploaded
         if (is_uploaded_file($file->tempName)) {
+            
+            // 2. initialize the document model
             $documentModel = new YiiDocumentModel();
-
             $format = explode(".", $file->name);
             $documentModel->format = $format[count($format) - 1];
             $serverFilePath = \config::path()['documentsUrl'] . $file->name;
@@ -182,21 +187,21 @@ class RadiometricTargetController extends Controller {
             $documentModel->documentType =  Yii::$app->params["SpectralHemisphericDirectionalReflectanceFile"];
             $documentModel->creationDate = date("Y-m-d");
 
+            // 3. Affect the concerned item
             $item = new \app\models\yiiModels\YiiInstanceDefinitionModel();
             $item->uri = $rtModel->uri;
-
             $wsUriModel = new \app\models\wsModels\WSUriModel();
             $rdfType = $wsUriModel->getUriType($sessionToken, $rtModel->uri, null);
             $item->rdfType = $rdfType;
-
             $documentModel->concernedItems = [$item];
 
+            // 4. Send the request to insert the document
             $dataToSend[] = $documentModel->attributesToArray();
             $response = $documentModel->insert($sessionToken, $dataToSend);
-
             $requestURL = isset($response->metadata->datafiles) ? $response->metadata->datafiles[0] : null;
 
             if ($requestURL !== null) {
+                // 5. Post file associated to the document
                 $filePointer = fopen($serverFilePath, 'r');
                 $requestRes = $documentModel->postDocument($sessionToken, $filePointer, $requestURL);
                 unlink($serverFilePath);

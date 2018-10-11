@@ -1,7 +1,19 @@
 <?php
+
+//******************************************************************************
+//                                       _form.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 01 Oct, 2018
+// Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
+
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\file\FileInput;
+
+/* @var $this yii\web\View */
+/* @var $model app\models\YiiRadiometricTargetModel */
 ?>
 
 <div class="radiometric-target-form well">
@@ -59,7 +71,6 @@ use kartik\file\FileInput;
     <?= $form->field($model, 'dateOfLastCalibration')->widget(\kartik\date\DatePicker::className(), [
         'options' => [
             'placeholder' => Yii::t('app', 'Enter date of last calibration'), 
-//            'onChange' => 'updateURI()',
             'id' => 'rtDateOfLastCalibration'],            
         'pluginOptions' => [
             'autoclose' => true,
@@ -111,6 +122,7 @@ use kartik\file\FileInput;
             rtChangeFigure($('#yiiradiometrictargetmodel-shape').val())
         });
     </script>
+    
     <?= $form->field($model, 'shape')->widget(\kartik\select2\Select2::classname(),[
             'data' => [
                 'rectangular' => Yii::t('app', 'Rectangular'),

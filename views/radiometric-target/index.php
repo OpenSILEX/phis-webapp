@@ -1,11 +1,19 @@
 <?php
 
+//******************************************************************************
+//                                       index.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 01 Oct, 2018
+// Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
+
 use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\SensorSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $searchModel app\models\RadiometricTargetSearch */
+/* @var $dataProvider yii\data\ArrayDataProvider */
 
 $this->title = Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
@@ -13,7 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="radiometric-target-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
         <?php

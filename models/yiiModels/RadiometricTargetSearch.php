@@ -1,17 +1,17 @@
 <?php
 
 //******************************************************************************
-//                                       InfrastructureSearch.php
+//                                       RadiometricTargetSearch.php
 // SILEX-PHIS
 // Copyright © INRA 2018
-// Creation date: 20 September, 2018
+// Creation date: 27 September, 2018
 // Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 namespace app\models\yiiModels;
 
 /**
- * implements the search action for the infrastructure
+ * implements the search action for the radioemtric target
  *
  * @author Migot Vincent <vincent.migot@inra.fr>
  */
@@ -26,7 +26,8 @@ class RadiometricTargetSearch extends YiiRadiometricTargetModel {
     }
 
     /**
-     * Search Infrastructures
+     * Search Radiometric target
+     * 
      * @param array $sessionToken used for the data access
      * @param string $params search params
      * @return mixed DataProvider of the result 
@@ -69,6 +70,7 @@ class RadiometricTargetSearch extends YiiRadiometricTargetModel {
 
     /**
      * transform the json into array
+     * 
      * @param json jsonList
      * @return array
      */

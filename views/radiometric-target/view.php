@@ -4,8 +4,8 @@
 //                                       view.php
 // SILEX-PHIS
 // Copyright © INRA 2018
-// Creation date: 28 Aug, 2018
-// Contact: vincent.migot@inra.fr, morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Creation date: 01 Oct, 2018
+// Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 use app\components\widgets\AnnotationButtonWidget;
@@ -16,11 +16,9 @@ use yii\widgets\DetailView;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\YiiInfrastructureModel */
+/* @var $model app\models\YiiRadiometricTargetModel */
 /* @var $dataDocumentsProvider yii\data\DataProviderInterface */
-/* @update [Arnaud Charleroy] 28 August, 2018 : adding annotation linked to this infrastructure model */
-/* @update [Vincent Migot] 20 Sept, 2018: implement view details from service
- */
+/* @var $radiometricTargetAnnotations yii\data\DataProviderInterface */
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 'url' => ['index']];
@@ -46,6 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
     );
     ?>
 
+    <!-- Radiometric target details ->
     <?php
     $attributes = [
             'label',
@@ -122,6 +121,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => $attributes
     ]); ?>
     
+    <!-- Radiometric target documents ->
     <?php
     if ($dataDocumentsProvider->getCount() > 0) {
         echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";

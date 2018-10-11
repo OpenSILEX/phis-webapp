@@ -29,6 +29,7 @@ return [
     'AcquisitionSessionPhenomobileDocument' => 'http://www.phenome-fppn.fr/vocabulary/2017#AcquisitionSessionPhenomobileDocument',
     
     'RadiometricTarget' => 'http://www.phenome-fppn.fr/vocabulary/2017#RadiometricTarget',
+    'SpectralHemisphericDirectionalReflectanceFile' => 'http://www.phenome-fppn.fr/vocabulary/2017#SpectralHemisphericDirectionalReflectanceFile',
     
     'Infrastructure' => 'http://www.phenome-fppn.fr/vocabulary/2017#Infrastructure',
     'LocalInfrastructure' => 'http://www.phenome-fppn.fr/vocabulary/2017#LocalInfrastructure',

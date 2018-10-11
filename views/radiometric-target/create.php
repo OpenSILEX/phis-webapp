@@ -1,9 +1,17 @@
 <?php
 
+//******************************************************************************
+//                                       create.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 01 Oct, 2018
+// Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
+
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\YiiSensorModel */
+/* @var $model app\models\YiiRadiometricTargetModel */
 
 $this->title = Yii::t('yii', 'Add Radiometric Target');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 'url' => ['index']];

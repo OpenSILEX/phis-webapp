@@ -29,7 +29,7 @@ use app\components\helpers\SiteMessages;
  */
 class InfrastructureController extends Controller {
 
-    CONST ANNOTATIONS_DATA = "infrastructureAnnotations";
+    CONST ANNOTATIONS_DATA = "infrasctructureAnnotations";
 
     /**
      * Define the behaviors

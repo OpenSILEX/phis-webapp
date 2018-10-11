@@ -1,5 +1,13 @@
 <?php
 
+//******************************************************************************
+//                          YiiRadiometricTargetModel.php
+// SILEX-PHIS
+// Copyright © INRA 2018
+// Creation date: 27 September, 2018
+// Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
+
 namespace app\models\yiiModels;
 
 use app\models\wsModels\WSActiveRecord;
@@ -10,10 +18,11 @@ use Yii;
  * The yii model for the radiometric targets. 
  * Implements a customized Active Record
  *  (WSActiveRecord, for the web services access)
+ * 
  * @see app\models\wsModels\WSTripletModel
  * @see app\models\wsModels\WSUriModel
  * @see app\models\wsModels\WSActiveRecord
- * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @author Migot Vincent <vincent.migot@inra.fr>
  */
 class YiiRadiometricTargetModel extends WSActiveRecord {
 
@@ -23,16 +32,14 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      * @var string
      */
     public $uri;
-
     const URI = "uri";
 
     /**
      * the label of the radiometric target
-     *  (e.g. par03_p)
+     *  (e.g. rt00001)
      * @var string
      */
     public $label;
-
     const LABEL = "label";
 
     /**
@@ -41,7 +48,6 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      * @var string
      */
     public $brand;
-
     const BRAND = "brand";
 
     /**
@@ -50,7 +56,6 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      * @var string 
      */
     public $serialNumber;
-
     const SERIAL_NUMBER = "serialNumber";
 
     /**
@@ -59,7 +64,6 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      * @var string
      */
     public $inServiceDate;
-
     const IN_SERVICE_DATE = "inServiceDate";
 
     /**
@@ -68,7 +72,6 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      * @var string
      */
     public $dateOfPurchase;
-
     const DATE_OF_PURCHASE = "dateOfPurchase";
 
     /**
@@ -77,7 +80,6 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      * @var string
      */
     public $dateOfLastCalibration;
-
     const DATE_OF_LAST_CALIBRATION = "dateOfLastCalibration";
 
     /**
@@ -86,53 +88,92 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      * @var string
      */
     public $personInCharge;
-
     const PERSON_IN_CHARGE = "personInCharge";
 
+    /**
+     * material of the radiometric target
+     *  (e.g. spectralon)
+     * @var string
+     */
     public $material;
-
     const MATERIAL = "material";
 
+    /**
+     * shape of the radiometric target
+     *  (e.g. circular or rectangular)
+     * @var string
+     */
     public $shape;
-
     const SHAPE = "shape";
 
+    /**
+     * length of the radiometric target if shape is rectangular
+     *  (e.g. 3.14)
+     * @var number
+     */
     public $length;
-
     const LENGTH = "length";
 
+    /**
+     * width of the radiometric target if shape is rectangular
+     *  (e.g. 3.14)
+     * @var number
+     */
     public $width;
-
     const WIDTH = "width";
 
+    /**
+     * diameter of the radiometric target if shape is circualr
+     *  (e.g. 3.14)
+     * @var number
+     */
     public $diameter;
-
     const DIAMETER = "diameter";
 
+    /**
+     * BRDF parameter of the radiometric target
+     *  (e.g. 5.1)
+     * @var number
+     */
     public $brdfP1;
-
     const BRDFP1 = "brdfP1";
 
+    /**
+     * BRDF parameter of the radiometric target
+     *  (e.g. 5.2)
+     * @var number
+     */
     public $brdfP2;
-
     const BRDFP2 = "brdfP2";
 
+    /**
+     * BRDF parameter of the radiometric target
+     *  (e.g. 5.3)
+     * @var number
+     */
     public $brdfP3;
-
     const BRDFP3 = "brdfP3";
 
+    /**
+     * BRDF parameter of the radiometric target
+     *  (e.g. 5.4)
+     * @var number
+     */
     public $brdfP4;
-
     const BRDFP4 = "brdfP4";
 
-    public $reflectanceFile;
+    /**
+     * Reflectance file name of the radiometric target
+     *  (e.g. 5.1)
+     * @var number
+     */
 
+    public $reflectanceFile;
     const REFLECTANCE_FILE = "reflectanceFile";
 
-    const PROPERTIES = "properties";
     /**
-     * Initialize wsModels. In this class, as there is no dedicated service, there 
-     * are two wsModels : WSTripletModel and WSUriModel
+     * Initialize wsModels for radioemtric target
+     * 
      * @param string $pageSize number of elements per page
      *                               (limited to 150 000)
      * @param string $page number of the current page 
@@ -183,6 +224,13 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
         ];
     }
 
+    /**
+     * Get the properties of a radiometric target corresponding to the given uri
+     * 
+     * @param type $sessionToken
+     * @param type $uri
+     * @return $this
+     */
     public function getDetails($sessionToken, $uri) {
         $requestRes = $this->wsModel->getDetails($sessionToken, $uri);
         
@@ -201,6 +249,7 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
     
     /**
      * allows to fill the attributes with the informations in the array given 
+     * 
      * @param array $array array key => value which contains the metadata of 
      *                     a radiometric target
      */
@@ -208,7 +257,7 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
         $this->uri = $array[YiiRadiometricTargetModel::URI];
         $this->label = $array[YiiRadiometricTargetModel::LABEL];
         
-        foreach ($array[YiiRadiometricTargetModel::PROPERTIES] as $property) {
+        foreach ($array[YiiModelsConstants::PROPERTIES] as $property) {
             switch($property->relation) {
                 case Yii::$app->params['hasBrand']:
                     $this->brand = $property->value;
@@ -264,6 +313,7 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
     /**
      * Create an array representing the radiometric target
      * Used for the web service for example
+     * 
      * @return array with the attributes. 
      */
     public function attributesToArray() {
@@ -315,6 +365,26 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
         return $elementForWebService;
     }
 
+    /**
+     * Return the radiometric target model as an array for the webservice
+     * 
+     * @return Array list of rdf properties with uri and label
+     * eg.
+     * [
+     *      uri => 'http://www.phenome-fppn.fr/id/radiometricTargets/rt001',
+     *      label => 'radiometric target label'
+     *      properties => [
+     *          [
+     *              relation => 'http://www.phenome-fppn.fr/vocabulary/2017#hasBrand'
+     *              value => 'brand name'
+     *          ],
+     *          [
+     *              relation => 'http://www.phenome-fppn.fr/vocabulary/2017#hasRadiometricTargetMaterial'
+     *              value => 'spectralon'
+     *          ],...
+     *      ]
+     * ]
+     */
     public function mapToProperties() {
         $elementForWebService = [];
 
