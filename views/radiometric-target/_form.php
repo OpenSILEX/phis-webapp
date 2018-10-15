@@ -49,7 +49,6 @@ use kartik\file\FileInput;
     <?= $form->field($model, 'inServiceDate')->widget(\kartik\date\DatePicker::className(), [
         'options' => [
             'placeholder' => Yii::t('app', 'Enter in service date'), 
-//            'onChange' => 'updateURI()',
             'id' => 'rtInServiceDate'],            
         'pluginOptions' => [
             'autoclose' => true,
@@ -60,7 +59,6 @@ use kartik\file\FileInput;
     <?= $form->field($model, 'dateOfPurchase')->widget(\kartik\date\DatePicker::className(), [
         'options' => [
             'placeholder' => Yii::t('app', 'Enter date of purchase'), 
-//            'onChange' => 'updateURI()',
             'id' => 'rtDateOfPurchase'],            
         'pluginOptions' => [
             'autoclose' => true,
