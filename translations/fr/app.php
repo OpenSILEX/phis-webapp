@@ -18,7 +18,7 @@ use app\models\yiiModels\YiiAnnotationModel;
 
 return [
     '{n, plural, =1{Project} other{Projects}}' => '{n, plural, =1{Projet} other{Projets}}',
-    '{n, plural, =1{Experiment} other{Expériments}}' => '{n, plural, =1{Expérimentation} other{Expérimentations}}',
+    '{n, plural, =1{Experiment} other{Experiments}}' => '{n, plural, =1{Expérimentation} other{Expérimentations}}',
     '{n, plural, =1{Group} other{Groups}}' => '{n, plural, =1{Groupe} other{Groupes}}',
     '{n, plural, =1{User} other{Users}}' => '{n, plural, =1{Utilisateur} other{Utilisateurs}}',
     '{n, plural, =1{Person} other{Persons}}' => '{n, plural, =1{Personne} other{Personnes}}',
