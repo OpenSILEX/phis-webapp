@@ -117,10 +117,10 @@ class RadiometricTargetController extends Controller {
         $sessionToken = Yii::$app->session['access_token'];
 
         $rtModel = new YiiRadiometricTargetModel();
-
+        $rtModel->isNewRecord = true;
+        
         if ($rtModel->load(Yii::$app->request->post())) {
             // 1. If post data, insert the submitted form
-            $rtModel->isNewRecord = true;
             $dataToSend[] = $rtModel->mapToProperties();
             $requestRes = $rtModel->insert($sessionToken, $dataToSend);
 

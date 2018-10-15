@@ -233,7 +233,7 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      */
     public function getDetails($sessionToken, $uri) {
         $requestRes = $this->wsModel->getDetails($sessionToken, $uri);
-        
+
         if (!is_string($requestRes)) {
             if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
                 return $requestRes;
@@ -255,7 +255,6 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      */
     protected function arrayToAttributes($array) {
         $this->uri = $array[YiiRadiometricTargetModel::URI];
-        $this->label = $array[YiiRadiometricTargetModel::LABEL];
         
         foreach ($array[YiiModelsConstants::PROPERTIES] as $property) {
             switch($property->relation) {
@@ -304,6 +303,9 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
                 case Yii::$app->params['brdfP4']:
                     $this->brdfP4 = $property->value;
                     break;
+                case Yii::$app->params['rdfsLabel']:
+                    $this->label = $property->value;
+                     break;
                 default:
                     break;
             }

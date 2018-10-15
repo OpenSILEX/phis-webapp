@@ -32,19 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <!-- Add annotation button -->
         <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
     </p>
-    <!-- Infrastructure properties detail-->
 
-
-    <!-- Infrastructure linked Annotation-->
-    <?=
-    AnnotationGridViewWidget::widget(
-            [
-                AnnotationGridViewWidget::ANNOTATIONS => ${RadiometricTargetController::ANNOTATIONS_DATA}
-            ]
-    );
-    ?>
-
-    <!-- Radiometric target details ->
+    <!-- Radiometric target details -->
     <?php
     $attributes = [
             'label',
@@ -121,7 +110,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => $attributes
     ]); ?>
     
-    <!-- Radiometric target documents ->
+    <!-- Radiometric target  linked Annotation-->
+    <?=
+    AnnotationGridViewWidget::widget(
+            [
+                AnnotationGridViewWidget::ANNOTATIONS => ${RadiometricTargetController::ANNOTATIONS_DATA}
+            ]
+    );
+    ?>
+    
+    <!-- Radiometric target documents -->
     <?php
     if ($dataDocumentsProvider->getCount() > 0) {
         echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
