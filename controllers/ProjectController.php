@@ -1,17 +1,12 @@
 <?php
-
-//**********************************************************************************************
-//                                       ProjectController.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
-// Creation date: March 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  March, 2017
-// Subject: implements the CRUD for the projects (ws project model)
-//***********************************************************************************************
-
+//******************************************************************************
+//                            ProjectController.java
+// SILEX-PHIS
+// Copyright © INRA 2017
+// Creation date: Mar, 2017
+// Contact: morgane.vidal@inra.fr,arnaud.charleroy@inra.fr, anne.tireau@inra.fr, 
+//          pascal.neveu@inra.fr
+//******************************************************************************
 namespace app\controllers;
 
 use Yii;
@@ -27,10 +22,11 @@ use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
 
 /**
- * CRUD actions for YiiProjectModel
+ * Implements the controller for the Projects and according to YiiProjectModel
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiProjectModel
- * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
+ * @update [Arnaud Charleroy] 14 September, 2018 : increase list of users displayed
  */
 class ProjectController extends Controller {
     
@@ -172,11 +168,15 @@ class ProjectController extends Controller {
             
         } else { //Sinon c'est qu'il faut afficher ce formulaire
             //Récupération de la liste des projets existants pour la dropdownList
+            //SILEX:conception
+            // This quick fix is used to show all users available. We need 
+            // to discuss another way to populate dropdown lists.
+            //SILEX:conception
             $searchModel = new ProjectSearch();
             $projects = $searchModel->find($sessionToken,[]);
             
             $searchUserModel = new UserSearch();
-            $contacts = $searchUserModel->find($sessionToken, []);
+            $contacts = $searchUserModel->find($sessionToken, ["pageSize" => 100]);
             
             if (is_string($projects)) {
                 return $this->render('/site/error', [
