@@ -183,17 +183,17 @@ class DatasetController extends Controller {
                     //if unknown agronomical object uri
                     if ($columnName === DatasetController::AGRONOMICAL_OBJECT_URI) { 
                         if (!isset($agronomicalObjects[$value])) { //If the existance of the agronomical object has never been tested
-                            $agronomicalObjects[$value] = false;
-                        } else if (!$agronomicalObjects[$value] && !$this->existAgronomicalObject($value)){ //the agronomical object does not exist
-                            $agronomicalObjects[$value] = false;
-                            $error = null;
+                            $agronomicalObjects[$value] = $this->existAgronomicalObject($value);
+                        }
+                        
+                        if (!$agronomicalObjects[$value]){ //the agronomical object does not exist
+                            $error = [];
                             $error[DatasetController::ERRORS_LINE] = $i + 1; //+1 because header isn't in given data
                             $error[DatasetController::ERRORS_COLUMN] = $columnNumber;
                             $error[DatasetController::ERRORS_MESSAGE] = Yii::t('app/message', 'Unknown agronomical object.');
                             $rowsErrors[] = $error;
-                        } else { //the agronomical object exist
-                            $agronomicalObjects[$value] = true;
                         }
+                        
                     } else if ($columnName === DatasetController::DATE) { //if bad date format or empty date
                         if (!$this->isDateOk($value)) {
                             $error = null;
