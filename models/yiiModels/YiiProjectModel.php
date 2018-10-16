@@ -177,9 +177,13 @@ class YiiProjectModel extends WSActiveRecord {
         $elementForWebService[YiiProjectModel::DESCRIPTION] = $this->description;
         $elementForWebService[YiiProjectModel::OBJECTIVE] = $this->objective;
         $elementForWebService[YiiProjectModel::PARENT_PROJECT] = $this->parentProject;
-        //SILEX:conception
-        // use a getter
-        //\SILEX:conception
+        //SILEX:info
+        // Unlike the other attributes (description, keywords, etc.) of the project model,
+        // the website attribute must be a URL.
+        // Due to format validations of the Web Service (@URL), send an empty string
+        // will raise an 400 error:
+        // [postProject.arg0[0].website]website is not an URL  | Invalid value
+        //\SILEX:info
         $elementForWebService[YiiProjectModel::WEBSITE] = ($this->website === "") ? null : $this->website;
         
         if ($this->administrativeContacts != null) {

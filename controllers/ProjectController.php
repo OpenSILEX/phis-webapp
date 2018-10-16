@@ -169,10 +169,8 @@ class ProjectController extends Controller {
         } else { //Sinon c'est qu'il faut afficher ce formulaire
             //Récupération de la liste des projets existants pour la dropdownList
             //SILEX:conception
-            // This quick fix is used to show all users available in the 
-            // dropdown list but we need to implements an autocompletion
-            // search linked to the web service instead of load all
-            // users in a list
+            // This quick fix is used to show all users available. We need 
+            // to discuss another way to populate dropdown lists.
             //SILEX:conception
             $searchModel = new ProjectSearch();
             $projects = $searchModel->find($sessionToken,[]);
