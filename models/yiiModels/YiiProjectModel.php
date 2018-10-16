@@ -94,6 +94,7 @@ class YiiProjectModel extends WSActiveRecord {
                'scientificContacts', 'administrativeContacts', 'projectCoordinatorContacts'], 'safe'],
            [['description'], 'string'],
            [['uri', 'parentProject', 'website'], 'string', 'max' => 300],
+           [['website'],'url'],
            [['keywords'], 'string', 'max' => 500],
            [['name', 'acronyme', 'subprojectType', 'financialSupport', 'financialName'], 'string', 'max' => 200],
            [['objective'], 'string', 'max' => 256],
@@ -177,11 +178,13 @@ class YiiProjectModel extends WSActiveRecord {
         $elementForWebService[YiiProjectModel::DESCRIPTION] = $this->description;
         $elementForWebService[YiiProjectModel::OBJECTIVE] = $this->objective;
         $elementForWebService[YiiProjectModel::PARENT_PROJECT] = $this->parentProject;
+
         //SILEX:info
-        // Unlike the other attributes (description, keywords, etc.) of the project model,
-        // the website attribute must be a URL.
-        // Due to format validations of the Web Service (@URL), send an empty string
-        // will raise an 400 error:
+        // Unlike the other text attributes (description, keywords, etc.) 
+        // of the project model, the website attribute must be a URL.
+        // Due to format validations of the Web Service (@URL), 
+        // send the website attribute with an empty string value
+        // will raise an 400 error like:
         // [postProject.arg0[0].website]website is not an URL  | Invalid value
         //\SILEX:info
         $elementForWebService[YiiProjectModel::WEBSITE] = ($this->website === "") ? null : $this->website;
