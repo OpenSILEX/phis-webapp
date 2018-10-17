@@ -206,23 +206,30 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
              });
              
             $(document).on('click', '#datasetSearchButton', function() {
-                            var searchFormData = new FormData();
-                            var data = $('form').serializeArray();
-                            $.each(data, function(key, input) {
-                               searchFormData.append(input.name, input.value); 
-                            });
-                            var plots = "";
-                            if (typeof selectedPlots !== 'undefined') {
-                                for (var i = 0; i < selectedPlots.length; i++) {
-                                    plots += selectedPlots[i][0];
-                                    if (i < selectedPlots.length-1) {
-                                        plots += ",";
-                                    } 
-                                }
+                            //SILEX:info
+                            //This is a quick fix which will be removed when the datasets 
+                            //functionnality will be updated
+                            //\SILEX:info
+                            if (selectedPlots.length > 20) { 
+                                alert("Too many plots selected.");
                             } else {
-                                plots = null;
+                                var searchFormData = new FormData();
+                                var data = $('form').serializeArray();
+                                $.each(data, function(key, input) {
+                                   searchFormData.append(input.name, input.value); 
+                                });
+                                var plots = "";
+                                if (typeof selectedPlots !== 'undefined') {
+                                    for (var i = 0; i < selectedPlots.length; i++) {
+                                        plots += selectedPlots[i][0];
+                                        if (i < selectedPlots.length-1) {
+                                            plots += ",";
+                                        } 
+                                    }
+                                } else {
+                                    plots = null;
+                                }
                             }
-                            
                             searchFormData.append("agronomicalObjects", plots);
 
                             $.ajax({
@@ -236,7 +243,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                               .done(function (data) {
                                 //SILEX:todo
                                 //gestion messages d'erreur
-                                //\SILEX:todo
+                                //\SILEX:todo          
                                 $('#visualization-dataset').html(data);
                              })
                              .fail(function (jqXHR, textStatus) {
