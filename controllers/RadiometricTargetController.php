@@ -83,7 +83,7 @@ class RadiometricTargetController extends Controller {
     public function actionView($id) {
         //1. Fill the radiometric target model with the information.
         $model = new YiiRadiometricTargetModel();
-        $rtDetail = $model->getDetails(Yii::$app->session['access_token'], $id);
+         $radiometricTargetDetail = $model->getDetails(Yii::$app->session['access_token'], $id);
 
         //2. Get documents.
         $searchDocumentModel = new DocumentSearch();
@@ -96,11 +96,11 @@ class RadiometricTargetController extends Controller {
         $infrastructureAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
 
         //4. Render the view of the infrastructure.
-        if (is_array($rtDetail) && isset($rtDetail["token"])) {
+        if (is_array( $radiometricTargetDetail) && isset( $radiometricTargetDetail["token"])) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
             return $this->render('view', [
-                        'model' => $rtDetail,
+                        'model' =>  $radiometricTargetDetail,
                         'dataDocumentsProvider' => $documents,
                         self::ANNOTATIONS_DATA => $infrastructureAnnotations
             ]);
@@ -116,20 +116,20 @@ class RadiometricTargetController extends Controller {
     public function actionCreate() {
         $sessionToken = Yii::$app->session['access_token'];
 
-        $rtModel = new YiiRadiometricTargetModel();
-        $rtModel->isNewRecord = true;
+         $radiometricTargetModel = new YiiRadiometricTargetModel();
+         $radiometricTargetModel->isNewRecord = true;
         
-        if ($rtModel->load(Yii::$app->request->post())) {
+        if ( $radiometricTargetModel->load(Yii::$app->request->post())) {
             // 1. If post data, insert the submitted form
-            $dataToSend[] = $rtModel->mapToProperties();
-            $requestRes = $rtModel->insert($sessionToken, $dataToSend);
+            $dataToSend[] =  $radiometricTargetModel->mapToProperties();
+            $requestRes =  $radiometricTargetModel->insert($sessionToken, $dataToSend);
 
             if (is_string($requestRes) && $requestRes === "token") { //L'utilisateur doit se connecter
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 // 2. Send file associated to the radiometric target
-                $rtModel->uri = $requestRes->metadata->datafiles[0];
-                $fileResponse = $this->sendFile($sessionToken, $rtModel);
+                 $radiometricTargetModel->uri = $requestRes->metadata->datafiles[0];
+                $fileResponse = $this->sendFile($sessionToken,  $radiometricTargetModel);
 
                 if ($fileResponse == false) {
                     return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
@@ -139,7 +139,7 @@ class RadiometricTargetController extends Controller {
                     return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
                 } else {
                     // 3. Display the view page of the inserted radiometric target
-                    return $this->redirect(['view', 'id' => $rtModel->uri]);
+                    return $this->redirect(['view', 'id' =>  $radiometricTargetModel->uri]);
                 }
             }
         } else {
@@ -154,7 +154,7 @@ class RadiometricTargetController extends Controller {
             $this->view->params['listContacts'] = $contacts;
 
             return $this->render('create', [
-                'model' => $rtModel
+                'model' =>  $radiometricTargetModel
             ]);
         }
     }
@@ -168,21 +168,21 @@ class RadiometricTargetController extends Controller {
     public function actionUpdate($id) {
         $sessionToken = Yii::$app->session['access_token'];
 
-        $rtModel = new YiiRadiometricTargetModel();
+         $radiometricTargetModel = new YiiRadiometricTargetModel();
         
-        if ($rtModel->load(Yii::$app->request->post())) {
+        if ( $radiometricTargetModel->load(Yii::$app->request->post())) {
             // 1. If post data, update the submitted form for the radiometric target
-            $dataToSend[] = $rtModel->mapToProperties();
-            $requestRes = $rtModel->update($sessionToken, $dataToSend);
+            $dataToSend[] =  $radiometricTargetModel->mapToProperties();
+            $requestRes =  $radiometricTargetModel->update($sessionToken, $dataToSend);
 
             if (is_string($requestRes) && $requestRes === "token") { //L'utilisateur doit se connecter
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
-                return $this->redirect(['view', 'id' => $rtModel->uri]);
+                return $this->redirect(['view', 'id' =>  $radiometricTargetModel->uri]);
             }
         } else {
             //1. Fill the radiometric target model with the information.
-            $rtDetail = $rtModel->getDetails($sessionToken, $id);
+             $radiometricTargetDetail =  $radiometricTargetModel->getDetails($sessionToken, $id);
         
             //2. Load user list for update form
             $searchUserModel = new UserSearch();
@@ -195,7 +195,7 @@ class RadiometricTargetController extends Controller {
             $this->view->params['listContacts'] = $contacts;
 
             return $this->render('update', [
-                'model' => $rtModel
+                'model' =>  $radiometricTargetModel
             ]);
         }
     }
@@ -204,12 +204,12 @@ class RadiometricTargetController extends Controller {
      * Send the attached reflectance file to the webservices
      * 
      * @param string $sessionToken current session token
-     * @param app\models\yiiModels\YiiRadiometricTargetModel $rtModel
+     * @param app\models\yiiModels\YiiRadiometricTargetModel  $radiometricTargetModel
      * @return false if the file is not correctly uploaded
      *          or the result of the webservice request to post document
      */
-    private function sendFile($sessionToken, $rtModel) {
-        $file = UploadedFile::getInstance($rtModel, 'reflectanceFile');
+    private function sendFile($sessionToken,  $radiometricTargetModel) {
+        $file = UploadedFile::getInstance( $radiometricTargetModel, 'reflectanceFile');
 
         // 1. check if the file is correctly uploaded
         if (is_uploaded_file($file->tempName)) {
@@ -230,9 +230,9 @@ class RadiometricTargetController extends Controller {
 
             // 3. Affect the concerned item
             $item = new \app\models\yiiModels\YiiInstanceDefinitionModel();
-            $item->uri = $rtModel->uri;
+            $item->uri =  $radiometricTargetModel->uri;
             $wsUriModel = new \app\models\wsModels\WSUriModel();
-            $rdfType = $wsUriModel->getUriType($sessionToken, $rtModel->uri, null);
+            $rdfType = $wsUriModel->getUriType($sessionToken,  $radiometricTargetModel->uri, null);
             $item->rdfType = $rdfType;
             $documentModel->concernedItems = [$item];
 

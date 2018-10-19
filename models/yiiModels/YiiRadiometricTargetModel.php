@@ -171,6 +171,9 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
     public $reflectanceFile;
     const REFLECTANCE_FILE = "reflectanceFile";
 
+    const RELATION = "relation";
+    const VALUE = "value";
+    
     /**
      * Initialize wsModels for radioemtric target
      * 
@@ -399,89 +402,89 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
         $properties = [];
 
         $properties[] = [
-            "relation" =>  Yii::$app->params['hasBrand'],
-            "value" => $this->brand
+            self::RELATION =>  Yii::$app->params['hasBrand'],
+            self::VALUE => $this->brand
         ];
 
         $properties[] = [
-            "relation" => Yii::$app->params['inServiceDate'],
-            "value" => $this->inServiceDate
+            self::RELATION => Yii::$app->params['inServiceDate'],
+            self::VALUE => $this->inServiceDate
         ];
         
         $properties[] = [
-            "relation" => Yii::$app->params['hasTechnicalContact'],
-            "value" => $this->personInCharge
+            self::RELATION => Yii::$app->params['hasTechnicalContact'],
+            self::VALUE => $this->personInCharge
         ];
         
         $properties[] = [
-            "relation" => Yii::$app->params['hasRadiometricTargetMaterial'],
-            "value" => $this->material
+            self::RELATION => Yii::$app->params['hasRadiometricTargetMaterial'],
+            self::VALUE => $this->material
         ];
         $properties[] = [
-            "relation" => Yii::$app->params['hasShape'],
-            "value" => $this->shape
+            self::RELATION => Yii::$app->params['hasShape'],
+            self::VALUE => $this->shape
         ];
 
         if ($this->serialNumber) {
             $properties[] = [
-                "relation" =>  Yii::$app->params['serialNumber'],
-                "value" => $this->serialNumber
+                self::RELATION =>  Yii::$app->params['serialNumber'],
+                self::VALUE => $this->serialNumber
             ];
         }
         if ($this->dateOfLastCalibration) {
             $properties[] = [
-                "relation" => Yii::$app->params['dateOfLastCalibration'],
-                "value" => $this->dateOfLastCalibration
+                self::RELATION => Yii::$app->params['dateOfLastCalibration'],
+                self::VALUE => $this->dateOfLastCalibration
             ];
         }
         if ($this->dateOfPurchase) {
             $properties[] = [
-                "relation" => Yii::$app->params['dateOfPurchase'],
-                "value" => $this->dateOfPurchase
+                self::RELATION => Yii::$app->params['dateOfPurchase'],
+                self::VALUE => $this->dateOfPurchase
             ];
         }
 
         if ($this->length) {
             $properties[] = [
-                "relation" => Yii::$app->params['hasShapeLength'],
-                "value" => $this->length
+                self::RELATION => Yii::$app->params['hasShapeLength'],
+                self::VALUE => $this->length
             ];
         }
         if ($this->width) {
             $properties[] = [
-                "relation" => Yii::$app->params['hasShapeWidth'],
-                "value" => $this->width
+                self::RELATION => Yii::$app->params['hasShapeWidth'],
+                self::VALUE => $this->width
             ];
         }
         if ($this->diameter) {
             $properties[] = [
-                "relation" => Yii::$app->params['hasShapeDiameter'],
-                "value" => $this->diameter
+                self::RELATION => Yii::$app->params['hasShapeDiameter'],
+                self::VALUE => $this->diameter
             ];
         }
 
         if ($this->brdfP1) {
             $properties[] = [
-                "relation" => Yii::$app->params['brdfP1'],
-                "value" => $this->brdfP1
+                self::RELATION => Yii::$app->params['brdfP1'],
+                self::VALUE => $this->brdfP1
             ];
         }
         if ($this->brdfP2) {
             $properties[] = [
-                "relation" => Yii::$app->params['brdfP2'],
-                "value" => $this->brdfP2
+                self::RELATION => Yii::$app->params['brdfP2'],
+                self::VALUE => $this->brdfP2
             ];
         }
         if ($this->brdfP3) {
             $properties[] = [
-                "relation" => Yii::$app->params['brdfP3'],
-                "value" => $this->brdfP3
+                self::RELATION => Yii::$app->params['brdfP3'],
+                self::VALUE => $this->brdfP3
             ];
         }
         if ($this->brdfP4) {
             $properties[] = [
-                "relation" => Yii::$app->params['brdfP4'],
-                "value" => $this->brdfP4
+                self::RELATION => Yii::$app->params['brdfP4'],
+                self::VALUE => $this->brdfP4
             ];
         }
 

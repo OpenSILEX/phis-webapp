@@ -55,7 +55,7 @@ class WSRadiometricTargetModel extends \openSILEX\guzzleClientPHP\WSModel {
      *              rdfTypeLabels => 
      *              relation => http://www.phenome-fppn.fr/vocabulary/2017#inServiceDate
      *              relationLabels => 
-     *              value => 6-07-10
+     *              value => 2018-10-28
      *              valueLabels => 
      *              domain => 
      *              labels => 

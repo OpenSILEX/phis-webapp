@@ -11,7 +11,7 @@
 namespace app\models\yiiModels;
 
 /**
- * implements the search action for the radioemtric target
+ * Implements the search action for the radiometric target
  *
  * @author Migot Vincent <vincent.migot@inra.fr>
  */

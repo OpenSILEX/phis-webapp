@@ -109,7 +109,7 @@ use kartik\file\FileInput;
     ?>
 
     <script>
-        function rtChangeFigure(value) {
+        function radiometricTargetChangeFigure(value) {
             if (value === 'circular') {
                 $(".field-yiiradiometrictargetmodel-diameter").show();
                 $(".field-yiiradiometrictargetmodel-width").hide();
@@ -123,7 +123,7 @@ use kartik\file\FileInput;
         }
 
         $(document).ready(function () {
-            rtChangeFigure($('#yiiradiometrictargetmodel-shape').val())
+            radiometricTargetChangeFigure($('#yiiradiometrictargetmodel-shape').val())
         });
     </script>
 
@@ -137,7 +137,7 @@ use kartik\file\FileInput;
             'allowClear' => false
         ],
         'pluginEvents' => [
-            "change" => "function(event) { rtChangeFigure(event.target.value)}",
+            "change" => "function(event) { radiometricTargetChangeFigure(event.target.value)}",
         ]
     ]);
     ?>
