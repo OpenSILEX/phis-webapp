@@ -81,7 +81,7 @@ class RadiometricTargetController extends Controller {
      * @return mixed redirect in case of error otherwise return the "view" view
      */
     public function actionView($id) {
-        //1. Fill the infrastructure model with the information.
+        //1. Fill the radiometric target model with the information.
         $model = new YiiRadiometricTargetModel();
         $rtDetail = $model->getDetails(Yii::$app->session['access_token'], $id);
 
@@ -154,11 +154,52 @@ class RadiometricTargetController extends Controller {
             $this->view->params['listContacts'] = $contacts;
 
             return $this->render('create', [
-                        'model' => $rtModel
+                'model' => $rtModel
             ]);
         }
     }
 
+    /**
+     * Display the form to update a radiometric target or update it in case of form submit
+     * 
+     * @return mixed redirect in case of error or after successfully create 
+     * the radiometric target otherwise return the "create" view 
+     */
+    public function actionUpdate($id) {
+        $sessionToken = Yii::$app->session['access_token'];
+
+        $rtModel = new YiiRadiometricTargetModel();
+        
+        if ($rtModel->load(Yii::$app->request->post())) {
+            // 1. If post data, update the submitted form for the radiometric target
+            $dataToSend[] = $rtModel->mapToProperties();
+            $requestRes = $rtModel->update($sessionToken, $dataToSend);
+
+            if (is_string($requestRes) && $requestRes === "token") { //L'utilisateur doit se connecter
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->redirect(['view', 'id' => $rtModel->uri]);
+            }
+        } else {
+            //1. Fill the radiometric target model with the information.
+            $rtDetail = $rtModel->getDetails($sessionToken, $id);
+        
+            //2. Load user list for update form
+            $searchUserModel = new UserSearch();
+            $contactsList = $searchUserModel->find($sessionToken, []);
+            $contacts = null;
+            if ($contactsList !== null) {
+                $contacts = \yii\helpers\ArrayHelper::map($contactsList, 'email', 'email');
+            }
+        
+            $this->view->params['listContacts'] = $contacts;
+
+            return $this->render('update', [
+                'model' => $rtModel
+            ]);
+        }
+    }
+    
     /**
      * Send the attached reflectance file to the webservices
      * 

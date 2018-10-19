@@ -31,8 +31,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <!-- Add annotation button -->
         <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
+        <!-- Add update button -->
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
     </p>
-
+    
     <!-- Radiometric target details -->
     <?php
     $attributes = [

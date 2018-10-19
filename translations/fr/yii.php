@@ -34,6 +34,7 @@ return [
     'Add Sensors' => 'Ajouter des Capteurs',
     'Add Vectors' => 'Ajouter des Vecteurs',
     'Add Radiometric Target' => 'Ajouter une Cible Radiométrique',
+    'Update Radiometric Target' => 'Mettre à jour une Cible Radiométrique',
     'An internal server error occurred.' => 'Une erreur de serveur interne s\'est produite.',
     'Are you sure you want to delete this item?' => 'Voulez-vous réellement supprimer cet élément ?',
     'Create' => 'Créer',
