@@ -55,7 +55,7 @@ AppAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
-                                'label' => Icon::show('home', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
+                                'label' => Icon::show('home', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Organization} other{Organizations}}', ['n' => 2]), 
                                 'url' => ['/infrastructure'],
                             ],
                             [
@@ -149,7 +149,7 @@ AppAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
-                                'label' => Icon::show('home', ['class' => 'fas'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 
+                                'label' => Icon::show('home', ['class' => 'fas'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Organization} other{Organizations}}', ['n' => 2]), 
                                 'url' => ['/infrastructure'],
                             ],
                             [

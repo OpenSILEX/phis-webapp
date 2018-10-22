@@ -26,6 +26,7 @@ return [
     '{n, plural, =1{Vector} other{Vectors}}' => '{n, plural, =1{Vecteur} other{Vecteurs}}',
     '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}' => '{n, plural, =1{Cible Radiométrique} other{Cibles Radiométriques}}',
     '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}' => '{n, plural, =1{Objet Agronomique} other{Objets Agronomiques}}',
+    '{n, plural, =1{Organization} other{Organizations}}' => '{n, plural, =1{Organisation} other{Organisations}}',
     
     'Add Dataset' => 'Importer un jeu de données',
     'Add Document' => 'Ajouter un document',
