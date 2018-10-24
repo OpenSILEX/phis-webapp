@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 && $propertyLabel !== "dateOfLastCalibration"
                                 && $propertyLabel !== "hasBrand"
                                 && $propertyLabel !== "hasLens"
-                                && $propertyLabel !== "observes"
+                                && $propertyLabel !== "measures"
                             ) {
                             $toReturn .= "<li>"
                                     . "<b>" . explode("#", $property->relation)[1] . "</b>"
