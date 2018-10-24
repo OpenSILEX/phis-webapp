@@ -114,7 +114,18 @@ class YiiSensorModel extends WSActiveRecord {
     const PROPERTIES = "properties";
     const RELATION = "relation";
     const VALUE = "value";
-    
+    /**
+     * variables observed by the sensor
+     * e.g.
+     * [
+     *      "uri" => "label",
+     *      "uri" => "label",
+     *      ...
+     * ]
+     * @var array 
+     */
+    public $variables;
+    const VARIABLES = "variables";
     /**
      * Initialize wsModels. In this class, as there is no dedicated service, there 
      * are two wsModels : WSTripletModel and WSUriModel
@@ -174,6 +185,11 @@ class YiiSensorModel extends WSActiveRecord {
         $this->dateOfLastCalibration = $array[YiiSensorModel::DATE_OF_LAST_CALIBRATION];
         $this->dateOfPurchase = $array[YiiSensorModel::DATE_OF_PURCHASE];
         $this->personInCharge = $array[YiiSensorModel::PERSON_IN_CHARGE];
+        if ($array[YiiSensorModel::VARIABLES]) {
+            // get_object_vars transforms stdClass to associative array
+            $this->variables = get_object_vars($array[YiiSensorModel::VARIABLES]);
+        } 
+        
     }
     
     /**

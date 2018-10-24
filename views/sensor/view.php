@@ -60,12 +60,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
+                'attribute' => 'variables',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "<ul>";
+                    foreach ($model->variables as $variableUri => $variableLabel) {
+                        $toReturn .= "<li>"
+                        . Html::a($variableLabel, ['variable/view', 'uri' => $variableUri])
+                        . "</li>";
+                    }
+                    $toReturn .= "</ul>";
+                    return $toReturn;
+                },
+            ],                        
+            [
               'attribute' => 'properties',
               'format' => 'raw',
               'value' => function ($model) {
                     $toReturn = "<ul>";
                     foreach ($model->properties as $property) {
                         $propertyLabel = explode("#", $property->relation)[1];
+                        
                         if ($propertyLabel !== "type"
                                 && $propertyLabel !== "label"
                                 && $propertyLabel !== "inServiceDate"
@@ -74,7 +89,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 && $propertyLabel !== "dateOfPurchase"
                                 && $propertyLabel !== "dateOfLastCalibration"
                                 && $propertyLabel !== "hasBrand"
-                                && $propertyLabel !== "hasLens") {
+                                && $propertyLabel !== "hasLens"
+                                && $propertyLabel !== "observes"
+                            ) {
                             $toReturn .= "<li>"
                                     . "<b>" . explode("#", $property->relation)[1] . "</b>"
                                     . " : "

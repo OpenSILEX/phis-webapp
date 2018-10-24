@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <h2><?= Yii::t('app', 'Trait') ?></h2>
             <?= DetailView::widget([
                 'model' => $model->trait,
@@ -82,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ]) ?>
         </div>
-        <div class="col-md-3 col-md-offset-1">
+        <div class="col-md-4">
             <h2><?= Yii::t('app', 'Method') ?></h2>
             <?= DetailView::widget([
                 'model' => $model->method,
@@ -109,7 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ]) ?>
         </div>
-        <div class="col-md-3 col-md-offset-1">
+        <div class="col-md-4">
             <h2><?= Yii::t('app', 'Unit') ?></h2>
             <?= DetailView::widget([
                 'model' => $model->unit,
