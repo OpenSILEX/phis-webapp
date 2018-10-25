@@ -39,6 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
     </p>
 
+    <?php if (Yii::$app->session['isAdmin']): ?>
     <!-- Script used to do Ajax call when the update variable button is clicked -->
     <script>
         $(document).ready(function() {
@@ -75,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         }
                         
                         // Display the toaster in case of success or error
-                        if (/*result.error*/ true) {
+                        if (/*result.error*/ false) {
                             toastr["error"]("Error while updating variables !")
                         } else {
                             toastr["success"]("Variables successfully updated !")
@@ -85,7 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
             })
         })
     </script>
-    
+    <?php endif; ?>
     <?=
     DetailView::widget([
         'model' => $model,
@@ -176,6 +177,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         $widgetOptions['disabled'] = true;
                     }
                             
+                    // Create widget HTML
                     $toReturn = Select2::widget($widgetOptions);
 
                     // Add the info box

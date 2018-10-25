@@ -107,9 +107,9 @@ class WSSensorModel extends \openSILEX\guzzleClientPHP\WSModel {
      *           a string "token" if token expired
      */
     public function putSensorVariables($sessionToken, $sensorUri, $variablesUri) {
-        $subService = "/" . $sensorUri . "/variables";
+        $subService = "/" . urlencode($sensorUri) . "/variables";
         $requestRes = $this->put($sessionToken, $subService, $variablesUri);
-        
+
         if (isset($requestRes->{WSConstants::TOKEN})) {
             return WEB_SERVICE_TOKEN;
         } else {

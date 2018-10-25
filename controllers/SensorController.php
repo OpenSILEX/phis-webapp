@@ -322,12 +322,16 @@ class SensorController extends Controller {
         $post = Yii::$app->request->post();
         $sessionToken = Yii::$app->session['access_token'];        
         $sensorUri = $post["sensor"];
-        $variablesUri = $post["variables"];
+        if (isset($post["variables"])) {
+            $variablesUri = $post["variables"];
+        } else {
+            $variablesUri = [];
+        }
         $sensorModel = new YiiSensorModel();
         
         $res = $sensorModel->updateVariables($sessionToken, $sensorUri, $variablesUri);
         
-        return $res;
+        return json_encode($res, JSON_UNESCAPED_SLASHES);
     }
     
     /**
