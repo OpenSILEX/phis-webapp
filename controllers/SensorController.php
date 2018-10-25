@@ -16,6 +16,7 @@ use app\models\yiiModels\YiiSensorModel;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
+use app\models\yiiModels\VariableSearch;
 
 /**
  * CRUD actions for SensorModel
@@ -292,16 +293,41 @@ class SensorController extends Controller {
         $searchAnnotationModel->targets[0] = $id;
         $sensorAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
      
+        //4. get sensors variables
+        $variablesSearch = new VariableSearch();
+        $variablesDataProvider = $variablesSearch->search(Yii::$app->session['access_token'], []);
+        $variables = [];
+        foreach ($variablesDataProvider->getModels() as $variable) {
+            $variables[$variable->uri] = $variable->label;
+        }
+
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
             return $this->render('view', [
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
+                'variables' => $variables,
                 self::ANNOTATIONS_DATA => $sensorAnnotations
 
             ]);
         }
+    }
+    
+    /**
+     * Ajax action to update the list of vriables measured by a sensor
+     * @return the webservice result with sucess or error
+     */
+    public function actionUpdateVariables() {
+        $post = Yii::$app->request->post();
+        $sessionToken = Yii::$app->session['access_token'];        
+        $sensorUri = $post["sensor"];
+        $variablesUri = $post["variables"];
+        $sensorModel = new YiiSensorModel();
+        
+        $res = $sensorModel->updateVariables($sessionToken, $sensorUri, $variablesUri);
+        
+        return $res;
     }
     
     /**

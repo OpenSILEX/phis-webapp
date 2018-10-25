@@ -168,3 +168,40 @@ form div.required label.control-label:after {
 table.properties-widget > tbody > tr > th:first-letter {
     text-transform: capitalize;
 }
+
+.variables-select-link {
+    color: #000;
+    opacity: 0.4;
+}
+
+.variables-select-link:hover {
+    color: #555555;
+    opacity: 1;
+    text-decoration: none;
+}
+
+.info-box {
+    font-style: italic;
+    width: 100%;
+    margin-top: 5px;
+    padding: 5px;
+    padding-left: 10px;
+    display: block;
+    border: 1px solid #555555;
+    border-radius: 5px;
+}
+
+.info-box:before {
+    content: "\f05a";
+    font-style: normal;
+    font-family: FontAwesome;
+    margin-right: 5px;
+}
+
+.toast-top-right {
+    margin-top: 50px;
+}
+
+.select2-container--krajee.select2-container--disabled .select2-selection, .select2-container--krajee.select2-container--disabled .select2-search__field {
+    cursor: default;
+}

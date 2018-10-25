@@ -331,7 +331,26 @@ class YiiSensorModel extends WSActiveRecord {
         $requestRes = $this->wsModel->postSensorProfile($sessionToken, $sensorProfile);
         
         if (is_string($requestRes) && $requestRes === "token") {
-                return $requestRes;
+            return $requestRes;
+        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES})) {
+            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * Update variables measured by a sensor
+     * @param string $sessionToken
+     * @param string $sensorUri
+     * @param array $variablesUri
+     * @return the query result
+     */
+    public function updateVariables($sessionToken, $sensorUri, $variablesUri) {
+        $requestRes = $this->wsModel->putSensorVariables($sessionToken, $sensorUri, $variablesUri);
+        
+        if (is_string($requestRes) && $requestRes === "token") {
+            return $requestRes;
         } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES})) {
             return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
         } else {
