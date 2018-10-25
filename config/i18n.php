@@ -17,7 +17,7 @@ return [
     'help' => null,
     'sourcePath' => '@yii',
     'messagePath' => __DIR__ . DIRECTORY_SEPARATOR .'..'. DIRECTORY_SEPARATOR . 'translations',
-    'languages' => ['en-US', 'fr'],
+    'languages' => ['en', 'fr'],
     'translator' => 'Yii::t',
     'sort' => false,
     'overwrite' => true,

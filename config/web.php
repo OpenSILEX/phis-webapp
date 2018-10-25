@@ -77,7 +77,7 @@ $config = [
     'on beforeRequest' => function() {
         $preferredLanguage = isset(Yii::$app->request->cookies['language']) ? (string)Yii::$app->request->cookies['language'] : null;
         if ($preferredLanguage === null) {
-            $preferredLanguage='en-US';   
+            $preferredLanguage='en';   
         }
         Yii::$app->language=$preferredLanguage;
     }
