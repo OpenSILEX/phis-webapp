@@ -120,6 +120,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         
                         for(var i in statusArray) {
                             var status = statusArray[i];
+                            // ICI !!! Pour morgane ;)
                             if (status.exception.type === "Error") {
                                 toastr["error"](status.message);
                             } else {
