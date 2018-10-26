@@ -351,8 +351,8 @@ class YiiSensorModel extends WSActiveRecord {
         
         if (is_string($requestRes) && $requestRes === "token") {
             return $requestRes;
-        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES})) {
-            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
+        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS})) {
+            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS};
         } else {
             return $requestRes;
         }

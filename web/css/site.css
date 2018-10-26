@@ -187,7 +187,6 @@ table.properties-widget > tbody > tr > th:first-letter {
     padding: 5px;
     padding-left: 10px;
     display: block;
-    border: 1px solid #555555;
     border-radius: 5px;
 }
 
@@ -204,4 +203,12 @@ table.properties-widget > tbody > tr > th:first-letter {
 
 .select2-container--krajee.select2-container--disabled .select2-selection, .select2-container--krajee.select2-container--disabled .select2-search__field {
     cursor: default;
+}
+
+.disabled.update-variables,
+.disabled.update-variables:hover,
+.disabled.update-variables:visited,
+.disabled.update-variables:focus {
+    background-color: #333333;
+    border: 1px solid #ccc;
 }
