@@ -28,6 +28,7 @@ return [
     '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}' => '{n, plural, =1{Objet Agronomique} other{Objets Agronomiques}}',
     '{n, plural, =1{Scientific frame} other{Scientific frames}}' => '{n, plural, =1{Cadre scientifique} other{Cadres scientifiques}}',
     
+    'A radiometric target can be described by the value of its coefficients to the bidirectional reflectance distribution function (see the BRDF ' => 'Une cible radiométrique peut être décrite par la valeur de ses coefficients à la fonction de distribution de la réflectivité bidirectionnelle (voir la ',
     'Add Dataset' => 'Importer un jeu de données',
     'Add Document' => 'Ajouter un document',
     'Add Document Script' => 'Ajouter un script',
@@ -174,6 +175,7 @@ return [
     'Website' => 'Site web',
     'Width' => 'Largeur',
     'Width (m)' => 'Largeur (m)',
+    'wikipedia page' => 'page wikipédia',
     'Yes' => 'Oui',
     YiiAnnotationModel::CREATION_DATE_LABEL => 'Date de l\'annotation',
     YiiAnnotationModel::MOTIVATED_BY_LABEL  => 'Motivée par',
