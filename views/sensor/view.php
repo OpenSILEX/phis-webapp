@@ -117,12 +117,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             "hideMethod": "fadeOut"
                         }
                         
-                        
                         for(var i in statusArray) {
                             var status = statusArray[i];
-                            // ICI !!! Pour morgane ;)
                             if (status.exception.type === "Error") {
-                                toastr["error"](status.message);
+                                toastr["error"](status.exception.details);
                             } else {
                                 toastr["success"](status.message);
                                 originalVariablesList = $(".variables-selector select").val();
