@@ -15,7 +15,6 @@
 namespace app\models\yiiModels;
 
 use app\models\wsModels\WSActiveRecord;
-use app\models\wsModels\WSTripletModel;
 use app\models\wsModels\WSUriModel;
 use app\models\wsModels\WSSensorModel;
 
@@ -34,63 +33,63 @@ class YiiSensorModel extends WSActiveRecord {
     
     /**
      * the sensor's uri
-     *  (e.g. http://www.phenome-fppn.fr/diaphen/s18001)
+     * @example http://www.phenome-fppn.fr/diaphen/s18001
      * @var string
      */
     public $uri;
     const URI = "uri";
     /**
      * the type uri (concept uri) of the sensor
-     *  (e.g. http://www.phenome-fppn.fr/vocabulary/2017#RadiationSensor)
+     * @example http://www.phenome-fppn.fr/vocabulary/2017#RadiationSensor
      * @var string
      */
     public $rdfType;
     const RDF_TYPE = "rdfType";
     /**
      * the label of the sensor
-     *  (e.g. par03_p)
+     * @example par03_p
      * @var string
      */
     public $label;
     const LABEL = "label";
     /**
      * the brand of the sensor
-     *  (e.g. Skye Instruments)
+     * @example Skye Instruments
      * @var string
      */
     public $brand; 
     const BRAND = "brand";
     /**
      * the serial number of the sensor 
-     *  (e.g. E1JFHS849DNSKF8DH)
+     * @example E1JFHS849DNSKF8DH
      * @var string 
      */
     public $serialNumber;
     const SERIAL_NUMBER = "serialNumber";
     /**
      * the in service date of the sensor
-     *  (e.g 2011-05-01)
+     * @example 2011-05-01
      * @var string
      */
     public $inServiceDate;
     const IN_SERVICE_DATE = "inServiceDate";
     /**
      * the date of purchase of the sensor
-     *  (e.g. 2011-01-01)
+     * @example 2011-01-01
      * @var string
      */
     public $dateOfPurchase;
     const DATE_OF_PURCHASE = "dateOfPurchase";
     /**
      * the date of last calibration of the sensor
-     *  (e.g 2017-03-22)
+     * @example 2017-03-22
      * @var string
      */
     public $dateOfLastCalibration;
     const DATE_OF_LAST_CALIBRATION = "dateOfLastCalibration";
     /**
      * email of the person in charge of the sensor
-     *  (e.g. user@email.com)
+     * @example user@email.com
      * @var string
      */
     public $personInCharge;
@@ -102,7 +101,7 @@ class YiiSensorModel extends WSActiveRecord {
     public $documents;
     /**
      * properties of the sensor (corresponding to the sensor profile)
-     * e.g.
+     * @example
      * [
      *      "relation" => "value",
      *      "relation => "value",
@@ -114,7 +113,18 @@ class YiiSensorModel extends WSActiveRecord {
     const PROPERTIES = "properties";
     const RELATION = "relation";
     const VALUE = "value";
-    
+    /**
+     * variables observed by the sensor
+     * e.g.
+     * [
+     *      "uri" => "label",
+     *      "uri" => "label",
+     *      ...
+     * ]
+     * @var array 
+     */
+    public $variables;
+    const VARIABLES = "variables";
     /**
      * Initialize wsModels. In this class, as there is no dedicated service, there 
      * are two wsModels : WSTripletModel and WSUriModel
@@ -174,6 +184,11 @@ class YiiSensorModel extends WSActiveRecord {
         $this->dateOfLastCalibration = $array[YiiSensorModel::DATE_OF_LAST_CALIBRATION];
         $this->dateOfPurchase = $array[YiiSensorModel::DATE_OF_PURCHASE];
         $this->personInCharge = $array[YiiSensorModel::PERSON_IN_CHARGE];
+        if ($array[YiiSensorModel::VARIABLES]) {
+            // get_object_vars transforms stdClass to associative array
+            $this->variables = get_object_vars($array[YiiSensorModel::VARIABLES]);
+        } 
+        
     }
     
     /**
@@ -315,9 +330,28 @@ class YiiSensorModel extends WSActiveRecord {
         $requestRes = $this->wsModel->postSensorProfile($sessionToken, $sensorProfile);
         
         if (is_string($requestRes) && $requestRes === "token") {
-                return $requestRes;
+            return $requestRes;
         } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES})) {
             return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES};
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * Update variables measured by a sensor
+     * @param string $sessionToken
+     * @param string $sensorUri
+     * @param array $variablesUri
+     * @return the query result
+     */
+    public function updateVariables($sessionToken, $sensorUri, $variablesUri) {
+        $requestRes = $this->wsModel->putSensorVariables($sessionToken, $sensorUri, $variablesUri);
+        
+        if (is_string($requestRes) && $requestRes === "token") {
+            return $requestRes;
+        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS})) {
+            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS};
         } else {
             return $requestRes;
         }

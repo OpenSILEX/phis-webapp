@@ -29,4 +29,5 @@ class WSConstants {
     const RESULT = 'result';
     const DATA_FILES = 'datafiles';
     const LANG = "language";
+    const STATUS = "status";
 }

@@ -97,4 +97,23 @@ class WSSensorModel extends \openSILEX\guzzleClientPHP\WSModel {
             return $requestRes;
         }
     }
+    
+    /**
+     * Call the webservice to update the list of measured variable by the given sensor
+     * @param string $sessionToken
+     * @param string $sensorUri
+     * @param array $variablesUri
+     * @return mixed the query result 
+     *           a string "token" if token expired
+     */
+    public function putSensorVariables($sessionToken, $sensorUri, $variablesUri) {
+        $subService = "/" . urlencode($sensorUri) . "/variables";
+        $requestRes = $this->put($sessionToken, $subService, $variablesUri);
+
+        if (isset($requestRes->{WSConstants::TOKEN})) {
+            return WEB_SERVICE_TOKEN;
+        } else {
+            return $requestRes;
+        }
+    }
 }
