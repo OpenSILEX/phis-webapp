@@ -303,7 +303,7 @@ class SensorController extends Controller {
             $variables[$variable->uri] = $variable->label;
         }
 
-        if ($res === "token") {
+        if ($res === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
             return $this->render('view', [
