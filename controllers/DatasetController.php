@@ -258,9 +258,11 @@ class DatasetController extends Controller {
         $variableSearchModel->label = $variableLabel;
         $searchResult = $variableSearchModel->search(Yii::$app->session['access_token'], []);
         if (is_string($searchResult)) {
-            throw new Exception("error getting variable uri");
-        } else if (is_array($searchResult) && isset($searchResult["token"])) {
-            throw new Exception("user must log in");
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+                 throw new Exception("user must log in");
+            } else {
+                throw new Exception("error getting variable uri");
+            }
         } else { 
             $models = $searchResult->getModels();
             //we assume that there is only one variable with the variable label. 
@@ -269,7 +271,6 @@ class DatasetController extends Controller {
             } else {
                 return null;
             }
-            
         }
     }
     
