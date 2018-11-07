@@ -272,6 +272,7 @@ class YiiExperimentModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiExperimentModel::URI] = $this->uri;
         $elementForWebService[YiiExperimentModel::START_DATE] = $this->startDate;
         $elementForWebService[YiiExperimentModel::END_DATE] = $this->endDate;

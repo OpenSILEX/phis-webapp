@@ -322,8 +322,7 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $elementForWebService[YiiModelsConstants::PAGE] = $this->page <= 0 ? 0 : $this->page - 1;
-        $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
+        $elementForWebService = parent::attributesToArray();
 
         $elementForWebService[YiiRadiometricTargetModel::URI] = $this->uri;
         $elementForWebService[YiiRadiometricTargetModel::LABEL] = $this->label;

@@ -124,7 +124,7 @@ class YiiInstanceDefinitionModel extends \app\models\wsModels\WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() { 
-        $toReturn = null;
+        $toReturn = parent::attributesToArray();
         $toReturn[YiiInstanceDefinitionModel::LABEL] = $this->label;
         
         if (isset($this->comment) 
