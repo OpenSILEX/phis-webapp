@@ -381,7 +381,7 @@ class YiiSensorModel extends WSActiveRecord {
         return null;
     }
     
-
+    /*
      * Update variables measured by a sensor
      * @param string $sessionToken
      * @param string $sensorUri
