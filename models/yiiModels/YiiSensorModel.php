@@ -214,8 +214,7 @@ class YiiSensorModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $elementForWebService[YiiModelsConstants::PAGE] = $this->page <= 0 ? 0 : $this->page - 1;
-        $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiSensorModel::URI] = $this->uri;
         $elementForWebService[YiiSensorModel::RDF_TYPE] = $this->rdfType;
         $elementForWebService[YiiSensorModel::LABEL] = $this->label;

@@ -207,6 +207,7 @@ class YiiDocumentModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiDocumentModel::DOCUMENT_TYPE] = $this->documentType;
         $elementForWebService[YiiDocumentModel::URI] = $this->uri;
         $elementForWebService[YiiDocumentModel::CREATOR] = $this->creator;
