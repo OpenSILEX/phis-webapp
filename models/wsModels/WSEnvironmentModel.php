@@ -59,11 +59,11 @@ class WSEnvironmentModel extends \openSILEX\guzzleClientPHP\WSModel {
     }
 
     //SILEX:todo
-    //The page size should not be fixed to 1000 but this method should call multiple times
+    //The page size should not be fixed to 80000 but this method should call multiple times
     //the web service in order to really get all the results
     //\SILEX:todo
     /**
-     * Return the 1000 first measured variable corresponding to the given parameters
+     * Return the 80000 first measured variable corresponding to the given parameters
      * @param string $sessionToken
      * @param string $sensorUri
      * @param string $variableUri
@@ -74,7 +74,7 @@ class WSEnvironmentModel extends \openSILEX\guzzleClientPHP\WSModel {
     public function getAllSensorData($sessionToken, $sensorUri, $variableUri, $startDate, $endDate) {
         // Define the parameter array
         $params = [
-            "pageSize" => 1000,
+            "pageSize" => 80000,
             "page" => 0,
             "variable" => $variableUri,
             "sensor" => $sensorUri,

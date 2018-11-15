@@ -46,6 +46,9 @@ echo Highcharts::widget([
                 'format' => '{value:.2f}'
             ]
         ],
+        'tooltip' => [
+           'xDateFormat' => '%Y-%m-%d %H:%M'
+         ],
         'series' => [$serie],
     ]
 ]);

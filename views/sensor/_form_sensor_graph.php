@@ -49,7 +49,7 @@ use yii\helpers\Url;
         <p class="info-box">
             <?= Yii::t('app/messages', 'If no date are selected, visualization will render latest week of data found for sensor measured variables.'); ?>
             <br/>
-            <?= Yii::t('app/messages', 'Measures displayed are limited to the 1000 first results.'); ?>
+            <?= Yii::t('app/messages', 'Measures displayed are limited to the 80 000 first results.'); ?>
         </p>
         
         <div class="form-group">

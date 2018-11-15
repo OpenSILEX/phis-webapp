@@ -54,5 +54,5 @@ return [
     'The above warning occurred while the Web server was processing your request.' => 'Un incident est survenu au moment du traitement de votre requête par le serveur.',
     'When you change variables measured by sensor in the list, click on the check button to update them.' => 'En cas de modification des variables mesurées par le capteur, cliquer sur le bouton de validation pour les mettre à jour.',
     'If no date are selected, visualization will render latest week of data found for sensor measured variables.' => 'Si aucune date n\'est sélectionnées, les graphiques représenteront la dernière semaine de données trouvée pour les variables mesurées par le capteur.',
-    'Measures displayed are limited to the 1000 first results.' => 'Les mesures affichées seront limitées au 1000 premiers résultats',
+    'Measures displayed are limited to the 80 000 first results.' => 'Les mesures affichées seront limitées au 80 000 premiers résultats',
 ];
