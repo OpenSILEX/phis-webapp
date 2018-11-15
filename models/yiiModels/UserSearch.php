@@ -81,10 +81,9 @@ class UserSearch extends YiiUserModel {
      * @inheritdoc
      */
     public function attributesToArray() {
-        $elementForWebService = parent::attributesToArray();
         // add page attribute
         if(isset($this->page)){
-            $elementForWebService[WSConstants::PAGE] = $this->getPageForWS();
+            $elementForWebService[WSConstants::PAGE] = $this->getPageNumber();
         }
         return $elementForWebService;
     }

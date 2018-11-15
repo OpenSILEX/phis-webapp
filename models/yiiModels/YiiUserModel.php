@@ -151,6 +151,7 @@ class YiiUserModel extends WSActiveRecord {
      *         ou d'envoyer lui-même son propre tableau (dans le cas où il souhaite enregistrer plusieurs instances)
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiUserModel::EMAIL] = $this->email;
         $elementForWebService[YiiUserModel::PASSWORD] = $this->password;
         $elementForWebService[YiiUserModel::FIRST_NAME] = $this->firstName;

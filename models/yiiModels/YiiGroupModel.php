@@ -143,6 +143,7 @@ class YiiGroupModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         if (isset($this->organism) && $this->organism != null) {
             $elementForWebService[YiiGroupModel::NAME] = $this->organism . "-" . $this->name;
         } else {

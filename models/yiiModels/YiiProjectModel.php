@@ -166,6 +166,7 @@ class YiiProjectModel extends WSActiveRecord {
      *         ou d'envoyer lui-même son propre tableau (dans le cas où il souhaite enregistrer plusieurs instances)
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiProjectModel::URI] = $this->uri;
         $elementForWebService[YiiProjectModel::NAME] = $this->name;
         $elementForWebService[YiiProjectModel::ACRONYME]= $this->acronyme;

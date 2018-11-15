@@ -214,8 +214,7 @@ class YiiSensorModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $elementForWebService[YiiModelsConstants::PAGE] = $this->page <= 0 ? 0 : $this->page - 1;
-        $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiSensorModel::URI] = $this->uri;
         $elementForWebService[YiiSensorModel::RDF_TYPE] = $this->rdfType;
         $elementForWebService[YiiSensorModel::LABEL] = $this->label;
@@ -339,6 +338,50 @@ class YiiSensorModel extends WSActiveRecord {
     }
     
     /**
+     * If the key has a "relation" correspondance in the ontology, 
+     * return the relation uri else return null
+     * @param string $key
+     * @return string e.g. http://www.phenome-fppn.fr/vocabulary/2017#width
+     */
+    public static function getPropertyFromKey($key) {
+        if ($key === "height") {
+            return Yii::$app->params["height"];
+        } elseif ($key === "width") {
+            return Yii::$app->params["width"];
+        } elseif ($key === "pixelSize") {
+            return Yii::$app->params["pixelSize"];
+        } elseif (strstr($key, "wavelength")) {
+            return Yii::$app->params["wavelength"];
+        } elseif ($key === "scanningAngularRange") {
+            return Yii::$app->params["scanningAngularRange"];
+        } elseif ($key === "scanAngularResolution") {
+            return Yii::$app->params["scanAngularResolution"];
+        } elseif ($key === "spotWidth") {
+            return Yii::$app->params["spotWidth"];
+        } elseif ($key === "spotHeight") {
+            return Yii::$app->params["spotHeight"];
+        } elseif ($key === "halfFieldOfView") {
+            return Yii::$app->params["halfFieldOfView"];
+        } elseif ($key === "minWavelength") {
+            return Yii::$app->params["minWavelength"];
+        } elseif ($key === "maxWavelength") {
+            return Yii::$app->params["maxWavelength"];
+        } elseif ($key === "spectralSamplingInterval") {
+            return Yii::$app->params["spectralSamplingInterval"];
+        } elseif ($key === "lensUri") {
+            return Yii::$app->params["hasLens"];
+        } elseif (strstr($key, "focalLength")) {
+            return Yii::$app->params["focalLength"];
+        } elseif (strstr($key, "attenuatorFilter")) {
+            return Yii::$app->params["attenuatorFilter"];
+        } elseif (strstr($key, "waveband")) {
+            return Yii::$app->params["waveband"];
+        }
+        
+        return null;
+    }
+    
+
      * Update variables measured by a sensor
      * @param string $sessionToken
      * @param string $sensorUri
@@ -356,4 +399,5 @@ class YiiSensorModel extends WSActiveRecord {
             return $requestRes;
         }
     }
+
 }
