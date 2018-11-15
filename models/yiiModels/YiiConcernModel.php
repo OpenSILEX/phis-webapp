@@ -72,6 +72,7 @@ class YiiConcernModel extends app\models\wsModels\WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
+        $toReturn = parent::attributesToArray();
         $toReturn[YiiConcernModel::URI] = $this->uri;
         $toReturn[YiiConcernModel::RDF_TYPE] = $this->rdfType;
         

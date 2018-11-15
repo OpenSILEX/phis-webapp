@@ -169,9 +169,11 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
      * @throws Exception
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[self::URI] = $this->uri;
         $elementForWebService[self::ALIAS] = $this->label;
         $elementForWebService[self::RDF_TYPE] = $this->rdfType;
+        $elementForWebService[\app\models\wsModels\WSConstants::LANG] = Yii::$app->language;
         
         return $elementForWebService;
     }

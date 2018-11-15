@@ -16,6 +16,7 @@ use app\models\yiiModels\YiiSensorModel;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
+use app\models\yiiModels\VariableSearch;
 
 /**
  * CRUD actions for SensorModel
@@ -248,11 +249,13 @@ class SensorController extends Controller {
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
         
         if (is_string($searchResult)) {
-            return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => $searchResult]);
-        } else if (is_array($searchResult) && isset($searchResult["token"])) { //user must log in
-            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->render('/site/error', [
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $searchResult]);
+            }
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,
@@ -292,16 +295,45 @@ class SensorController extends Controller {
         $searchAnnotationModel->targets[0] = $id;
         $sensorAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
      
-        if ($res === "token") {
+        //4. get sensors variables
+        $variablesSearch = new VariableSearch();
+        $variablesDataProvider = $variablesSearch->search(Yii::$app->session['access_token'], []);
+        $variables = [];
+        foreach ($variablesDataProvider->getModels() as $variable) {
+            $variables[$variable->uri] = $variable->label;
+        }
+
+        if ($res === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
             return $this->render('view', [
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
+                'variables' => $variables,
                 self::ANNOTATIONS_DATA => $sensorAnnotations
 
             ]);
         }
+    }
+    
+    /**
+     * Ajax action to update the list of vriables measured by a sensor
+     * @return the webservice result with sucess or error
+     */
+    public function actionUpdateVariables() {
+        $post = Yii::$app->request->post();
+        $sessionToken = Yii::$app->session['access_token'];        
+        $sensorUri = $post["sensor"];
+        if (isset($post["variables"])) {
+            $variablesUri = $post["variables"];
+        } else {
+            $variablesUri = [];
+        }
+        $sensorModel = new YiiSensorModel();
+        
+        $res = $sensorModel->updateVariables($sessionToken, $sensorUri, $variablesUri);
+        
+        return json_encode($res, JSON_UNESCAPED_SLASHES);
     }
     
     /**
@@ -329,9 +361,13 @@ class SensorController extends Controller {
             $searchResult = $sensorSearchModel->search($sessionToken, $searchParam);
             
             if (is_string($searchResult)) {
-                return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => $searchResult]);
+                if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+                    return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+                } else {
+                    return $this->render('/site/error', [
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $searchResult]);
+                }
             } else {
                 $models = $searchResult->getmodels();
             }

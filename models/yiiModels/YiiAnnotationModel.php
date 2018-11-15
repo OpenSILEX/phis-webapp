@@ -143,6 +143,7 @@ class YiiAnnotationModel extends WSActiveRecord {
      *        in multiple instances
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiAnnotationModel::CREATOR] = $this->creator;
         $elementForWebService[YiiAnnotationModel::MOTIVATED_BY] = $this->motivatedBy;
         $elementForWebService[YiiAnnotationModel::CREATION_DATE] = $this->creationDate;

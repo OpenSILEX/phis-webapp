@@ -3,9 +3,8 @@
 //                         WSActiveRecord.php
 // SILEX-PHIS
 // Copyright © INRA 2017
-// Creation date:  Feb, 2017
-// Contact: arnaud.charleroy@inra.fr,  morgane.vidal@inra.fr, anne.tireau@inra.fr,
-//          pascal.neveu@inra.fr
+// Creation date: Feb, 2017
+// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 namespace app\models\wsModels;
 
@@ -15,9 +14,11 @@ namespace app\models\wsModels;
  * Based on the Yii Active Record of relational databases
  * See Yii2 ActiveRecord documentation for more details
  * @see http://www.yiiframework.com/doc-2.0/guide-db-active-record.html
- * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
+ * @author Morgane Vidal <morgane.vidal@inra.fr>
  * @update [Arnaud Charleroy] 14 September, 2018 : Fix totalCount attribute when only 
  *                                                 one element is returned 
+ * @update [Morgane Vidal] 6 November, 2018 : Add the management of the page number 
+ *                                            and the page size to send to the web service.
  */
 abstract class WSActiveRecord extends \yii\base\Model {
     
@@ -130,7 +131,13 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * Used for the web service for example
      * @return array with the attributes. 
      */
-    abstract public function attributesToArray();
+    public function attributesToArray() {
+        $toReturn = null;
+        $toReturn[WSConstants::PAGE] = $this->getPageNumber();
+        $toReturn[WSConstants::PAGE_SIZE] = $this->pageSize;
+        
+        return $toReturn;
+    }
     
     /**
      * allows to fill the attributes with the informations in the array given 
@@ -139,10 +146,10 @@ abstract class WSActiveRecord extends \yii\base\Model {
     abstract protected function arrayToAttributes($array);
     
     /**
-     * Return the number of the ws page
-     * @return int
+     * Return the page number to send to the web service.
+     * @return int the actual page number
      */
-    public function getPageForWS() {
+    public function getPageNumber() {
         if($this->page == null){
              return $this->page = 0;
         }

@@ -148,6 +148,13 @@ use kartik\file\FileInput;
 
     <?= $form->field($model, 'diameter')->textInput(['maxlength' => true]) ?>
 
+    <?= Yii::t('app', 'A radiometric target can be described by the value of its coefficients to the bidirectional reflectance distribution function (see the BRDF '),
+            Html::a(Yii::t('app', 'wikipedia page'), "https://en.wikipedia.org/wiki/Bidirectional_reflectance_distribution_function", ['target' => '_blank']),
+            '):' ?>
+    <div class="text-center">
+    <?= Html::img('images/figures/radiometric-target_BRDF-equation.png', ["class"=>"img-thumbnail"]);?>
+    </div>
+
     <?= $form->field($model, 'brdfP1')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'brdfP2')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'brdfP3')->textInput(['maxlength' => true]) ?>

@@ -216,9 +216,9 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
             'personInCharge' => Yii::t('app', 'Person In Charge'),
             'material' => Yii::t('app', 'Material'),
             'shape' => Yii::t('app', 'Shape'),
-            'width' => Yii::t('app', 'Width'),
-            'length' => Yii::t('app', 'Length'),
-            'diameter' => Yii::t('app', 'Diameter'),
+            'width' => Yii::t('app', 'Width (m)'),
+            'length' => Yii::t('app', 'Length (m)'),
+            'diameter' => Yii::t('app', 'Diameter (m)'),
             'brdfP1' => Yii::t('app', 'BRDF coefficient P1'),
             'brdfP2' => Yii::t('app', 'BRDF coefficient P2'),
             'brdfP3' => Yii::t('app', 'BRDF coefficient P3'),
@@ -322,8 +322,7 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $elementForWebService[YiiModelsConstants::PAGE] = $this->page <= 0 ? 0 : $this->page - 1;
-        $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
+        $elementForWebService = parent::attributesToArray();
 
         $elementForWebService[YiiRadiometricTargetModel::URI] = $this->uri;
         $elementForWebService[YiiRadiometricTargetModel::LABEL] = $this->label;

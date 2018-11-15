@@ -15,8 +15,6 @@
 
 namespace app\models\yiiModels;
 
-use app\models\yiiModels\YiiSensorModel;
-
 /**
  * implements the search action for the vectors
  * @author Morgane Vidal <morgane.vidal@inra.fr>
@@ -56,8 +54,9 @@ class VectorSearch extends YiiVectorModel {
         
         if (is_string($findResult)) {
             return $findResult;
-        } else if (isset($findResult[\app\models\wsModels\WSConstants::TOKEN])) {
-            return $findResult;
+        } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
+                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN) {
+            return \app\models\wsModels\WSConstants::TOKEN;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
             return new \yii\data\ArrayDataProvider([

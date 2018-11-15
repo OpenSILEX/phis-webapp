@@ -23,7 +23,7 @@ use app\components\widgets\PropertiesWidget;
  */
 
 $this->title = $model->label;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="infrastructure-view">

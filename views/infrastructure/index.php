@@ -15,7 +15,7 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\DataProviderInterface */
 /* @var $searchModel app\models\YiiInfrastructureModel */
 
-$this->title = Yii::t('app', '{n, plural, =1{Infrastructure} other{Infrastructures}}', ['n' => 2]);
+$this->title = Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="infrastructure-index">
@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'label',
-            'rdfType',
+            'rdfTypeLabel:text:Type',
             'uri',
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',

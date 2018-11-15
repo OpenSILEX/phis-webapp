@@ -25,8 +25,9 @@ class WSConstants {
     const CURRENT_PAGE = 'currentPage';
     const PAGE_SIZE = 'pageSize';
     const PAGE = "page";
-    const TOKEN = 'token';
+    const TOKEN = 'Invalid token';
     const RESULT = 'result';
     const DATA_FILES = 'datafiles';
     const LANG = "language";
+    const STATUS = "status";
 }
