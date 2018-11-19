@@ -111,9 +111,13 @@ class SensorDataSearch extends \yii\base\Model {
         } else if ($this->dateStart == null) {
             // If only dateEnd is defined
             $dateTimeEnd = new \DateTime($this->dateEnd);
-        } else {
+        } else if ($this->dateEnd == null) {
             // If only dateStart is defined
             $dateTimeStart = new \DateTime($this->dateStart);
+        } else {
+            // Both dateStart and dateAnd are defined
+            $dateTimeStart = new \DateTime($this->dateStart);
+            $dateTimeEnd = new \DateTime($this->dateEnd);
         }
         
         // Get all data
