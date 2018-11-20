@@ -71,7 +71,7 @@ require_once '../config/config.php';
             ],
             'pluginOptions' => [               
                 'maxFileCount' => 1,
-                'maxFileSize'=>2000
+                'maxFileSize'=>40000
             ]
             ]);
     } ?>
