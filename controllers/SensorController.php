@@ -24,8 +24,10 @@ use app\models\yiiModels\VariableSearch;
  * @see app\models\yiiModels\YiiSensorModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
- * @update [Morgane Vidal] 13 March, 2018 : add link documents to sensors
+ * @update [Morgane Vidal] 13 March, 2018 : add link documents to sensors
  * @update [Arnaud Charleroy] 23 August, 2018 : add annotations list linked to an instance viewed and update coding style
+ * @update [Vincent Migot] 7 November, 2018 : Add sensor/variables link
+ * @update [Vincent Migot] 19 November, 2018 : Add visualization of environmental data
  */
 class SensorController extends Controller {
     
@@ -306,12 +308,15 @@ class SensorController extends Controller {
         if ($res === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
+            $dataSearchModel = new \app\models\yiiModels\SensorDataSearch();
+            $dataSearchModel->sensorURI = $res->uri;
+
             return $this->render('view', [
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
                 'variables' => $variables,
+                'dataSearchModel' => $dataSearchModel,
                 self::ANNOTATIONS_DATA => $sensorAnnotations
-
             ]);
         }
     }
@@ -578,6 +583,27 @@ class SensorController extends Controller {
             return json_encode($sensorModel->rdfType, JSON_UNESCAPED_SLASHES);
         } else {
             return json_encode(null);
+        }
+    }
+    
+        /**
+     * Ajax action which return the HTML graph corresponding to the SensorDataSearch POST parameters
+     * @return string
+     */
+    public function actionSearchData() {
+        $searchModel = new \app\models\yiiModels\SensorDataSearch();
+        
+        // Load POST parameters
+        if ($searchModel->load(Yii::$app->request->post())) {
+            
+            // Get data
+            $sessionToken = Yii::$app->session['access_token'];
+            $sensorGraphData = $searchModel->getEnvironmentData($sessionToken);
+            
+            // Render data
+            return $this->renderAjax('_view_sensor_graph', [
+                'sensorGraphData' => $sensorGraphData
+            ]);
         }
     }
 }

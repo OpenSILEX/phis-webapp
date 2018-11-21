@@ -20,6 +20,7 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiSensorModel */
+/* @var $dataSearchModel app\models\yiiModels\SensorDataSearch */
 /* @var $variables array */
 /* Implements the view page for a sensor */
 /* @update [Arnaud Charleroy] 22 august, 2018 (add annotation functionality) */
@@ -273,6 +274,12 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ]); ?>
 
+    <!-- Sensor data -->
+    <?= $this->render('_form_sensor_graph', [
+        'model' => $dataSearchModel,
+        'variables' => $model->variables
+    ]) ?>
+    
     <!-- Sensor linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
