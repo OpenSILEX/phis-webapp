@@ -4,7 +4,7 @@
 //                          _form_sensor_graph.php
 // SILEX-PHIS
 // Copyright © INRA 2018
-// Creation date: 8 nov. 2018
+// Creation date: 8th November 2018
 // Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 

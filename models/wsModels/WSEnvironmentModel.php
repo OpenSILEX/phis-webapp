@@ -1,9 +1,9 @@
 <?php
 //******************************************************************************
-//                                       EnvironmentDAOMongo.java
+//                           WSEnvironmentModel.java
 // SILEX-PHIS
 // Copyright © INRA 2018
-// Creation date: 14 nov. 2018
+// Creation date: 14th, November 2018
 // Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -18,6 +18,7 @@ include_once '../config/web_services.php';
  */
 class WSEnvironmentModel extends \openSILEX\guzzleClientPHP\WSModel {
     
+    const DATE_FORMAT = "Y-m-d\TH:i:sO";
     /**
      * initialize access to the environments service. Calls super constructor
      */
@@ -81,11 +82,11 @@ class WSEnvironmentModel extends \openSILEX\guzzleClientPHP\WSModel {
         ];
         
         if ($startDate != null) {
-            $params["startDate"] = $startDate->format("Y-m-d\TH:i:sO");
+            $params["startDate"] = $startDate->format(self::DATE_FORMAT);
         }
 
         if ($endDate != null) {
-            $params["endDate"] = $endDate->format("Y-m-d\TH:i:sO");
+            $params["endDate"] = $endDate->format(self::DATE_FORMAT);
         }
         
         $params["dateSortAsc"] = "true";

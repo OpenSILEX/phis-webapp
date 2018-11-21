@@ -312,12 +312,11 @@ class SensorController extends Controller {
             $dataSearchModel->sensorURI = $res->uri;
 
             return $this->render('view', [
-                        'model' => $res,
-                        'dataDocumentsProvider' => $documents,
-                        'variables' => $variables,
-                        'dataSearchModel' => $dataSearchModel,
-                        self::ANNOTATIONS_DATA => $sensorAnnotations
-
+                'model' => $res,
+                'dataDocumentsProvider' => $documents,
+                'variables' => $variables,
+                'dataSearchModel' => $dataSearchModel,
+                self::ANNOTATIONS_DATA => $sensorAnnotations
             ]);
         }
     }
