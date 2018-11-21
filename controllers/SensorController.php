@@ -26,6 +26,8 @@ use app\models\yiiModels\VariableSearch;
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  * @update [Morgane Vidal] 13 March, 2018 : add link documents to sensors
  * @update [Arnaud Charleroy] 23 August, 2018 : add annotations list linked to an instance viewed and update coding style
+ * @update [Vincent Migot] 7 November, 2018 : Add sensor/variables link
+ * @update [Vincent Migot] 19 November, 2018 : Add visualization of environmental data
  */
 class SensorController extends Controller {
     
