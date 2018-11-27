@@ -458,13 +458,15 @@ class DatasetController extends Controller {
                        var cell = hot1.getCell(row,col);
                        cell.style.color = "black";';
         
-        //2. Cells Errors        
-        foreach ($csvErrors[DatasetController::ERRORS_ROWS] as $dataError) {
-            $updateSettings .= 'if (row === ' . ($dataError[DatasetController::ERRORS_LINE] - 1) 
-                            . ' && col === ' . $dataError[DatasetController::ERRORS_COLUMN] . ') {'
-                    . 'cell.style.fontWeight = "bold";'
-                    . 'cell.style.color = "red";'
-                        . '}';
+        //2. Cells Errors    
+        if (isset($csvErrors[DatasetController::ERRORS_ROWS])) {
+            foreach ($csvErrors[DatasetController::ERRORS_ROWS] as $dataError) {
+                $updateSettings .= 'if (row === ' . ($dataError[DatasetController::ERRORS_LINE] - 1) 
+                                . ' && col === ' . $dataError[DatasetController::ERRORS_COLUMN] . ') {'
+                        . 'cell.style.fontWeight = "bold";'
+                        . 'cell.style.color = "red";'
+                            . '}';
+            }
         }
         
         //3. Ignored columns
