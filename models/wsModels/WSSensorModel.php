@@ -48,9 +48,8 @@ class WSSensorModel extends \openSILEX\guzzleClientPHP\WSModel {
         $subService = "/" . urlencode($uri);
         $requestRes = $this->get($sessionToken, $subService, $params);
         
-        $data = $requestRes->{WSConstants::RESULT}->{WSConstants::DATA};
-        if (isset($data) && (is_array($data) && count($data) > 0))  {
-            return (array) $data[0];
+        if (isset($requestRes->{WSConstants::RESULT}->{WSConstants::DATA}))  {
+            return (array) $requestRes->{WSConstants::RESULT}->{WSConstants::DATA}[0];
         } else {
             return $requestRes;
         }
