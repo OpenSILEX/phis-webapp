@@ -636,7 +636,8 @@ class DatasetController extends Controller {
      */
     public function actionCreate() { 
         $datasetModel = new \app\models\yiiModels\YiiDatasetModel();
-        $this->view->params["variables"] = $this->getVariablesListLabelToShow();
+        $variablesModel = new \app\models\yiiModels\YiiVariableModel();
+        $this->view->params["variables"] = $variablesModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
         
         //If the form is complete, register data
         if ($datasetModel->load(Yii::$app->request->post())) {

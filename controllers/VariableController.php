@@ -78,7 +78,14 @@ class VariableController extends Controller {
     public function actionIndex() {
         $searchModel = new VariableSearch();
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        }
+
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -217,39 +224,18 @@ class VariableController extends Controller {
             } else {
                 return $this->redirect(['view', 'uri' => $requestRes[0]]);
             }
-            
-        } else { 
-            $searchTraitModel = new TraitSearch();
-            $traits = $searchTraitModel->find($sessionToken, []);
-            
-            $searchMethodModel = new MethodSearch();
-            $methods = $searchMethodModel->find($sessionToken, []);
-            
-            $searchUnitModel = new UnitSearch();
-            $units = $searchUnitModel->find($sessionToken, []);
-            
-            if (is_string($traits) || is_string($methods) || is_string($units)) {
-                return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => "Request error while getting existing traits, methods and units"]);
-            } else if (is_array($units) && isset($units["token"])) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                $traits = $this->instancesDefinitionsToMap($traits);
-                $methods = $this->instancesDefinitionsToMap($methods);
-                $units = $this->instancesDefinitionsToMap($units);
-                $variableModel->isNewRecord = true;
-                
-                return $this->render('create', [
-                    'modelVariable' => $variableModel,
-                    'modelTrait' => $traitModel,
-                    'modelMethod' => $methodModel,
-                    'modelUnit' => $unitModel,
-                    'listTraits' => $traits,
-                    'listMethods' => $methods,
-                    'listUnits' => $units
-                ]);                
-            }
+        } else {
+            $variableModel->isNewRecord = true;
+
+            return $this->render('create', [
+                'modelVariable' => $variableModel,
+                'modelTrait' => $traitModel,
+                'modelMethod' => $methodModel,
+                'modelUnit' => $unitModel,
+                'listTraits' => $traitModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
+                'listMethods' => $unitModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
+                'listUnits' => $methodModel->getInstancesDefinitionsUrisAndLabel($sessionToken)
+            ]);              
         }
     }
 }

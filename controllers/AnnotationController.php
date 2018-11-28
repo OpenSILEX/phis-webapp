@@ -79,10 +79,17 @@ class AnnotationController extends Controller {
     public function actionIndex() {
         // Initialize annotation search model
         $searchModel = new \app\models\yiiModels\AnnotationSearch();
-        $searchResult = $searchModel->search(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], Yii::$app->request->queryParams);
+        
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        }
+        $searchResult = $searchModel->search(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], $searchParams);
         
         // Load user instances list
-        $userInstances = UserController::getUsersUriNameInstances();
+        $userModel = new YiiUserModel();
+        $users = $userModel->getPersonsMailsAndName(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN]);
        
         // Load once motivation instances list
         $motivationInstances = $this->getMotivationInstances();
@@ -103,7 +110,7 @@ class AnnotationController extends Controller {
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
                         AnnotationController::MOTIVATION_INSTANCES => $motivationInstances,
-                        'userInstances' => $userInstances
+                        'userInstances' => $users
                     ]
                 );
         }

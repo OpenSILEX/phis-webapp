@@ -103,7 +103,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @return an array with the results,
                "token" if the user needs to log in (invalid token).
      */
-    public function find($sessionToken, $attributes) {
+    public function find($sessionToken, $attributes) {        
         $requestRes = $this->wsModel->get($sessionToken, "", $attributes);
 
         if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION})) {
@@ -133,7 +133,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
      */
     public function attributesToArray() {
         $toReturn = null;
-        $toReturn[WSConstants::PAGE] = $this->getPageNumber();
+        $toReturn[WSConstants::PAGE] = $this->page;
         $toReturn[WSConstants::PAGE_SIZE] = $this->pageSize;
         
         return $toReturn;
@@ -144,18 +144,4 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @param array $array array key => value which contains the metadata of an image
      */
     abstract protected function arrayToAttributes($array);
-    
-    /**
-     * Return the page number to send to the web service.
-     * @return int the actual page number
-     */
-    public function getPageNumber() {
-        if($this->page == null){
-             return $this->page = 0;
-        }
-        if($this->page === 0){
-             return $this->page;
-        }
-        return ($this->page - 1);
-    }
 }
