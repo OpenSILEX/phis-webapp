@@ -135,7 +135,7 @@ ToastrAsset::register($this);
                                 ],
                                 [
                                     'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'), 
-                                    'url' => "http://147.100.175.121/phis-docs-community/"
+                                    'url' => "https://opensilex.github.io/phis-docs-community/installation/"
                                 ],
                                 [
                                     'label' => Icon::show('paperclip', [], Icon::BSG) . " " . Yii::t('app', 'Vocabulary'), 
@@ -214,7 +214,7 @@ ToastrAsset::register($this);
                                 ],
                                 [
                                     'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'), 
-                                    'url' => "http://147.100.175.121/phis-docs-community/"
+                                    'url' => "https://opensilex.github.io/phis-docs-community/installation/"
                                 ],
                             ]   
                         ];
