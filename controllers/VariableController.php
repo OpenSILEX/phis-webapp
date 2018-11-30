@@ -233,8 +233,8 @@ class VariableController extends Controller {
                 'modelMethod' => $methodModel,
                 'modelUnit' => $unitModel,
                 'listTraits' => $traitModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
-                'listMethods' => $unitModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
-                'listUnits' => $methodModel->getInstancesDefinitionsUrisAndLabel($sessionToken)
+                'listMethods' => $methodModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
+                'listUnits' => $unitModel->getInstancesDefinitionsUrisAndLabel($sessionToken)
             ]);              
         }
     }
