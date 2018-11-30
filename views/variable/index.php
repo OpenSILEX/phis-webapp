@@ -41,21 +41,45 @@ $this->params['breadcrumbs'][] = $this->title;
               'format' => 'raw',
               'value' => function ($model,  $key, $index) {
                     return $model->trait->{'label'} ;
-              }
+              },
+                'filter' => \kartik\select2\Select2::widget([
+                   'attribute' => 'trait',
+                   'model' => $searchModel,
+                   'data' => $listTraits,
+                   'options' => [
+                       'placeholder' => 'Select method alias...'
+                   ]
+                 ]),
             ],
             [
               'attribute' => 'method',
               'format' => 'raw',
               'value' => function ($model,  $key, $index) {
                     return $model->method->{'label'} ;
-              }
+              },
+              'filter' => \kartik\select2\Select2::widget([
+                     'attribute' => 'method',
+                     'model' => $searchModel,
+                     'data' => $listMethods,
+                     'options' => [
+                         'placeholder' => 'Select method alias...'
+                     ]
+                 ]),
             ],
             [
               'attribute' => 'unit',
               'format' => 'raw',
               'value' => function ($model,  $key, $index) {
                     return $model->unit->{'label'} ;
-              }
+               },
+                'filter' => \kartik\select2\Select2::widget([
+                     'attribute' => 'unit',
+                     'model' => $searchModel,
+                     'data' => $listUnits,
+                     'options' => [
+                         'placeholder' => 'Select unit alias...'
+                     ]
+                 ]),
             ],
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',

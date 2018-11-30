@@ -77,6 +77,12 @@ class VariableController extends Controller {
      */
     public function actionIndex() {
         $searchModel = new VariableSearch();
+        $sessionToken = Yii::$app->session['access_token'];
+        
+        //Models used to get the lists of traits, methods and unit for the search
+        $traitModel = new YiiTraitModel();
+        $methodModel = new YiiMethodModel();
+        $unitModel = new YiiUnitModel();
         
         //Get the search params and update pagination
         $searchParams = Yii::$app->request->queryParams;        
@@ -84,7 +90,7 @@ class VariableController extends Controller {
             $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
         }
 
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        $searchResult = $searchModel->search($sessionToken, $searchParams);
         
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
@@ -97,7 +103,10 @@ class VariableController extends Controller {
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+                'dataProvider' => $searchResult,
+                'listTraits' => $traitModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
+                'listMethods' => $methodModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
+                'listUnits' => $unitModel->getInstancesDefinitionsUrisAndLabel($sessionToken)
             ]);
         }
     }
