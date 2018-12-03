@@ -11,7 +11,6 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
-use Yii;
 use kartik\icons\Icon;
 use yii\helpers\Html;
 use yii\bootstrap\NavBar;
@@ -277,12 +276,21 @@ ToastrAsset::register($this);
             var delay = parseInt(tokenTimeout, 10) - Math.floor(Date.now() / 1000);
             
             if (delay >= 0) {
+                // Define timeout
                 setTimeout(function() {
                     $("#login-overlay").css({
                         opacity: 1,
                         visibility: "visible"
                     });
                 }, delay * 1000);
+            } else {
+                // Redirect to login page if delay is already expired and not already on login page
+                var loginUrl = "<?= Yii::$app->urlManager->createUrl("site/login"); ?>";
+                var currentUrl = window.location.href;
+                var traillingUrl = currentUrl.substring(currentUrl.length - loginUrl.length);
+                if (loginUrl != traillingUrl) {
+                    window.location.href = loginUrl;
+                }
             }
         }
         
