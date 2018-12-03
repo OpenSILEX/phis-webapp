@@ -34,7 +34,8 @@
         "openSILEX/handsontable-php": "dev-master",
         "phpoffice/phpspreadsheet": "^1.4",
         "fxp/composer-asset-plugin": "~1.4",
-        "lavrentiev/yii2-toastr": "^2.0"
+        "lavrentiev/yii2-toastr": "^2.0",
+        "webtoucher/yii2-js-cookie": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
