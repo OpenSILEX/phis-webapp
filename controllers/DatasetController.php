@@ -146,7 +146,7 @@ class DatasetController extends Controller {
      *               [3] => "variable label"
      */
     private function getColumnsCorrespondences($csvHeader, $expectedVariables) {
-        $columnsCorrepondences = null;
+        $columnsCorrepondences = [];
         for ($i = 0; $i < count($csvHeader); $i++) {
             if ($csvHeader[$i] === DatasetController::AGRONOMICAL_OBJECT_URI) {
                 $columnsCorrepondences[$i] = DatasetController::AGRONOMICAL_OBJECT_URI;
