@@ -15,9 +15,6 @@
 namespace app\controllers;
 
 use app\models\yiiModels\VariableSearch;
-use app\models\yiiModels\MethodSearch;
-use app\models\yiiModels\TraitSearch;
-use app\models\yiiModels\UnitSearch;
 use app\models\yiiModels\YiiMethodModel;
 use app\models\yiiModels\YiiTraitModel;
 use app\models\yiiModels\YiiUnitModel;
@@ -125,19 +122,6 @@ class VariableController extends Controller {
             return $this->render('view', [
                 'model' => $res
             ]);
-        }
-    }
-    
-    /**
-     * 
-     * @param mixed $instanceDefinitions instances definitions list. (traits, methods or units)
-     * @return ArrayHelper of the instances definitions uri => label (traits, methods, units)
-     */
-    private function instancesDefinitionsToMap($instanceDefinitions) {
-        if ($instanceDefinitions !== null) {
-            return \yii\helpers\ArrayHelper::map($instanceDefinitions, 'uri', 'label');
-        } else {
-            return null;
         }
     }
     
