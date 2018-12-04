@@ -304,12 +304,8 @@ class SensorController extends Controller {
         $sensorAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
      
         //4. get sensors variables
-        $variablesSearch = new VariableSearch();
-        $variablesDataProvider = $variablesSearch->search(Yii::$app->session['access_token'], []);
-        $variables = [];
-        foreach ($variablesDataProvider->getModels() as $variable) {
-            $variables[$variable->uri] = $variable->label;
-        }
+        $variableModel = new \app\models\yiiModels\YiiVariableModel();
+        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
 
         if ($res === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
