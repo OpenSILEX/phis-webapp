@@ -17,6 +17,8 @@ namespace app\models\wsModels;
 class WSConstants {
 
     const ACCESS_TOKEN = 'access_token';
+    const TOKEN_EXPIRES_IN = 'expires_in';
+    const TOKEN_COOKIE_TIMEOUT = 'tokenTimeout';
     const DATA = 'data';
     const METADATA = 'metadata';
     const PAGINATION = 'pagination';

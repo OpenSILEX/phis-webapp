@@ -50,6 +50,19 @@ class WSTokenModel extends \openSILEX\guzzleClientPHP\WSModel {
         $requestRes = $this->post("", "", $bodyToSend);
 
         if (isset($requestRes->{WSConstants::ACCESS_TOKEN})) {
+                        
+            // Compute token expiration timestamp
+            $delay = $requestRes->{WSConstants::TOKEN_EXPIRES_IN};
+            $date = new \DateTime();
+            $date->add(new \DateInterval('PT' . $delay . 'S'));
+            $tokenTimeout = $date->getTimestamp();
+            
+            // set cookie storing token timeout
+            setcookie(
+                WSConstants::TOKEN_COOKIE_TIMEOUT,
+                $tokenTimeout
+            );
+                
            return $requestRes->{WSConstants::ACCESS_TOKEN};
         } else {
             return null;
