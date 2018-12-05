@@ -16,6 +16,7 @@ use app\models\yiiModels\YiiSensorModel;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
+use app\models\yiiModels\VariableSearch;
 
 /**
  * CRUD actions for SensorModel
@@ -23,8 +24,10 @@ use app\models\wsModels\WSConstants;
  * @see app\models\yiiModels\YiiSensorModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
- * @update [Morgane Vidal] 13 March, 2018 : add link documents to sensors
+ * @update [Morgane Vidal] 13 March, 2018 : add link documents to sensors
  * @update [Arnaud Charleroy] 23 August, 2018 : add annotations list linked to an instance viewed and update coding style
+ * @update [Vincent Migot] 7 November, 2018 : Add sensor/variables link
+ * @update [Vincent Migot] 19 November, 2018 : Add visualization of environmental data
  */
 class SensorController extends Controller {
     
@@ -248,11 +251,13 @@ class SensorController extends Controller {
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
         
         if (is_string($searchResult)) {
-            return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => $searchResult]);
-        } else if (is_array($searchResult) && isset($searchResult["token"])) { //user must log in
-            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->render('/site/error', [
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $searchResult]);
+            }
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,
@@ -292,16 +297,48 @@ class SensorController extends Controller {
         $searchAnnotationModel->targets[0] = $id;
         $sensorAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
      
-        if ($res === "token") {
+        //4. get sensors variables
+        $variablesSearch = new VariableSearch();
+        $variablesDataProvider = $variablesSearch->search(Yii::$app->session['access_token'], []);
+        $variables = [];
+        foreach ($variablesDataProvider->getModels() as $variable) {
+            $variables[$variable->uri] = $variable->label;
+        }
+
+        if ($res === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
+            $dataSearchModel = new \app\models\yiiModels\SensorDataSearch();
+            $dataSearchModel->sensorURI = $res->uri;
+
             return $this->render('view', [
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
+                'variables' => $variables,
+                'dataSearchModel' => $dataSearchModel,
                 self::ANNOTATIONS_DATA => $sensorAnnotations
-
             ]);
         }
+    }
+    
+    /**
+     * Ajax action to update the list of vriables measured by a sensor
+     * @return the webservice result with sucess or error
+     */
+    public function actionUpdateVariables() {
+        $post = Yii::$app->request->post();
+        $sessionToken = Yii::$app->session['access_token'];        
+        $sensorUri = $post["sensor"];
+        if (isset($post["variables"])) {
+            $variablesUri = $post["variables"];
+        } else {
+            $variablesUri = [];
+        }
+        $sensorModel = new YiiSensorModel();
+        
+        $res = $sensorModel->updateVariables($sessionToken, $sensorUri, $variablesUri);
+        
+        return json_encode($res, JSON_UNESCAPED_SLASHES);
     }
     
     /**
@@ -329,9 +366,13 @@ class SensorController extends Controller {
             $searchResult = $sensorSearchModel->search($sessionToken, $searchParam);
             
             if (is_string($searchResult)) {
-                return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => $searchResult]);
+                if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+                    return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+                } else {
+                    return $this->render('/site/error', [
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $searchResult]);
+                }
             } else {
                 $models = $searchResult->getmodels();
             }
@@ -401,50 +442,6 @@ class SensorController extends Controller {
     }
     
     /**
-     * if the key has a "relation" correspondance in the ontology, 
-     * return the relation uri else return null
-     * @param string $key
-     * @return string e.g. http://www.phenome-fppn.fr/vocabulary/2017#width
-     */
-    private function getRelationFromKey($key) {
-        if ($key === "height") {
-            return Yii::$app->params["height"];
-        } elseif ($key === "width") {
-            return Yii::$app->params["width"];
-        } elseif ($key === "pixelSize") {
-            return Yii::$app->params["pixelSize"];
-        } elseif (strstr($key, "wavelength")) {
-            return Yii::$app->params["wavelength"];
-        } elseif ($key === "scanningAngularRange") {
-            return Yii::$app->params["scanningAngularRange"];
-        } elseif ($key === "scanAngularResolution") {
-            return Yii::$app->params["scanAngularResolution"];
-        } elseif ($key === "spotWidth") {
-            return Yii::$app->params["spotWidth"];
-        } elseif ($key === "spotHeight") {
-            return Yii::$app->params["spotHeight"];
-        } elseif ($key === "halfFieldOfView") {
-            return Yii::$app->params["halfFieldOfView"];
-        } elseif ($key === "minWavelength") {
-            return Yii::$app->params["minWavelength"];
-        } elseif ($key === "maxWavelength") {
-            return Yii::$app->params["maxWavelength"];
-        } elseif ($key === "spectralSamplingInterval") {
-            return Yii::$app->params["spectralSamplingInterval"];
-        } elseif ($key === "lensUri") {
-            return Yii::$app->params["hasLens"];
-        } elseif (strstr($key, "focalLength")) {
-            return Yii::$app->params["focalLength"];
-        } elseif (strstr($key, "attenuatorFilter")) {
-            return Yii::$app->params["attenuatorFilter"];
-        } elseif (strstr($key, "waveband")) {
-            return Yii::$app->params["waveband"];
-        }
-        
-        return null;
-    }
-    
-    /**
      * extract the informations corresponding to the sensor profile from a given 
      * post and return an array with the sensor profile
      * @param array $post
@@ -462,8 +459,8 @@ class SensorController extends Controller {
                         $sensorProperty[SensorController::RDF_TYPE] = Yii::$app->params[SensorController::LENS];
                     }
                     
-                    if ($this->getRelationFromKey($key) !== null) {
-                        $sensorProperty[SensorController::RELATION] = $this->getRelationFromKey($key);
+                    if (YiiSensorModel::getPropertyFromKey($key) !== null) {
+                        $sensorProperty[SensorController::RELATION] = YiiSensorModel::getPropertyFromKey($key);
                         $sensorProperty[SensorController::VALUE] = $value;
                         $sensorProperties[] = $sensorProperty;
                     }
@@ -586,6 +583,27 @@ class SensorController extends Controller {
             return json_encode($sensorModel->rdfType, JSON_UNESCAPED_SLASHES);
         } else {
             return json_encode(null);
+        }
+    }
+    
+        /**
+     * Ajax action which return the HTML graph corresponding to the SensorDataSearch POST parameters
+     * @return string
+     */
+    public function actionSearchData() {
+        $searchModel = new \app\models\yiiModels\SensorDataSearch();
+        
+        // Load POST parameters
+        if ($searchModel->load(Yii::$app->request->post())) {
+            
+            // Get data
+            $sessionToken = Yii::$app->session['access_token'];
+            $sensorGraphData = $searchModel->getEnvironmentData($sessionToken);
+            
+            // Render data
+            return $this->renderAjax('_view_sensor_graph', [
+                'sensorGraphData' => $sensorGraphData
+            ]);
         }
     }
 }

@@ -81,6 +81,7 @@ class YiiFileInformationModel extends \app\models\wsModels\WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
+        $toReturn = parent::attributesToArray();
         $toReturn[YiiFileInformationModel::EXTENSION]= $this->extension;
         $toReturn[YiiFileInformationModel::CHECKSUM] = $this->checksum;
         $toReturn[YiiFileInformationModel::SERVER_FILE_PATH] = $this->serverFilePath;

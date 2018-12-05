@@ -87,15 +87,16 @@ class AnnotationController extends Controller {
         // Load once motivation instances list
         $motivationInstances = $this->getMotivationInstances();
         if (is_string($searchResult)) {
-            return $this->render('/site/error', 
-                    [
-                        'name' => Yii::t('app/messages','Internal error'),
-                        'message' => $searchResult
-                    ]
-                );
-            //User must log in
-        } else if (is_array($searchResult) && isset($searchResult["token"])) { 
-            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->render('/site/error', 
+                        [
+                            'name' => Yii::t('app/messages','Internal error'),
+                            'message' => $searchResult
+                        ]
+                    );
+            }
         } else {
             return $this->render('index', 
                     [

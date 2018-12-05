@@ -16,12 +16,15 @@ use yii\helpers\Html;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use lavrentiev\widgets\toastr\ToastrAsset;
 use kartik\nav\NavX;
 
 require_once(__DIR__ . '/../../config/config.php');
 require_once(__DIR__ . '/../../config/web_services.php');
 
 AppAsset::register($this);
+ToastrAsset::register($this);
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>

@@ -82,11 +82,13 @@ class ExperimentController extends Controller {
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
        
         if (is_string($searchResult)) {
-            return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => $searchResult]);
-        } else if (is_array($searchResult) && isset($searchResult["token"])) { //L'utilisateur doit se connecter
-            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->render('/site/error', [
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $searchResult]);
+            }
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,

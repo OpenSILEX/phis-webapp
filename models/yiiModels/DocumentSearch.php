@@ -59,8 +59,9 @@ class DocumentSearch extends \app\models\yiiModels\YiiDocumentModel {
         
         if (is_string($findResult)) {
             return $findResult;
-        } else if (isset($findResult[\app\models\wsModels\WSConstants::TOKEN])) {
-            return $findResult;
+        } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
+                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN) {
+            return \app\models\wsModels\WSConstants::TOKEN;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
             return new \yii\data\ArrayDataProvider([

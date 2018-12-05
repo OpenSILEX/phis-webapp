@@ -129,8 +129,7 @@ class YiiAgronomicalObjectModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $elementForWebService[YiiModelsConstants::PAGE] = $this->page;
-        $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiAgronomicalObjectModel::URI] = $this->uri;
         $elementForWebService[YiiAgronomicalObjectModel::EXPERIMENT] = $this->experiment;
         $elementForWebService[YiiAgronomicalObjectModel::ALIAS] = $this->alias;
