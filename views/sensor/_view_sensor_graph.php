@@ -33,7 +33,8 @@ foreach ($sensorGraphData['data'] as $data) {
 
 // Display Hightchart widget
 echo Highcharts::widget([
-    'id' => 'test',
+    // Create a unique ID for each graph based on variable URI
+    'id' => base64_encode($sensorGraphData["variableUri"]),
     'options' => [
         'title' => ['text' => $sensorGraphData["graphName"] . ' - ' . $sensorGraphData["variableUri"]],
         'xAxis' => [

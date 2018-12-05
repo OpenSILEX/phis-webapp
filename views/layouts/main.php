@@ -100,20 +100,24 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 
                                 'url' => ['/radiometric-target/index']
                             ],
-                            Html::tag('li','',['class' => 'divider']),
-                            [
-                                'label' => Yii::t('app', 'Acquisition session template'),
-                                'items' => [
-                                    [
-                                        'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "UAV"), 
-                                        'url' => ['/acquisition-session-metadata-file/generate-uav-metadata-file']
-                                    ],
-                                    [
-                                        'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "Phenomobile"), 
-                                        'url' => ['/acquisition-session-metadata-file/generate-field-robot-metadata-file']
-                                    ],
-                                ]
-                            ]
+                            //SILEX:info
+                            //we have stop maintaining this functionnality for now. 
+                            //Uncomment the following block to allow user to download the 4P acquisition session file
+//                            Html::tag('li','',['class' => 'divider']),
+//                            [
+//                                'label' => Yii::t('app', 'Acquisition session template'),
+//                                'items' => [
+//                                    [
+//                                        'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "UAV"), 
+//                                        'url' => ['/acquisition-session-metadata-file/generate-uav-metadata-file']
+//                                    ],
+//                                    [
+//                                        'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "Phenomobile"), 
+//                                        'url' => ['/acquisition-session-metadata-file/generate-field-robot-metadata-file']
+//                                    ],
+//                                ]
+//                            ]
+                            //\SILEX:info
                         ]];
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
@@ -135,7 +139,7 @@ ToastrAsset::register($this);
                                 ],
                                 [
                                     'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'), 
-                                    'url' => "http://147.100.175.121/phis-docs-community/"
+                                    'url' => "https://opensilex.github.io/phis-docs-community/"
                                 ],
                                 [
                                     'label' => Icon::show('paperclip', [], Icon::BSG) . " " . Yii::t('app', 'Vocabulary'), 
@@ -214,7 +218,7 @@ ToastrAsset::register($this);
                                 ],
                                 [
                                     'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'), 
-                                    'url' => "http://147.100.175.121/phis-docs-community/"
+                                    'url' => "https://opensilex.github.io/phis-docs-community/"
                                 ],
                             ]   
                         ];

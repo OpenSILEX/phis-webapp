@@ -279,7 +279,7 @@ class YiiSensorModel extends WSActiveRecord {
         }
         $requestRes = $this->wsModel->getSensorByUri($sessionToken, $uri, $params);
         
-        if (!is_string($requestRes)) {
+        if (!is_string($requestRes) && !is_object($requestRes)) {
             if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
                 return $requestRes;
             } else {
