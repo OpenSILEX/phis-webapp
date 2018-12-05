@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                    'model' => $searchModel,
                    'data' => $listTraits,
                    'options' => [
-                       'placeholder' => 'Select method alias...'
+                       'placeholder' => Yii::t('app', 'Select trait alias...')
                    ]
                  ]),
             ],
@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
                      'model' => $searchModel,
                      'data' => $listMethods,
                      'options' => [
-                         'placeholder' => 'Select method alias...'
+                         'placeholder' => Yii::t('app', 'Select method alias...')
                      ]
                  ]),
             ],
@@ -77,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                      'model' => $searchModel,
                      'data' => $listUnits,
                      'options' => [
-                         'placeholder' => 'Select unit alias...'
+                         'placeholder' => Yii::t('app', 'Select unit alias...')
                      ]
                  ]),
             ],

@@ -184,12 +184,12 @@ class YiiInstanceDefinitionModel extends \app\models\wsModels\WSActiveRecord {
         $instanceDefinitionsToReturn = [];
         
         if ($instanceDefinitions !== null) {
-            //1. get the traits
+            //1. get the instances definitions 
             foreach($instanceDefinitions as $instanceDefinition) {
                 $instanceDefinitionsToReturn[$instanceDefinition->uri] = $instanceDefinition->label;
             }
             
-            //2. if there are other pages, get the other traits
+            //2. if there are other pages, get the other instances definitions
             if ($this->totalPages > $this->page) {
                 $this->page++; //next page
                 $nextInstanceDefinitions = $this->getInstancesDefinitionsUrisAndLabel($sessionToken);
