@@ -72,7 +72,13 @@ class GroupController extends Controller {
     public function actionIndex() {
         $searchModel = new GroupSearch();
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;
+        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        }
+        
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));

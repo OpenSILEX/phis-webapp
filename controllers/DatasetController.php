@@ -641,6 +641,7 @@ class DatasetController extends Controller {
     public function actionCreate() { 
         $datasetModel = new \app\models\yiiModels\YiiDatasetModel();
         $variablesModel = new \app\models\yiiModels\YiiVariableModel();
+        
         $variables = $variablesModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
         $this->view->params["variables"] = $this->getVariablesListLabelToShowFromVariableList($variables);
         

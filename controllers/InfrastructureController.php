@@ -52,7 +52,14 @@ class InfrastructureController extends Controller {
      */
     public function actionIndex() {
         $infrastructuresModel = new InfrastructureSearch();
-        $searchResult = $infrastructuresModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], Yii::$app->request->queryParams);
+        
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;
+        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        }
+        
+        $searchResult = $infrastructuresModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
 
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {

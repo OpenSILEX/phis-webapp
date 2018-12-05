@@ -25,6 +25,10 @@ class UserSearch extends YiiUserModel {
     //each class ElementNameSearch
     //\SILEX:refactor
     
+    public function __construct($pageSize = null, $page = null) {
+        parent::__construct($pageSize, $page);
+    }
+    
     /**
      * @inheritdoc
      */
@@ -75,18 +79,6 @@ class UserSearch extends YiiUserModel {
                 //\SILEX:info
             ]);
         }
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public function attributesToArray() {
-        $elementForWebService = null;
-        // add page attribute
-        if(isset($this->page)){
-            $elementForWebService[WSConstants::PAGE] = $this->getPageNumber();
-        }
-        return $elementForWebService;
     }
     
     /**

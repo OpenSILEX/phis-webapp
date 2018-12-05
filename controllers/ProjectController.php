@@ -73,8 +73,14 @@ class ProjectController extends Controller {
      */
     public function actionIndex() {
         $searchModel = new ProjectSearch();
+        
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        }
 
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
@@ -132,20 +138,7 @@ class ProjectController extends Controller {
         } else {
             return null;
         }
-    }
-    
-    /**
-     * 
-     * @param mixed $contacts persons list
-     * @return ArrayHelper list of the persons 'email' => 'email'
-     */
-    private function contactsToMap($contacts) {
-        if ($contacts !== null) {
-            return \yii\helpers\ArrayHelper::map($contacts, 'email', 'email');
-        } else {
-            return null;
-        }
-    }    
+    } 
     
     /**
      * @action Create a Project
@@ -177,8 +170,8 @@ class ProjectController extends Controller {
             $searchModel = new ProjectSearch();
             $projects = $searchModel->find($sessionToken,[]);
             
-            $searchUserModel = new UserSearch();
-            $contacts = $searchUserModel->find($sessionToken, ["pageSize" => 100]);
+            $userModel = new \app\models\yiiModels\YiiUserModel();
+            $contacts = $userModel->getPersonsMailsAndName($sessionToken);
             
             if (is_string($projects)) {
                 return $this->render('/site/error', [
@@ -188,7 +181,6 @@ class ProjectController extends Controller {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 $projects = $this->projectsToMap($projects);
-                $contacts = $this->contactsToMap($contacts);
                 $this->view->params['listProjects'] = $projects;
                 $this->view->params['listContacts'] = $contacts;
                 $projectModel->isNewRecord = true;
@@ -229,8 +221,8 @@ class ProjectController extends Controller {
             $searchModel = new ProjectSearch();
             $projects = $searchModel->find($sessionToken,[]);
             
-            $searchUserModel = new UserSearch();
-            $contacts = $searchUserModel->find($sessionToken, []);
+            $userModel = new \app\models\yiiModels\YiiUserModel();
+            $contacts = $userModel->getPersonsMailsAndName($sessionToken);
             
             $actualScientificContacts = null;
             $actualAdministrativeContacts = null;
@@ -262,7 +254,6 @@ class ProjectController extends Controller {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 $projects = $this->projectsToMap($projects);
-                $contacts = $this->contactsToMap($contacts);
                 $this->view->params['listProjects'] = $projects;
                 $this->view->params['listContacts'] = $contacts;
                 $this->view->params['listActualScientificContacts'] = $actualScientificContacts;
