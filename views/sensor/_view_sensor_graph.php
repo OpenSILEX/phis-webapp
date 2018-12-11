@@ -27,30 +27,33 @@ $serie = [
     "name" => $sensorGraphData["graphName"],
     "data" => []
 ];
-foreach ($sensorGraphData['data'] as $data) {
-    $serie['data'][] = [(strtotime($data->date))*1000, $data->value ];
-}
 
-// Display Hightchart widget
-echo Highcharts::widget([
-    // Create a unique ID for each graph based on variable URI
-    'id' => base64_encode($sensorGraphData["variableUri"]),
-    'options' => [
-        'title' => ['text' => $sensorGraphData["graphName"] . ' - ' . $sensorGraphData["variableUri"]],
-        'xAxis' => [
-            'type' => 'datetime',
-            'title' => 'Date',
-        ],
-        'yAxis' => [
-            'title' => "Value",
-            'labels' => [
-                'format' => '{value:.2f}'
-            ]
-        ],
-        'tooltip' => [
-           'xDateFormat' => '%Y-%m-%d %H:%M'
-         ],
-        'series' => [$serie],
-    ]
-]);
+if (is_array($sensorGraphData['data'])) {
+    foreach ($sensorGraphData['data'] as $data) {
+        $serie['data'][] = [(strtotime($data->date))*1000, $data->value ];
+    }
+
+    // Display Hightchart widget
+    echo Highcharts::widget([
+        // Create a unique ID for each graph based on variable URI
+        'id' => base64_encode($sensorGraphData["variableUri"]),
+        'options' => [
+            'title' => ['text' => $sensorGraphData["graphName"] . ' - ' . $sensorGraphData["variableUri"]],
+            'xAxis' => [
+                'type' => 'datetime',
+                'title' => 'Date',
+            ],
+            'yAxis' => [
+                'title' => "Value",
+                'labels' => [
+                    'format' => '{value:.2f}'
+                ]
+            ],
+            'tooltip' => [
+               'xDateFormat' => '%Y-%m-%d %H:%M'
+             ],
+            'series' => [$serie],
+        ]
+    ]);
+}
 ?>
