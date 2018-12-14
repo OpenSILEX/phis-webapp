@@ -16,7 +16,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\AgronomicalObjectSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}', ['n' => 2]);
+$this->title = Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

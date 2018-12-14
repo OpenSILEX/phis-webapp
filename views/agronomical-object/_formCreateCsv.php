@@ -33,19 +33,23 @@ use kartik\file\FileInput;
         <b><?= Yii::t('app/messages', 'File Rules')?> : </b>
         <table class="table table-hover">
             <tr>
-                <th>Alias</th>
-                <td><?= Yii::t('app/messages', 'The alias of the plot (e.g. MAU17-PG_38_WW_1_19_5)')?></td>
+                <th style="color:red">Alias *</th>
+                <td><?= Yii::t('app/messages', 'The alias of the scientific object (e.g. MAU17-PG_38_WW_1_19_5)')?></td>
             </tr>
             <tr>
-                <th style="color:red">Geometry *</th>
-                <td><p><b style="color:red">WGS84 (EPSG:4326)</b> - <?= Yii::t('app/message', 'e.g. of coordinates') ?> : 3.974014429 43.61252934</p> <p><?= Yii::t('app/messages', 'Expected format') ?> : POLYGON (( 1.33 2.33, 3.44 5.66, 4.55 5.66, 6.77 7.88, 1.33 2.33))</p></td>
+                <th style="color:red">RdfType *</th>
+                <td><?= Yii::t('app/messages', 'RdfType of the object (e.g. http://www.phenome-fppn.fr/vocabulary/2017#Plot)')?></td>
             </tr>
-             <tr>
+            <tr>
                 <th style="color:red">ExperimentURI *</th>
                 <td><?= Yii::t('app/messages', 'The URI of the experiment (e.g. http://www.phenome-fppn.fr/pheno3c/P3C2017-6)') ?></td>
             </tr>
             <tr>
-                <th>Species</th>
+                <th>Geometry</th>
+                <td><p><b style="color:red">WGS84 (EPSG:4326)</b> - <?= Yii::t('app/message', 'e.g. of coordinates') ?> : 3.974014429 43.61252934</p> <p><?= Yii::t('app/messages', 'Expected format') ?> : POLYGON (( 1.33 2.33, 3.44 5.66, 4.55 5.66, 6.77 7.88, 1.33 2.33))</p></td>
+            </tr>
+            <tr>
+                <th style="color:red">Species *</th>
                 <td><p><?= Yii::t('app/messages', 'The URI of the species (e.g. http://www.phenome-fppn.fr/id/species/zeamays)') ?> </p>
                     <p><?= Yii::t('app/messages', 'See the folowing list to get all species URI') ?> :</p>
                     <ul class="ul_tiret">

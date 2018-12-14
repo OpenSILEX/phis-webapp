@@ -72,6 +72,13 @@ require_once '../config/config.php';
       * @var REPETITION
       */
      const REPETITION = "Repetition";
+     
+    /**
+      * the replication column for the csv files
+      * @var RDF_TYPE
+      */
+    const RDF_TYPE = "RdfType";
+     
           
      /**
      * define the behaviors
@@ -93,10 +100,10 @@ require_once '../config/config.php';
      * @return array list of the columns names for an agronomical objects file
      */
     private function getHeaderList() {
-        return [AgronomicalObjectController::ALIAS, AgronomicalObjectController::GEOMETRY, 
-                AgronomicalObjectController::EXPERIMENT_URI, AgronomicalObjectController::SPECIES,
-                AgronomicalObjectController::VARIETY, AgronomicalObjectController::EXPERIMENT_MODALITIES,
-                AgronomicalObjectController::REPETITION];
+        return [AgronomicalObjectController::ALIAS, AgronomicalObjectController::RDF_TYPE,  
+                AgronomicalObjectController::EXPERIMENT_URI, AgronomicalObjectController::GEOMETRY, 
+                AgronomicalObjectController::SPECIES, AgronomicalObjectController::VARIETY, 
+                AgronomicalObjectController::EXPERIMENT_MODALITIES, AgronomicalObjectController::REPETITION];
     }
     
     /**
@@ -107,7 +114,8 @@ require_once '../config/config.php';
      *                 false if not
      */
     private function existRequiredColumns($csvHeader) {
-        return in_array(AgronomicalObjectController::GEOMETRY, $csvHeader) 
+        return in_array(AgronomicalObjectController::ALIAS, $csvHeader) 
+                && in_array(AgronomicalObjectController::RDF_TYPE, $csvHeader) 
                 && in_array(AgronomicalObjectController::EXPERIMENT_URI, $csvHeader);
     }
     
@@ -130,7 +138,7 @@ require_once '../config/config.php';
                     $headersNamesNumber[$headerName] = $keyNumer;
                 }             }
         } else {
-            $headersNamesNumber["Error"][] = Yii::t('app/messages','Required column missing (Geometry or ExperimentURI)');
+            $headersNamesNumber["Error"][] = Yii::t('app/messages','Required column missing');
         }
         
         return $headersNamesNumber;
@@ -162,7 +170,7 @@ require_once '../config/config.php';
      * @return true si la geometry est correcte, 
      *         false sinon
      */
-    private function isGeometryOk($geometry) {
+    private function isGeometryOk($geometry) {        
         $explodeByOpenPar = explode("((", $geometry);
         if (count($explodeByOpenPar) === 2) {
             if (strtoupper($explodeByOpenPar[0]) === "POLYGON " 
@@ -226,6 +234,9 @@ require_once '../config/config.php';
         
         //1. check header
         $headerCheck = $this->getCSVHeaderCorrespondancesOrErrors(str_getcsv($csvContent[0], AgronomicalObjectController::DELIM_CSV));
+        echo '<pre>'; print_r($headerCheck); echo '</pre>';
+        $bool = array_key_exists("Geometry",$headerCheck);
+        echo $bool;
         $errors = null;
         if (isset($headerCheck["Error"])) {
             $errors["header"] = $headerCheck["Error"];
@@ -233,13 +244,14 @@ require_once '../config/config.php';
             $experiments = [];
             for ($i = 1; $i < count($csvContent); $i++) {
                 $row = str_getcsv($csvContent[$i], AgronomicalObjectController::DELIM_CSV);
-                
-                if (!$this->isGeometryOk($row[$headerCheck["Geometry"]])) {
-                    $error = null;
-                    $error["line"] = "L." . ($i + 1);
-                    $error["column"] = AgronomicalObjectController::GEOMETRY;
-                    $error["message"] = Yii::t('app/messages', 'Bad geometry given') . ". " . Yii::t('app/messages', 'Expected format') . " : POLYGON ((1.33 2.33, 3.44 5.66, 4.55 5.66, 6.77 7.88, 1.33 2.33))";
-                    $errors[] = $error;
+                If (array_key_exists("Geometry",$headerCheck)) {
+                    if (!$this->isGeometryOk($row[$headerCheck["Geometry"]])) {
+                        $error = null;
+                        $error["line"] = "L." . ($i + 1);
+                        $error["column"] = AgronomicalObjectController::GEOMETRY;
+                        $error["message"] = Yii::t('app/messages', 'Bad geometry given') . ". " . Yii::t('app/messages', 'Expected format') . " : POLYGON ((1.33 2.33, 3.44 5.66, 4.55 5.66, 6.77 7.88, 1.33 2.33))";
+                        $errors[] = $error;
+                        }
                 }
                 if (!in_array($row[$headerCheck[AgronomicalObjectController::EXPERIMENT_URI]], $experiments)) {
                     if (!$this->existExperiment($row[$headerCheck[AgronomicalObjectController::EXPERIMENT_URI]])) {                        
@@ -250,7 +262,7 @@ require_once '../config/config.php';
                         $errors[] = $error;
                     }
                     $experiments[] = $row[$headerCheck[AgronomicalObjectController::EXPERIMENT_URI]];
-                }
+                }               
                 if (!$this->existSpecies($row[$headerCheck["Species"]])) {
                     $error = null;
                     $error["line"] = "L." . ($i + 1);
@@ -304,7 +316,7 @@ require_once '../config/config.php';
     }
     
     /**
-     * 
+     * @update Dec. 2018 : the geometry becomes facultative and it is required to define the rdfType
      * @param array $fileContent the csv file content
      * @param array $correspondances the columns numbers corresponding to the 
      *                               expected columns (if the file columns are 
@@ -318,12 +330,15 @@ require_once '../config/config.php';
             if ($cpt > 0) {
                 $plot = str_getcsv($row, AgronomicalObjectController::DELIM_CSV);
                 $p = null;
-                $p["geometry"] = $plot[$correspondances[AgronomicalObjectController::GEOMETRY]];
                 $p["experiment"] = $plot[$correspondances[AgronomicalObjectController::EXPERIMENT_URI]];
-                $p["rdfType"] = Yii::$app->params['Plot'];
+                $p["rdfType"] = $plot[$correspondances[AgronomicalObjectController::RDF_TYPE]];
+                
+                if (isset($correspondances[AgronomicalObjectController::GEOMETRY])) {
+                    $p["geometry"] = $plot[$correspondances[AgronomicalObjectController::GEOMETRY]];
+                }
                 
                 if (isset($correspondances[AgronomicalObjectController::ALIAS])) {
-                    $alias["relation"] = Yii::$app->params['hasAlias'];
+                    $alias["relation"] = Yii::$app->params['rdfsLabel'];
                     $alias["value"] = $plot[$correspondances[AgronomicalObjectController::ALIAS]];
                     $p["properties"][] = $alias;
                 }
@@ -388,6 +403,7 @@ require_once '../config/config.php';
             } else {
                 $correspondancesCSV = $this->getCSVHeaderCorrespondancesOrErrors(str_getcsv($fileContent[0], AgronomicalObjectController::DELIM_CSV));
                 $forWebService = $this->getArrayForWebServiceCreate($fileContent, $correspondancesCSV);
+                echo '<pre>'; print_r($forWebService); echo '</pre>';
                 $requestRes = $agronomicalObjectModel->insert(Yii::$app->session['access_token'], $forWebService);
                 
                 if (is_string($requestRes)) {//Request error
@@ -491,7 +507,7 @@ require_once '../config/config.php';
             //get all the data (if multiple pages) and write them in a file
             $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
             
-            $headerFile = "AgronomicalObjectURI" . AgronomicalObjectController::DELIM_CSV .
+            $headerFile = "ScientificObjectURI" . AgronomicalObjectController::DELIM_CSV .
                           "Alias" . AgronomicalObjectController::DELIM_CSV .
                           "Type" . AgronomicalObjectController::DELIM_CSV .
                           "ExperimentURI" . AgronomicalObjectController::DELIM_CSV . 
