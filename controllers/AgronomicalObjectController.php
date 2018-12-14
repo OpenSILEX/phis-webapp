@@ -234,9 +234,6 @@ require_once '../config/config.php';
         
         //1. check header
         $headerCheck = $this->getCSVHeaderCorrespondancesOrErrors(str_getcsv($csvContent[0], AgronomicalObjectController::DELIM_CSV));
-        echo '<pre>'; print_r($headerCheck); echo '</pre>';
-        $bool = array_key_exists("Geometry",$headerCheck);
-        echo $bool;
         $errors = null;
         if (isset($headerCheck["Error"])) {
             $errors["header"] = $headerCheck["Error"];
@@ -244,7 +241,7 @@ require_once '../config/config.php';
             $experiments = [];
             for ($i = 1; $i < count($csvContent); $i++) {
                 $row = str_getcsv($csvContent[$i], AgronomicalObjectController::DELIM_CSV);
-                If (array_key_exists("Geometry",$headerCheck)) {
+                If ($row[$headerCheck["Geometry"]] != "") {
                     if (!$this->isGeometryOk($row[$headerCheck["Geometry"]])) {
                         $error = null;
                         $error["line"] = "L." . ($i + 1);
@@ -403,7 +400,6 @@ require_once '../config/config.php';
             } else {
                 $correspondancesCSV = $this->getCSVHeaderCorrespondancesOrErrors(str_getcsv($fileContent[0], AgronomicalObjectController::DELIM_CSV));
                 $forWebService = $this->getArrayForWebServiceCreate($fileContent, $correspondancesCSV);
-                echo '<pre>'; print_r($forWebService); echo '</pre>';
                 $requestRes = $agronomicalObjectModel->insert(Yii::$app->session['access_token'], $forWebService);
                 
                 if (is_string($requestRes)) {//Request error
