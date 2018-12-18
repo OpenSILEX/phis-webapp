@@ -20,7 +20,8 @@ use app\models\yiiModels\UserSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
-
+use app\models\yiiModels\ExperimentSearch;
+use app\models\yiiModels\YiiModelsConstants;
 /**
  * Implements the controller for the Projects and according to YiiProjectModel
  * @see yii\web\Controller
@@ -31,6 +32,7 @@ use app\models\wsModels\WSConstants;
 class ProjectController extends Controller {
     
     CONST ANNOTATIONS_DATA = "projectAnnotations";
+    CONST EXPERIMENTS = "experiments";
     
     /**
      * define the behaviors
@@ -116,13 +118,22 @@ class ProjectController extends Controller {
         $searchAnnotationModel->targets[0] = $id;
         $projectAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
         
+        //4. Get project experiments
+        $searchExperimentModel = new ExperimentSearch();
+        $searchExperimentModel->projectUri = $id;
+        $projectExperiments = $searchExperimentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [
+            ExperimentSearch::PROJECT_URI => $id,
+            YiiModelsConstants::PAGE => (Yii::$app->request->get(YiiModelsConstants::PAGE, 1) - 1)
+        ]);
+        
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
             return $this->render('view', [
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
-                self::ANNOTATIONS_DATA => $projectAnnotations
+                self::ANNOTATIONS_DATA => $projectAnnotations,
+                self::EXPERIMENTS => $projectExperiments
             ]);
         }
     }
