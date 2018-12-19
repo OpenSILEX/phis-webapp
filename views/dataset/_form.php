@@ -298,8 +298,8 @@ use yii\helpers\Url;
         <b><?= Yii::t('app/messages', 'File Rules')?> : </b>
         <table class="table table-hover" id="dataset-csv-columns-desc">
             <tr>
-                <th style="color:red">AgronomicalObjectURI *</th>
-                <td><?= Yii::t('app/messages', 'The URI of the agronomical object (e.g http://www.phenome-fppn.fr/phenovia/2017/o1028649)')?></td>
+                <th style="color:red">ScientificObjectURI *</th>
+                <td><?= Yii::t('app/messages', 'The URI of the scientific object (e.g http://www.phenome-fppn.fr/phenovia/2017/o1028649)')?></td>
             </tr>
             <tr>
                 <th style="color:red">Date *</th>

@@ -267,6 +267,13 @@ require_once '../config/config.php';
                     $error["message"] = Yii::t('app/messages', 'Unknown species') . " : " . $row[$headerCheck[AgronomicalObjectController::SPECIES]];
                     $errors[] = $error;
                 }
+                if ($row[$headerCheck["Alias"]] == "") {
+                    $error = null;
+                    $error["line"] = "L." . ($i + 1);
+                    $error["column"] = AgronomicalObjectController::ALIAS;
+                    $error["message"] = Yii::t('app/messages', 'Alias is missing');
+                    $errors[] = $error;
+                }
             }
         }
         
@@ -505,7 +512,7 @@ require_once '../config/config.php';
             
             $headerFile = "ScientificObjectURI" . AgronomicalObjectController::DELIM_CSV .
                           "Alias" . AgronomicalObjectController::DELIM_CSV .
-                          "Type" . AgronomicalObjectController::DELIM_CSV .
+                          "RdfType" . AgronomicalObjectController::DELIM_CSV .
                           "ExperimentURI" . AgronomicalObjectController::DELIM_CSV . 
                           "\n";
             

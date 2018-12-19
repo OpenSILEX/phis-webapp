@@ -139,7 +139,8 @@ class ExperimentController extends Controller {
         //3. get experiment's agronomical objects
         $searchAgronomicalObject = new \app\models\yiiModels\AgronomicalObjectSearch();
         $searchAgronomicalObject->experiment = $id;
-        $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session['access_token'], ["experiment" => $id]);
+        $searchParams = Yii::$app->request->queryParams;
+        $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session['access_token'], $searchParams);
          
         //4. get project annotations
         $searchAnnotationModel = new AnnotationSearch();
