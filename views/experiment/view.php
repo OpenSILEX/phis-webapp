@@ -10,9 +10,11 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use yii\helpers\Url;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\controllers\ExperimentController;
+use app\components\widgets\LinkObjectsWidget;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiExperimentModel */
@@ -134,6 +136,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $toReturn;
                 }
             ],
+            [
+                'attribute' => 'variables',
+                'format' => 'raw',
+                'value' => function ($model) use ($variables) {
+                    return LinkObjectsWidget::widget([
+                        "uri" => $model->uri,
+                        "updateLinksAjaxCallUrl" => Url::to(['experiment/update-variables']),
+                        "items" => $variables,
+                        "actualItems" => is_array($model->variables) ? array_keys($model->variables) : [],
+                        "itemViewRoute" => "variable/view",
+                        "conceptLabel" => "measured variables",
+                        "canUpdate" => true
+                    ]);
+                }
+            ]
         ];
     } else {
         $attributes = [

@@ -54,4 +54,23 @@ class WSExperimentModel extends \openSILEX\guzzleClientPHP\WSModel {
             return $requestRes;
         }
     }
+    
+    /**
+     * Call the webservice to update the list of measured variable by the given experiment
+     * @param string $sessionToken
+     * @param string $experimentUri
+     * @param array $variablesUri
+     * @return mixed the query result 
+     *           a string "token" if token expired
+     */
+    public function putExperimentVariables($sessionToken, $experimentUri, $variablesUri) {
+        $subService = "/" . urlencode($experimentUri) . "/variables";
+        $requestRes = $this->put($sessionToken, $subService, $variablesUri);
+
+        if (isset($requestRes->{WSConstants::TOKEN})) {
+            return WEB_SERVICE_TOKEN;
+        } else {
+            return $requestRes;
+        }
+    }
 }

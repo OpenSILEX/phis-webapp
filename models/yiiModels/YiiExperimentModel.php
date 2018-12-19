@@ -140,6 +140,9 @@ class YiiExperimentModel extends WSActiveRecord {
     const CONTACTS = "contacts";
     const CONTACT_TYPE = "type";
     
+    public $variables;
+    const VARIABLES = "variables";
+    
     /**
      * Initialize wsModel. In this class, wsModel is a WSAgronomicalObjectModel
      * @param string $pageSize number of elements per page
@@ -187,6 +190,7 @@ class YiiExperimentModel extends WSActiveRecord {
             'cropSpecies' => Yii::t('app', 'Crop Species'),
             'scientificSupervisorContacts' => Yii::t('app', 'Scientific Supervisors'),
             'technicalSupervisorContacts' => Yii::t('app', 'Technical Supervisors'),
+            'variables' => Yii::t('app', 'Measured Variables')
         ];
     }
    
@@ -236,6 +240,10 @@ class YiiExperimentModel extends WSActiveRecord {
                     $this->technicalSupervisorContacts[] = $experimentContact;
                 }
             }
+        }
+        
+        foreach ($array[YiiExperimentModel::VARIABLES] as $variableUri => $variableLabel) {
+            $this->variables[$variableUri] = $variableLabel;            
         }
     }
     
@@ -310,5 +318,24 @@ class YiiExperimentModel extends WSActiveRecord {
         }
         
         return $elementForWebService;
+    }
+    
+    /**
+     * Update variables measured by an experiment
+     * @param string $sessionToken
+     * @param string $experimentUri
+     * @param array $variablesUri
+     * @return the query result
+     */
+    public function updateVariables($sessionToken, $experimentUri, $variablesUri) {
+        $requestRes = $this->wsModel->putExperimentVariables($sessionToken, $experimentUri, $variablesUri);
+        
+        if (is_string($requestRes) && $requestRes === "token") {
+            return $requestRes;
+        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS})) {
+            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS};
+        } else {
+            return $requestRes;
+        }
     }
 }

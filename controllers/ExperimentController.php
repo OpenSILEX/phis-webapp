@@ -23,7 +23,6 @@ use app\models\yiiModels\YiiExperimentModel;
 use app\models\yiiModels\ExperimentSearch;
 use app\models\yiiModels\ProjectSearch;
 use app\models\yiiModels\GroupSearch;
-use app\models\yiiModels\UserSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
@@ -145,7 +144,11 @@ class ExperimentController extends Controller {
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
         $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
-       
+        
+        //5. get all variables
+        $variableModel = new \app\models\yiiModels\YiiVariableModel();
+        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
+        
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
@@ -156,7 +159,8 @@ class ExperimentController extends Controller {
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
                 'dataAgronomicalObjectsProvider' => $agronomicalObjects,
-                self::ANNOTATIONS_DATA => $experimentAnnotations
+                self::ANNOTATIONS_DATA => $experimentAnnotations,
+                'variables' => $variables
             ]);
         }
     }
@@ -343,5 +347,25 @@ class ExperimentController extends Controller {
                 ]);
             }
         }
+    }
+    
+    /**
+     * Ajax action to update the list of variables measured by an experiment
+     * @return the webservice result with sucess or error
+     */
+    public function actionUpdateVariables() {
+        $post = Yii::$app->request->post();
+        $sessionToken = Yii::$app->session['access_token'];        
+        $experimentUri = $post["uri"];
+        if (isset($post["items"])) {
+            $variablesUri = $post["items"];
+        } else {
+            $variablesUri = [];
+        }
+        $experimentModel = new YiiExperimentModel();
+        
+        $res = $experimentModel->updateVariables($sessionToken, $experimentUri, $variablesUri);
+        
+        return json_encode($res, JSON_UNESCAPED_SLASHES);
     }
 }
