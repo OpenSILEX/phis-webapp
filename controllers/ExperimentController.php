@@ -149,6 +149,10 @@ class ExperimentController extends Controller {
         $variableModel = new \app\models\yiiModels\YiiVariableModel();
         $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
         
+        //6. Get all sensors
+        $sensorModel = new \app\models\yiiModels\YiiSensorModel();
+        $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session['access_token']);
+        
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
@@ -160,7 +164,8 @@ class ExperimentController extends Controller {
                 'dataDocumentsProvider' => $documents,
                 'dataAgronomicalObjectsProvider' => $agronomicalObjects,
                 self::ANNOTATIONS_DATA => $experimentAnnotations,
-                'variables' => $variables
+                'variables' => $variables,
+                'sensors' => $sensors
             ]);
         }
     }
@@ -365,6 +370,26 @@ class ExperimentController extends Controller {
         $experimentModel = new YiiExperimentModel();
         
         $res = $experimentModel->updateVariables($sessionToken, $experimentUri, $variablesUri);
+        
+        return json_encode($res, JSON_UNESCAPED_SLASHES);
+    }
+    
+    /**
+     * Ajax action to update the list of sensors which participates in an experiment
+     * @return the webservice result with sucess or error
+     */
+    public function actionUpdateSensors() {
+        $post = Yii::$app->request->post();
+        $sessionToken = Yii::$app->session['access_token'];        
+        $experimentUri = $post["uri"];
+        if (isset($post["items"])) {
+            $sensorsUris = $post["items"];
+        } else {
+            $sensorsUris = [];
+        }
+        $experimentModel = new YiiExperimentModel();
+        
+        $res = $experimentModel->updateSensors($sessionToken, $experimentUri, $sensorsUris);
         
         return json_encode($res, JSON_UNESCAPED_SLASHES);
     }

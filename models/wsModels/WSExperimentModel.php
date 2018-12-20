@@ -73,4 +73,23 @@ class WSExperimentModel extends \openSILEX\guzzleClientPHP\WSModel {
             return $requestRes;
         }
     }
+    
+    /**
+     * Call the webservice to update the list of sensors which participates in the given experiment
+     * @param string $sessionToken
+     * @param string $experimentUri
+     * @param array $sensorsUris
+     * @return mixed the query result 
+     *           a string "token" if token expired
+     */
+    public function putExperimentSensors($sessionToken, $experimentUri, $sensorsUris) {
+        $subService = "/" . urlencode($experimentUri) . "/sensors";
+        $requestRes = $this->put($sessionToken, $subService, $sensorsUris);
+
+        if (isset($requestRes->{WSConstants::TOKEN})) {
+            return WEB_SERVICE_TOKEN;
+        } else {
+            return $requestRes;
+        }
+    }
 }

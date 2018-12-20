@@ -400,4 +400,33 @@ class YiiSensorModel extends WSActiveRecord {
         }
     }
 
+    /**
+     * Get all the sensors uri and label
+     * @return array the list of the sensors uri and label existing in the database
+     * @example returned array : 
+     * [
+     *      ["http://www.opensilex.fr/platform/s001"] => "sensor label",
+     *      ...
+     * ]
+     */
+    public function getAllSensorsUrisAndLabels($sessionToken) {
+        $foundedSensors = $this->find($sessionToken, $this->attributesToArray());
+        $sensorsToReturn = [];
+        
+        if ($foundedSensors !== null) {
+            foreach($foundedSensors as $sensor) {
+                $sensorsToReturn[$sensor->uri] = $sensor->label;
+            }
+            
+            // If there are other pages, get the other sensors
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextSensors = $this->getAllSensorsUrisAndLabels($sessionToken);
+
+                $sensorsToReturn = array_merge($sensorsToReturn, $nextSensors);
+            }
+        }
+        
+        return $sensorsToReturn;
+    }
 }

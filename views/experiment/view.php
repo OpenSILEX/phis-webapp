@@ -150,6 +150,21 @@ $this->params['breadcrumbs'][] = $this->title;
                         "canUpdate" => true
                     ]);
                 }
+            ],
+            [
+                'attribute' => 'sensors',
+                'format' => 'raw',
+                'value' => function ($model) use ($sensors) {
+                    return LinkObjectsWidget::widget([
+                        "uri" => $model->uri,
+                        "updateLinksAjaxCallUrl" => Url::to(['experiment/update-sensors']),
+                        "items" => $sensors,
+                        "actualItems" => is_array($model->sensors) ? array_keys($model->sensors) : [],
+                        "itemViewRoute" => "sensor/view",
+                        "conceptLabel" => "sensors",
+                        "canUpdate" => true
+                    ]);
+                }
             ]
         ];
     } else {
