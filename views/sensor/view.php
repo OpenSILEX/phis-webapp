@@ -77,7 +77,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         "actualItems" => is_array($model->variables) ? array_keys($model->variables) : [],
                         "itemViewRoute" => "variable/view",
                         "conceptLabel" => "measured variables",
-                        "canUpdate" => true
+                        "updateMessage" => Yii::t('app', 'Update measured variables'),
+                        "infoMessage" => Yii::t('app/messages', 'When you change measured variables in the list, click on the check button to update them.'),
+                        "canUpdate" => Yii::$app->session['isAdmin'] ? true : false
                     ]);
                 }
             ],

@@ -71,6 +71,16 @@ class LinkObjectsWidget extends \yii\base\Widget {
      * @var boolean
      */
     public $canUpdate = false;
+    /**
+     * The info message displayed under the select2 form.
+     * @var string
+     */
+    public $infoMessage;
+    /**
+     * The update message displayed on the select2.
+     * @var string
+     */
+    public $updateMessage;
     
     const ITEM_SELECTOR_CLASS = "items-selector";
     const UPDATE_ITEMS_CLASS = "update-items";
@@ -175,7 +185,7 @@ class LinkObjectsWidget extends \yii\base\Widget {
             $widgetOptions['addon']['append'] = [
                 'content' => Html::button('<i class="fa fa-check"></i>', [
                     'class' => 'btn btn-primary disabled ' . LinkObjectsWidget::UPDATE_ITEMS_CLASS,
-                    'title' => Yii::t('app', 'Update') . " " . $this->conceptLabel,
+                    'title' => $this->updateMessage,
                     'data-toogle' => 'tooltip',
                 ]),
                 'asButton' => true
@@ -189,7 +199,7 @@ class LinkObjectsWidget extends \yii\base\Widget {
 
         // Add the info box
         if ($this->canUpdate) {
-            $toReturn .= '<p class="info-box">' . Yii::t('app/messages', 'When you change ' . $this->conceptLabel . ' in the list, click on the check button to update them.') . '</p>';
+            $toReturn .= '<p class="info-box">' . $this->infoMessage . '</p>';
         }
         
         return $toReturn;
