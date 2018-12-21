@@ -52,6 +52,7 @@ return [
     'Campaign' => 'Campagne',
     'Carpet' => 'Moquette',
     'Characterize Sensor' => 'Caractériser un Capteur',
+    'Characterize' => 'Caractériser',
     'Circular' => 'Circulaire',
     'Column' => 'Colonne',
     'Comment' => 'Commentaire',
