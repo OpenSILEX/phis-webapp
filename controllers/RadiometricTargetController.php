@@ -57,8 +57,14 @@ class RadiometricTargetController extends Controller {
      */
     public function actionIndex() {
         $searchModel = new RadiometricTargetSearch();
+        
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        }
 
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
 
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
@@ -146,14 +152,8 @@ class RadiometricTargetController extends Controller {
             }
         } else {
             // If no post data display the create form
-            $searchUserModel = new UserSearch();
-            $contactsList = $searchUserModel->find($sessionToken, []);
-            $contacts = null;
-            if ($contactsList !== null) {
-                $contacts = \yii\helpers\ArrayHelper::map($contactsList, 'email', 'email');
-            }
-        
-            $this->view->params['listContacts'] = $contacts;
+            $userModel = new \app\models\yiiModels\YiiUserModel();        
+            $this->view->params['listContacts'] = $userModel->getPersonsMailsAndName($sessionToken);
 
             return $this->render('create', [
                 'model' =>  $radiometricTargetModel
@@ -187,14 +187,8 @@ class RadiometricTargetController extends Controller {
              $radiometricTargetDetail =  $radiometricTargetModel->getDetails($sessionToken, $id);
         
             //2. Load user list for update form
-            $searchUserModel = new UserSearch();
-            $contactsList = $searchUserModel->find($sessionToken, []);
-            $contacts = null;
-            if ($contactsList !== null) {
-                $contacts = \yii\helpers\ArrayHelper::map($contactsList, 'email', 'email');
-            }
-        
-            $this->view->params['listContacts'] = $contacts;
+            $userModel = new \app\models\yiiModels\YiiUserModel();
+            $this->view->params['listContacts'] = $userModel->getPersonsMailsAndName($sessionToken);
 
             return $this->render('update', [
                 'model' =>  $radiometricTargetModel

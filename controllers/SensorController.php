@@ -157,12 +157,12 @@ class SensorController extends Controller {
         }
         
         $usersModel = new \app\models\yiiModels\YiiUserModel();
-        $usersMails = $usersModel->getUsersMails(Yii::$app->session['access_token']);
+        $users = $usersModel->getPersonsMailsAndName(Yii::$app->session['access_token']);
         
         return $this->render('create', [
             'model' => $sensorModel,
             'sensorsTypes' => json_encode($sensorsTypes, JSON_UNESCAPED_SLASHES),
-            'users' => json_encode($usersMails)
+            'users' => json_encode(array_keys($users))
         ]);
     }
     
@@ -248,7 +248,13 @@ class SensorController extends Controller {
     public function actionIndex() {
         $searchModel = new \app\models\yiiModels\SensorSearch();
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        }
+
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
@@ -298,12 +304,8 @@ class SensorController extends Controller {
         $sensorAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
      
         //4. get sensors variables
-        $variablesSearch = new VariableSearch();
-        $variablesDataProvider = $variablesSearch->search(Yii::$app->session['access_token'], []);
-        $variables = [];
-        foreach ($variablesDataProvider->getModels() as $variable) {
-            $variables[$variable->uri] = $variable->label;
-        }
+        $variableModel = new \app\models\yiiModels\YiiVariableModel();
+        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
 
         if ($res === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));

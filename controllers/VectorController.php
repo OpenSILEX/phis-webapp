@@ -123,12 +123,13 @@ class VectorController extends Controller {
         }
         
         $usersModel = new \app\models\yiiModels\YiiUserModel();
-        $usersMails = $usersModel->getUsersMails(Yii::$app->session['access_token']);
+        $users = $usersModel->getPersonsMailsAndName(Yii::$app->session['access_token']);
+        
         
         return $this->render('create', [
             'model' => $model,
             'vectorsTypes' => json_encode($vectorsTypes, JSON_UNESCAPED_SLASHES),
-            'users' => json_encode($usersMails)
+            'users' => json_encode(array_keys($users))
         ]);
     }
     
@@ -213,7 +214,12 @@ class VectorController extends Controller {
     public function actionIndex() {
         $searchModel = new \app\models\yiiModels\VectorSearch();
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        }
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {

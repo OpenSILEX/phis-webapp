@@ -137,27 +137,27 @@ use yii\widgets\ActiveForm;
             
         if (inputId === "trait") {
             var toAdd = $("#" + inputId + " option:selected").text();
-            toAdd = toAdd.replace("_", "-");
+            toAdd = toAdd.replace(/_/g, "-");
             $('#yiivariablemodel-label').val(toAdd + "_" + variableLabelTab[1] + "_" + variableLabelTab[2]);
         } else if (inputId === "newtrait") { 
             var toAdd = $("#" + inputId).val(); 
-            toAdd = toAdd.replace("_", "-");   
+            toAdd = toAdd.replace(/_/g, "-");
             $('#yiivariablemodel-label').val(toAdd + "_" + variableLabelTab[1] + "_" + variableLabelTab[2]);
         } else if (inputId === "method") {
             var toAdd = $("#" + inputId + " option:selected").text();
-            toAdd = toAdd.replace("_", "-");
+            toAdd = toAdd.replace(/_/g, "-");
             $('#yiivariablemodel-label').val(variableLabelTab[0] + "_" + toAdd + "_" + variableLabelTab[2]);
         } else if (inputId === "newmethod") {
             var toAdd = $("#" + inputId).val();
-            toAdd = toAdd.replace("_", "-");
+            toAdd = toAdd.replace(/_/g, "-");
             $('#yiivariablemodel-label').val(variableLabelTab[0] + "_" + toAdd + "_" + variableLabelTab[2]);
         } else if (inputId === "unit") {
             var toAdd = $("#" + inputId + " option:selected").text();
-            toAdd = toAdd.replace("_", "-");
+            toAdd = toAdd.replace(/_/g, "-");
             $('#yiivariablemodel-label').val(variableLabelTab[0] + "_" + variableLabelTab[1] + "_" + toAdd);
         } else if (inputId === "newunit") {
             var toAdd = $("#" + inputId).val();
-            toAdd = toAdd.replace("_", "-");
+            toAdd = toAdd.replace(/_/g, "-");
             $('#yiivariablemodel-label').val(variableLabelTab[0] + "_" + variableLabelTab[1] + "_" + toAdd);
         }
     }

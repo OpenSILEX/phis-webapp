@@ -146,7 +146,7 @@ class DatasetController extends Controller {
      *               [3] => "variable label"
      */
     private function getColumnsCorrespondences($csvHeader, $expectedVariables) {
-        $columnsCorrepondences = null;
+        $columnsCorrepondences = [];
         for ($i = 0; $i < count($csvHeader); $i++) {
             if ($csvHeader[$i] === DatasetController::AGRONOMICAL_OBJECT_URI) {
                 $columnsCorrepondences[$i] = DatasetController::AGRONOMICAL_OBJECT_URI;
@@ -236,6 +236,7 @@ class DatasetController extends Controller {
         if ($missingColumns !== null) {
             $errors[DatasetController::ERRORS_MISSING_COLUMN] = $missingColumns;
         }
+        
         //2. get columns to manipulate
         $columnsCorrespondences = $this->getColumnsCorrespondences($csvHeader, $expectedVariables);
         
@@ -380,12 +381,13 @@ class DatasetController extends Controller {
      * @return array contains the variables list. The key is the variable label 
      *               and the value is the variable label
      */
-    private function getVariablesListLabelToShow() {
-        $searchVariableModel = new VariableSearch();
-        $variables = $searchVariableModel->find(Yii::$app->session['access_token'], []);
-        
+    private function getVariablesListLabelToShowFromVariableList($variables) {
         if ($variables !== null) {
-            return \yii\helpers\ArrayHelper::map($variables, 'label', 'label');
+            $variablesToReturn = [];
+            foreach ($variables as $key => $value) {
+                $variablesToReturn[$value] = $value;
+            }
+            return $variablesToReturn;
         } else {
             return null;
         }
@@ -458,13 +460,15 @@ class DatasetController extends Controller {
                        var cell = hot1.getCell(row,col);
                        cell.style.color = "black";';
         
-        //2. Cells Errors        
-        foreach ($csvErrors[DatasetController::ERRORS_ROWS] as $dataError) {
-            $updateSettings .= 'if (row === ' . ($dataError[DatasetController::ERRORS_LINE] - 1) 
-                            . ' && col === ' . $dataError[DatasetController::ERRORS_COLUMN] . ') {'
-                    . 'cell.style.fontWeight = "bold";'
-                    . 'cell.style.color = "red";'
-                        . '}';
+        //2. Cells Errors    
+        if (isset($csvErrors[DatasetController::ERRORS_ROWS])) {
+            foreach ($csvErrors[DatasetController::ERRORS_ROWS] as $dataError) {
+                $updateSettings .= 'if (row === ' . ($dataError[DatasetController::ERRORS_LINE] - 1) 
+                                . ' && col === ' . $dataError[DatasetController::ERRORS_COLUMN] . ') {'
+                        . 'cell.style.fontWeight = "bold";'
+                        . 'cell.style.color = "red";'
+                            . '}';
+            }
         }
         
         //3. Ignored columns
@@ -636,7 +640,10 @@ class DatasetController extends Controller {
      */
     public function actionCreate() { 
         $datasetModel = new \app\models\yiiModels\YiiDatasetModel();
-        $this->view->params["variables"] = $this->getVariablesListLabelToShow();
+        $variablesModel = new \app\models\yiiModels\YiiVariableModel();
+        
+        $variables = $variablesModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
+        $this->view->params["variables"] = $this->getVariablesListLabelToShowFromVariableList($variables);
         
         //If the form is complete, register data
         if ($datasetModel->load(Yii::$app->request->post())) {
@@ -666,7 +673,6 @@ class DatasetController extends Controller {
                        'handsontableErrorsCellsSettings' => $this->getHandsontableCellsSettings($csvErrors, $csvHeaders, $correspondancesCSV)
                 ]);
             } else {
-                
                 $firstInsert = true;
                 foreach ($correspondancesCSV as $key => $value) {
                     if ($value !== DatasetController::AGRONOMICAL_OBJECT_URI

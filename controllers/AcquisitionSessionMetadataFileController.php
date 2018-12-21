@@ -159,6 +159,8 @@ class AcquisitionSessionMetadataFileController extends Controller {
         $documentModel = new YiiDocumentModel();
         $search["documentType"] = $this->documentType;
         $search["concernedItem"] = $infrastructureUri;
+        $search["sortByDate"] = "desc";
+        $search["pageSize"] = 1;
         
         $wsResult = $documentModel->find($sessionToken, $search);
         
