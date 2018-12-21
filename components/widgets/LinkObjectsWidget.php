@@ -134,7 +134,7 @@ class LinkObjectsWidget extends \yii\base\Widget {
                 [$this->itemViewRoute, 'uri' => $uri],
                 [
                     "class" => "fa fa-eye item-select-link",
-                    "alt" => $label
+                    "alt" => str_replace("\n", "", $label)
                 ]
             ) . "',";
         }
