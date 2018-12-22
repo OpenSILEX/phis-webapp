@@ -266,6 +266,30 @@ class YiiExperimentModel extends WSActiveRecord {
         }
     }
     
+    
+    public function getExperimentsList($sessionToken) {
+        $params = [];
+        if ($this->pageSize !== null) {
+           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+        }
+        if ($this->page !== null) {
+            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+        }
+        
+        $wsModel = new WSExperimentModel();
+        $requestRes = $wsModel->getExperimentsList($sessionToken,$params);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                return "token";
+            } else {
+                return $requestRes;
+            }
+        } else {
+            return $requestRes;
+        }
+    }
+    
    /**
      * Create an array representing the experiment
      * Used for the web service for example

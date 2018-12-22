@@ -25,7 +25,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_formCreateCsv', [
+    <?= $this->render('_form', [
         'model' => $model,
+        'objectsTypes' => $objectsTypes,
+        'experiments' => $experiments,
+        'species' => $species
     ]) ?>
 </div>
