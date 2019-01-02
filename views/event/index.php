@@ -28,10 +28,23 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn']
             , 'type'
             , [
-              'attribute' => 'concernsItems',
-              'format' => 'raw',
-              'value' => function ($model) {
-                return implode(", ", $model->concernsItems[0]->labels);
+                'attribute' => 'concernsItems',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $concernsItemsString = "";
+                    $first = true;
+                    foreach ($model->concernsItems as $concernsItem) {
+                            if($first) {
+                                $first = false;
+                            }
+                            else
+                            {
+                                $concernsItemsString .= "<br>";
+                            }
+                            $concernsItemsString 
+                                    .= implode(", ", $concernsItem->labels);
+                    }
+                    return $concernsItemsString;
               }
             ]
             , 'dateTimeString'
