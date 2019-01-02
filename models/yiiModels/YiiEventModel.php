@@ -6,7 +6,7 @@
 // Author(s): Andréas Garcia <andreas.garcia@inra.fr>
 // PHIS-SILEX version 1.0
 // Copyright © - INRA - 2018
-// Creation date: 02 janvier 2019
+// Creation dateTimeString: 02 janvier 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -51,8 +51,8 @@ class YiiEventModel extends WSActiveRecord {
      * @example E1JFHS849DNSKF8DH
      * @var string 
      */
-    public $date;
-    const DATE = "date";
+    public $dateTimeString;
+    const DATETIME_STRING = "dateTimeString";
     
     public $properties;
     const PROPERTIES = "properties";
@@ -74,7 +74,7 @@ class YiiEventModel extends WSActiveRecord {
     public function rules() {
        return [ 
            [['uri'], 'required']
-           , [['type', 'concernsItems', 'date', 'documents','properties'], 'safe']
+           , [['type', 'concernsItems', 'dateTimeString', 'documents','properties'], 'safe']
         ]; 
     }
     
@@ -87,7 +87,7 @@ class YiiEventModel extends WSActiveRecord {
             'uri' => 'URI'
             , 'type' => Yii::t('app', 'Type')
             , 'concernsItems' => Yii::t('app', 'Concerned Elements')
-            , 'date' => Yii::t('app', 'Date')
+            , 'dateTimeString' => Yii::t('app', 'Date')
             , 'properties' => Yii::t('app', 'Properties')
         ];
     }
@@ -105,7 +105,7 @@ class YiiEventModel extends WSActiveRecord {
             $this->concernsItems 
                     = get_object_vars($array[YiiEventModel::CONCERNS_ITEMS]);
         } 
-        $this->date = $array[YiiEventModel::DATE];
+        $this->dateTimeString = $array[YiiEventModel::DATETIME_STRING];
         $this->properties = $array[YiiEventModel::PROPERTIES];
     }
     

@@ -6,7 +6,7 @@
 // Author(s): Andréas Garcia <andreas.garcia@inra.fr>
 // PHIS-SILEX version 1.0
 // Copyright © - INRA - 2018
-// Creation date: 02 janvier 2019
+// Creation dateTimeString: 02 janvier 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -24,7 +24,8 @@ class EventSearch extends YiiEventModel {
      */
     public function rules() {
         return [ 
-            [['uri', 'type', 'concernsItems', 'date', 'documents','properties'], 'safe']
+            [['uri', 'type', 'concernsItems', 'dateTimeString', 'documents'
+                ,'properties'], 'safe']
         ]; 
     }
     
@@ -41,7 +42,6 @@ class EventSearch extends YiiEventModel {
         }
         
         if (!$this->validate()) {
-            error_log("hoy");
             return new \yii\data\ArrayDataProvider();
         }
         

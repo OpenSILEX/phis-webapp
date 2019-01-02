@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn']
             , 'type'
            // , 'concernsItems'
-           // , 'date'
+            , 'dateTimeString'
         ],
     ]); ?>
 </div>
