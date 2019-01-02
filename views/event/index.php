@@ -27,7 +27,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn']
             , 'type'
-           // , 'concernsItems'
+            , [
+              'attribute' => 'concernsItems',
+              'format' => 'raw',
+              'value' => function ($model) {
+                return implode(", ", $model->concernsItems[0]->labels);
+              }
+            ]
             , 'dateTimeString'
         ],
     ]); ?>

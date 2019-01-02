@@ -85,7 +85,7 @@ class EventSearch extends YiiEventModel {
             foreach ($jsonList as $value) {
                 $toReturn[] = $value;
             }
-        } 
+        }
         return $toReturn;
     }
 }

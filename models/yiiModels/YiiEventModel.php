@@ -98,7 +98,7 @@ class YiiEventModel extends WSActiveRecord {
      *                     a event
      */
     protected function arrayToAttributes($array) {
-        var_dump($array);
+        var_dump($array[YiiEventModel::CONCERNS_ITEMS]);
         $this->uri = $array[YiiEventModel::URI];
         $this->type = $array[YiiEventModel::TYPE];
         if ($array[YiiEventModel::CONCERNS_ITEMS]) {

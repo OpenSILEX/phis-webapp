@@ -124,7 +124,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
         }
         
         if (isset($requestRes->{WSConstants::RESULT}->{WSConstants::DATA}))  {
-            return (array) $requestRes->{WSConstants::RESULT}
+            return (array)$requestRes->{WSConstants::RESULT}
                     ->{WSConstants::DATA};
             
         } else {
