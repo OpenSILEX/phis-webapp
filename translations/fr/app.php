@@ -67,6 +67,7 @@ return [
     'Data' => 'Données',
     'Dataset' => 'Jeux de données',
     'Dataset Creation Date' => 'Données Insérées',
+    'Date' => 'Date',
     'Date End' => 'Date de fin',
     'Date Of Last Calibration' => 'Date de Dernier Étalonnage',
     'Date Of Purchase' => 'Date d\'Achat',

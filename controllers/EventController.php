@@ -25,23 +25,25 @@ class EventController extends Controller {
     const URI = "uri";
     
     /**
-     * list all sensors
+     * list all the events
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new \app\models\yiiModels\SensorSearch();
+        $searchModel = new \app\models\yiiModels\EventSearch();
         
         //Get the search params and update pagination
         $searchParams = Yii::$app->request->queryParams;        
-        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+        if (isset($searchParams[
+            \app\models\yiiModels\YiiModelsConstants::PAGE])) {
             $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
         }
 
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
-        
+        $searchResult = $searchModel->search(Yii::$app->session['access_token']
+                , $searchParams);
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+                return $this->redirect(Yii::$app->urlManager
+                        ->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
                         'name' => Yii::t('app/messages','Internal error'),
@@ -49,8 +51,8 @@ class EventController extends Controller {
             }
         } else {
             return $this->render('index', [
-               'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+               'searchModel' => $searchModel
+               , 'dataProvider' => $searchResult
             ]);
         }
     }
