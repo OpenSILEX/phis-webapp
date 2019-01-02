@@ -81,7 +81,7 @@ ToastrAsset::register($this);
                                 'url' => ['/variable/index']
                             ],
                             [
-                                'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Events'), 
+                                'label' => Icon::show('fa-flag', [], Icon::BSG) . " " . Yii::t('app', 'Events'), 
                                 'url' => ['/event/index']
                             ],
                             //SILEX:info
@@ -183,7 +183,7 @@ ToastrAsset::register($this);
                                 'url' => ['/variable/index']
                             ],
                             [
-                                'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Events'), 
+                                'label' => Icon::show('fa-flag', [], Icon::BSG) . " " . Yii::t('app', 'Events'), 
                                 'url' => ['/event/index']
                             ],
                             //SILEX:info
