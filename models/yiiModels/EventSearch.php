@@ -19,14 +19,17 @@ use app\models\yiiModels\YiiEventModel;
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class EventSearch extends YiiEventModel {
+    
+    const CONCERNS_ITEM_LABEL = 'concernsItemLabel';
+    const DATE_RANGE_START = 'dateRangeStart';
+    const DATE_RANGE_END = 'dateRangeEnd';
+    
     /**
      * @inheritdoc
      */
     public function rules() {
-        return [ 
-            [['uri', 'type', 'concernsItems', 'dateTimeString', 'documents'
-                ,'properties'], 'safe']
-        ]; 
+        return [[['type', 'concernsItemLabel', 'dateRangeStart', 'dateRangeEnd']
+            , 'safe']]; 
     }
     
     /**
@@ -46,7 +49,7 @@ class EventSearch extends YiiEventModel {
         }
         
         //Request to the web service and return result
-        $findResult = $this->find($sessionToken, $this->attributesToArray());
+        $findResult = $this->find($sessionToken, $this->searchFiltersArray());
         
         if (is_string($findResult)) {
             return $findResult;
@@ -88,4 +91,14 @@ class EventSearch extends YiiEventModel {
         }
         return $toReturn;
     }
+    
+    private function searchFiltersArray() {
+        $searchFiltersArray = parent::attributesToArray();
+        $searchFiltersArray[YiiEventModel::TYPE] 
+                = $this->type;
+        $searchFiltersArray[EventSearch::CONCERNS_ITEM_LABEL] 
+                = $this->concernsItems;
+        return $searchFiltersArray;
+    }
+
 }

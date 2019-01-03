@@ -32,7 +32,7 @@ class EventController extends Controller {
         $searchModel = new \app\models\yiiModels\EventSearch();
         
         //Get the search params and update pagination
-        $searchParams = Yii::$app->request->queryParams;        
+        $searchParams = Yii::$app->request->queryParams;
         if (isset($searchParams[
             \app\models\yiiModels\YiiModelsConstants::PAGE])) {
             $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
