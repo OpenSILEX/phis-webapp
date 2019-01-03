@@ -14,6 +14,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\SensorSearch */
@@ -41,8 +42,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            
-            'uri',
+            [
+              'attribute' => 'uri',
+              'format' => 'raw',
+               'value' => 'uri',
+              'filter' =>false,
+            ],
             'label',
             [
               'attribute' => 'rdfType',
@@ -53,8 +58,32 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'brand',
             'serialNumber',
-            'inServiceDate',
-            'dateOfLastCalibration',
+            [
+              'attribute' => 'inServiceDate',
+              'format' => 'raw',
+               'value' => 'inServiceDate',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'inServiceDate',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
+            [
+              'attribute' => 'dateOfLastCalibration',
+              'format' => 'raw',
+               'value' => 'dateOfLastCalibration',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'dateOfLastCalibration',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
             [
               'attribute' => 'personInCharge',
               'format' => 'raw',
