@@ -19,9 +19,7 @@ use app\models\wsModels\WSEventModel;
 use Yii;
 
 /**
- * The yii model for the events. 
- * Implements a customized Active Record
- *  (WSActiveRecord, for the web services access)
+ * The yii model for an  Event. 
  * @see app\models\wsModels\WSTripletModel
  * @see app\models\wsModels\WSUriModel
  * @see app\models\wsModels\WSActiveRecord
@@ -30,25 +28,21 @@ use Yii;
 class YiiEventModel extends WSActiveRecord {
     
     /**
-     * @example http://www.phenome-fppn.fr/diaphen/s18001
      * @var string
      */
     public $uri;
     const URI = "uri";
     /**
-     * @example http://www.phenome-fppn.fr/vocabulary/2018/oeev#MoveFrom
      * @var string
      */
     public $type;
     const TYPE = "type";
     /**
-     * @example Skye Instruments
      * @var string
      */
     public $concernsItems; 
     const CONCERNS_ITEMS = "concernsItems";
     /**
-     * @example E1JFHS849DNSKF8DH
      * @var string 
      */
     public $dateTimeString;
@@ -98,7 +92,6 @@ class YiiEventModel extends WSActiveRecord {
      *                     a event
      */
     protected function arrayToAttributes($array) {
-        var_dump($array[YiiEventModel::CONCERNS_ITEMS]);
         $this->uri = $array[YiiEventModel::URI];
         $this->type = $array[YiiEventModel::TYPE];
         if ($array[YiiEventModel::CONCERNS_ITEMS]) {

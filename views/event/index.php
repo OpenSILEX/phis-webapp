@@ -28,19 +28,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn']
             , 'type'
             , [
-                'attribute' => 'concernsItems',
+                'attribute' => 'concernsItemLabel',
                 'format' => 'raw',
                 'value' => function ($model) {
                     $concernsItemsString = "";
                     $first = true;
                     foreach ($model->concernsItems as $concernsItem) {
-                            if($first) {
-                                $first = false;
-                            }
-                            else
-                            {
-                                $concernsItemsString .= "<br>";
-                            }
+                            $first ? $first = false 
+                                    : $concernsItemsString .= "<br>";
                             $concernsItemsString 
                                     .= implode(", ", $concernsItem->labels);
                     }

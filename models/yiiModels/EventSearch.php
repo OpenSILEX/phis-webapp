@@ -20,8 +20,11 @@ use app\models\yiiModels\YiiEventModel;
  */
 class EventSearch extends YiiEventModel {
     
+    public $concernsItemLabel;
     const CONCERNS_ITEM_LABEL = 'concernsItemLabel';
+    public $dateRangeStart;
     const DATE_RANGE_START = 'dateRangeStart';
+    public $dateRangeEnd;
     const DATE_RANGE_END = 'dateRangeEnd';
     
     /**
@@ -97,7 +100,7 @@ class EventSearch extends YiiEventModel {
         $searchFiltersArray[YiiEventModel::TYPE] 
                 = $this->type;
         $searchFiltersArray[EventSearch::CONCERNS_ITEM_LABEL] 
-                = $this->concernsItems;
+                = $this->concernsItemLabel;
         return $searchFiltersArray;
     }
 
