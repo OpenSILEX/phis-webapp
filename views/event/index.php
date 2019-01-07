@@ -10,6 +10,7 @@
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
+use Yii;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\daterange\DateRangePicker;
@@ -44,16 +45,18 @@ $this->params['breadcrumbs'][] = $this->title;
               }
             ]
             ,  [
-                'attribute' => 'dateTimeString',
                 'format' => 'raw',
                 'value' => 'dateTimeString',
+                'attribute' => 'dateTimeString',
                 'filter' => DateRangePicker::widget([
-                    'name'=>'datetime-range-date-picker',
+                    'attribute' => 'dateRange',
+                    'model' => $searchModel, 
                     'convertFormat'=>true,
                     'pluginOptions'=>[
                         'timePicker'=>true,
                         'timePickerIncrement'=>15,
-                        'locale'=>['format'=>'Y-m-d H:i A']
+                        'locale'=>['format'=>
+                            Yii::$app->params['standardDateTimeFormat']]
                     ]            
                 ])
             ]

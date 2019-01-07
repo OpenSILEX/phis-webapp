@@ -5,6 +5,7 @@ return [
     'baseURI' => 'http://www.phenome-fppn.fr/phis/',
     'platform' => 'Phis',
     'platformCode' => 'PHS',
+    'standardDateTimeFormat' => 'Y-m-dTH:iZ',
     
     //ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts
