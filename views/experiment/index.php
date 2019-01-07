@@ -48,27 +48,30 @@ $this->params['breadcrumbs'][] = $this->title;
               'attribute' => 'startDate',
               'format' => 'raw',
                'value' => 'startDate',
-              'filter' => DatePicker::widget([
-                    'model' => $searchModel, 
-                    'attribute' => 'startDate',
-                    'pluginOptions' => [
-                        'autoclose'=>true,
-                        'format' => 'yyyy-mm-dd'
-                    ]
-                ]),
+//              'filter' => DatePicker::widget([
+//                    'model' => $searchModel, 
+//                    'attribute' => 'startDate',
+//                    'pluginOptions' => [
+//                        'autoclose'=>true,
+//                        'format' => 'yyyy-mm-dd'
+//                    ]
+//                ]),
+                'filter' =>false,
             ],
+                
             [
               'attribute' => 'endDate',
               'format' => 'raw',
                'value' => 'endDate',
-              'filter' => DatePicker::widget([
-                    'model' => $searchModel, 
-                    'attribute' => 'endDate',
-                    'pluginOptions' => [
-                        'autoclose'=>true,
-                        'format' => 'yyyy-mm-dd'
-                    ]
-                ]),
+//              'filter' => DatePicker::widget([
+//                    'model' => $searchModel, 
+//                    'attribute' => 'endDate',
+//                    'pluginOptions' => [
+//                        'autoclose'=>true,
+//                        'format' => 'yyyy-mm-dd'
+//                    ]
+//                ]),
+                'filter' =>false,
             ],
 //            [
 //              'attribute' => 'projects',
