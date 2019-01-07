@@ -48,6 +48,8 @@ $this->params['breadcrumbs'][] = $this->title;
               'attribute' => 'startDate',
               'format' => 'raw',
                'value' => 'startDate',
+                //SILEX:info
+                //Uncomment when the search will be fixed in the web service
 //              'filter' => DatePicker::widget([
 //                    'model' => $searchModel, 
 //                    'attribute' => 'startDate',
@@ -56,6 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                        'format' => 'yyyy-mm-dd'
 //                    ]
 //                ]),
+                //\SILEX:info
                 'filter' =>false,
             ],
                 
@@ -63,6 +66,8 @@ $this->params['breadcrumbs'][] = $this->title;
               'attribute' => 'endDate',
               'format' => 'raw',
                'value' => 'endDate',
+                //SILEX:info
+                //Uncomment when the search will be fixed in the web service
 //              'filter' => DatePicker::widget([
 //                    'model' => $searchModel, 
 //                    'attribute' => 'endDate',
@@ -71,6 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //                        'format' => 'yyyy-mm-dd'
 //                    ]
 //                ]),
+                //\SILEX:info
                 'filter' =>false,
             ],
 //            [
