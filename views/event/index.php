@@ -12,6 +12,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\daterange\DateRangePicker;
 
 $this->title = Yii::t('app', '{n, plural, =1{Event} other{Events}}'
         , ['n' => 2]);
@@ -42,7 +43,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $concernsItemsString;
               }
             ]
-            , 'dateTimeString'
+            ,  [
+                'attribute' => 'dateTimeString',
+                'format' => 'raw',
+                'value' => 'dateTimeString',
+                'filter' => DateRangePicker::widget([
+                    'name'=>'datetime-range-date-picker',
+                    'convertFormat'=>true,
+                    'pluginOptions'=>[
+                        'timePicker'=>true,
+                        'timePickerIncrement'=>15,
+                        'locale'=>['format'=>'Y-m-d H:i A']
+                    ]            
+                ])
+            ]
         ],
     ]); ?>
 </div>
