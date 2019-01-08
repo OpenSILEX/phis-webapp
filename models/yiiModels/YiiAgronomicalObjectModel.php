@@ -155,7 +155,7 @@ class YiiAgronomicalObjectModel extends WSActiveRecord {
         }
     }
     
-        /**
+    /**
      * calls web service and return the list of object types of the ontology
      * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
      * @return list of the sensors types
