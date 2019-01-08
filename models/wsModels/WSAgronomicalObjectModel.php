@@ -26,6 +26,6 @@ class WSAgronomicalObjectModel extends \openSILEX\guzzleClientPHP\WSModel {
      * initialize access to the agronomical objects service. Calls super constructor
      */
     public function __construct() {
-        parent::__construct(WS_PHIS_PATH, "agronomicalObjects");
+        parent::__construct(WS_PHIS_PATH, "scientificObjects");
     }
 }

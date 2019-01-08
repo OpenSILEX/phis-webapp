@@ -423,9 +423,13 @@ require_once '../config/config.php';
         $objects = json_decode(Yii::$app->request->post()["objects"]);
         $sessionToken = Yii::$app->session['access_token'];
         
-        $objectsUris = null;
+        $return = [
+            "objectUris" => [],
+            "messages" => []
+        ];        
+
         if (count($objects) > 0) {
-            $objectsUris = null;
+
             foreach ($objects as $object) {
                 $forWebService = null;
                 $scientificObjectModel = new YiiAgronomicalObjectModel();
@@ -442,12 +446,19 @@ require_once '../config/config.php';
                 $forWebService = $this->getArrayForWebServiceCreate($scientificObject);
                 $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
                 
-                $objectsUris[] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
-            }
-            return json_encode($objectsUris, JSON_UNESCAPED_SLASHES); 
-        }
-        
-        return true;
+                
+                if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
+                    $return["objectUris"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
+                    $return["messages"][] = "object saved";
+                }
+                else {
+                    $return["objectUris"][] = null;
+                    $return["messages"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->details;
+                }
+            }      
+          
+        }        
+        return json_encode($return, JSON_UNESCAPED_SLASHES);
     }
     
     /**
