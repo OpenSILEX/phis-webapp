@@ -44,8 +44,8 @@ ToastrAsset::register($this);
 <div class="wrap">
     <?php
     //To use the fontawesome glyphicons on the page
+    Icon::map($this, Icon::ICF); //@see https://icofont.com/icons
     Icon::map($this, Icon::FA);
-    
     NavBar::begin([
         'brandLabel' => 'PHIS <i> ' . Yii::$app->params['platform'] . '</i>',
         'brandUrl' => Yii::$app->homeUrl,
@@ -60,6 +60,10 @@ ToastrAsset::register($this);
     } else if (Yii::$app->session['isAdmin']) { //Cas d'un admin
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
+                            [
+                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
+                                'url' => ['/species/index']
+                            ],
                             [
                                 'label' => Icon::show('home', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]), 
                                 'url' => ['/infrastructure'],
@@ -158,6 +162,10 @@ ToastrAsset::register($this);
     } else { // Cas d'un utilisateur simple connecté
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
+                            [
+                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
+                                'url' => ['/species/index']
+                            ],
                             [
                                 'label' => Icon::show('home', ['class' => 'fas'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]), 
                                 'url' => ['/infrastructure'],

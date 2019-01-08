@@ -13,6 +13,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ExperimentSearch */
@@ -36,10 +37,48 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             
-            'uri',
+            [
+              'attribute' => 'uri',
+              'format' => 'raw',
+               'value' => 'uri',
+              'filter' =>false,
+            ],
             'alias',
-            'startDate',
-            'endDate',
+            [
+              'attribute' => 'startDate',
+              'format' => 'raw',
+               'value' => 'startDate',
+                //SILEX:info
+                //Uncomment when the search will be fixed in the web service
+//              'filter' => DatePicker::widget([
+//                    'model' => $searchModel, 
+//                    'attribute' => 'startDate',
+//                    'pluginOptions' => [
+//                        'autoclose'=>true,
+//                        'format' => 'yyyy-mm-dd'
+//                    ]
+//                ]),
+                //\SILEX:info
+                'filter' =>false,
+            ],
+                
+            [
+              'attribute' => 'endDate',
+              'format' => 'raw',
+               'value' => 'endDate',
+                //SILEX:info
+                //Uncomment when the search will be fixed in the web service
+//              'filter' => DatePicker::widget([
+//                    'model' => $searchModel, 
+//                    'attribute' => 'endDate',
+//                    'pluginOptions' => [
+//                        'autoclose'=>true,
+//                        'format' => 'yyyy-mm-dd'
+//                    ]
+//                ]),
+                //\SILEX:info
+                'filter' =>false,
+            ],
 //            [
 //              'attribute' => 'projects',
 //              'format' => 'raw',
@@ -56,7 +95,21 @@ $this->params['breadcrumbs'][] = $this->title;
 //              }
 //            ],
             'field',
-            'campaign',
+            [
+               'attribute' => 'campaign',
+               'format' => 'raw',
+               'value' => 'campaign',
+               'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'campaign',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy',
+                        'minViewMode' => 'years',
+                        'viewMode' => 'years',
+                    ]
+                ]),
+            ],
 
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',

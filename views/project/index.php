@@ -15,6 +15,8 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
+use kartik\date\DatePicker;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ProjectSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -41,8 +43,40 @@ $this->params['breadcrumbs'][] = $this->title;
             //'name',
             'acronyme',
             'financialSupport',
-            'dateStart',
-            'dateEnd',
+            [
+              'attribute' => 'dateStart',
+              'format' => 'raw',
+               'value' => 'dateStart',
+                //SILEX:info
+                //Uncomment when the search will be fixed in the web service
+//              'filter' => DatePicker::widget([
+//                    'model' => $searchModel, 
+//                    'attribute' => 'dateStart',
+//                    'pluginOptions' => [
+//                        'autoclose'=>true,
+//                        'format' => 'yyyy-mm-dd'
+//                    ]
+//                ]),
+                //\SILEX:info
+                'filter' =>false,
+            ],
+            [
+              'attribute' => 'dateEnd',
+              'format' => 'raw',
+               'value' => 'dateEnd',
+                //SILEX:info
+                //Uncomment when the search will be fixed in the web service
+//              'filter' => DatePicker::widget([
+//                    'model' => $searchModel, 
+//                    'attribute' => 'dateEnd',
+//                    'pluginOptions' => [
+//                        'autoclose'=>true,
+//                        'format' => 'yyyy-mm-dd'
+//                    ]
+//                ]),
+                //\SILEX:info
+                'filter' =>false,
+            ],
             // 'subprojectType',
             // 'financialName',
             // 'keywords',
