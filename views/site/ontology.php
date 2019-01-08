@@ -22,27 +22,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 <?php 
-    $species = [
-        ['label_la' => 'Beta vulgaris', 'label_en' => 'Beet', 'label_fr' => 'Betterave', 'uri' => 'http://www.phenome-fppn.fr/id/species/betavulgaris'],  
-        ['label_la' => 'Helianthus annuus', 'label_en' => 'Sunflower', 'label_fr' => 'Tournesol', 'uri' => 'http://www.phenome-fppn.fr/id/species/helianthusannuus'],
-        ['label_la' => 'Vicia faba', 'label_en' => 'Fababean', 'label_fr' => 'Féverole', 'uri' => 'http://www.phenome-fppn.fr/id/species/viciafaba'],
-        ['label_la' => 'Lupinus albus', 'label_en' => 'Lupine', 'label_fr' => 'Lupin blanc', 'uri' => 'http://www.phenome-fppn.fr/id/species/lupinusalbus'],
-        ['label_la' => 'Pisum sativum', 'label_en' => 'Peas', 'label_fr' => 'Pois protéagineux', 'uri' => 'http://www.phenome-fppn.fr/id/species/pisumsativum'],
-        ['label_la' => 'Glycine max', 'label_en' => 'Soybean', 'label_fr' => 'Soja', 'uri' => 'http://www.phenome-fppn.fr/id/species/glycinemax'],
-        ['label_la' => 'Linum usitatissimum', 'label_en' => 'Flax', 'label_fr' => 'Lin', 'uri' => 'http://www.phenome-fppn.fr/id/species/linumusitatissum'],
-        ['label_la' => 'Canabis sativa', 'label_en' => 'Hemp', 'label_fr' => 'Chanvre', 'uri' => 'http://www.phenome-fppn.fr/id/species/canabissativa'],
-        ['label_la' => 'Zea mays', 'label_en' => 'Maize', 'label_fr' => 'Maïs', 'uri' => 'http://www.phenome-fppn.fr/id/species/zeamays'],
-        ['label_la' => 'Gossypium hirsutum', 'label_en' => 'Upland cotton', 'label_fr' => 'Coton mexicain', 'uri' => 'http://www.phenome-fppn.fr/id/species/gossypiumhirsutum'],
-        ['label_la' => 'Ordeum vulgare', 'label_en' => 'Barley', 'label_fr' => 'Orge', 'uri' => 'http://www.phenome-fppn.fr/id/species/ordeumvulgare'],
-        ['label_la' => 'Oriza sativa', 'label_en' => 'Rice', 'label_fr' => 'Riz', 'uri' => 'http://www.phenome-fppn.fr/id/species/orizasativa'],
-        ['label_la' => 'Pennisetum glaucum', 'label_en' => 'Pearl millet', 'label_fr' => 'Mil', 'uri' => 'http://www.phenome-fppn.fr/id/species/pennisetumglaucum'],
-        ['label_la' => 'Populus', 'label_en' => 'Polar', 'label_fr' => 'Peuplier', 'uri' => 'http://www.phenome-fppn.fr/id/species/populus'],
-        ['label_la' => 'Sorghum bicolor', 'label_en' => 'Sorghum', 'label_fr' => 'Sorgho', 'uri' => 'http://www.phenome-fppn.fr/id/species/sorghumbicolor'],
-        ['label_la' => 'Teosine', 'label_en' => 'Teosintes', 'label_fr' => 'Téosintes', 'uri' => 'http://www.phenome-fppn.fr/id/species/teosine'],
-        ['label_la' => 'Triticum aestivum', 'label_en' => 'Bread wheat', 'label_fr' => 'Blé tendre', 'uri' => 'http://www.phenome-fppn.fr/id/species/triticumaestivum'],
-        ['label_la' => 'Triticum turgidum', 'label_en' => 'Durum wheat', 'label_fr' => 'Blé dur', 'uri' => 'http://www.phenome-fppn.fr/id/species/triticumturgidum'],
-    ];
-
     $agronomicalObjects = [
         ['label' => 'Agronomical Object', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#AgronomicalObject'],
         ['label' => 'Plot', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Plot'],
@@ -144,10 +123,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <h2><?= Html::encode(Yii::t('app', 'Summary')) ?></h2>
     
     <ul class="list-group">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <?= Html::a(Yii::t('yii', 'Species'), ['ontology', '#' => 'species']) ?>
-            <span class="badge badge-primary badge-pill"><?= Html::encode(count($species)) ?></span>
-        </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <?= Html::a(Yii::t('yii', 'Agronomical Objects'), ['ontology', '#' => 'agronomical-objects']) ?>
             <span class="badge badge-primary badge-pill"><?= Html::encode(count($agronomicalObjects)) ?></span>
