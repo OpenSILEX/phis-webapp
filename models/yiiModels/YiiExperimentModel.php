@@ -139,6 +139,18 @@ class YiiExperimentModel extends WSActiveRecord {
     
     const CONTACTS = "contacts";
     const CONTACT_TYPE = "type";
+    /**
+     * The list of the variables measured by the experiment
+     * @var array<string>
+     */
+    public $variables;
+    const VARIABLES = "variables";
+    /**
+     * The list of sensors which participates in the experiment
+     * @var array<string>
+     */
+    public $sensors;
+    const SENSORS = "sensors";
     
     /**
      * Initialize wsModel. In this class, wsModel is a WSAgronomicalObjectModel
@@ -187,6 +199,8 @@ class YiiExperimentModel extends WSActiveRecord {
             'cropSpecies' => Yii::t('app', 'Crop Species'),
             'scientificSupervisorContacts' => Yii::t('app', 'Scientific Supervisors'),
             'technicalSupervisorContacts' => Yii::t('app', 'Technical Supervisors'),
+            'variables' => Yii::t('app', 'Measured Variables'),
+            'sensors' => Yii::t('app', 'Sensors which participates in')
         ];
     }
    
@@ -236,6 +250,14 @@ class YiiExperimentModel extends WSActiveRecord {
                     $this->technicalSupervisorContacts[] = $experimentContact;
                 }
             }
+        }
+        
+        foreach ($array[YiiExperimentModel::VARIABLES] as $variableUri => $variableLabel) {
+            $this->variables[$variableUri] = $variableLabel;            
+        }
+        
+        foreach ($array[YiiExperimentModel::SENSORS] as $sensorUri => $sensorLabel) {
+            $this->sensors[$sensorUri] = $sensorLabel;            
         }
     }
     
@@ -310,5 +332,43 @@ class YiiExperimentModel extends WSActiveRecord {
         }
         
         return $elementForWebService;
+    }
+    
+    /**
+     * Update variables measured by an experiment
+     * @param string $sessionToken
+     * @param string $experimentUri
+     * @param array $variablesUri
+     * @return the query result
+     */
+    public function updateVariables($sessionToken, $experimentUri, $variablesUri) {
+        $requestRes = $this->wsModel->putExperimentVariables($sessionToken, $experimentUri, $variablesUri);
+        
+        if (is_string($requestRes) && $requestRes === "token") {
+            return $requestRes;
+        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS})) {
+            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS};
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * Update sensors which participates in an experiment
+     * @param string $sessionToken
+     * @param string $experimentUri
+     * @param array $sensorsUris
+     * @return the query result
+     */
+    public function updateSensors($sessionToken, $experimentUri, $sensorsUris) {
+        $requestRes = $this->wsModel->putExperimentSensors($sessionToken, $experimentUri, $sensorsUris);
+        
+        if (is_string($requestRes) && $requestRes === "token") {
+            return $requestRes;
+        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS})) {
+            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS};
+        } else {
+            return $requestRes;
+        }
     }
 }
