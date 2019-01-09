@@ -23,8 +23,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php 
     $agronomicalObjects = [
-        ['label' => 'Agronomical Object', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#AgronomicalObject'],
+        ['label' => 'Scientific Object', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#ScientificObject'],
         ['label' => 'Plot', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Plot'],
+        ['label' => 'Plant', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Plant'],
+        ['label' => 'Leaf', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Leaf'],
+        ['label' => 'Rootstock', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Rootstock'],
+        ['label' => 'Scion', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Scion'],
+        ['label' => 'Seed', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Seed'],
+        ['label' => 'Silk', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Silk'],
     ];
     
     $sensingDevices = [
@@ -124,7 +130,11 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <ul class="list-group">
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            <?= Html::a(Yii::t('yii', 'Agronomical Objects'), ['ontology', '#' => 'agronomical-objects']) ?>
+            <?= Html::a(Yii::t('yii', 'Species'), ['ontology', '#' => 'species']) ?>
+            <span class="badge badge-primary badge-pill"><?= Html::encode(count($species)) ?></span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <?= Html::a(Yii::t('yii', 'Scientific Objects'), ['ontology', '#' => 'scientific-objects']) ?>
             <span class="badge badge-primary badge-pill"><?= Html::encode(count($agronomicalObjects)) ?></span>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -198,7 +208,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         ?>
     
-    <h2 id="agronomical-objects"><?= Html::encode(Yii::t('app', 'Agronomical Objects')) ?></h2>
+    <h2 id="agronomical-objects"><?= Html::encode(Yii::t('app', 'Scientific Objects')) ?></h2>
     
         <?php
         $agronomicalObjectsProvider = new \yii\data\ArrayDataProvider([

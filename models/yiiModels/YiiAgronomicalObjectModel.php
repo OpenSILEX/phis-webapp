@@ -16,6 +16,7 @@ namespace app\models\yiiModels;
 
 use Yii;
 use app\models\wsModels\WSActiveRecord;
+use app\models\wsModels\WSUriModel;
 use app\models\wsModels\WSAgronomicalObjectModel;
 
 /**
@@ -41,12 +42,14 @@ class YiiAgronomicalObjectModel extends WSActiveRecord {
      * @var string
      */
     public $geometry;
+    const GEOMETRY = "geometry";
     /**
      * the rdf type of the agronomical object. Must be in the ontology. 
      *                      (e.g http://www.phenome-fppn.fr/vocabulary/2017#Plot)
      * @var string
      */
     public $type;
+    const TYPE = "type";
     /**
      * the uri of the experiment in which the agronomical object is
      *                      (e.g http://www.phenome-fppn.fr/diaphen/DIA2017-1)
@@ -73,6 +76,15 @@ class YiiAgronomicalObjectModel extends WSActiveRecord {
     public $alias;
     const ALIAS = "alias";
     
+    public $species;
+    const SPECIES = "species";
+    
+    public $variety;
+    const VARIETY = "variety";
+    
+    public $parent;
+    const ISPARTOF = "ispartof";
+
     /**
      * Initialize wsModel. In this class, wsModel is a WSAgronomicalObjectModel
      * @param string $pageSize number of elements per page
@@ -84,35 +96,7 @@ class YiiAgronomicalObjectModel extends WSActiveRecord {
         $this->pageSize = ($pageSize !== null || $pageSize === "") ? $pageSize : null;
         $this->page = ($page !== null || $page != "") ? $page : null;
     }
-    
-    /**
-     * 
-     * @return array the rules of the attributes
-     */
-    public function rules() {
-        return [
-          [['geometry', 'type'], 'required'],
-          [['uri', 'geometry', 'type', 'experiment'], 'string'],
-          [['file'], 'safe'],
-          [['file'], 'file', 'extensions' => 'csv']
-        ];
-    }
-    
-    /**
-     * 
-     * @return array the labels of the attributes
-     */
-    public function attributeLabels() {
-        return [
-          'uri' => Yii::t('app', 'URI'),
-          'geometry' => Yii::t('app', 'Geometry'),
-          'type' => Yii::t('app', 'Type'),
-          'experiment' => Yii::t('app', 'Experiment'),
-          'year' => Yii::t('app', 'Year'),
-          'file' => Yii::t('app', 'File')
-        ];
-    }
-    
+       
     /**
      * allows to fill the attributes with the informations in the array given 
      * @param array $array array key => value which contains the metadata of 
@@ -133,9 +117,73 @@ class YiiAgronomicalObjectModel extends WSActiveRecord {
         $elementForWebService[YiiAgronomicalObjectModel::URI] = $this->uri;
         $elementForWebService[YiiAgronomicalObjectModel::EXPERIMENT] = $this->experiment;
         $elementForWebService[YiiAgronomicalObjectModel::ALIAS] = $this->alias;
+        $elementForWebService[YiiAgronomicalObjectModel::TYPE] = $this->type;
+        $elementForWebService[YiiAgronomicalObjectModel::GEOMETRY] = $this->geometry;
+        $elementForWebService[YiiAgronomicalObjectModel::SPECIES] = $this->species;
+        $elementForWebService[YiiAgronomicalObjectModel::VARIETY] = $this->variety;
+        $elementForWebService[YiiAgronomicalObjectModel::ISPARTOF] = $this->parent;
         
         return $elementForWebService;
     }
+    
+    /**
+     * calls web service and return the list of object types of the ontology
+     * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
+     * @return list of the sensors types
+     */
+    public function getObjectTypes($sessionToken) {
+        $scientificObjectConceptUri = "http://www.phenome-fppn.fr/vocabulary/2017#ScientificObject";
+        $params = [];
+        if ($this->pageSize !== null) {
+           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+        }
+        if ($this->page !== null) {
+            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+        }
+        
+        $wsUriModel = new WSUriModel();
+        $requestRes = $wsUriModel->getDescendants($sessionToken, $scientificObjectConceptUri, $params);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                return "token";
+            } else {
+                return $requestRes;
+            }
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * calls web service and return the list of object types of the ontology
+     * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
+     * @return list of the sensors types
+     */
+    public function getExperiments($sessionToken) {
+        $params = [];
+        if ($this->pageSize !== null) {
+           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+        }
+        if ($this->page !== null) {
+            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+        }
+        
+        $wsUriModel = new WSUriModel();
+        $requestRes = $wsUriModel->getDescendants($sessionToken, $scientificObjectConceptUri, $params);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                return "token";
+            } else {
+                return $requestRes;
+            }
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    
     
     /**
      * while the species service is not implemented, get a fixed species uris 

@@ -306,7 +306,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
     if ($dataAgronomicalObjectsProvider->getCount() > 0) {
-        echo "<h3>" . Yii::t('app', 'Linked Agronomical Objects') . "</h3>";
+        echo "<h3>" . Yii::t('app', 'Linked Scientific Objects') . "</h3>";
         echo GridView::widget([
             'dataProvider' => $dataAgronomicalObjectsProvider,
             'columns' => [

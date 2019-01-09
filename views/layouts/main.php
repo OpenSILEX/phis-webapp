@@ -77,7 +77,7 @@ ToastrAsset::register($this);
                                 'url' => ['/experiment/index']
                             ],
                             [
-                                'label' => Icon::show('leaf', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}', ['n' => 2]),
+                                'label' => Icon::show('leaf', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]),
                                 'url' => ['/agronomical-object/index']
                             ],
                             [
