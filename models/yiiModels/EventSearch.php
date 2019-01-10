@@ -88,7 +88,6 @@ class EventSearch extends YiiEventModel {
         }
     }
     
-    
     /**
      * @see http://www.yiiframework.com/doc-2.0/guide-structure-models.html#attribute-labels
      * @return array the labels of the attributes

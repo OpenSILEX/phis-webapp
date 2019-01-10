@@ -26,12 +26,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn']
-            , 'type'
-            , [
-                'attribute' => 'concernsLabel'
-                , 'format' => 'raw'
-                , 'value' => function ($model) {
+            ['class' => 'yii\grid\SerialColumn'],
+            'type',
+            [
+                'attribute' => 'concernsLabel',
+                'format' => 'raw',
+                'value' => function ($model) {
                     $concernsString = "";
                     $first = true;
                     $concernsNumber = 1;
@@ -47,21 +47,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
                     return $concernsString;
                 } 
-            ]
-            , [
-                'attribute' => 'dateRange'
-                , 'format' => 'raw'
-                , 'value' => 'date'
-                , 'filter' => DateRangePicker::widget([
-                    'model'=> $searchModel
-                    , 'attribute' => 'dateRange'
-                    , 'convertFormat'=>true
-                    , 'pluginOptions'=>[
-                        'autoclose'=>true
-                        , 'timePicker'=>true
-                        , 'timePickerIncrement'=>15
-                        , 'locale'=>['format'=> Yii::$app->params['standardDateTimeFormat']]
-                    ]            
+            ],
+            [
+                'attribute' => 'dateRange', 
+                'format' => 'raw', 'value' => 'date',
+                'filter' => DateRangePicker::widget([
+                    'model'=> $searchModel,
+                    'attribute' => 'dateRange',
+                    'convertFormat'=>true,
+                    'pluginOptions'=>[
+                        'autoclose'=>true,
+                        'timePicker'=>true,
+                        'timePickerIncrement'=>15,
+                        'locale'=>['format'=> Yii::$app->params['standardDateTimeFormat']]
+                    ]                            
                 ])
             ]
         ]
