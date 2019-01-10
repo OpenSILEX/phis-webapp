@@ -6,6 +6,7 @@ return [
     'platform' => 'Phis',
     'platformCode' => 'PHS',
     'standardDateTimeFormat' => 'Y-m-dTH:i:sZ',
+    'numberOfConcernsToDisplayInEventIndex' => 3,
     
     //ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts

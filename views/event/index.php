@@ -34,9 +34,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 , 'value' => function ($model) {
                     $concernsString = "";
                     $first = true;
+                    $concernsNumber = 1;
                     foreach ($model->concerns as $concernsItem) {
                             $first ? $first = false : $concernsString .= "<br>";
                             $concernsString .= implode(", ", $concernsItem->labels);
+                            $concernsNumber++;
+                            if ($concernsNumber >= Yii::$app->params['numberOfConcernsToDisplayInEventIndex'])
+                            {
+                                $concernsString .= "<br>...";
+                                break;
+                            }
                     }
                     return $concernsString;
                 } 
