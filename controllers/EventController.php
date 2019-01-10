@@ -11,6 +11,10 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
+use app\models\yiiModels\EventSearch;
+use app\models\yiiModels\YiiModelsConstants;
+use app\models\wsModels\WSConstants;
+use app\components\helpers\SiteMessages;
 
 /**
  * @see yii\web\Controller
@@ -18,39 +22,32 @@ use yii\web\Controller;
  */
 class EventController extends Controller {
     
-    const PROPERTIES = "properties";
-    const RELATION = "relation";
-    const VALUE = "value";
-    const RDF_TYPE = "rdfType";
-    const URI = "uri";
-    
     /**
-     * list all the events
+     * list the events
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new \app\models\yiiModels\EventSearch();
+        $searchModel = new EventSearch();
         
-        //Get the search params and update pagination
         $searchParams = Yii::$app->request->queryParams;
-        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
-            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $searchParams[YiiModelsConstants::PAGE]--;
         }
 
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            if ($searchResult === WSConstants::TOKEN) {
+                return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
             } else {
-                return $this->render('/site/error', [
-                        'name' => Yii::t('app/messages','Internal error'),
-                        'message' => $searchResult]);
+                return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                            SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
+                            SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
             }
         } else {
-            
-            return $this->render('index', ['searchModel' => $searchModel, 'dataProvider' => $searchResult
-            ]);
+            return $this->render('index', [
+                'searchModel' => $searchModel, 
+                'dataProvider' => $searchResult]);
         }
     }
 }

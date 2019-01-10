@@ -17,13 +17,23 @@ use Yii;
 use app\models\yiiModels\YiiEventModel;
 
 /**
- * implements the search action for the events
+ * Search action for the events
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class EventSearch extends YiiEventModel {
     
+    /**
+     * Searched concerns label 
+     *  (e.g. "Plot 445")
+     * @var string
+     */
     public $concernsLabel;
     const CONCERNS_LABEL = 'concernsLabel';
+    
+    /**
+     * Searched date range 
+     * @var string
+     */
     public $dateRange;
     const DATE_RANGE = 'dateRange';
     public $dateRangeStart;
@@ -46,6 +56,7 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
+     * Search Events
      * @param array $sessionToken
      * @param string $params
      * @return mixed DataProvider of the result or string 
@@ -66,10 +77,7 @@ class EventSearch extends YiiEventModel {
         
         if (is_string($findResult)) {
             return $findResult;
-        }  else if (
-            isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-            && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN
-            ) {
+        }  else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN) {
             return \app\models\wsModels\WSConstants::TOKEN;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
