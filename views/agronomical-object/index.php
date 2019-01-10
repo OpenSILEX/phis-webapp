@@ -16,7 +16,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\AgronomicalObjectSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}', ['n' => 2]);
+$this->title = Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('yii', 'Create'), ['create-csv'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
         <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
     </p>
     
@@ -35,8 +35,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            
-            'uri',
+            [
+              'attribute' => 'uri',
+              'format' => 'raw',
+               'value' => 'uri',
+              'filter' =>false,
+            ],
             'alias',
             [
                 'attribute' => 'rdfType',

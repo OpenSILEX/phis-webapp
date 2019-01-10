@@ -10,9 +10,11 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use yii\helpers\Url;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\controllers\ExperimentController;
+use app\components\widgets\LinkObjectsWidget;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiExperimentModel */
@@ -134,6 +136,40 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $toReturn;
                 }
             ],
+            [
+                'attribute' => 'variables',
+                'format' => 'raw',
+                'value' => function ($model) use ($variables) {
+                    return LinkObjectsWidget::widget([
+                        "uri" => $model->uri,
+                        "updateLinksAjaxCallUrl" => Url::to(['experiment/update-variables']),
+                        "items" => $variables,
+                        "actualItems" => is_array($model->variables) ? array_keys($model->variables) : [],
+                        "itemViewRoute" => "variable/view",
+                        "conceptLabel" => "measured variables",
+                        "canUpdate" => true,
+                        "updateMessage" => Yii::t('app', 'Update measured variables'),
+                        "infoMessage" => Yii::t('app/messages', 'When you change measured variables in the list, click on the check button to update them.')
+                    ]);
+                }
+            ],
+            [
+                'attribute' => 'sensors',
+                'format' => 'raw',
+                'value' => function ($model) use ($sensors) {
+                    return LinkObjectsWidget::widget([
+                        "uri" => $model->uri,
+                        "updateLinksAjaxCallUrl" => Url::to(['experiment/update-sensors']),
+                        "items" => $sensors,
+                        "actualItems" => is_array($model->sensors) ? array_keys($model->sensors) : [],
+                        "itemViewRoute" => "sensor/view",
+                        "conceptLabel" => "sensors",
+                        "canUpdate" => true,
+                        "updateMessage" => Yii::t('app', 'Update sensors'),
+                        "infoMessage" => Yii::t('app/messages', 'When you change sensors in the list, click on the check button to update them.')
+                    ]);
+                }
+            ]
         ];
     } else {
         $attributes = [
@@ -194,6 +230,40 @@ $this->params['breadcrumbs'][] = $this->title;
             //'groups',
             'keywords',
             'comment:ntext',
+            [
+                'attribute' => 'variables',
+                'format' => 'raw',
+                'value' => function ($model) use ($variables) {
+                    return LinkObjectsWidget::widget([
+                        "uri" => $model->uri,
+                        "updateLinksAjaxCallUrl" => Url::to(['experiment/update-variables']),
+                        "items" => $variables,
+                        "actualItems" => is_array($model->variables) ? array_keys($model->variables) : [],
+                        "itemViewRoute" => "variable/view",
+                        "conceptLabel" => "measured variables",
+                        "canUpdate" => false,
+                        "updateMessage" => Yii::t('app', 'Update measured variables'),
+                        "infoMessage" => Yii::t('app/messages', 'When you change measured variables in the list, click on the check button to update them.')
+                    ]);
+                }
+            ],
+            [
+                'attribute' => 'sensors',
+                'format' => 'raw',
+                'value' => function ($model) use ($sensors) {
+                    return LinkObjectsWidget::widget([
+                        "uri" => $model->uri,
+                        "updateLinksAjaxCallUrl" => Url::to(['experiment/update-sensors']),
+                        "items" => $sensors,
+                        "actualItems" => is_array($model->sensors) ? array_keys($model->sensors) : [],
+                        "itemViewRoute" => "sensor/view",
+                        "conceptLabel" => "sensors",
+                        "canUpdate" => false,
+                        "updateMessage" => Yii::t('app', 'Update sensors'),
+                        "infoMessage" => Yii::t('app/messages', 'When you change sensors in the list, click on the check button to update them.')
+                    ]);
+                }
+            ]
         ];
     }
 
@@ -236,7 +306,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
     if ($dataAgronomicalObjectsProvider->getCount() > 0) {
-        echo "<h3>" . Yii::t('app', 'Linked Agronomical Objects') . "</h3>";
+        echo "<h3>" . Yii::t('app', 'Linked Scientific Objects') . "</h3>";
         echo GridView::widget([
             'dataProvider' => $dataAgronomicalObjectsProvider,
             'columns' => [

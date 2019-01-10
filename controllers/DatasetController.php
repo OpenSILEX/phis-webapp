@@ -41,7 +41,7 @@ class DatasetController extends Controller {
     //\SILEX:TODO
     
     const DELIM_CSV = ";";
-    const AGRONOMICAL_OBJECT_URI = "AgronomicalObjectURI";
+    const AGRONOMICAL_OBJECT_URI = "ScientificObjectURI";
     const DATE = "Date";
     const VALUE = "Value";
     
@@ -190,7 +190,7 @@ class DatasetController extends Controller {
                             $error = [];
                             $error[DatasetController::ERRORS_LINE] = $i + 1; //+1 because header isn't in given data
                             $error[DatasetController::ERRORS_COLUMN] = $columnNumber;
-                            $error[DatasetController::ERRORS_MESSAGE] = Yii::t('app/message', 'Unknown agronomical object.');
+                            $error[DatasetController::ERRORS_MESSAGE] = Yii::t('app/message', 'Unknown scientific object.');
                             $rowsErrors[] = $error;
                         }
                         

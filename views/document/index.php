@@ -14,6 +14,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\DocumentSearch */
@@ -38,7 +39,19 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             'title',
             'creator',
-            'creationDate',
+            [
+              'attribute' => 'creationDate',
+              'format' => 'raw',
+               'value' => 'creationDate',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'creationDate',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
             'language',
 
             ['class' => 'yii\grid\ActionColumn',

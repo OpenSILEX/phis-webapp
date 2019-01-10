@@ -21,6 +21,7 @@
  use app\models\yiiModels\YiiAgronomicalObjectModel;
  use app\models\yiiModels\AgronomicalObjectSearch;
  use app\models\yiiModels\YiiExperimentModel;
+ use app\models\wsModels\WSConstants;
 
 require_once '../config/config.php';
  
@@ -72,6 +73,13 @@ require_once '../config/config.php';
       * @var REPETITION
       */
      const REPETITION = "Repetition";
+     
+    /**
+      * the replication column for the csv files
+      * @var RDF_TYPE
+      */
+    const RDF_TYPE = "RdfType";
+     
           
      /**
      * define the behaviors
@@ -89,14 +97,79 @@ require_once '../config/config.php';
     }
     
     /**
+     * get the types of scientific object
+     * @return array list of the obejct types uris 
+     * e.g. [
+     *          "UAV",
+     *          "Pot"
+     *      ]
+     */
+    public function getObjectTypes() {
+        $model = new YiiAgronomicalObjectModel();
+        
+        $objectsTypes = [];
+        $totalPages = 1;
+        for ($i = 0; $i < $totalPages; $i++) {
+            $model->page = $i;
+            $scientificObjectConcepts = $model->getObjectTypes(Yii::$app->session['access_token']);
+            if ($scientificObjectConcepts === "token") {
+                return "token";
+            } else {
+                $totalPages = $scientificObjectConcepts[\app\models\wsModels\WSConstants::PAGINATION][\app\models\wsModels\WSConstants::TOTAL_PAGES];
+
+                foreach ($scientificObjectConcepts[\app\models\wsModels\WSConstants::DATA] as $objectType) {
+                    $objectsTypes[] = explode("#", $objectType->uri)[1];
+                }
+            }
+        }
+        
+        return $objectsTypes;
+    }
+    
+    /**
+     * get the experiments
+     * @return array list of species
+     */
+    public function getExperimentsURI() {
+        $model = new YiiExperimentModel();
+        $experimentsURI = [];
+        $experiments = $model->getExperimentsList(Yii::$app->session['access_token']);
+        if ($experiments === "token") {
+            return "token";
+        } else {
+            foreach ($experiments as $experiment){
+                $experimentsURI[] = $experiment->uri;
+            }
+            return $experimentsURI;
+        }
+    }
+    
+    /**
+     * get the species 
+     * @return array list of species
+     */
+    public function getSpecies() {
+        $model = new YiiAgronomicalObjectModel();
+        
+        $species = array();
+        $speciesURIList = $model->getSpeciesUriList(Yii::$app->session['access_token']);
+
+                
+        return $speciesURIList;
+    }
+    
+    
+    
+    
+    /**
      * get the csv file header
      * @return array list of the columns names for an agronomical objects file
      */
     private function getHeaderList() {
-        return [AgronomicalObjectController::ALIAS, AgronomicalObjectController::GEOMETRY, 
-                AgronomicalObjectController::EXPERIMENT_URI, AgronomicalObjectController::SPECIES,
-                AgronomicalObjectController::VARIETY, AgronomicalObjectController::EXPERIMENT_MODALITIES,
-                AgronomicalObjectController::REPETITION];
+        return [AgronomicalObjectController::ALIAS, AgronomicalObjectController::RDF_TYPE,  
+                AgronomicalObjectController::EXPERIMENT_URI, AgronomicalObjectController::GEOMETRY, 
+                AgronomicalObjectController::SPECIES, AgronomicalObjectController::VARIETY, 
+                AgronomicalObjectController::EXPERIMENT_MODALITIES, AgronomicalObjectController::REPETITION];
     }
     
     /**
@@ -107,7 +180,8 @@ require_once '../config/config.php';
      *                 false if not
      */
     private function existRequiredColumns($csvHeader) {
-        return in_array(AgronomicalObjectController::GEOMETRY, $csvHeader) 
+        return in_array(AgronomicalObjectController::ALIAS, $csvHeader) 
+                && in_array(AgronomicalObjectController::RDF_TYPE, $csvHeader) 
                 && in_array(AgronomicalObjectController::EXPERIMENT_URI, $csvHeader);
     }
     
@@ -130,7 +204,7 @@ require_once '../config/config.php';
                     $headersNamesNumber[$headerName] = $keyNumer;
                 }             }
         } else {
-            $headersNamesNumber["Error"][] = Yii::t('app/messages','Required column missing (Geometry or ExperimentURI)');
+            $headersNamesNumber["Error"][] = Yii::t('app/messages','Required column missing');
         }
         
         return $headersNamesNumber;
@@ -162,7 +236,7 @@ require_once '../config/config.php';
      * @return true si la geometry est correcte, 
      *         false sinon
      */
-    private function isGeometryOk($geometry) {
+    private function isGeometryOk($geometry) {        
         $explodeByOpenPar = explode("((", $geometry);
         if (count($explodeByOpenPar) === 2) {
             if (strtoupper($explodeByOpenPar[0]) === "POLYGON " 
@@ -233,13 +307,14 @@ require_once '../config/config.php';
             $experiments = [];
             for ($i = 1; $i < count($csvContent); $i++) {
                 $row = str_getcsv($csvContent[$i], AgronomicalObjectController::DELIM_CSV);
-                
-                if (!$this->isGeometryOk($row[$headerCheck["Geometry"]])) {
-                    $error = null;
-                    $error["line"] = "L." . ($i + 1);
-                    $error["column"] = AgronomicalObjectController::GEOMETRY;
-                    $error["message"] = Yii::t('app/messages', 'Bad geometry given') . ". " . Yii::t('app/messages', 'Expected format') . " : POLYGON ((1.33 2.33, 3.44 5.66, 4.55 5.66, 6.77 7.88, 1.33 2.33))";
-                    $errors[] = $error;
+                If ($row[$headerCheck["Geometry"]] != "") {
+                    if (!$this->isGeometryOk($row[$headerCheck["Geometry"]])) {
+                        $error = null;
+                        $error["line"] = "L." . ($i + 1);
+                        $error["column"] = AgronomicalObjectController::GEOMETRY;
+                        $error["message"] = Yii::t('app/messages', 'Bad geometry given') . ". " . Yii::t('app/messages', 'Expected format') . " : POLYGON ((1.33 2.33, 3.44 5.66, 4.55 5.66, 6.77 7.88, 1.33 2.33))";
+                        $errors[] = $error;
+                        }
                 }
                 if (!in_array($row[$headerCheck[AgronomicalObjectController::EXPERIMENT_URI]], $experiments)) {
                     if (!$this->existExperiment($row[$headerCheck[AgronomicalObjectController::EXPERIMENT_URI]])) {                        
@@ -250,12 +325,19 @@ require_once '../config/config.php';
                         $errors[] = $error;
                     }
                     $experiments[] = $row[$headerCheck[AgronomicalObjectController::EXPERIMENT_URI]];
-                }
+                }               
                 if (!$this->existSpecies($row[$headerCheck["Species"]])) {
                     $error = null;
                     $error["line"] = "L." . ($i + 1);
                     $error["column"] = AgronomicalObjectController::SPECIES;
                     $error["message"] = Yii::t('app/messages', 'Unknown species') . " : " . $row[$headerCheck[AgronomicalObjectController::SPECIES]];
+                    $errors[] = $error;
+                }
+                if ($row[$headerCheck["Alias"]] == "") {
+                    $error = null;
+                    $error["line"] = "L." . ($i + 1);
+                    $error["column"] = AgronomicalObjectController::ALIAS;
+                    $error["message"] = Yii::t('app/messages', 'Alias is missing');
                     $errors[] = $error;
                 }
             }
@@ -303,112 +385,126 @@ require_once '../config/config.php';
             && !empty($value);
     }
     
-    /**
-     * 
-     * @param array $fileContent the csv file content
-     * @param array $correspondances the columns numbers corresponding to the 
-     *                               expected columns (if the file columns are 
-     *                               not in the good order) 
-     * @return array data of the attribute $fileContent 
-     *               in the web service expected format
-     */
-    private function getArrayForWebServiceCreate($fileContent, $correspondances) {
-        $cpt = 0;
-        foreach ($fileContent as $row) {
-            if ($cpt > 0) {
-                $plot = str_getcsv($row, AgronomicalObjectController::DELIM_CSV);
-                $p = null;
-                $p["geometry"] = $plot[$correspondances[AgronomicalObjectController::GEOMETRY]];
-                $p["experiment"] = $plot[$correspondances[AgronomicalObjectController::EXPERIMENT_URI]];
-                $p["rdfType"] = Yii::$app->params['Plot'];
-                
-                if (isset($correspondances[AgronomicalObjectController::ALIAS])) {
-                    $alias["relation"] = Yii::$app->params['hasAlias'];
-                    $alias["value"] = $plot[$correspondances[AgronomicalObjectController::ALIAS]];
-                    $p["properties"][] = $alias;
-                }
-                if (isset($correspondances[AgronomicalObjectController::SPECIES])) {
-                    $species["rdfType"] = Yii::$app->params['Species'];
-                    $species["relation"] = Yii::$app->params['fromSpecies'];
-                    $species["value"] = $plot[$correspondances[AgronomicalObjectController::SPECIES]];
-                    $p["properties"][] = $species;
-                }
-                if (isset($correspondances[AgronomicalObjectController::VARIETY]) && $this->valueIsNotEmpty($plot[$correspondances[AgronomicalObjectController::VARIETY]])) {
-                    $variety["rdfType"] = Yii::$app->params['Variety'];
-                    $variety["relation"] = Yii::$app->params['fromVariety'];
-                    $value = str_replace(" ", "_", $plot[$correspondances[AgronomicalObjectController::VARIETY]]);
-                    $variety["value"] = $value;
-                    $p["properties"][] = $variety;
-                }
-                if (isset($correspondances[AgronomicalObjectController::EXPERIMENT_MODALITIES])) {
-                    $experimentModalities["relation"] = Yii::$app->params['hasExperimentModalities'];
-                    $experimentModalities["value"] = $plot[$correspondances[AgronomicalObjectController::EXPERIMENT_MODALITIES]];
-                    $p["properties"][] = $experimentModalities;
-                }
-                if (isset($correspondances[AgronomicalObjectController::REPETITION])) {
-                    $repetition["relation"] = Yii::$app->params['hasRepetition'];
-                    $repetition["value"] = $plot[$correspondances[AgronomicalObjectController::REPETITION]];
-                    $p["properties"][] = $repetition;
-                }
-                $forWebService[] = $p;
-            }
-            $cpt++;
-        }
 
-        return $forWebService;
+    
+
+    /**
+     * generated the scientific object creation page
+     * @return mixed
+     */
+    public function actionCreate() {
+        $sessionToken = Yii::$app->session['access_token'];
+        $model = new YiiAgronomicalObjectModel();
+        
+        $objectsTypes = $this->getObjectTypes();
+        if ($objectsTypes === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        }
+        $experiments = $this->getExperimentsURI();
+        if ($experiments === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        }        
+        
+        $species = $this ->getSpecies();
+        
+        return $this->render('create', [
+            'model' => $model,
+            'objectsTypes' => json_encode($objectsTypes, JSON_UNESCAPED_SLASHES),
+            'experiments' => json_encode($experiments, JSON_UNESCAPED_SLASHES),
+            'species' => json_encode($species,JSON_UNESCAPED_SLASHES)
+        ]);
     }
     
     /**
-     * create agronomical objects with a csv file. 
-     * Render the create by csv action
-     * @return mixed
+     * create the given objects
+     * @return string the json of the creation return
      */
-    public function actionCreateCsv() {
-        $agronomicalObjectModel = new YiiAgronomicalObjectModel();
+    public function actionCreateMultipleScientificObjects() {
+        $objects = json_decode(Yii::$app->request->post()["objects"]);
+        $sessionToken = Yii::$app->session['access_token'];
+        
+        $return = [
+            "objectUris" => [],
+            "messages" => []
+        ];        
 
-        //the form has been complete by the user
-        if ($agronomicalObjectModel->load(Yii::$app->request->post())) {
-            //Register the file
-            $document = UploadedFile::getInstance($agronomicalObjectModel, 'file');
-            $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/" . $document->name;
-            $document->saveAs($serverFilePath);
-            
-            //Read the file 
-            $fileContent = str_getcsv(file_get_contents($serverFilePath), "\n");
-            
-            unlink($serverFilePath);
-            
-            $csvErrors = $this->getCSVErrors($fileContent);
-            if ($csvErrors != null) {
-                $errorMessage = $this->getErrorMessageToPrint($csvErrors);
-                Yii::$app->getSession()->setFlash('error', $errorMessage);
-                return $this->render('createCsv', [
-                       'model' => $agronomicalObjectModel
-                ]);
-            } else {
-                $correspondancesCSV = $this->getCSVHeaderCorrespondancesOrErrors(str_getcsv($fileContent[0], AgronomicalObjectController::DELIM_CSV));
-                $forWebService = $this->getArrayForWebServiceCreate($fileContent, $correspondancesCSV);
-                $requestRes = $agronomicalObjectModel->insert(Yii::$app->session['access_token'], $forWebService);
+        if (count($objects) > 0) {
+
+            foreach ($objects as $object) {
+                $forWebService = null;
+                $scientificObjectModel = new YiiAgronomicalObjectModel();
                 
-                if (is_string($requestRes)) {//Request error
-                    return $this->render('/site/error', [
-                        'name' => Yii::t('app/messages','Internal error'),
-                        'message' => $requestRes]);
-                } else if (is_array($requestRes) && isset($requestRes["token"])) { //Unlogged user
-                    return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-                } else { //Data has been registered
-                    Yii::$app->getSession()->setFlash('created', "<div class=\"alert alert-success\" role=\"alert\"><b>" . count($forWebService) . " " . Yii::t('app', 'Data Inserted') . "</b></div>");
-                    return $this->render('createCsv', [
-                       'model' => $agronomicalObjectModel
-                    ]);
+                $scientificObjectModel->alias = $object[1];
+                $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
+                $scientificObjectModel->experiment = $object[3];
+                $scientificObjectModel->geometry = $object[4];
+                $scientificObjectModel->parent = $object[5];
+                $scientificObjectModel->species = $object[6];
+                $scientificObjectModel->variety = $object[7];                
+                
+                $scientificObject = $scientificObjectModel->attributesToArray();
+                $forWebService = $this->getArrayForWebServiceCreate($scientificObject);
+                $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
+                
+                
+                if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
+                    $return["objectUris"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
+                    $return["messages"][] = "object saved";
                 }
-            }   
-            
-        } else {
-            return $this->render('createCsv', [
-                   'model' => $agronomicalObjectModel
-                ]);
+                else {
+                    $return["objectUris"][] = null;
+                    $return["messages"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->details;
+                }
+            }      
+          
+        }        
+        return json_encode($return, JSON_UNESCAPED_SLASHES);
+    }
+    
+    /**
+     * 
+     * @param string $vectorType
+     * @return string the complete vector type uri corresponding to the given 
+     *                vector type
+     *                e.g. http://www.phenome-fppn.fr/vocabulary/2017#UAV
+     */
+    private function getObjectTypeCompleteUri($objectType) {
+        $objectTypesList = $this->getObjectsTypesUris();
+        foreach ($objectTypesList as $objectTypeUri) {
+            if (strpos($objectTypeUri, $objectType)) {
+                return $objectTypeUri;
+            }
         }
+        return null;
+    }
+    
+        /**
+     * get the vectors types (complete uri)
+     * @return array list of the vectors types uris 
+     * e.g. [
+     *          "http://www.phenome-fppn.fr/vocabulary/2017#UAV",
+     *          "http://www.phenome-fppn.fr/vocabulary/2017#Pot"
+     *      ]
+     */
+    public function getObjectsTypesUris() {
+        $model = new YiiAgronomicalObjectModel();
+        
+        $objectsTypes = [];
+        $totalPages = 1;
+        for ($i = 0; $i < $totalPages; $i++) {
+            $model->page = $i;
+            $objectsConcepts = $model->getObjectTypes(Yii::$app->session['access_token']);
+            if ($objectsConcepts === "token") {
+                return "token";
+            } else {
+                $totalPages = $objectsConcepts[\app\models\wsModels\WSConstants::PAGINATION][\app\models\wsModels\WSConstants::TOTAL_PAGES];
+                foreach ($objectsConcepts[\app\models\wsModels\WSConstants::DATA] as $objectType) {
+                    $objectsTypes[] = $objectType->uri;
+                }
+            }
+        }
+        
+        return $objectsTypes;
     }
     
     /**
@@ -424,6 +520,55 @@ require_once '../config/config.php';
             return null;
         }
     }
+    
+        /**
+     * @update Dec. 2018 : the geometry becomes facultative and it is required to define the rdfType
+     * @param array $fileContent the csv file content
+     * @param array $correspondances the columns numbers corresponding to the 
+     *                               expected columns (if the file columns are 
+     *                               not in the good order) 
+     * @return array data of the attribute $fileContent 
+     *               in the web service expected format
+     */
+    private function getArrayForWebServiceCreate($scientificObject) {
+        
+        if ($scientificObject["alias"] != null) {
+            $alias["relation"] = Yii::$app->params['rdfsLabel'];
+            $alias["value"] = $scientificObject["alias"];
+            $p["properties"][] = $alias;
+        }
+        
+        $p["rdfType"] = $scientificObject["type"];
+        $p["experiment"] = $scientificObject["experiment"];
+        $p["geometry"] = $scientificObject["geometry"];
+        
+        if ($scientificObject["ispartof"] != null) {
+            $parent["relation"] = Yii::$app->params['isPartOf'];
+            $parent["value"] = $scientificObject["ispartof"];
+            $p["properties"][] = $parent;
+        }
+        
+        if ($scientificObject["species"] != null) {
+            $species["rdfType"] = Yii::$app->params['Species'];
+            $species["relation"] = Yii::$app->params['fromSpecies'];
+            $species["value"] = $scientificObject["species"];
+            $p["properties"][] = $species;
+        }
+        
+        if ($scientificObject["variety"] != null) {
+            $variety["rdfType"] = Yii::$app->params['Variety'];
+            $variety["relation"] = Yii::$app->params['fromVariety'];
+            $value = str_replace(" ", "_", $scientificObject["variety"]);
+            $variety["value"] = $value;
+            $p["properties"][] = $variety;
+        }
+       
+        $forWebService[] = $p;    
+
+        return $forWebService;
+    }
+    
+    
     
     /**
      * agronomical objects index (list of agronomical objects)
@@ -491,9 +636,9 @@ require_once '../config/config.php';
             //get all the data (if multiple pages) and write them in a file
             $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
             
-            $headerFile = "AgronomicalObjectURI" . AgronomicalObjectController::DELIM_CSV .
+            $headerFile = "ScientificObjectURI" . AgronomicalObjectController::DELIM_CSV .
                           "Alias" . AgronomicalObjectController::DELIM_CSV .
-                          "Type" . AgronomicalObjectController::DELIM_CSV .
+                          "RdfType" . AgronomicalObjectController::DELIM_CSV .
                           "ExperimentURI" . AgronomicalObjectController::DELIM_CSV . 
                           "\n";
             

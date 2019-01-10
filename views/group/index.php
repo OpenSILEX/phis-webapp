@@ -37,10 +37,32 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'uri',
+            [
+              'attribute' => 'uri',
+              'format' => 'raw',
+               'value' => 'uri',
+              'filter' =>false,
+            ],
             'name',
-            'level',
-
+            [
+                'attribute' => 'level',
+                'format' => 'raw',
+                'filter' => \kartik\select2\Select2::widget([
+                            'attribute' => 'level',
+                            'model' => $searchModel,
+                            'data' => [
+                                'Guest' => Yii::t('app', 'Guest'),
+                                'Owner' => Yii::t('app', 'Owner')],
+                            'options' => [
+                                'placeholder' => Yii::t('app', 'Select level'),
+                                'multiple' => false,
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]),
+            ],
+            
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',
                 'buttons' => [
