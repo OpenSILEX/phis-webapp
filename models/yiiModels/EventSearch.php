@@ -67,10 +67,8 @@ class EventSearch extends YiiEventModel {
         if (is_string($findResult)) {
             return $findResult;
         }  else if (
-            isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}
-                    ->{'details'}) 
-            && $findResult->{'metadata'}->{'status'}[0]->{'exception'}
-                    ->{'details'} === \app\models\wsModels\WSConstants::TOKEN
+            isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
+            && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN
             ) {
             return \app\models\wsModels\WSConstants::TOKEN;
         } else {
