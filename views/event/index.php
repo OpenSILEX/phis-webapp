@@ -15,8 +15,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\daterange\DateRangePicker;
 
-$this->title = Yii::t('app', '{n, plural, =1{Event} other{Events}}'
-        , ['n' => 2]);
+$this->title = Yii::t('app', '{n, plural, =1{Event} other{Events}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="event-index">
@@ -30,36 +29,34 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn']
             , 'type'
             , [
-                'attribute' => 'concernsItemLabel',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    $concernsItemsString = "";
+                'attribute' => 'concernsLabel'
+                , 'format' => 'raw'
+                , 'value' => function ($model) {
+                    $concernsString = "";
                     $first = true;
-                    foreach ($model->concernsItems as $concernsItem) {
-                            $first ? $first = false 
-                                    : $concernsItemsString .= "<br>";
-                            $concernsItemsString 
-                                    .= implode(", ", $concernsItem->labels);
+                    foreach ($model->concerns as $concernsItem) {
+                            $first ? $first = false : $concernsString .= "<br>";
+                            $concernsString .= implode(", ", $concernsItem->labels);
                     }
-                    return $concernsItemsString;
-              }
+                    return $concernsString;
+                } 
             ]
-            ,  [
-                'format' => 'raw',
-                'value' => 'dateTimeString',
-                'attribute' => 'dateTimeString',
-                'filter' => DateRangePicker::widget([
-                    'attribute' => 'dateRange',
-                    'model' => $searchModel, 
-                    'convertFormat'=>true,
-                    'pluginOptions'=>[
-                        'timePicker'=>true,
-                        'timePickerIncrement'=>15,
-                        'locale'=>['format'=>
-                            Yii::$app->params['standardDateTimeFormat']]
+            , [
+                'attribute' => 'dateRange'
+                , 'format' => 'raw'
+                , 'value' => 'date'
+                , 'filter' => DateRangePicker::widget([
+                    'model'=> $searchModel
+                    , 'attribute' => 'dateRange'
+                    , 'convertFormat'=>true
+                    , 'pluginOptions'=>[
+                        'autoclose'=>true
+                        , 'timePicker'=>true
+                        , 'timePickerIncrement'=>15
+                        , 'locale'=>['format'=> Yii::$app->params['standardDateTimeFormat']]
                     ]            
                 ])
             ]
-        ],
+        ]
     ]); ?>
 </div>

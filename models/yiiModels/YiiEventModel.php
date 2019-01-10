@@ -12,11 +12,11 @@
 
 namespace app\models\yiiModels;
 
+use Yii;
+
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSUriModel;
 use app\models\wsModels\WSEventModel;
-
-use Yii;
 
 /**
  * The yii model for an  Event. 
@@ -40,13 +40,13 @@ class YiiEventModel extends WSActiveRecord {
     /**
      * @var string
      */
-    public $concernsItems; 
-    const CONCERNS_ITEMS = "concernsItems";
+    public $concerns; 
+    const CONCERNS = "concerns";
     /**
      * @var string 
      */
-    public $dateTimeString;
-    const DATETIME_STRING = "dateTimeString";
+    public $date;
+    const DATE = "date";
     
     public $properties;
     const PROPERTIES = "properties";
@@ -57,8 +57,7 @@ class YiiEventModel extends WSActiveRecord {
         $this->wsModel = new WSEventModel();
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize 
                 : $this->pageSize = null;
-        ($page !== null || $page !== "") ? $this->page = $page 
-                : $this->page = null;
+        ($page !== null || $page !== "") ? $this->page = $page : $this->page = null;
     }
     
     /**
@@ -67,8 +66,12 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function rules() {
        return [ 
-           [['uri'], 'required']
-           , [['type', 'concernsItems', 'dateTimeString', 'documents','properties'], 'safe']
+           [[YiiEventModel::URI], 'required']
+            , [[YiiEventModel::TYPE, 
+                YiiEventModel::CONCERNS, 
+                YiiEventModel::DATE, 
+                YiiEventModel::PROPERTIES
+            ] , 'safe']
         ]; 
     }
     
@@ -78,11 +81,10 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'uri' => 'URI'
-            , 'type' => Yii::t('app', 'Type')
-            , 'concernsItems' => Yii::t('app', 'Concerned Elements')
-            , 'dateTimeString' => Yii::t('app', 'Date')
-            , 'properties' => Yii::t('app', 'Properties')
+            YiiEventModel::URI => 'URI'
+            , YiiEventModel::TYPE => Yii::t('app', 'Type')
+            , YiiEventModel::PROPERTIES => Yii::t('app', 'Properties')
+            , YiiEventModel::DATE => Yii::t('app', 'Date')
         ];
     }
     
@@ -94,11 +96,11 @@ class YiiEventModel extends WSActiveRecord {
     protected function arrayToAttributes($array) {
         $this->uri = $array[YiiEventModel::URI];
         $this->type = $array[YiiEventModel::TYPE];
-        if ($array[YiiEventModel::CONCERNS_ITEMS]) {
-            $this->concernsItems 
-                    = get_object_vars($array[YiiEventModel::CONCERNS_ITEMS]);
+        if ($array[YiiEventModel::CONCERNS]) {
+            $this->concerns 
+                    = get_object_vars($array[YiiEventModel::CONCERNS]);
         } 
-        $this->dateTimeString = $array[YiiEventModel::DATETIME_STRING];
+        $this->date = $array[YiiEventModel::DATE];
         $this->properties = $array[YiiEventModel::PROPERTIES];
     }
     
@@ -129,8 +131,7 @@ class YiiEventModel extends WSActiveRecord {
                 = "http://www.phenome-fppn.fr/vocabulary/2018/oeev#Event";
         $params = [];
         if ($this->pageSize !== null) {
-           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] 
-                   = $this->pageSize; 
+           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
         }
         if ($this->page !== null) {
             $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;

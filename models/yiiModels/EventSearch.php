@@ -12,6 +12,8 @@
 
 namespace app\models\yiiModels;
 
+use Yii;
+
 use app\models\yiiModels\YiiEventModel;
 
 /**
@@ -20,8 +22,10 @@ use app\models\yiiModels\YiiEventModel;
  */
 class EventSearch extends YiiEventModel {
     
-    public $concernsItemLabel;
-    const CONCERNS_ITEM_LABEL = 'concernsItemLabel';
+    public $concernsLabel;
+    const CONCERNS_LABEL = 'concernsLabel';
+    public $dateRange;
+    const DATE_RANGE = 'dateRange';
     public $dateRangeStart;
     const DATE_RANGE_START = 'dateRangeStart';
     public $dateRangeEnd;
@@ -31,8 +35,14 @@ class EventSearch extends YiiEventModel {
      * @inheritdoc
      */
     public function rules() {
-        return [[['type', 'concernsItemLabel', 'dateRangeStart', 'dateRangeEnd']
-            , 'safe']]; 
+        return [[
+            [
+                YiiEventModel::TYPE,
+                EventSearch::CONCERNS_LABEL,
+                EventSearch::DATE_RANGE,
+                EventSearch::DATE_RANGE_START,
+                EventSearch::DATE_RANGE_END
+            ],  'safe']]; 
     }
     
     /**
@@ -52,7 +62,7 @@ class EventSearch extends YiiEventModel {
         }
         
         //Request to the web service and return result
-        $findResult = $this->find($sessionToken, $this->searchFiltersArray());
+        $findResult = $this->find($sessionToken, $this->attributesToArray());
         
         if (is_string($findResult)) {
             return $findResult;
@@ -80,6 +90,40 @@ class EventSearch extends YiiEventModel {
         }
     }
     
+    
+    /**
+     * @see http://www.yiiframework.com/doc-2.0/guide-structure-models.html#attribute-labels
+     * @return array the labels of the attributes
+     */
+    public function attributeLabels() {
+        return array_merge(
+                parent::attributeLabels(),
+                [
+                    EventSearch::CONCERNS_LABEL => Yii::t('app', 'Concerned Elements'),
+                    EventSearch::DATE_RANGE => Yii::t('app', 'Date')
+                ]
+        );
+    }
+    
+    public function setAttributes($values, $safeOnly = true) {
+        parent::setAttributes($values, $safeOnly);
+            
+        if (is_array($values)) {
+            if (isset($values[EventSearch::DATE_RANGE])){
+                $date_range = $values[EventSearch::DATE_RANGE];
+                if (!empty($date_range))
+                {
+                    $dateRangeArray = explode(" - ", $date_range);
+                    $this->dateRangeStart = $dateRangeArray[0];
+                    
+                    if (isset($dateRangeArray[1])){
+                        $this->dateRangeEnd = $dateRangeArray[1];
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * transform the json into array
      * @param json jsonList
@@ -95,13 +139,16 @@ class EventSearch extends YiiEventModel {
         return $toReturn;
     }
     
-    private function searchFiltersArray() {
-        $searchFiltersArray = parent::attributesToArray();
-        $searchFiltersArray[YiiEventModel::TYPE] 
-                = $this->type;
-        $searchFiltersArray[EventSearch::CONCERNS_ITEM_LABEL] 
-                = $this->concernsItemLabel;
-        return $searchFiltersArray;
+    /**
+     * @inheritdoc
+     */
+    public function attributesToArray() {
+        //return parent::attributesToArray();
+        return [
+            YiiEventModel::TYPE => $this->type,
+            EventSearch::CONCERNS_LABEL => $this->concernsLabel,
+            EventSearch::DATE_RANGE_START => $this->dateRangeStart,
+            EventSearch::DATE_RANGE_END => $this->dateRangeEnd
+        ];
     }
-
 }
