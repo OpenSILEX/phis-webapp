@@ -128,6 +128,33 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ])
     ?>
+    
+    <!-- List of experiments -->
+    <?= "<h3>" . Yii::t('app', 'Experiments') . "</h3>"; ?>
+    <?= GridView::widget([
+        'dataProvider' => ${ProjectController::EXPERIMENTS},
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            
+            'uri',
+            'alias',
+            'startDate',
+            'endDate',
+            'field',
+            'campaign',
+
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view}',
+                'buttons' => [
+                    'view' => function($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
+                                        ['experiment/view', 'id' => $model->uri]); 
+                    },
+                ]
+            ],
+        ],
+    ]); ?>
+    
     <!-- Project linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [

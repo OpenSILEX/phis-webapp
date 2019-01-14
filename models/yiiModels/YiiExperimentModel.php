@@ -122,6 +122,15 @@ class YiiExperimentModel extends WSActiveRecord {
     public $projects;
     const PROJECTS = "projects";
     const PROJECTS_URIS = "projectsUris";
+    
+    /**
+     * the project uri where the experiment is searched. 
+     *      (e.g http://www.phenome-fppn.fr/phenovia/RAPSODYN)
+     * @var string
+     */
+    public $projectUri;
+    const PROJECT_URI = "projectUri";
+    
     /**
      * the experiment's scientific supervisors contacts (email).
      *      (e.g john.doe[at]inra.fr) 
@@ -332,6 +341,11 @@ class YiiExperimentModel extends WSActiveRecord {
         $elementForWebService[YiiExperimentModel::GROUPS] = $this->groups;
         $elementForWebService[YiiExperimentModel::PROJECTS_URIS] = $this->projects;  
         $elementForWebService[YiiExperimentModel::CROP_SPECIES] = $this->cropSpecies;
+
+        // Project Uri is only used in case of search and not in case of posting data
+        if ($this->projectUri != null) {
+            $elementForWebService[YiiExperimentModel::PROJECT_URI] = $this->projectUri;          
+        }
         
         if ($this->groups != null) {
             foreach ($this->groups as $groupUri) {
