@@ -13,7 +13,9 @@
 namespace app\models\yiiModels;
 
 use Yii;
+use DateTime;
 
+use app\models\wsModels\WSConstants;
 use app\models\yiiModels\YiiEventModel;
 
 /**
@@ -23,12 +25,12 @@ use app\models\yiiModels\YiiEventModel;
 class EventSearch extends YiiEventModel {
     
     /**
-     * Searched concerns label 
+     * Searched concerned item's label 
      *  (e.g. "Plot 445")
      * @var string
      */
-    public $concernsLabel;
-    const CONCERNS_LABEL = 'concernsLabel';
+    public $concernedItemLabel;
+    const CONCERNED_ITEM_LABEL = 'concernedItemLabel';
     
     /**
      * Searched date range 
@@ -48,7 +50,7 @@ class EventSearch extends YiiEventModel {
         return [[
             [
                 YiiEventModel::TYPE,
-                EventSearch::CONCERNS_LABEL,
+                EventSearch::CONCERNED_ITEM_LABEL,
                 EventSearch::DATE_RANGE,
                 EventSearch::DATE_RANGE_START,
                 EventSearch::DATE_RANGE_END
@@ -77,7 +79,8 @@ class EventSearch extends YiiEventModel {
         
         if (is_string($findResult)) {
             return $findResult;
-        }  else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN) {
+        }  else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
+            && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN) {
             return \app\models\wsModels\WSConstants::TOKEN;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
@@ -88,8 +91,7 @@ class EventSearch extends YiiEventModel {
                     'totalCount' => $this->totalCount
                 ],
                 //SILEX:info
-                //totalCount must be there too to get the pagination in 
-                //GridView
+                //totalCount must be there too to get the pagination in GridView
                 'totalCount' => $this->totalCount
                 //\SILEX:info
             ]);
@@ -104,7 +106,7 @@ class EventSearch extends YiiEventModel {
         return array_merge(
                 parent::attributeLabels(),
                 [
-                    EventSearch::CONCERNS_LABEL => Yii::t('app', 'Concerned Elements'),
+                    EventSearch::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Elements'),
                     EventSearch::DATE_RANGE => Yii::t('app', 'Date')
                 ]
         );
@@ -114,17 +116,38 @@ class EventSearch extends YiiEventModel {
         parent::setAttributes($values, $safeOnly);
             
         if (is_array($values)) {
-            if (isset($values[EventSearch::DATE_RANGE])){
-                $date_range = $values[EventSearch::DATE_RANGE];
-                if (!empty($date_range))
-                {
-                    $dateRangeArray = explode(" - ", $date_range);
-                    $this->dateRangeStart = $dateRangeArray[0];
-                    
-                    if (isset($dateRangeArray[1])){
-                        $this->dateRangeEnd = $dateRangeArray[1];
+            if (isset($values[EventSearch::DATE_RANGE])) {
+                $dateRange = $values[EventSearch::DATE_RANGE];
+                if (!empty($dateRange)) {
+                    $this->validateDateRangeSubmittedAndSetDatesAttributes($dateRange);
+                }
+            }
+        }
+    }
+    
+    private function validateDateRangeSubmittedAndSetDatesAttributes($dateRangeSubmittedString) {
+        $dateRangeArray = explode(Yii::$app->params['dateRangeSeparator'], $dateRangeSubmittedString);
+
+        $submittedDateRangeStartString = $dateRangeArray[0];
+        if (!empty($submittedDateRangeStartString)) {
+            $submittedDateRangeStart = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormat'], $submittedDateRangeStartString);
+            error_log("popo ".$submittedDateRangeStart);
+            if ($$submittedDateRangeStart->format(Yii::$app->params['standardDateTimeFormat']) == $submittedDateRangeStartString) {
+                $this->dateRangeStart = $submittedDateRangeStartString;
+
+                if (isset($dateRangeArray[1])) {
+                    $submittedDateRangeEndString = $dateRangeArray[1];
+                    $submittedDateRangeEnd = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormat'], $submittedDateRangeEndString);
+                    if ($submittedDateRangeEnd->format(Yii::$app->params['standardDateTimeFormat']) == $submittedDateRangeEndString) {
+                        $this->dateRangeEnd = $submittedDateRangeEndString;
+                    }
+                    else {
+                        $this->dateRangeEnd = null;
                     }
                 }
+            }
+            else {
+                $this->dateRangeStart = null;
             }
         }
     }
@@ -151,7 +174,7 @@ class EventSearch extends YiiEventModel {
         //return parent::attributesToArray();
         return [
             YiiEventModel::TYPE => $this->type,
-            EventSearch::CONCERNS_LABEL => $this->concernsLabel,
+            EventSearch::CONCERNED_ITEM_LABEL => $this->concernedItemLabel,
             EventSearch::DATE_RANGE_START => $this->dateRangeStart,
             EventSearch::DATE_RANGE_END => $this->dateRangeEnd
         ];

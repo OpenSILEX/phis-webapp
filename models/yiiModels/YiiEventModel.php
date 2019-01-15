@@ -40,8 +40,8 @@ class YiiEventModel extends WSActiveRecord {
     /**
      * @var string
      */
-    public $concerns; 
-    const CONCERNS = "concerns";
+    public $concernedItems; 
+    const CONCERNED_ITEMS = "concernedItems";
     /**
      * @var string 
      */
@@ -68,7 +68,7 @@ class YiiEventModel extends WSActiveRecord {
        return [ 
            [[YiiEventModel::URI], 'required']
             , [[YiiEventModel::TYPE, 
-                YiiEventModel::CONCERNS, 
+                YiiEventModel::CONCERNED_ITEMS, 
                 YiiEventModel::DATE, 
                 YiiEventModel::PROPERTIES
             ] , 'safe']
@@ -81,10 +81,10 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function attributeLabels() {
         return [
-            YiiEventModel::URI => 'URI'
-            , YiiEventModel::TYPE => Yii::t('app', 'Type')
-            , YiiEventModel::PROPERTIES => Yii::t('app', 'Properties')
-            , YiiEventModel::DATE => Yii::t('app', 'Date')
+            YiiEventModel::URI => 'URI', 
+            YiiEventModel::TYPE => Yii::t('app', 'Type'), 
+            YiiEventModel::PROPERTIES => Yii::t('app', 'Properties'), 
+            YiiEventModel::DATE => Yii::t('app', 'Date')
         ];
     }
     
@@ -96,9 +96,8 @@ class YiiEventModel extends WSActiveRecord {
     protected function arrayToAttributes($array) {
         $this->uri = $array[YiiEventModel::URI];
         $this->type = $array[YiiEventModel::TYPE];
-        if ($array[YiiEventModel::CONCERNS]) {
-            $this->concerns 
-                    = get_object_vars($array[YiiEventModel::CONCERNS]);
+        if ($array[YiiEventModel::CONCERNED_ITEMS]) {
+            $this->concernedItems = get_object_vars($array[YiiEventModel::CONCERNED_ITEMS]);
         } 
         $this->date = $array[YiiEventModel::DATE];
         $this->properties = $array[YiiEventModel::PROPERTIES];

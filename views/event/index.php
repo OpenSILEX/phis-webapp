@@ -29,23 +29,25 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             'type',
             [
-                'attribute' => 'concernsLabel',
+                'attribute' => 'concernedItemLabel',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    $concernsString = "";
+                    $concernedItemLabels = "";
                     $first = true;
-                    $concernsNumber = 1;
-                    foreach ($model->concerns as $concernsItem) {
-                            $first ? $first = false : $concernsString .= "<br>";
-                            $concernsString .= implode(", ", $concernsItem->labels);
-                            $concernsNumber++;
-                            if ($concernsNumber >= Yii::$app->params['numberOfConcernsToDisplayInEventIndex'])
+                    $currentConcernedItemNumber = 0;
+                    foreach ($model->concernedItems as $concernedItem) {
+                            $currentConcernedItemNumber++;
+                            if ($currentConcernedItemNumber > Yii::$app->params['numberOfConcernedItemsToDisplayInEventIndex'])
                             {
-                                $concernsString .= "<br>...";
+                                $concernedItemLabels .= "<br>...";
                                 break;
                             }
+                            else{
+                                $first ? $first = false : $concernedItemLabels .= "<br>";
+                                $concernedItemLabels .= implode(", ", $concernedItem->labels);
+                            }
                     }
-                    return $concernsString;
+                    return $concernedItemLabels;
                 } 
             ],
             [
