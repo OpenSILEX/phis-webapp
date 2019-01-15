@@ -18,6 +18,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/0.37.0/handsontable.full.min.js"></script>
 
 <div class="scientificObject-form">
+    <p><i>See the <a href="https://opensilex.github.io/phis-docs-community/experimental-organization/#importing-scientific-objects">documentation</a> to get more informations about the columns contents.</i></p>
     <div id="objects-created" class="alert alert-success"><?= Yii::t('app', 'Scientific Objects Created') ?></div>
     <!--<button type = "button" id="export" id="exportButton">Export</button>-->
     <div id="objects-creation">
@@ -26,7 +27,6 @@
             <button type="button" class="btn btn-success" id="objects-save"><?= Yii::t('app', 'Create Scientific Objects') ?></button>
         </div>
     </div>
-    
     <div id="loader" class="loader" style="display:none"></div>
     
     <script>
@@ -92,8 +92,8 @@
             td.style.fontWeight = 'bold';
         }   
         
-        //creates renderer for the uriColumn
-        function uriColumnRenderer(instance, td, row, col, prop, value, cellProperties) {
+        //creates renderer for the read only columns
+        function readOnlyColumnRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
             td.style.fontWeight = 'bold';
             td.style.background = '#EEE';
@@ -183,8 +183,8 @@
             cells: function(row, col, prop) {
                 var cellProperties = {};
                 
-                if (col === 0) {
-                    cellProperties.renderer = uriColumnRenderer;
+                if (col === 0 || col === 8) {
+                    cellProperties.renderer = readOnlyColumnRenderer;
                 }
                 
                 return cellProperties;
