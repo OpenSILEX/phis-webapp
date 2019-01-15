@@ -45,9 +45,15 @@ class EventController extends Controller {
                             SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
             }
         } else {
+<<<<<<< Updated upstream
             return $this->render('index', [
                 'searchModel' => $searchModel, 
                 'dataProvider' => $searchResult]);
+=======
+//            return $this->render('index', [
+//                'searchModel' => $searchModel, 
+//                'dataProvider' => $searchResult]);
+>>>>>>> Stashed changes
         }
     }
 }

@@ -129,6 +129,7 @@ class EventSearch extends YiiEventModel {
         $dateRangeArray = explode(Yii::$app->params['dateRangeSeparator'], $dateRangeSubmittedString);
 
         $submittedDateRangeStartString = $dateRangeArray[0];
+<<<<<<< Updated upstream
         if (!empty($submittedDateRangeStartString)) {
             $submittedDateRangeStart = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormat'], $submittedDateRangeStartString);
             error_log("popo ".$submittedDateRangeStart);
@@ -149,6 +150,30 @@ class EventSearch extends YiiEventModel {
             else {
                 $this->dateRangeStart = null;
             }
+=======
+            print_r($submittedDateRangeStartString);
+        if (!empty($submittedDateRangeStartString)) {
+            $submittedDateRangeStart = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormat'], $submittedDateRangeStartString);
+            error_log("format ".Yii::$app->params['standardDateTimeFormat']);
+            print_r($submittedDateRangeStart);
+//            if ($submittedDateRangeStart->format(Yii::$app->params['standardDateTimeFormat']) == $submittedDateRangeStartString) {
+//                $this->dateRangeStart = $submittedDateRangeStartString;
+//
+//                if (isset($dateRangeArray[1])) {
+//                    $submittedDateRangeEndString = $dateRangeArray[1];
+//                    $submittedDateRangeEnd = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormat'], $submittedDateRangeEndString);
+//                    if ($submittedDateRangeEnd->format(Yii::$app->params['standardDateTimeFormat']) == $submittedDateRangeEndString) {
+//                        $this->dateRangeEnd = $submittedDateRangeEndString;
+//                    }
+//                    else {
+//                        $this->dateRangeEnd = null;
+//                    }
+//                }
+//            }
+//            else {
+//                $this->dateRangeStart = null;
+//            }
+>>>>>>> Stashed changes
         }
     }
     
