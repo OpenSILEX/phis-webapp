@@ -18,7 +18,7 @@ namespace app\models\yiiModels;
 use app\models\yiiModels\YiiGroupModel;
 
 /**
- * implements the search action for the agronomical objects
+ * implements the search action for the groups
  *
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */

@@ -17,7 +17,7 @@ namespace app\models\yiiModels;
 use app\models\yiiModels\YiiUnitModel;
 
 /**
- * implements the search action for the agronomical objects
+ * implements the search action for the units
  *
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */

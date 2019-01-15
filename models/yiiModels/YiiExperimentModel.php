@@ -162,7 +162,7 @@ class YiiExperimentModel extends WSActiveRecord {
     const SENSORS = "sensors";
     
     /**
-     * Initialize wsModel. In this class, wsModel is a WSAgronomicalObjectModel
+     * Initialize wsModel. In this class, wsModel is a WSExperimentModel
      * @param string $pageSize number of elements per page
      *                               (limited to 150 000)
      * @param string $page number of the current page 

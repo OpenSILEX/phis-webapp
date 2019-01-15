@@ -78,7 +78,7 @@ ToastrAsset::register($this);
                             ],
                             [
                                 'label' => Icon::show('leaf', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]),
-                                'url' => ['/agronomical-object/index']
+                                'url' => ['/scientific-object/index']
                             ],
                             [
                                 'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'), 
@@ -179,8 +179,8 @@ ToastrAsset::register($this);
                                 'url' => ['/experiment/index']
                             ],
                             [
-                                'label' => Icon::show('leaf', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}', ['n' => 2]),
-                                'url' => ['/agronomical-object/index']
+                                'label' => Icon::show('leaf', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]),
+                                'url' => ['/scientific-object/index']
                             ],
                             [
                                 'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'), 

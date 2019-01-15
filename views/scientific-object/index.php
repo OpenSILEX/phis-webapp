@@ -13,14 +13,14 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\AgronomicalObjectSearch */
+/* @var $searchModel app\models\ScientificObjectSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="agronomicalobject-index">
+<div class="scientific-object-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>

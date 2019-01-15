@@ -9,7 +9,7 @@
 // Creation date: August 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 // Last modification date:  August, 31 2017
-// Subject: creation of agronomical objects via CSV
+// Subject: creation of scientific objects via CSV
 //***********************************************************************************************
 ?>
 
@@ -210,7 +210,7 @@
                 var objectsArray = handsontable.getData();
                 var objectsString = JSON.stringify(objectsArray);
                 $.ajax({
-                    url: 'index.php?r=agronomical-object%2Fcreate-multiple-scientific-objects',
+                    url: 'index.php?r=scientific-object%2Fcreate-multiple-scientific-objects',
                     type: 'POST',
                     dataType: 'json',
                     data: {objects: objectsString}
