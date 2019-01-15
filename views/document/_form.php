@@ -8,10 +8,15 @@
 // Copyright © - INRA - 2017
 // Creation date: June 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  June, 2017
+// Last modification date:  Jan., 2019
 // Subject: creation or update document form
 //***********************************************************************************************
 
+
+/**
+ * @update [Andréas Garcia] <andreas.garcia@inra.fr> 15 Jan., 2019: 
+ * change "concern" occurences to "concernedItem"
+ */
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\file\FileInput;
@@ -45,7 +50,7 @@ require_once '../config/config.php';
     <?php 
         if ($model->isNewRecord) {            
             echo $form->field($model, 'concernedItems')->widget(\kartik\select2\Select2::classname(),[
-                'data' =>$this->params['actualConcerns'],
+                'data' =>$this->params['currentConcernedItem'],
                 'readonly' => true,
                 'pluginOptions' => [                    
                     'multiple' => false,
