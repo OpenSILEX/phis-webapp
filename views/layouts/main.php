@@ -61,10 +61,6 @@ ToastrAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
-                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
-                                'url' => ['/species/index']
-                            ],
-                            [
                                 'label' => Icon::show('home', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]), 
                                 'url' => ['/infrastructure'],
                             ],
@@ -83,6 +79,10 @@ ToastrAsset::register($this);
                             [
                                 'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'), 
                                 'url' => ['/variable/index']
+                            ],
+                            [
+                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
+                                'url' => ['/species/index']
                             ],
                             //SILEX:info
                             //Uncomment this code if you want to allow access to annotation index
@@ -163,10 +163,6 @@ ToastrAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
-                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
-                                'url' => ['/species/index']
-                            ],
-                            [
                                 'label' => Icon::show('home', ['class' => 'fas'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]), 
                                 'url' => ['/infrastructure'],
                             ],
@@ -185,6 +181,10 @@ ToastrAsset::register($this);
                             [
                                 'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'), 
                                 'url' => ['/variable/index']
+                            ],
+                            [
+                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
+                                'url' => ['/species/index']
                             ],
                             //SILEX:info
                             //Uncomment this code if you want to allow access to annotation index

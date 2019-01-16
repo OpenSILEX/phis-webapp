@@ -429,7 +429,6 @@ require_once '../config/config.php';
         if (count($objects) > 0) {
 
             foreach ($objects as $object) {
-                $forWebService = null;
                 $scientificObjectModel = new YiiScientificObjectModel();
                 
                 $scientificObjectModel->alias = $object[1];

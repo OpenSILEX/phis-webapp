@@ -18,7 +18,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/0.37.0/handsontable.full.min.js"></script>
 
 <div class="scientificObject-form">
-    <p><i>See the <a href="https://opensilex.github.io/phis-docs-community/experimental-organization/#importing-scientific-objects">documentation</a> to get more informations about the columns contents.</i></p>
+    <p><i>See the <a href="https://opensilex.github.io/phis-docs-community/experimental-organization/#importing-scientific-objects" target="_blank">documentation</a> to get more informations about the columns contents.</i></p>
     <div id="objects-created" class="alert alert-success"><?= Yii::t('app', 'Scientific Objects Created') ?></div>
     <!--<button type = "button" id="export" id="exportButton">Export</button>-->
     <div id="objects-creation">
