@@ -86,7 +86,7 @@ class DatasetController extends Controller {
      * @return boolean 
      */
     private function existAgronomicalObject($agronomicalObjectURI) {
-        $agronomicalObjectModel = new \app\models\yiiModels\YiiAgronomicalObjectModel();
+        $agronomicalObjectModel = new \app\models\yiiModels\YiiScientificObjectModel();
         $agronomicalObject = $agronomicalObjectModel->find(Yii::$app->session['access_token'], ["uri" => $agronomicalObjectURI]);
          
         return (count($agronomicalObject) > 0);
