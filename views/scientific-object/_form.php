@@ -75,6 +75,23 @@
             }
         };
         
+        /**
+         * validate an experiment cell value. callback will be true if the value is 
+         * not empty and is an experiment from the experiments list
+         * @param {type} value
+         * @param {type} callback
+         * @returns {undefined} 
+         */
+        var experimentValidator = function(value, callback) {
+            if (isEmpty(value)) {
+                callback(false);
+            } else if (experiments.indexOf(value) > -1) {
+                callback(true);
+            } else {
+                callback(false);
+            }
+        };
+        
         var speciesValidator = function(value, callback) {
           if (isEmpty(value)) {
                 callback(true);
@@ -131,7 +148,7 @@
                     source: experiments,
                     strict: true,
                     required: true,
-                    validator: emptyValidator
+                    validator: experimentValidator
                 },
                 {
                     data: 'geometry',
