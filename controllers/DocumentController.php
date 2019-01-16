@@ -236,18 +236,17 @@ class DocumentController extends Controller {
             
             //Prepare the target of the document
             if ($concernedItemUri !== null) {
-                $item = new \app\models\yiiModels\YiiInstanceDefinitionModel();
-                $item->uri = $concernedItemUri;
-                
+                $concernedItem = new \app\models\yiiModels\YiiInstanceDefinitionModel();
+                $concernedItem->uri = $concernedItemUri;
                 if ($concernedItemRdfType === null) {
                     //Get concerned item rdfType
                     $rdfType = $wsUriModel->getUriType(Yii::$app->session['access_token'], $concernedItemUri, null);
-                    $item->rdfType = $rdfType;
+                    $concernedItem->rdfType = $rdfType;
                 } else {
-                    $item->rdfType = $concernedItemRdfType;
+                    $concernedItem->rdfType = $concernedItemRdfType;
                 }
                 
-                $concernedItems[] = $item;
+                $concernedItems[] = $concernedItem;
             }
             
             $documentModel->concernedItems = $concernedItems;
