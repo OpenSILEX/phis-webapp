@@ -33,7 +33,7 @@ class YiiInstanceDefinitionModel extends \app\models\wsModels\WSActiveRecord {
     const URI = "uri";
     /**
      * The rdf type of the instance definition
-     *  (e.g. http://www.phenome-fppn.fr/vocabulary/2017#Thermocouple)
+     *  (e.g. http://www.opensilex.org/vocabulary/oeso#Thermocouple)
      * @var string
      */
     public $rdfType;

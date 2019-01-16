@@ -58,14 +58,14 @@ class AcquisitionSessionMetadataFileController extends Controller {
     
     /**
      * The type of the document
-     * @example http://www.phenome-fppn.fr/vocabulary/2017#AcquisitionSessionUAVDocument  
+     * @example http://www.opensilex.org/vocabulary/oeso#AcquisitionSessionUAVDocument  
      * @var string    
      */
     private $documentType;
     
     /**
      * The type of the vector required
-     * @example http://www.phenome-fppn.fr/vocabulary/2017#AcquisitionSessionPhenomobileDocument 
+     * @example http://www.opensilex.org/vocabulary/oeso#AcquisitionSessionPhenomobileDocument 
      * @var string 
      */
     private $vectorType;
@@ -243,7 +243,7 @@ class AcquisitionSessionMetadataFileController extends Controller {
          * [
          *   {
          *     "Installation": null,
-         *     "GroupPlot_type": "http://www.phenome-fppn.fr/vocabulary/2017#Experiment",
+         *     "GroupPlot_type": "http://www.opensilex.org/vocabulary/oeso#Experiment",
          *     "GroupPlot_alias": "tes",
          *     "GroupPlot_uri": "http://www.phenome-fppn.fr/phis/PHS2018-1",
          *     "GroupPlot_species": "",
@@ -296,7 +296,7 @@ class AcquisitionSessionMetadataFileController extends Controller {
          * @example 
          * [
          *     ['Installation', 'GroupPlot_type', 'GroupPlot_alias', 'GroupPlot_uri'],
-         *     [null, "http://www.phenome-fppn.fr/vocabulary/2017#Experiment", "tes",  "http://www.phenome-fppn.fr/phis/PHS2018-1"]
+         *     [null, "http://www.opensilex.org/vocabulary/oeso#Experiment", "tes",  "http://www.phenome-fppn.fr/phis/PHS2018-1"]
          * ]
          */
         $sheetData = [];

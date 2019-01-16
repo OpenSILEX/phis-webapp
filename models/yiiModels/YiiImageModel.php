@@ -32,7 +32,7 @@ class YiiImageModel extends WSActiveRecord {
     public $uri;
     const URI = "uri";
     /**
-     * the uri of the rdf type of the image (e.g http://www.phenome-fppn.fr/vocabulary/2017#HemisphericalImage)
+     * the uri of the rdf type of the image (e.g http://www.opensilex.org/vocabulary/oeso#HemisphericalImage)
      * @var string
      */
     public $rdfType;
@@ -151,7 +151,7 @@ class YiiImageModel extends WSActiveRecord {
      * @return the list of rdf types of images
      */
     public function getRdfTypes($sessionToken) {
-        $imageConceptUri = "http://www.phenome-fppn.fr/vocabulary/2017#Image";
+        $imageConceptUri = "http://www.opensilex.org/vocabulary/oeso#Image";
         
         $imagesTypes = [];
         $totalPages = 1;

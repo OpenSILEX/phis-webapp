@@ -465,7 +465,7 @@ require_once '../config/config.php';
      * @param string $vectorType
      * @return string the complete vector type uri corresponding to the given 
      *                vector type
-     *                e.g. http://www.phenome-fppn.fr/vocabulary/2017#UAV
+     *                e.g. http://www.opensilex.org/vocabulary/oeso#UAV
      */
     private function getObjectTypeCompleteUri($objectType) {
         $objectTypesList = $this->getObjectsTypesUris();
@@ -481,8 +481,8 @@ require_once '../config/config.php';
      * get the vectors types (complete uri)
      * @return array list of the vectors types uris 
      * e.g. [
-     *          "http://www.phenome-fppn.fr/vocabulary/2017#UAV",
-     *          "http://www.phenome-fppn.fr/vocabulary/2017#Pot"
+     *          "http://www.opensilex.org/vocabulary/oeso#UAV",
+     *          "http://www.opensilex.org/vocabulary/oeso#Pot"
      *      ]
      */
     public function getObjectsTypesUris() {

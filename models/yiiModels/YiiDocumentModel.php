@@ -39,7 +39,7 @@ class YiiDocumentModel extends WSActiveRecord {
     const URI = "uri";
     /**
      * document's type
-     *      (e.g http://www.phenome-fppn.fr/vocabulary/2017/#DataFile)
+     *      (e.g http://www.opensilex.org/vocabulary/oeso/#DataFile)
      * @var string
      */
     public $documentType;
@@ -101,8 +101,8 @@ class YiiDocumentModel extends WSActiveRecord {
     const CONCERNED_ITEM_WS_FIELD = "concernedItem";
     
     const CONCERNED_ITEM_RDF_TYPE = "typeURI";
-    const CONCERNED_ITEM_EXPERIMENT_RDF_TYPE = "http://www.phenome-fppn.fr/vocabulary/2017#Experiment";
-    const CONCERNED_ITEM_PROJECT_RDF_TYPE = "http://www.phenome-fppn.fr/vocabulary/2017#Project";
+    const CONCERNED_ITEM_EXPERIMENT_RDF_TYPE = "http://www.opensilex.org/vocabulary/oeso#Experiment";
+    const CONCERNED_ITEM_PROJECT_RDF_TYPE = "http://www.opensilex.org/vocabulary/oeso#Project";
     /**
      * the file concerned by the metadata
      * @var file 

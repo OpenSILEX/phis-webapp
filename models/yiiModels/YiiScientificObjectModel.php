@@ -43,8 +43,8 @@ class YiiScientificObjectModel extends WSActiveRecord {
     public $geometry;
     const GEOMETRY = "geometry";
     /**
-     * the rdf type of the scientific object. Must be in the ontology. 
-     *                      (e.g http://www.phenome-fppn.fr/vocabulary/2017#Plot)
+     * the rdf type of the agronomical object. Must be in the ontology. 
+     *                      (e.g http://www.opensilex.org/vocabulary/oeso#Plot)
      * @var string
      */
     public $type;
@@ -139,7 +139,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
      * @return list of the sensors types
      */
     public function getObjectTypes($sessionToken) {
-        $scientificObjectConceptUri = "http://www.phenome-fppn.fr/vocabulary/2017#ScientificObject";
+        $scientificObjectConceptUri = "http://www.opensilex.org/vocabulary/oeso#ScientificObject";
         $params = [];
         if ($this->pageSize !== null) {
            $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
@@ -199,26 +199,26 @@ class YiiScientificObjectModel extends WSActiveRecord {
      */
     public function getSpeciesUriList() {
         return [
-            "http://www.phenome-fppn.fr/id/species/betavulgaris", 
-            "http://www.phenome-fppn.fr/id/species/brassicanapus",
-            "http://www.phenome-fppn.fr/id/species/canabissativa",
-            "http://www.phenome-fppn.fr/id/species/glycinemax",
-            "http://www.phenome-fppn.fr/id/species/gossypiumhirsutum",
-            "http://www.phenome-fppn.fr/id/species/helianthusannuus",
-            "http://www.phenome-fppn.fr/id/species/linumusitatissum",
-            "http://www.phenome-fppn.fr/id/species/lupinusalbus",
-            "http://www.phenome-fppn.fr/id/species/ordeumvulgare",
-            "http://www.phenome-fppn.fr/id/species/orizasativa",
-            "http://www.phenome-fppn.fr/id/species/pennisetumglaucum",
-            "http://www.phenome-fppn.fr/id/species/pisumsativum",
-            "http://www.phenome-fppn.fr/id/species/populus",
-            "http://www.phenome-fppn.fr/id/species/sorghumbicolor",
-            "http://www.phenome-fppn.fr/id/species/teosinte",
-            "http://www.phenome-fppn.fr/id/species/triticumaestivum",
-            "http://www.phenome-fppn.fr/id/species/triticumturgidum",
-            "http://www.phenome-fppn.fr/id/species/viciafaba",
-            "http://www.phenome-fppn.fr/id/species/zeamays",
-            "http://www.phenome-fppn.fr/id/species/maize"
+            "http://www.opensilex.org/id/species/betavulgaris", 
+            "http://www.opensilex.org/id/species/brassicanapus",
+            "http://www.opensilex.org/id/species/canabissativa",
+            "http://www.opensilex.org/id/species/glycinemax",
+            "http://www.opensilex.org/id/species/gossypiumhirsutum",
+            "http://www.opensilex.org/id/species/helianthusannuus",
+            "http://www.opensilex.org/id/species/linumusitatissum",
+            "http://www.opensilex.org/id/species/lupinusalbus",
+            "http://www.opensilex.org/id/species/ordeumvulgare",
+            "http://www.opensilex.org/id/species/orizasativa",
+            "http://www.opensilex.org/id/species/pennisetumglaucum",
+            "http://www.opensilex.org/id/species/pisumsativum",
+            "http://www.opensilex.org/id/species/populus",
+            "http://www.opensilex.org/id/species/sorghumbicolor",
+            "http://www.opensilex.org/id/species/teosinte",
+            "http://www.opensilex.org/id/species/triticumaestivum",
+            "http://www.opensilex.org/id/species/triticumturgidum",
+            "http://www.opensilex.org/id/species/viciafaba",
+            "http://www.opensilex.org/id/species/zeamays",
+            "http://www.opensilex.org/id/species/maize"
         ];
     }
 }

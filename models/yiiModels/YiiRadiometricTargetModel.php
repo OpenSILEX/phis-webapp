@@ -379,11 +379,11 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
      *      label => 'radiometric target label'
      *      properties => [
      *          [
-     *              relation => 'http://www.phenome-fppn.fr/vocabulary/2017#hasBrand'
+     *              relation => 'http://www.opensilex.org/vocabulary/oeso#hasBrand'
      *              value => 'brand name'
      *          ],
      *          [
-     *              relation => 'http://www.phenome-fppn.fr/vocabulary/2017#hasRadiometricTargetMaterial'
+     *              relation => 'http://www.opensilex.org/vocabulary/oeso#hasRadiometricTargetMaterial'
      *              value => 'spectralon'
      *          ],...
      *      ]

@@ -137,8 +137,8 @@ class YiiExperimentModel extends WSActiveRecord {
      * @var array<string>
      */
     public $scientificSupervisorContacts;
-    const CONTACT_SCIENTIFIC_SUPERVISOR = "http://www.phenome-fppn.fr/vocabulary/2017/#ScientificSupervisor";
-    const CONTACT_TECHNICAL_SUPERVISOR = "http://www.phenome-fppn.fr/vocabulary/2017/#TechnicalSupervisor";
+    const CONTACT_SCIENTIFIC_SUPERVISOR = "http://www.opensilex.org/vocabulary/oeso/#ScientificSupervisor";
+    const CONTACT_TECHNICAL_SUPERVISOR = "http://www.opensilex.org/vocabulary/oeso/#TechnicalSupervisor";
     /**
      * the experiment's technical supervisor contacts (email).
      *      (e.g. john.doe[at]inra.fr) 
