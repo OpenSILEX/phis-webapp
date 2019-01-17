@@ -250,7 +250,7 @@
                         if (data["objectUris"][i] !== null) {
                             handsontable.setDataAtCell(i, 0, data["objectUris"][i]);
                         }
-                        handsontable.setDataAtCell(i, 8, data["messages"][i]);                        
+                        handsontable.setDataAtCell(i, 10, data["messages"][i]);                        
                     }                    
                     $('#objects-save').hide();
                 })
