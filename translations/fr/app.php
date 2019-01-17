@@ -189,6 +189,7 @@ return [
     'Yes' => 'Oui',
     YiiAnnotationModel::CREATION_DATE_LABEL => 'Date de l\'annotation',
     YiiAnnotationModel::MOTIVATED_BY_LABEL  => 'Motivée par',
-    YiiAnnotationModel::TARGETS_LABEL  => 'Entités ciblées'
-    
+    YiiAnnotationModel::TARGETS_LABEL  => 'Entités ciblées',
+    'Back to sensor view' => 'Retour à la vue du capteur',
+    'Sensor Data Visualization' => 'Visualisation des données du capteur'
 ];
