@@ -64,7 +64,7 @@ return [
     'hasLens' => 'http://www.opensilex.org/vocabulary/oeso#hasLens',
     'hasPart' => 'http://www.opensilex.org/vocabulary/oeso#hasPart',
     'hasRadiometricTargetMaterial' => 'http://www.opensilex.org/vocabulary/oeso#hasRadiometricTargetMaterial',
-    'hasRepetition' => 'http://www.opensilex.org/vocabulary/oeso#hasRepetition',
+    'hasReplication' => 'http://www.opensilex.org/vocabulary/oeso#hasReplication',
     'hasShape' => 'http://www.opensilex.org/vocabulary/oeso#hasShape',
     'hasShapeLength' => 'http://www.opensilex.org/vocabulary/oeso#hasShapeLength',
     'hasShapeWidth' => 'http://www.opensilex.org/vocabulary/oeso#hasShapeWidth',

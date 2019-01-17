@@ -68,9 +68,9 @@ require_once '../config/config.php';
      const EXPERIMENT_MODALITIES = "ExperimentModalities";
      /**
       * the replication column for the csv files
-      * @var REPETITION
+      * @var REPLICATION
       */
-     const REPETITION = "Repetition";
+     const REPLICATION = "Replication";
      
     /**
       * the replication column for the csv files
