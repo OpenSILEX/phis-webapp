@@ -437,7 +437,9 @@ require_once '../config/config.php';
                 $scientificObjectModel->geometry = $object[4];
                 $scientificObjectModel->parent = $object[5];
                 $scientificObjectModel->species = $object[6];
-                $scientificObjectModel->variety = $object[7];                
+                $scientificObjectModel->variety = $object[7];  
+                $scientificObjectModel->modality = $object[8];
+                $scientificObjectModel->replication = $object[9];
                 
                 $scientificObject = $scientificObjectModel->attributesToArray();
                 $forWebService = $this->getArrayForWebServiceCreate($scientificObject);
@@ -558,6 +560,18 @@ require_once '../config/config.php';
             $value = str_replace(" ", "_", $scientificObject["variety"]);
             $variety["value"] = $value;
             $p["properties"][] = $variety;
+        }
+        
+        if ($scientificObject[YiiScientificObjectModel::MODALITY] !== null) {
+            $modality["relation"] = Yii::$app->params['hasExperimentModalities'];
+            $modality["value"] = $scientificObject[YiiScientificObjectModel::MODALITY];
+            $p["properties"][] = $modality;
+        }
+        
+        if ($scientificObject[YiiScientificObjectModel::REPLICATION] !== null) {
+            $replication["relation"] = Yii::$app->params['hasRepetition'];
+            $replication["value"] = $scientificObject[YiiScientificObjectModel::REPLICATION];
+            $p["properties"][] = $replication;
         }
        
         $forWebService[] = $p;    

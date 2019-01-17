@@ -173,6 +173,16 @@
                     required: false
                 },
                 {
+                    data: 'modalities',
+                    type: 'text',
+                    required: false
+                },
+                {
+                    data: 'replication',
+                    type: 'text',
+                    required: false
+                },
+                {
                     data: 'insertion status',
                     type: 'text',
                     required: false,
@@ -190,6 +200,8 @@
                 "<b><?= Yii::t('app', 'Parent') ?></b>",
                 "<b><?= Yii::t('app', 'Species') ?></b>",
                 "<b><?= Yii::t('app', 'Variety') ?></b>",
+                "<b><?= Yii::t('app', 'Experiment Modalities') ?></b>",
+                "<b><?= Yii::t('app', 'Replication') ?></b>",
                 "<b><?= Yii::t('app', 'Insertion status') ?></b>"
             ],
             manualRowMove: true,
@@ -200,7 +212,7 @@
             cells: function(row, col, prop) {
                 var cellProperties = {};
                 
-                if (col === 0 || col === 8) {
+                if (col === 0 || col === 10) {
                     cellProperties.renderer = readOnlyColumnRenderer;
                 }
                 
