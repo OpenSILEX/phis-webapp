@@ -61,10 +61,6 @@ ToastrAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
-                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
-                                'url' => ['/species/index']
-                            ],
-                            [
                                 'label' => Icon::show('home', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]), 
                                 'url' => ['/infrastructure'],
                             ],
@@ -78,11 +74,15 @@ ToastrAsset::register($this);
                             ],
                             [
                                 'label' => Icon::show('leaf', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]),
-                                'url' => ['/agronomical-object/index']
+                                'url' => ['/scientific-object/index']
                             ],
                             [
                                 'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'), 
                                 'url' => ['/variable/index']
+                            ],
+                            [
+                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
+                                'url' => ['/species/index']
                             ],
                             [
                                 'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'), 
@@ -167,10 +167,6 @@ ToastrAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
-                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
-                                'url' => ['/species/index']
-                            ],
-                            [
                                 'label' => Icon::show('home', ['class' => 'fas'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]), 
                                 'url' => ['/infrastructure'],
                             ],
@@ -183,17 +179,12 @@ ToastrAsset::register($this);
                                 'url' => ['/experiment/index']
                             ],
                             [
-                                'label' => Icon::show('leaf', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}', ['n' => 2]),
-                                'url' => ['/agronomical-object/index']
+                                'label' => Icon::show('leaf', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]),
+                                'url' => ['/scientific-object/index']
                             ],
                             [
                                 'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'), 
                                 'url' => ['/variable/index']
-                            ],
-                            [
-                                'label' => Icon::show('flag', [], Icon::FA) 
-                                . " " . Yii::t('app', 'Events'), 
-                                'url' => ['/event/index']
                             ],
                             //SILEX:info
                             //Uncomment this code if you want to allow access to annotation index
