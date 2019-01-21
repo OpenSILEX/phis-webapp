@@ -39,11 +39,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             $currentConcernedItemNumber++;
                             if ($currentConcernedItemNumber > Yii::$app->params['numberOfConcernedItemsToDisplayInEventIndex'])
                             {
-                                $concernedItemLabels .= "<br>...";
+                                $concernedItemLabels .= "<br/>...";
                                 break;
                             }
                             else{
-                                $first ? $first = false : $concernedItemLabels .= "<br>";
+                                $first ? $first = false : $concernedItemLabels .= "<br/>";
                                 $concernedItemLabels .= implode(", ", $concernedItem->labels);
                             }
                     }
@@ -52,11 +52,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'dateRange', 
-                'format' => 'raw', 'value' => 'date',
+                'format' => 'raw',
+                'value' => 'date',
                 'filter' => DateRangePicker::widget([
                     'model'=> $searchModel,
                     'attribute' => 'dateRange',
                     'convertFormat'=>true,
+                    'options' => array('class' => 'form-control date-range-input'),
                     'pluginOptions'=>[
                         'autoclose'=>true,
                         'timePicker'=>true,

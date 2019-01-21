@@ -125,6 +125,13 @@ a.desc:after {
     outline: none;
 }
 
+/*SILEX:info
+kartik date range filter
+\SILEX:info*/
+.date-range-input {
+    min-width: 53ch;
+}
+
 /*Pour les astérisques sur les champs obligatoires dans les formulaires*/
 /*SILEX:required*/
 form div.required label.control-label:after {
