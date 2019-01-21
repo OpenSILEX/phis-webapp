@@ -39,9 +39,9 @@ class EventSearch extends YiiEventModel {
     public $dateRange;
     const DATE_RANGE = 'dateRange';
     public $dateRangeStart;
-    const DATE_RANGE_START = 'dateRangeStart';
+    const DATE_RANGE_START = 'startDate';
     public $dateRangeEnd;
-    const DATE_RANGE_END = 'dateRangeEnd';
+    const DATE_RANGE_END = 'endDate';
     
     /**
      * @inheritdoc
