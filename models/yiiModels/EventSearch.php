@@ -138,11 +138,9 @@ class EventSearch extends YiiEventModel {
                 $this->dateRangeStart = $submittedDateRangeStartString;
                 if (isset($dateRangeArray[1])) {   
                     $submittedDateRangeEndString = $dateRangeArray[1];
-                    if (!empty($submittedDateRangeEndString)) {
-                        $isSubmittedEndDateFormatValid = $this->validateSubmittedDateFormat($submittedDateRangeEndString);
-                        if ($isSubmittedEndDateFormatValid) {
-                            $this->dateRangeEnd = $submittedDateRangeEndString;
-                        }
+                    $isSubmittedEndDateFormatValid = $this->validateSubmittedDateFormat($submittedDateRangeEndString);
+                    if ($isSubmittedEndDateFormatValid) {
+                        $this->dateRangeEnd = $submittedDateRangeEndString;
                     }
                 } 
             }
@@ -164,7 +162,8 @@ class EventSearch extends YiiEventModel {
         try {
             /* the standard date format provide a 'T' between the date and the 
              * time but the PHP date format parser interprets the 'T' as the
-             * timezone part of the date. So, before analysing that a date has
+             * timezone part of the date. (See http://php.net/manual/en/function.date.php)
+             * So, before analysing that a date has
              * a valid date format, we have to replace the 'T' by a neutral char
              * (like a space) in order to be able to use the PHP parser 
              * thereafter.
@@ -176,13 +175,11 @@ class EventSearch extends YiiEventModel {
                 error_log("dateRangeStartParseErrorMessages ".print_r(DateTime::getLastErrors()['errors'], true)); 
                 return false;
             }
-            else{
-                if ($date->format(Yii::$app->params['standardDateTimeFormatPhp']) == $dateStringWithoutT) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
+            else if ($date->format(Yii::$app->params['standardDateTimeFormatPhp']) == $dateStringWithoutT) {
+                return true;
+            }
+            else {
+                return false;
             }
         } catch (Exception $exception) {                
             error_log($exception->getMessage());
