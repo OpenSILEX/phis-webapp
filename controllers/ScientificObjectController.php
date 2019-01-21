@@ -403,7 +403,7 @@ require_once '../config/config.php';
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }        
         
-        $species = $this ->getSpecies();
+        $species = $this->getSpecies();
         
         return $this->render('create', [
             'model' => $model,
