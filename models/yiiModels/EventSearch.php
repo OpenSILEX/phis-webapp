@@ -119,37 +119,81 @@ class EventSearch extends YiiEventModel {
             if (isset($values[EventSearch::DATE_RANGE])) {
                 $dateRange = $values[EventSearch::DATE_RANGE];
                 if (!empty($dateRange)) {
-                    $this->validateDateRangeSubmittedAndSetDatesAttributes($dateRange);
+                    $this->validateSubmittedDateRangeAndSetDatesAttributes($dateRange);
                 }
             }
         }
     }
     
-    private function validateDateRangeSubmittedAndSetDatesAttributes($dateRangeSubmittedString) {
-        $dateRangeArray = explode(Yii::$app->params['dateRangeSeparator'], $dateRangeSubmittedString);
+    private function validateSubmittedDateRangeAndSetDatesAttributes($submittedDateRangeString) {        
+        $dateRangeArray = explode(Yii::$app->params['dateRangeSeparator'], $submittedDateRangeString);
+        
+        $isSubmittedStartDateFormatValid = true;
+        $isSubmittedEndDateFormatValid = true;
 
         $submittedDateRangeStartString = $dateRangeArray[0];
         if (!empty($submittedDateRangeStartString)) {
-            $submittedDateRangeStart = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormat'], $submittedDateRangeStartString);
-            error_log("popo ".$submittedDateRangeStart);
-            if ($$submittedDateRangeStart->format(Yii::$app->params['standardDateTimeFormat']) == $submittedDateRangeStartString) {
+            $isSubmittedStartDateFormatValid = $this->validateSubmittedDateFormat($submittedDateRangeStartString);
+            if ($isSubmittedStartDateFormatValid) {
                 $this->dateRangeStart = $submittedDateRangeStartString;
-
-                if (isset($dateRangeArray[1])) {
+                if (isset($dateRangeArray[1])) {   
                     $submittedDateRangeEndString = $dateRangeArray[1];
-                    $submittedDateRangeEnd = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormat'], $submittedDateRangeEndString);
-                    if ($submittedDateRangeEnd->format(Yii::$app->params['standardDateTimeFormat']) == $submittedDateRangeEndString) {
-                        $this->dateRangeEnd = $submittedDateRangeEndString;
+                    if (!empty($submittedDateRangeEndString)) {
+                        $isSubmittedEndDateFormatValid = $this->validateSubmittedDateFormat($submittedDateRangeEndString);
+                        if ($isSubmittedEndDateFormatValid) {
+                            $this->dateRangeEnd = $submittedDateRangeEndString;
+                        }
                     }
-                    else {
-                        $this->dateRangeEnd = null;
-                    }
-                }
-            }
-            else {
-                $this->dateRangeStart = null;
+                } 
             }
         }
+        
+        if (!$isSubmittedStartDateFormatValid || !$isSubmittedEndDateFormatValid) {
+            $this->handleSearchDateRangeFormatError();
+        }
+    }
+    
+    private function validateSubmittedDateFormat($dateString) {
+        /*
+         * Steps to validate a date format of a date string:
+         *  - create a DateTime object from this date string and its format
+         *  - transform this DateTime into a string using this format
+         *  if there is no parsing error and if the final date string and the 
+         * first one are equal, then the date format is valid
+         */
+        try {
+            /* the standard date format provide a 'T' between the date and the 
+             * time but the PHP date format parser interprets the 'T' as the
+             * timezone part of the date. So, before analysing that a date has
+             * a valid date format, we have to replace the 'T' by a neutral char
+             * (like a space) in order to be able to use the PHP parser 
+             * thereafter.
+             */
+            $dateStringWithoutT = str_replace("T", " ", $dateString);
+            $date = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormatPhp'], $dateStringWithoutT);
+            $dateRangeStartParseErrorCount = DateTime::getLastErrors()['error_count']; 
+            if ($dateRangeStartParseErrorCount >= 1) {
+                error_log("dateRangeStartParseErrorMessages ".print_r(DateTime::getLastErrors()['errors'], true)); 
+                return false;
+            }
+            else{
+                if ($date->format(Yii::$app->params['standardDateTimeFormatPhp']) == $dateStringWithoutT) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        } catch (Exception $exception) {                
+            error_log($exception->getMessage());
+            return false;
+        }
+    }
+    
+    private function handleSearchDateRangeFormatError(){
+        $this->dateRangeStart = null;
+        $this->dateRangeEnd = null;
+        $this->dateRange = null;
     }
     
     /**
