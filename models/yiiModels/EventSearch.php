@@ -106,7 +106,7 @@ class EventSearch extends YiiEventModel {
         return array_merge(
                 parent::attributeLabels(),
                 [
-                    EventSearch::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Elements'),
+                    EventSearch::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
                     EventSearch::DATE_RANGE => Yii::t('app', 'Date')
                 ]
         );
