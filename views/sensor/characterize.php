@@ -35,6 +35,12 @@ $this->params['breadcrumbs'][] = $this->title;
         var rdfType = "<?= $sensor->rdfType ?>";
         var inputLabels = {};
         
+        /**
+         * Add the given field to the list of the required fields for the current sensor type
+         * label is used to display error message
+         * @param string name 
+         * @param string label
+         */
         function addRequiredField(name, label) {
             $('.characterize-form > form').yiiActiveForm('add', {
                 id: name,
@@ -46,6 +52,14 @@ $this->params['breadcrumbs'][] = $this->title;
             inputLabels[name] = label;
         }    
         
+        /**
+         * Add the given list of fields to the list of the required fields for the current sensor type
+         * label is used to display error message
+         * N is the number of fields occurence
+         * @param string name 
+         * @param string label
+         * @param int count
+         */
         function addRequiredFieldGroup(groupName, label, count) {
             for (var i = 1; i <= count; i++) {
                 var name = groupName + i;
@@ -62,6 +76,12 @@ $this->params['breadcrumbs'][] = $this->title;
         
         var requiredMessage = "<?= Yii::t('yii', '{attribute} cannot be blank.') ?>";
         
+        /**
+         * Validate fields declared to be required
+         * @params ...fieldNames list of all fields name to check
+         * @returns {Boolean} True if all fields in the list are filled
+         *                    false otherwise
+         */
         function checkRequiredFields() {
             var emptyFields = false;
             
@@ -82,6 +102,13 @@ $this->params['breadcrumbs'][] = $this->title;
             return !emptyFields;
         }
         
+        /**
+         * Validate field group declared to be required
+         * @param string groupName
+         * @param int count
+         * @returns {Boolean} true if every field in the group are filled
+         *                    false otherwise
+         */
         function checkRequiredFieldGroup(groupName, count) {
             var emptyFields = false;
             var fieldName = "";
@@ -241,14 +268,32 @@ $this->params['breadcrumbs'][] = $this->title;
     </script>
 
     <?php 
-        function createValidatedInput($name, $label, $type, $unit = null) {
+        /**
+         * This function generate HTML and JS validation script for an input markup used to characterize sensor
+         * @param string $name    input name
+         * @param string $label   displayed label
+         * @param string $type    input type @see https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input
+         * @param string $step    optional step attribute for input type number @see https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input/number#step
+         * @param string $unit    optional displayed unit (added to label)
+         * @return string HTML and JS code generated
+         */
+        function createValidatedInput($name, $label, $type, $step = null, $unit = null) {
             $toReturn = '<div id="input-container-' . $name . '" class="form-group">';
             $completeLabel = $label;
             if ($unit != null) {
                 $completeLabel .=  ' (' . $unit . ') ';
             }
             $toReturn .= Html::label($completeLabel . '<font color="red">*</font>', $name, ['class' => 'control-label']);
-            $toReturn .= Html::textInput($name, null, ['type' => $type, 'class' => 'form-control']);
+            
+            $attributes = [
+                'type' => $type, 
+                'class' => 'form-control'
+            ];
+            if ($step != null) {
+                $attributes['step'] = $step;
+            }
+            
+            $toReturn .= Html::textInput($name, null, $attributes);
             $toReturn .= '<div class="help-block"></div>';
             $toReturn .= <<<EOT
                 <script>
@@ -261,8 +306,19 @@ EOT;
             
             return $toReturn;
         }
-        
-        function createValidatedInputTableRow($name, $count, $label, $type, $unit = null, $extraText = "") {
+
+        /**
+         * This function generate HTML and JS validation script for N input markup used to characterize sensor
+         * @param string $name    input name
+         * @param type $count     number of input to generate
+         * @param string $label   displayed label
+         * @param string $type    input type @see https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input
+         * @param string $step    optional step attribute for input type number @see https://developer.mozilla.org/fr/docs/Web/HTML/Element/Input/number#step
+         * @param string $unit    optional displayed unit (added to label)
+         * @param type $extraText optional extra text displayed after label and unit
+         * @return string HTML and JS code generated
+         */        
+        function createValidatedInputTableRow($name, $count, $label, $type, $step = null, $unit = null, $extraText = "") {
             $toReturn = '<tr id="input-container-' . $name . '" class="form-group">';
             $completeLabel = $label;
             if ($unit != null) {
@@ -270,8 +326,16 @@ EOT;
             }            
             $toReturn .= '<th scope="row">' . $completeLabel .'<font color="red">*</font>' . $extraText . '<div class="help-block"></div></th>';
             
+            $attributes = [
+                'type' => $type, 
+                'class' => 'form-control'
+            ];
+            if ($step != null) {
+                $attributes['step'] = $step;
+            }
+            
             for ($i = 1; $i <= $count; $i++) {
-                $toReturn .= '<td>' . Html::textInput($name . $i, null, ['type' => $type, 'class' => 'form-control', 'step' => 'any']) . '</td>';
+                $toReturn .= '<td>' . Html::textInput($name . $i, null, $attributes) . '</td>';
             }
                         
             $toReturn .= <<<EOT
@@ -287,7 +351,8 @@ EOT;
             return $toReturn;
         }
     ?>
-    
+
+    <!-- Generated form for the current sensor type, all required field are check before submitting form -->
     <div class="characterize-form well" onSubmit="return validateRequiredFields();">
         <?php $form = ActiveForm::begin(); ?>
 
@@ -303,9 +368,9 @@ EOT;
          
             </script>
             <div class="characterize-attributes" id="camera">
-                <?= createValidatedInput('height', Yii::t('app', 'Height'), 'number', 'pixels') ?>
-                <?= createValidatedInput('width', Yii::t('app', 'Width'), 'number', 'pixels') ?>
-                <?= createValidatedInput('pixelSize', Yii::t('app', 'Pixel Size'), 'number', 'µm') ?>
+                <?= createValidatedInput('height', Yii::t('app', 'Height'), 'number', 1, 'pixels') ?>
+                <?= createValidatedInput('width', Yii::t('app', 'Width'), 'number', 1, 'pixels') ?>
+                <?= createValidatedInput('pixelSize', Yii::t('app', 'Pixel Size'), 'number', 'any', 'µm') ?>
             </div>
         <?php endif; ?>
         
@@ -323,9 +388,9 @@ EOT;
                       <th scope="col">6</th>
                     </tr>
                     <tbody>
-                        <?= createValidatedInputTableRow('wavelength', 6, Yii::t('app', 'Wavelength'), 'number', 'nm'); ?>
-                        <?= createValidatedInputTableRow('focalLength', 6, Yii::t('app', 'Focal Length'), 'number', 'mm'); ?>
-                        <?= createValidatedInputTableRow('attenuatorFilter', 6, Yii::t('app', 'Attenuator Filter'), 'number', '%', ' [0 - 100]'); ?>
+                        <?= createValidatedInputTableRow('wavelength', 6, Yii::t('app', 'Wavelength'), 'number', 'any', 'nm'); ?>
+                        <?= createValidatedInputTableRow('focalLength', 6, Yii::t('app', 'Focal Length'), 'number', 'any', 'mm'); ?>
+                        <?= createValidatedInputTableRow('attenuatorFilter', 6, Yii::t('app', 'Attenuator Filter'), 'number', 'any', '%', ' [0 - 100]'); ?>
                     </tbody>
                   </thead>
                 </table>
@@ -334,7 +399,7 @@ EOT;
         
         <?php if ($sensor->rdfType === Yii::$app->params["TIRCamera"]): ?>
             <div id="waveband">
-                <?= createValidatedInput('waveband', Yii::t('app', 'Waveband'), 'number', 'nm') ?>
+                <?= createValidatedInput('waveband', Yii::t('app', 'Waveband'), 'number', 'any', 'nm') ?>
             </div>
         <?php endif; ?>
         
@@ -391,35 +456,35 @@ EOT;
                 </div>
 
 
-                <?= createValidatedInput('lensFocalLength', Yii::t('app', 'Focal Length'), 'number', 'mm') ?>
+                <?= createValidatedInput('lensFocalLength', Yii::t('app', 'Focal Length'), 'number', 'any', 'mm') ?>
 
-                <?= createValidatedInput('lensAperture', Yii::t('app', 'Aperture'), 'number', 'fnumber') ?>
+                <?= createValidatedInput('lensAperture', Yii::t('app', 'Aperture'), 'number', 'any', 'fnumber') ?>
             </div>
         <?php endif; ?>
         
         <?php if ($sensor->rdfType === Yii::$app->params["LiDAR"]): ?>
             <div id="lidar">
-                <?= createValidatedInput('wavelength', Yii::t('app', 'Wavelength'), 'number', 'nm') ?>
+                <?= createValidatedInput('wavelength', Yii::t('app', 'Wavelength'), 'number', 'any', 'nm') ?>
 
-                <?= createValidatedInput('scanningAngularRange', Yii::t('app', 'Scanning Angular Range'), 'number', '°') ?>
+                <?= createValidatedInput('scanningAngularRange', Yii::t('app', 'Scanning Angular Range'), 'number', 'any', '°') ?>
 
-                <?= createValidatedInput('scanAngularResolution', Yii::t('app', 'Scan Angular Resolution'), 'number', '°') ?>
+                <?= createValidatedInput('scanAngularResolution', Yii::t('app', 'Scan Angular Resolution'), 'number', 'any', '°') ?>
 
-                <?= createValidatedInput('spotWidth', Yii::t('app', 'Spot width'), 'number', '°') ?>
+                <?= createValidatedInput('spotWidth', Yii::t('app', 'Spot width'), 'number', 'any', '°') ?>
 
-                <?= createValidatedInput('spotHeight', Yii::t('app', 'Spot height'), 'number', '°') ?>
+                <?= createValidatedInput('spotHeight', Yii::t('app', 'Spot height'), 'number', 'any', '°') ?>
             </div>
         <?php endif; ?>
         
         <?php if ($sensor->rdfType === Yii::$app->params["Spectrometer"]): ?>        
             <div id="spectrometer">
-                <?= createValidatedInput('halfFieldOfView', Yii::t('app', 'Half Field Of View'), 'number', '°') ?>
+                <?= createValidatedInput('halfFieldOfView', Yii::t('app', 'Half Field Of View'), 'number', 'any', '°') ?>
 
-                <?= createValidatedInput('minWavelength', Yii::t('app', 'Minimum Wavelength'), 'number', 'nm') ?>
+                <?= createValidatedInput('minWavelength', Yii::t('app', 'Minimum Wavelength'), 'number', 'any', 'nm') ?>
 
-                <?= createValidatedInput('maxWavelength', Yii::t('app', 'Maximum Wavelength'), 'number', 'nm') ?>
+                <?= createValidatedInput('maxWavelength', Yii::t('app', 'Maximum Wavelength'), 'number', 'any', 'nm') ?>
 
-                <?= createValidatedInput('spectralSamplingInterval', Yii::t('app', 'number', 'Spectral Sampling Interval')) ?>
+                <?= createValidatedInput('spectralSamplingInterval', Yii::t('app', 'number', 'any', 'Spectral Sampling Interval')) ?>
             </div>
         <?php endif; ?>
         
