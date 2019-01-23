@@ -33,19 +33,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($model) {
                     $concernedItemLabels = "";
-                    $first = true;
                     $currentConcernedItemNumber = 0;
                     foreach ($model->concernedItems as $concernedItem) {
-                            $currentConcernedItemNumber++;
-                            if ($currentConcernedItemNumber > Yii::$app->params['numberOfConcernedItemsToDisplayInEventIndex'])
+                            if ($currentConcernedItemNumber > 0) {
+                                $concernedItemLabels .= "<br/>";
+                            }
+                            
+                            if ($currentConcernedItemNumber == Yii::$app->params['numberOfConcernedItemsToDisplayInEventIndex'])
                             {
-                                $concernedItemLabels .= "<br/>...";
+                                $concernedItemLabels .= "...";
                                 break;
                             }
                             else{
-                                $first ? $first = false : $concernedItemLabels .= "<br/>";
                                 $concernedItemLabels .= implode(", ", $concernedItem->labels);
                             }
+                            $currentConcernedItemNumber++;
                     }
                     return $concernedItemLabels;
                 } 
