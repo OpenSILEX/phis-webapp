@@ -9,7 +9,7 @@
 // Creation date: August 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 // Last modification date:  August, 31 2017
-// Subject: creation of agronomical objects via CSV
+// Subject: creation of scientific objects via CSV
 //***********************************************************************************************
 ?>
 
@@ -18,6 +18,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/0.37.0/handsontable.full.min.js"></script>
 
 <div class="scientificObject-form">
+    <p><i>See the <a href="https://opensilex.github.io/phis-docs-community/experimental-organization/#importing-scientific-objects" target="_blank">documentation</a> to get more informations about the columns contents.</i></p>
     <div id="objects-created" class="alert alert-success"><?= Yii::t('app', 'Scientific Objects Created') ?></div>
     <!--<button type = "button" id="export" id="exportButton">Export</button>-->
     <div id="objects-creation">
@@ -26,7 +27,6 @@
             <button type="button" class="btn btn-success" id="objects-save"><?= Yii::t('app', 'Create Scientific Objects') ?></button>
         </div>
     </div>
-    
     <div id="loader" class="loader" style="display:none"></div>
     
     <script>
@@ -75,6 +75,23 @@
             }
         };
         
+        /**
+         * validate an experiment cell value. callback will be true if the value is 
+         * not empty and is an experiment from the experiments list
+         * @param {type} value
+         * @param {type} callback
+         * @returns {undefined} 
+         */
+        var experimentValidator = function(value, callback) {
+            if (isEmpty(value)) {
+                callback(false);
+            } else if (experiments.indexOf(value) > -1) {
+                callback(true);
+            } else {
+                callback(false);
+            }
+        };
+        
         var speciesValidator = function(value, callback) {
           if (isEmpty(value)) {
                 callback(true);
@@ -92,8 +109,8 @@
             td.style.fontWeight = 'bold';
         }   
         
-        //creates renderer for the uriColumn
-        function uriColumnRenderer(instance, td, row, col, prop, value, cellProperties) {
+        //creates renderer for the read only columns
+        function readOnlyColumnRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
             td.style.fontWeight = 'bold';
             td.style.background = '#EEE';
@@ -131,7 +148,7 @@
                     source: experiments,
                     strict: true,
                     required: true,
-                    validator: emptyValidator
+                    validator: experimentValidator
                 },
                 {
                     data: 'geometry',
@@ -156,6 +173,16 @@
                     required: false
                 },
                 {
+                    data: 'modalities',
+                    type: 'text',
+                    required: false
+                },
+                {
+                    data: 'replication',
+                    type: 'text',
+                    required: false
+                },
+                {
                     data: 'insertion status',
                     type: 'text',
                     required: false,
@@ -173,6 +200,8 @@
                 "<b><?= Yii::t('app', 'Parent') ?></b>",
                 "<b><?= Yii::t('app', 'Species') ?></b>",
                 "<b><?= Yii::t('app', 'Variety') ?></b>",
+                "<b><?= Yii::t('app', 'Experiment Modalities') ?></b>",
+                "<b><?= Yii::t('app', 'Replication') ?></b>",
                 "<b><?= Yii::t('app', 'Insertion status') ?></b>"
             ],
             manualRowMove: true,
@@ -183,8 +212,8 @@
             cells: function(row, col, prop) {
                 var cellProperties = {};
                 
-                if (col === 0) {
-                    cellProperties.renderer = uriColumnRenderer;
+                if (col === 0 || col === 10) {
+                    cellProperties.renderer = readOnlyColumnRenderer;
                 }
                 
                 return cellProperties;
@@ -210,7 +239,7 @@
                 var objectsArray = handsontable.getData();
                 var objectsString = JSON.stringify(objectsArray);
                 $.ajax({
-                    url: 'index.php?r=agronomical-object%2Fcreate-multiple-scientific-objects',
+                    url: 'index.php?r=scientific-object%2Fcreate-multiple-scientific-objects',
                     type: 'POST',
                     dataType: 'json',
                     data: {objects: objectsString}
@@ -221,7 +250,7 @@
                         if (data["objectUris"][i] !== null) {
                             handsontable.setDataAtCell(i, 0, data["objectUris"][i]);
                         }
-                        handsontable.setDataAtCell(i, 8, data["messages"][i]);                        
+                        handsontable.setDataAtCell(i, 10, data["messages"][i]);                        
                     }                    
                     $('#objects-save').hide();
                 })

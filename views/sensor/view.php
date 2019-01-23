@@ -27,6 +27,25 @@ use yii\helpers\Url;
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+$sensorProfilePropertiesCount = 0;
+foreach ($model->properties as $property) {
+    $propertyLabel = explode("#", $property->relation)[1];
+    
+    if ($propertyLabel !== "type" 
+            && $propertyLabel !== "label" 
+            && $propertyLabel !== "inServiceDate" 
+            && $propertyLabel !== "personInCharge" 
+            && $propertyLabel !== "serialNumber" 
+            && $propertyLabel !== "dateOfPurchase" 
+            && $propertyLabel !== "dateOfLastCalibration" 
+            && $propertyLabel !== "hasBrand" 
+            && $propertyLabel !== "hasLens" 
+            && $propertyLabel !== "measures"
+    ) {
+        $sensorProfilePropertiesCount++;
+    }
+}
 ?>
 
 <div class="sensor-view">
@@ -37,6 +56,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <!-- Add annotation button-->
         <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
         <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+        <?php
+            if (Yii::$app->session['isAdmin'] && $sensorProfilePropertiesCount == 0) {
+                echo Html::a(Yii::t('app', 'Characterize Sensor'), ['characterize', 'sensorUri' => $model->uri], ['class' => 'btn btn-success']);
+            }
+        ?>
     </p>
 
     <?php if (Yii::$app->session['isAdmin']): ?>

@@ -1,7 +1,7 @@
 <?php
 
 //**********************************************************************************************
-//                                       AgronomicalObjectSearch.php 
+//                                       ScientificObjectSearch.php 
 //
 // Author(s): Morgane VIDAL
 // PHIS-SILEX version 1.0
@@ -9,20 +9,20 @@
 // Creation date: October 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 // Last modification date:  October, 3 2017
-// Subject: AgronomicalObjectSearch represents the model behind the search form about app\models\AgronomicalObject
+// Subject: ScientificObjectSearch represents the model behind the search form about app\models\YiiScientificObjectModel
 //          Based on the Yii2 Search basic class
 //***********************************************************************************************
 
 namespace app\models\yiiModels;
 
-use app\models\yiiModels\YiiAgronomicalObjectModel;
+use app\models\yiiModels\YiiScientificObjectModel;
 
 /**
- * implements the search action for the agronomical objects
+ * implements the search action for the scientific objects
  *
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
-class AgronomicalObjectSearch extends YiiAgronomicalObjectModel {
+class ScientificObjectSearch extends YiiScientificObjectModel {
     //SILEX:refactor
     //create a trait (?) with methods search and jsonListOfArray and use it in 
     //each class ElementNameSearch

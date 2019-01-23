@@ -136,7 +136,7 @@ class ExperimentController extends Controller {
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
         //3. get experiment's agronomical objects
-        $searchAgronomicalObject = new \app\models\yiiModels\AgronomicalObjectSearch();
+        $searchAgronomicalObject = new \app\models\yiiModels\ScientificObjectSearch();
         $searchAgronomicalObject->experiment = $id;
         $searchParams = Yii::$app->request->queryParams;
         $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session['access_token'], $searchParams);

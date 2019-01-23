@@ -133,7 +133,6 @@ class UserController extends Controller {
         //Form has been complete
         if ($userModel->load(Yii::$app->request->post())) {
             $userModel->isNewRecord = true;
-            $userModel->groups = Yii::$app->request->post('YiiUserModel')['groups'];
             $userModel->password = md5($userModel->password);
 
             $dataToSend[] = $userModel->attributesToArray();

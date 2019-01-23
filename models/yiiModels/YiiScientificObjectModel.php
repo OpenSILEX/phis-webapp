@@ -1,7 +1,7 @@
 <?php
 
 //**********************************************************************************************
-//                                       YiiAgronomicalObjectModel.php 
+//                                       YiiScientificObjectModel.php 
 //
 // Author(s): Morgane VIDAL
 // PHIS-SILEX version 1.0
@@ -9,34 +9,33 @@
 // Creation date: August 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 // Last modification date:  August, 30 2017
-// Subject: The Yii model for the agronomical objects. Used with web services
+// Subject: The Yii model for the scientific objects. Used with web services
 //***********************************************************************************************
 
 namespace app\models\yiiModels;
 
-use Yii;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSUriModel;
-use app\models\wsModels\WSAgronomicalObjectModel;
+use app\models\wsModels\WSScientificObjectModel;
 
 /**
- * The yii model for the agronomical objects. 
+ * The yii model for the scientific objects. 
  * Implements a customized Active Record
  *  (WSActiveRecord, for the web services access)
- * @see app\models\wsModels\WSAgronomicalObjectModel
+ * @see app\models\wsModels\WSScientificObjectModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
-class YiiAgronomicalObjectModel extends WSActiveRecord {
+class YiiScientificObjectModel extends WSActiveRecord {
     
     /**
-     * uri of the agronomical object 
+     * uri of the scientific object 
      *                      (e.g. http://www.phenome-fppn.fr/pheno3c/o17000001)
      * @var string
      */
     public $uri;
     const URI = "uri";
     /**
-     * geometry of the agronomical objects. 
+     * geometry of the scientific objects. 
      *                      (e.g. POLYGON((0 0, 10 0, 10 10, 0 10, 0 0)) )
      * @see https://fr.wikipedia.org/wiki/Well-known_text
      * @var string
@@ -44,27 +43,27 @@ class YiiAgronomicalObjectModel extends WSActiveRecord {
     public $geometry;
     const GEOMETRY = "geometry";
     /**
-     * the rdf type of the agronomical object. Must be in the ontology. 
+     * the rdf type of the scientific object. Must be in the ontology. 
      *                      (e.g http://www.phenome-fppn.fr/vocabulary/2017#Plot)
      * @var string
      */
     public $type;
     const TYPE = "type";
     /**
-     * the uri of the experiment in which the agronomical object is
+     * the uri of the experiment in which the scientific object is
      *                      (e.g http://www.phenome-fppn.fr/diaphen/DIA2017-1)
      * @var experiment 
      */
     public $experiment;
     const EXPERIMENT = "experiment";
     /**
-     * the year of the agronomical object 
+     * the year of the scientific object 
      *                      (e.g 2017)
      * @var string
      */
     public $year;
     /**
-     * the file for the agronomical objects creation by csv file
+     * the file for the scientific objects creation by csv file
      * @var file
      */
     public $file;
@@ -82,17 +81,23 @@ class YiiAgronomicalObjectModel extends WSActiveRecord {
     public $variety;
     const VARIETY = "variety";
     
+    public $modality;
+    const MODALITY = "modality";
+    
+    public $replication;
+    const REPLICATION = "replication";
+    
     public $parent;
     const ISPARTOF = "ispartof";
 
     /**
-     * Initialize wsModel. In this class, wsModel is a WSAgronomicalObjectModel
+     * Initialize wsModel. In this class, wsModel is a WSScientificObjectModel
      * @param string $pageSize number of elements per page
      *                               (limited to 150 000)
      * @param string $page number of the current page 
      */
     public function __construct($pageSize = null, $page = null) {
-        $this->wsModel = new WSAgronomicalObjectModel();
+        $this->wsModel = new WSScientificObjectModel();
         $this->pageSize = ($pageSize !== null || $pageSize === "") ? $pageSize : null;
         $this->page = ($page !== null || $page != "") ? $page : null;
     }
@@ -108,20 +113,22 @@ class YiiAgronomicalObjectModel extends WSActiveRecord {
     }
 
     /**
-     * Create an array representing the agronomical object
+     * Create an array representing the scientific object
      * Used for the web service for example
      * @return array with the attributes. 
      */
     public function attributesToArray() {
         $elementForWebService = parent::attributesToArray();
-        $elementForWebService[YiiAgronomicalObjectModel::URI] = $this->uri;
-        $elementForWebService[YiiAgronomicalObjectModel::EXPERIMENT] = $this->experiment;
-        $elementForWebService[YiiAgronomicalObjectModel::ALIAS] = $this->alias;
-        $elementForWebService[YiiAgronomicalObjectModel::TYPE] = $this->type;
-        $elementForWebService[YiiAgronomicalObjectModel::GEOMETRY] = $this->geometry;
-        $elementForWebService[YiiAgronomicalObjectModel::SPECIES] = $this->species;
-        $elementForWebService[YiiAgronomicalObjectModel::VARIETY] = $this->variety;
-        $elementForWebService[YiiAgronomicalObjectModel::ISPARTOF] = $this->parent;
+        $elementForWebService[YiiScientificObjectModel::URI] = $this->uri;
+        $elementForWebService[YiiScientificObjectModel::EXPERIMENT] = $this->experiment;
+        $elementForWebService[YiiScientificObjectModel::ALIAS] = $this->alias;
+        $elementForWebService[YiiScientificObjectModel::TYPE] = $this->type;
+        $elementForWebService[YiiScientificObjectModel::GEOMETRY] = $this->geometry;
+        $elementForWebService[YiiScientificObjectModel::SPECIES] = $this->species;
+        $elementForWebService[YiiScientificObjectModel::VARIETY] = $this->variety;
+        $elementForWebService[YiiScientificObjectModel::MODALITY] = $this->modality;
+        $elementForWebService[YiiScientificObjectModel::REPLICATION] = $this->replication;
+        $elementForWebService[YiiScientificObjectModel::ISPARTOF] = $this->parent;
         
         return $elementForWebService;
     }

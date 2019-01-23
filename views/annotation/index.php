@@ -37,7 +37,6 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => YiiAnnotationModel::COMMENTS_LABEL,
                 'attribute' => YiiAnnotationModel::COMMENTS,
-                'format' => 'html',
                 'value' => function ($model) {
                     return implode(('<br>,'), $model->comments);
                 }

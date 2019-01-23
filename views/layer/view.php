@@ -29,8 +29,14 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
     
 <div class="layer-view">
 
-     <h1><?= Html::encode($this->title) ?></h1>
-     
+    <h1>
+        <?= Html::encode($this->title) ?>
+        <?php if (Yii::$app->session['isAdmin']) {
+           echo Html::a(Yii::t('app', 'Generate Map'), 
+               ['layer/view', 'objectURI' => $model->objectURI, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
+           }
+        ?>
+     </h1>
     <div id="map" class="map"></div>
     <p><i>Use Alt+Shift+Drag to rotate the map. Use Ctrl+Click+Drag to select multiple elements.</i></p>
     <div id="info">
@@ -129,8 +135,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                         } else {
                             plot.push("");
                         }
-                        if (feature.get('alias') !== undefined) {
-                            plot.push(feature.get('alias'));
+                        if (feature.get('label') !== undefined) {
+                            plot.push(feature.get('label'));
                         } else {
                             plot.push("");
                         }
