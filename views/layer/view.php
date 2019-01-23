@@ -129,8 +129,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                         } else {
                             plot.push("");
                         }
-                        if (feature.get('alias') !== undefined) {
-                            plot.push(feature.get('alias'));
+                        if (feature.get('label') !== undefined) {
+                            plot.push(feature.get('label'));
                         } else {
                             plot.push("");
                         }
