@@ -17,7 +17,9 @@ use app\models\wsModels\WSConstants;
 use app\components\helpers\SiteMessages;
 
 /**
+ * Controller for the Events according to YiiEventModel
  * @see yii\web\Controller
+ * @see app\models\yiiModels\YiiEventModel
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class EventController extends Controller {

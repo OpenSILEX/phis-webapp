@@ -1,12 +1,10 @@
 <?php
 
 //******************************************************************************
-//                                       EventSearch.php
-//
-// Author(s): Andréas Garcia <andreas.garcia@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation dateTimeString: 02 janvier 2019
+//                               EventSearch.php
+// PHIS-SILEX
+// Copyright © INRA 2018
+// Creation date: 02 jan. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -15,6 +13,7 @@ namespace app\models\yiiModels;
 use Yii;
 use DateTime;
 
+use yii\data\ArrayDataProvider;
 use app\models\wsModels\WSConstants;
 use app\models\yiiModels\YiiEventModel;
 
@@ -25,15 +24,16 @@ use app\models\yiiModels\YiiEventModel;
 class EventSearch extends YiiEventModel {
     
     /**
-     * Searched concerned item's label 
-     *  (e.g. "Plot 445")
+     * Concerned item's label filter
+     * @example Plot 445
      * @var string
      */
     public $concernedItemLabel;
     const CONCERNED_ITEM_LABEL = 'concernedItemLabel';
     
     /**
-     * Searched date range 
+     * Date range filter
+     * @example 2019-01-02T00:00:00+01:00 - 2019-01-03T23:00:00+01:00
      * @var string
      */
     public $dateRange;
@@ -58,33 +58,40 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * Search Events
      * @param array $sessionToken
-     * @param string $params
+     * @param string $searchParams
      * @return mixed DataProvider of the result or string 
      * \app\models\wsModels\WSConstants::TOKEN if the user needs to log in
      */
-    public function search($sessionToken, $params) {
-        $this->load($params);
-        if (isset($params[YiiModelsConstants::PAGE])) {
-            $this->page = $params[YiiModelsConstants::PAGE];
+    public function search($sessionToken, $searchParams) {
+        $this->load($searchParams);
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $this->page = $searchParams[YiiModelsConstants::PAGE];
         }
         
         if (!$this->validate()) {
-            return new \yii\data\ArrayDataProvider();
+            return new ArrayDataProvider();
         }
         
-        //Request to the web service and return result
-        $findResult = $this->find($sessionToken, $this->attributesToArray());
+        return $this->requestToWSAndReturnResult($sessionToken);
+    }
+    
+    /**
+     * Request to WS and return result
+     * @param $sessionToken
+     * @return request result
+     */
+    private function requestToWSAndReturnResult($sessionToken) {
+        $results = $this->find($sessionToken, $this->attributesToArray());
         
-        if (is_string($findResult)) {
-            return $findResult;
-        }  else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-            && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN) {
-            return \app\models\wsModels\WSConstants::TOKEN;
+        if (is_string($results)) {
+            return $results;
+        }  else if (isset($results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
+            && $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN) {
+            return WSConstants::TOKEN;
         } else {
-            $resultSet = $this->jsonListOfArraysToArray($findResult);
-            return new \yii\data\ArrayDataProvider([
+            $resultSet = $this->jsonListOfArraysToArray($results);
+            return new ArrayDataProvider([
                 'models' => $resultSet,
                 'pagination' => [
                     'pageSize' => $this->pageSize,
@@ -99,7 +106,6 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * @see http://www.yiiframework.com/doc-2.0/guide-structure-models.html#attribute-labels
      * @return array the labels of the attributes
      */
     public function attributeLabels() {
@@ -112,35 +118,51 @@ class EventSearch extends YiiEventModel {
         );
     }
     
+    /**
+     * @inheritdoc
+     * @param type $values
+     * @param type $safeOnly
+     */
     public function setAttributes($values, $safeOnly = true) {
         parent::setAttributes($values, $safeOnly);
             
         if (is_array($values)) {
             if (isset($values[EventSearch::DATE_RANGE])) {
                 $dateRange = $values[EventSearch::DATE_RANGE];
+                
+                //SILEX:info
+                // We shouldn't control the date range format because de WS 
+                // already implements it but as the webapp doesn't handle WS
+                // error responses yet, we have to control the format of the 
+                // submitted date range at the moment.
+                //\SILEX:info
                 if (!empty($dateRange)) {
-                    $this->validateSubmittedDateRangeAndSetDatesAttributes($dateRange);
+                    $this->validateDateRangeFormatAndSetDatesAttributes($dateRange);
                 }
             }
         }
     }
     
-    private function validateSubmittedDateRangeAndSetDatesAttributes($submittedDateRangeString) {        
-        $dateRangeArray = explode(Yii::$app->params['dateRangeSeparator'], $submittedDateRangeString);
+    /**
+     * 
+     * @param type $dateRangeString
+     */
+    private function validateDateRangeFormatAndSetDatesAttributes($dateRangeString) {        
+        $dateRangeArray = explode(Yii::$app->params['dateRangeSeparator'], $dateRangeString);
         
         $isSubmittedStartDateFormatValid = true;
         $isSubmittedEndDateFormatValid = true;
 
-        $submittedDateRangeStartString = $dateRangeArray[0];
-        if (!empty($submittedDateRangeStartString)) {
-            $isSubmittedStartDateFormatValid = $this->validateSubmittedDateFormat($submittedDateRangeStartString);
+        $submittedStartDateString = $dateRangeArray[0];
+        if (!empty($submittedStartDateString)) {
+            $isSubmittedStartDateFormatValid = $this->validateSubmittedDateFormat($submittedStartDateString);
             if ($isSubmittedStartDateFormatValid) {
-                $this->dateRangeStart = $submittedDateRangeStartString;
+                $this->dateRangeStart = $submittedStartDateString;
                 if (isset($dateRangeArray[1])) {   
-                    $submittedDateRangeEndString = $dateRangeArray[1];
-                    $isSubmittedEndDateFormatValid = $this->validateSubmittedDateFormat($submittedDateRangeEndString);
+                    $submittedEndDateString = $dateRangeArray[1];
+                    $isSubmittedEndDateFormatValid = $this->validateSubmittedDateFormat($submittedEndDateString);
                     if ($isSubmittedEndDateFormatValid) {
-                        $this->dateRangeEnd = $submittedDateRangeEndString;
+                        $this->dateRangeEnd = $submittedEndDateString;
                     }
                 } 
             }
@@ -194,7 +216,7 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * transform the json into array
+     * Transform the json into array
      * @param json jsonList
      * @return array
      */
@@ -212,7 +234,6 @@ class EventSearch extends YiiEventModel {
      * @inheritdoc
      */
     public function attributesToArray() {
-        //return parent::attributesToArray();
         return [
             YiiEventModel::TYPE => $this->type,
             EventSearch::CONCERNED_ITEM_LABEL => $this->concernedItemLabel,

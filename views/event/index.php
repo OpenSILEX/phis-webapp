@@ -1,12 +1,10 @@
 <?php
 
 //******************************************************************************
-//                                       index.php
-//
-// Author(s): Andréas Garcia <andreas.garcia@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 02 janvier 2019
+//                                 index.php
+// PHIS-SILEX
+// Copyright © INRA 2018
+// Creation date: 02 jan. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -14,6 +12,10 @@ use Yii;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\daterange\DateRangePicker;
+
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\EventSearch */
+/* @var $dataProvider yii\data\ActiveDataProvider*/
 
 $this->title = Yii::t('app', '{n, plural, =1{Event} other{Events}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
@@ -40,19 +42,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     $concernedItemLabels = "";
                     $currentConcernedItemNumber = 0;
                     foreach ($model->concernedItems as $concernedItem) {
-                            if ($currentConcernedItemNumber > 0) {
-                                $concernedItemLabels .= "<br/>";
-                            }
-                            
-                            if ($currentConcernedItemNumber == Yii::$app->params['numberOfConcernedItemsToDisplayInEventIndex'])
-                            {
-                                $concernedItemLabels .= "...";
-                                break;
-                            }
-                            else{
-                                $concernedItemLabels .= implode(", ", $concernedItem->labels);
-                            }
-                            $currentConcernedItemNumber++;
+                        if ($currentConcernedItemNumber > 0) {
+                            $concernedItemLabels .= "<br/>";
+                        }
+
+                        if ($currentConcernedItemNumber == Yii::$app->params['numberOfConcernedItemsToDisplayInEventIndex'])
+                        {
+                            $concernedItemLabels .= "...";
+                            break;
+                        }
+                        else{
+                            $concernedItemLabels .= implode(", ", $concernedItem->labels);
+                        }
+                        $currentConcernedItemNumber++;
                     }
                     return $concernedItemLabels;
                 } 

@@ -1,12 +1,10 @@
 <?php
 
 //******************************************************************************
-//                                       YiiEventModel.php
-//
-// Author(s): Andréas Garcia <andreas.garcia@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation dateTimeString: 02 janvier 2019
+//                             YiiEventModel.php
+// PHIS-SILEX
+// Copyright © INRA 2018
+// Creation date: 02 jan. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -19,7 +17,7 @@ use app\models\wsModels\WSUriModel;
 use app\models\wsModels\WSEventModel;
 
 /**
- * The yii model for an  Event. 
+ * The yii model for an event 
  * @see app\models\wsModels\WSTripletModel
  * @see app\models\wsModels\WSUriModel
  * @see app\models\wsModels\WSActiveRecord
@@ -28,26 +26,36 @@ use app\models\wsModels\WSEventModel;
 class YiiEventModel extends WSActiveRecord {
     
     /**
+     * @example http://www.phenome-fppn.fr/id/event/96e72788-6bdc-4f8e-abd1-ce9329371e8e
      * @var string
      */
     public $uri;
     const URI = "uri";
+    
     /**
+     * @example http://www.phenome-fppn.fr/vocabulary/2018/oeev#MoveFrom
      * @var string
      */
     public $type;
     const TYPE = "type";
+    
     /**
-     * @var string
+     * @var array
      */
     public $concernedItems; 
     const CONCERNED_ITEMS = "concernedItems";
+    
     /**
+     * @example 2019-01-02T00:00:00+01:00
      * @var string 
      */
     public $date;
     const DATE = "date";
     
+    /**
+     * Specific properties
+     * @var array 
+     */
     public $properties;
     const PROPERTIES = "properties";
     const RELATION = "relation";
@@ -61,13 +69,13 @@ class YiiEventModel extends WSActiveRecord {
     }
     
     /**
-     * @see http://www.yiiframework.com/doc-2.0/guide-input-validation.html
      * @return array the rules of the attributes
      */
     public function rules() {
        return [ 
-           [[YiiEventModel::URI], 'required']
-            , [[YiiEventModel::TYPE, 
+           [[YiiEventModel::URI], 'required'],
+           [[
+                YiiEventModel::TYPE, 
                 YiiEventModel::CONCERNED_ITEMS, 
                 YiiEventModel::DATE, 
                 YiiEventModel::PROPERTIES
@@ -76,7 +84,6 @@ class YiiEventModel extends WSActiveRecord {
     }
     
     /**
-     * @see http://www.yiiframework.com/doc-2.0/guide-structure-models.html#attribute-labels
      * @return array the labels of the attributes
      */
     public function attributeLabels() {
@@ -89,9 +96,9 @@ class YiiEventModel extends WSActiveRecord {
     }
     
     /**
-     * allows to fill the attributes with the informations in the array given 
+     * Allows to fill the attributes with the informations in the array given 
      * @param array $array array key => value which contains the metadata of 
-     *                     a event
+     * an event
      */
     protected function arrayToAttributes($array) {
         $this->uri = $array[YiiEventModel::URI];
@@ -104,9 +111,9 @@ class YiiEventModel extends WSActiveRecord {
     }
     
     /**
-     * allows to fill the property attribute with the information of the given 
+     * Allows to fill the property attribute with the information of the given 
      * array
-     * @param array $array array key => value with the properties of a event 
+     * @param array $array array key => value with the properties of an event 
      */
     protected function propertiesArrayToAttributes($array) {
         if ($array[YiiEventModel::PROPERTIES] !== null) {
@@ -121,13 +128,13 @@ class YiiEventModel extends WSActiveRecord {
     }
 
     /**
-     * calls web service and returns the list of events types
+     * TODO not used yet
+     * Calls web service and returns the list of events types
      * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
      * @return list of the events types
      */
     public function getEventsTypes($sessionToken) {
-        $eventConceptUri 
-                = "http://www.phenome-fppn.fr/vocabulary/2018/oeev#Event";
+        $eventConceptUri = "http://www.phenome-fppn.fr/vocabulary/2018/oeev#Event";
         $params = [];
         if ($this->pageSize !== null) {
            $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
@@ -137,8 +144,7 @@ class YiiEventModel extends WSActiveRecord {
         }
         
         $wsUriModel = new WSUriModel();
-        $requestRes = $wsUriModel
-                ->getDescendants($sessionToken, $eventConceptUri, $params);
+        $requestRes = $wsUriModel->getDescendants($sessionToken, $eventConceptUri, $params);
         
         if (!is_string($requestRes)) {
             if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
