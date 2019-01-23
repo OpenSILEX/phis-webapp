@@ -130,10 +130,6 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <ul class="list-group">
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            <?= Html::a(Yii::t('yii', 'Species'), ['ontology', '#' => 'species']) ?>
-            <span class="badge badge-primary badge-pill"><?= Html::encode(count($species)) ?></span>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
             <?= Html::a(Yii::t('yii', 'Scientific Objects'), ['ontology', '#' => 'scientific-objects']) ?>
             <span class="badge badge-primary badge-pill"><?= Html::encode(count($agronomicalObjects)) ?></span>
         </li>
@@ -184,30 +180,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <span class="badge badge-primary badge-pill"><?= Html::encode(count($vectors)) ?></span>
         </li>
     </ul>
-    
 
-    <h2 id="species"><?= Html::encode(Yii::t('app', 'Species')) ?></h2>
-        <?php    
-        $speciesProvider = new \yii\data\ArrayDataProvider([
-           'allModels' => $species,
-           'sort' => [
-               'attributes' => ['label_la', 'label_en', 'label_fr', 'uri']
-           ]
-        ]);
-
-        echo yii\grid\GridView::widget([
-            'dataProvider' => $speciesProvider,
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-                'label_la',
-                'label_en',
-                'label_fr',
-                'uri'
-            ]
-        ]);
-
-        ?>
-    
     <h2 id="agronomical-objects"><?= Html::encode(Yii::t('app', 'Scientific Objects')) ?></h2>
     
         <?php
