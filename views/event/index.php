@@ -32,7 +32,10 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'type',
                 'format' => 'raw',
-                'value' => 'type',
+                'value' => function($model) {
+                    $typeLabel = explode('#', $model->type)[1];
+                    return $typeLabel;
+                },
                 'filter' => false
             ],
             [
