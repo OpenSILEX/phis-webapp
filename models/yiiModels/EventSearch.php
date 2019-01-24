@@ -38,8 +38,20 @@ class EventSearch extends YiiEventModel {
      */
     public $dateRange;
     const DATE_RANGE = 'dateRange';
+    
+    /**
+     * Date range start filter
+     * @example 2019-01-02T00:00:00+01:00
+     * @var string
+     */
     public $dateRangeStart;
     const DATE_RANGE_START = 'startDate';
+    
+    /**
+     * Date range end filter
+     * @example 2019-01-02T00:00:00+01:00
+     * @var string
+     */
     public $dateRangeEnd;
     const DATE_RANGE_END = 'endDate';
     
@@ -55,6 +67,19 @@ class EventSearch extends YiiEventModel {
                 EventSearch::DATE_RANGE_START,
                 EventSearch::DATE_RANGE_END
             ],  'safe']]; 
+    }
+    
+    /**
+     * @return array the labels of the attributes
+     */
+    public function attributeLabels() {
+        return array_merge(
+                parent::attributeLabels(),
+                [
+                    EventSearch::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
+                    EventSearch::DATE_RANGE => Yii::t('app', 'Date')
+                ]
+        );
     }
     
     /**
@@ -106,19 +131,6 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * @return array the labels of the attributes
-     */
-    public function attributeLabels() {
-        return array_merge(
-                parent::attributeLabels(),
-                [
-                    EventSearch::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
-                    EventSearch::DATE_RANGE => Yii::t('app', 'Date')
-                ]
-        );
-    }
-    
-    /**
      * @inheritdoc
      * @param type $values
      * @param type $safeOnly
@@ -131,7 +143,7 @@ class EventSearch extends YiiEventModel {
                 $dateRange = $values[EventSearch::DATE_RANGE];
                 
                 //SILEX:info
-                // We shouldn't control the date range format because de WS 
+                // We shouldn't control the date range format because the WS 
                 // already implements it but as the webapp doesn't handle WS
                 // error responses yet, we have to control the format of the 
                 // submitted date range at the moment.
@@ -144,7 +156,9 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * 
+     * Validate the date range format and set the dates attributes. The accepted 
+     * date range format is defined in the application parameter 
+     * standardDateTimeFormatPhp.
      * @param type $dateRangeString
      */
     private function validateDateRangeFormatAndSetDatesAttributes($dateRangeString) {        
@@ -153,11 +167,13 @@ class EventSearch extends YiiEventModel {
         $isSubmittedStartDateFormatValid = true;
         $isSubmittedEndDateFormatValid = true;
 
+        // validate start date
         $submittedStartDateString = $dateRangeArray[0];
         if (!empty($submittedStartDateString)) {
             $isSubmittedStartDateFormatValid = $this->validateSubmittedDateFormat($submittedStartDateString);
             if ($isSubmittedStartDateFormatValid) {
                 $this->dateRangeStart = $submittedStartDateString;
+                // validate end date
                 if (isset($dateRangeArray[1])) {   
                     $submittedEndDateString = $dateRangeArray[1];
                     $isSubmittedEndDateFormatValid = $this->validateSubmittedDateFormat($submittedEndDateString);
@@ -169,26 +185,35 @@ class EventSearch extends YiiEventModel {
         }
         
         if (!$isSubmittedStartDateFormatValid || !$isSubmittedEndDateFormatValid) {
-            $this->handleSearchDateRangeFormatError();
+            $this->resetDateRangeFilterValues();
         }
     }
     
+    /**
+     * Validate the submitted date format. The accepted date format is defined 
+     * in the application parameter standardDateTimeFormatPhp
+     * @param type $dateString
+     * @return boolean
+     */
     private function validateSubmittedDateFormat($dateString) {
-        /*
+        /* //SILEX:info
          * Steps to validate a date format of a date string:
          *  - create a DateTime object from this date string and its format
          *  - transform this DateTime into a string using this format
          *  if there is no parsing error and if the final date string and the 
-         * first one are equal, then the date format is valid
+         *  first one are equal, then the date format is valid
+         * //\SILEX:info
          */
         try {
-            /* the standard date format provide a 'T' between the date and the 
+            /* //SILEX:info
+             * the standard date format provide a 'T' between the date and the 
              * time but the PHP date format parser interprets the 'T' as the
              * timezone part of the date. (See http://php.net/manual/en/function.date.php)
              * So, before analysing that a date has
              * a valid date format, we have to replace the 'T' by a neutral char
              * (like a space) in order to be able to use the PHP parser 
              * thereafter.
+             * //\SILEX:info
              */
             $dateStringWithoutT = str_replace("T", " ", $dateString);
             $date = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormatPhp'], $dateStringWithoutT);
@@ -209,7 +234,10 @@ class EventSearch extends YiiEventModel {
         }
     }
     
-    private function handleSearchDateRangeFormatError(){
+    /**
+     * Reset the date range filter values
+     */
+    private function resetDateRangeFilterValues(){
         $this->dateRangeStart = null;
         $this->dateRangeEnd = null;
         $this->dateRange = null;

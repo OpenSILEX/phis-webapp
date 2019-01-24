@@ -106,16 +106,11 @@ abstract class WSActiveRecord extends \yii\base\Model {
     public function find($sessionToken, $attributes) {        
         $requestRes = $this->wsModel->get($sessionToken, "", $attributes);
 
-        if (isset($requestRes->{WSConstants::METADATA}
-                ->{WSConstants::PAGINATION})) {
-            $this->totalPages = $requestRes->{WSConstants::METADATA}
-                    ->{WSConstants::PAGINATION}->{WSConstants::TOTAL_PAGES};
-            $this->totalCount = $requestRes->{WSConstants::METADATA}
-                    ->{WSConstants::PAGINATION}->{WSConstants::TOTAL_COUNT};
-            $this->page = $requestRes->{WSConstants::METADATA}
-                    ->{WSConstants::PAGINATION}->{WSConstants::CURRENT_PAGE};
-            $this->pageSize = $requestRes->{WSConstants::METADATA}
-                    ->{WSConstants::PAGINATION}->{WSConstants::PAGE_SIZE};
+        if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION})) {
+            $this->totalPages = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_PAGES};
+            $this->totalCount = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_COUNT};
+            $this->page = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::CURRENT_PAGE};
+            $this->pageSize = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::PAGE_SIZE};
         } else {
             //SILEX:info
             // A null pagination means only one result
@@ -124,8 +119,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
         }
         
         if (isset($requestRes->{WSConstants::RESULT}->{WSConstants::DATA}))  {
-            return (array)$requestRes->{WSConstants::RESULT}
-                    ->{WSConstants::DATA};
+            return (array)$requestRes->{WSConstants::RESULT}->{WSConstants::DATA};
             
         } else {
             return $requestRes;

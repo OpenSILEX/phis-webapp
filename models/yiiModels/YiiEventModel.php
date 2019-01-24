@@ -54,6 +54,12 @@ class YiiEventModel extends WSActiveRecord {
     
     /**
      * Specific properties
+     * @example
+     * [
+     *      "relation" => "value",
+     *      "relation => "value",
+     *      ...
+     * ]
      * @var array 
      */
     public $properties;
@@ -128,9 +134,11 @@ class YiiEventModel extends WSActiveRecord {
     }
 
     /**
-     * TODO not used yet
      * Calls web service and returns the list of events types
-     * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
+     * //SILEX:todo Not used yet. Will be used to generate a dropdown list to
+     * select the event type filter
+     * //\SILEX
+     * @param sessionToken
      * @return list of the events types
      */
     public function getEventsTypes($sessionToken) {
