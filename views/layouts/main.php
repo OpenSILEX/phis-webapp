@@ -288,6 +288,7 @@ ToastrAsset::register($this);
 
  <!-- Script for handling user token expiration form -->
 <script>
+    $(document).ready(function() {
         /**
          * Function which display login form overlay when cookie is expires
          */
