@@ -288,8 +288,6 @@ ToastrAsset::register($this);
 
  <!-- Script for handling user token expiration form -->
 <script>
-    $(document).ready(function() {
-
         /**
          * Function which display login form overlay when cookie is expires
          */
@@ -308,13 +306,14 @@ ToastrAsset::register($this);
                     });
                 }, delay * 1000);
             } else {
-                // Redirect to login page if delay is already expired and not already on login page
+                // Redirect to login page if delay is already expired and not already on login page or on index
                 var loginUrl = "<?= Yii::$app->urlManager->createUrl("site/login"); ?>";
-                var currentUrl = window.location.href;
-                var traillingUrl = currentUrl.substring(currentUrl.length - loginUrl.length);
-                var onIndex = currentUrl.substring(currentUrl.length - 9, currentUrl.length) == "index.php";
-
-                if (loginUrl != traillingUrl && !onIndex ) {
+                var controller = '<?= $this->context->module->controller->id ?>';
+                var action = '<?= $this->context->module->controller->action->id ?>';
+                var onIndex = (controller == 'site' && action == 'index');
+                var onLogin = (controller == 'site' && action == 'login');
+                
+                if (!onLogin && !onIndex ) {
                     window.location.href = loginUrl;
                 }
             }
