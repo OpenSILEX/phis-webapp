@@ -2,24 +2,27 @@
 
 //******************************************************************************
 //                                       ImageSearch.php
-//
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 3 janv. 2018
+// PHIS-SILEX
+// Copyright © INRA 2018
+// Creation date: 3 jan. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  3 janv. 2018
+// Last modification date: 3 jan. 2018
 // Subject: represents the model behind the search form about 
-//                                              app\models\YiiImageModel
-//          Based on the Yii2 search basic classes
+// app\models\YiiImageModel
+// Based on the Yii2 search basic classes
 //******************************************************************************
 
 namespace app\models\yiiModels;
+
+use app\models\wsModels\WSConstants;
+use yii\data\ArrayDataProvider;
 
 /**
  * implements the search action for the images
  *
  * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @update [Andréas Garcia] <andreas.garcia@inra.fr> 15 Jan., 2019: change 
+ * "concern" occurences to "concernedItem"
  */
 class ImageSearch extends YiiImageModel {
     
@@ -38,7 +41,7 @@ class ImageSearch extends YiiImageModel {
      */
     public function rules() {
         return [
-          [['uri', 'rdfType', 'concern', 'fileInformations'], 'safe']  
+          [['uri', 'rdfType', 'concernedItems', 'fileInformations'], 'safe']  
         ];
     }
     
@@ -58,7 +61,7 @@ class ImageSearch extends YiiImageModel {
         
         //2. Check validity of search data
         if (!$this->validate()) {
-            return new \yii\data\ArrayDataProvider();
+            return new ArrayDataProvider();
         }
         
         //3. Request to the web service and return result
@@ -67,11 +70,11 @@ class ImageSearch extends YiiImageModel {
         if (is_string($findResult)) {
             return $findResult;
         } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN) {
-            return \app\models\wsModels\WSConstants::TOKEN;
+                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN) {
+            return WSConstants::TOKEN;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
-            return new \yii\data\ArrayDataProvider([
+            return new ArrayDataProvider([
                 'models' => $resultSet,
                 'pagination' => [
                     'pageSize' => $this->pageSize,

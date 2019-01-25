@@ -278,7 +278,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                     plots = null;
                 }
                 
-                searchFormData.append("concernedElements", plots);
+                searchFormData.append("concernedItems", plots);
                 
                 $.ajax({
                     url: '<?php echo Url::to(['image/search-from-layer']) ?>', 
