@@ -52,21 +52,6 @@ class YiiEventModel extends WSActiveRecord {
     public $date;
     const DATE = "date";
     
-    /**
-     * Specific properties
-     * @example
-     * [
-     *      "relation" => "value",
-     *      "relation => "value",
-     *      ...
-     * ]
-     * @var array 
-     */
-    public $properties;
-    const PROPERTIES = "properties";
-    const RELATION = "relation";
-    const VALUE = "value";
-    
     public function __construct($pageSize = null, $page = null) {
         $this->wsModel = new WSEventModel();
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize 
@@ -83,8 +68,7 @@ class YiiEventModel extends WSActiveRecord {
            [[
                 YiiEventModel::TYPE, 
                 YiiEventModel::CONCERNED_ITEMS, 
-                YiiEventModel::DATE, 
-                YiiEventModel::PROPERTIES
+                YiiEventModel::DATE
             ] , 'safe']
         ]; 
     }
@@ -96,7 +80,6 @@ class YiiEventModel extends WSActiveRecord {
         return [
             YiiEventModel::URI => 'URI', 
             YiiEventModel::TYPE => Yii::t('app', 'Type'), 
-            YiiEventModel::PROPERTIES => Yii::t('app', 'Properties'), 
             YiiEventModel::DATE => Yii::t('app', 'Date')
         ];
     }
@@ -113,24 +96,6 @@ class YiiEventModel extends WSActiveRecord {
             $this->concernedItems = get_object_vars($array[YiiEventModel::CONCERNED_ITEMS]);
         } 
         $this->date = $array[YiiEventModel::DATE];
-        $this->properties = $array[YiiEventModel::PROPERTIES];
-    }
-    
-    /**
-     * Allows to fill the property attribute with the information of the given 
-     * array
-     * @param array $array array key => value with the properties of an event 
-     */
-    protected function propertiesArrayToAttributes($array) {
-        if ($array[YiiEventModel::PROPERTIES] !== null) {
-            foreach ($array[YiiEventModel::PROPERTIES] as $property) {
-                $propertyToAdd = null;
-                $propertyToAdd[YiiEventModel::RELATION] = $property->relation; 
-                $propertyToAdd[YiiEventModel::VALUE] = $property->value;
-                $propertyToAdd[YiiEventModel::TYPE] = $property->type;
-                $this->properties[] = $property;
-            }
-        }
     }
 
     /**
