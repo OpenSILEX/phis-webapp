@@ -5,6 +5,10 @@ return [
     'baseURI' => 'http://www.phenome-fppn.fr/phis/',
     'platform' => 'Phis',
     'platformCode' => 'PHS',
+    'standardDateTimeFormat' => 'Y-m-dTH:i:sZ',
+    'standardDateTimeFormatPhp' => 'Y-m-d H:i:sP',
+    'dateRangeSeparator' => ' - ',
+    'numberOfConcernedItemsToDisplayInEventIndex' => 3,
     
     //ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts
