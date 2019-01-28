@@ -267,9 +267,12 @@ table.properties-widget > tbody > tr > th:first-letter {
 }
 
 #login-overlay.login-demo .login-button button, 
-#login-overlay.login-demo .login-button a {
+#login-overlay.login-demo .login-button a,
+#login-overlay.login-demo .login-button button:focus, 
+#login-overlay.login-demo .login-button a:focus {
     border: none;
     color: rgb(51, 122, 183);
+    background-color: transparent;
 }
 
 #login-overlay.login-demo .login-button a:hover {
