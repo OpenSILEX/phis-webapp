@@ -246,7 +246,7 @@ class VectorController extends Controller {
         
         //get vector's linked documents
         $searchDocumentModel = new DocumentSearch();
-        $searchDocumentModel->concernedItem = $id;
+        $searchDocumentModel->concernedItemFilter = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
         //2. get vector annotations

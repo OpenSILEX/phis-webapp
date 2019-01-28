@@ -294,7 +294,7 @@ class SensorController extends Controller {
         
         //get sensor's linked documents
         $searchDocumentModel = new DocumentSearch();
-        $searchDocumentModel->concernedItem = $id;
+        $searchDocumentModel->concernedItemFilter = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
         //3. get sensor annotations
