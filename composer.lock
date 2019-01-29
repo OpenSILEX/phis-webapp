@@ -996,16 +996,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.10.3",
+            "version": "8.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "8c129346bcb057caf7ed243792d5dacc137b4617"
+                "reference": "3cda94a4a442c24259fb0893618422a56cb8a898"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/8c129346bcb057caf7ed243792d5dacc137b4617",
-                "reference": "8c129346bcb057caf7ed243792d5dacc137b4617",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/3cda94a4a442c24259fb0893618422a56cb8a898",
+                "reference": "3cda94a4a442c24259fb0893618422a56cb8a898",
                 "shasum": ""
             },
             "require": {
@@ -1060,7 +1060,7 @@
                 "phonenumber",
                 "validation"
             ],
-            "time": "2019-01-09T12:30:34+00:00"
+            "time": "2019-01-24T15:41:24+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -3111,16 +3111,16 @@
         },
         {
             "name": "codeception/base",
-            "version": "2.5.2",
+            "version": "2.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeception/base.git",
-                "reference": "50aaf8bc032823018aed8d14114843b4a2c52a48"
+                "reference": "5044443f200843218353b061c942857a62ceca9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeception/base/zipball/50aaf8bc032823018aed8d14114843b4a2c52a48",
-                "reference": "50aaf8bc032823018aed8d14114843b4a2c52a48",
+                "url": "https://api.github.com/repos/Codeception/base/zipball/5044443f200843218353b061c942857a62ceca9b",
+                "reference": "5044443f200843218353b061c942857a62ceca9b",
                 "shasum": ""
             },
             "require": {
@@ -3196,7 +3196,7 @@
                 "functional testing",
                 "unit testing"
             ],
-            "time": "2019-01-01T21:20:37+00:00"
+            "time": "2018-08-01T07:46:24+00:00"
         },
         {
             "name": "codeception/phpunit-wrapper",
