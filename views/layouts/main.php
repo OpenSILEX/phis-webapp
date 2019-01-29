@@ -46,18 +46,24 @@ ToastrAsset::register($this);
     //To use the fontawesome glyphicons on the page
     Icon::map($this, Icon::ICF); //@see https://icofont.com/icons
     Icon::map($this, Icon::FA);
+    
+    $webappName = Yii::$app->params['opensilex-webapp-type'] === "phis" ? "PHIS" : "OpenSILEX";
+    $footerCopyrightWebappName = Yii::$app->params['opensilex-webapp-type'] === "phis" ? "OpenSILEX - PHIS" : "OpenSILEX";
+    
     NavBar::begin([
-        'brandLabel' => 'PHIS <i> ' . Yii::$app->params['platform'] . '</i>',
+        'brandLabel' => $webappName . ' <i> ' . Yii::$app->params['platform'] . '</i>',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
     $menuItems;
-    //Cas d'un utilisateur non connecté (invité)
+    
+    //unconnect user
     if (Yii::$app->session['isGuest'] || Yii::$app->session['isGuest'] === null) {
         $menuItems = [['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']]];
-    } else if (Yii::$app->session['isAdmin']) { //Cas d'un admin
+    //admin user
+    } else if (Yii::$app->session['isAdmin']) {
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
@@ -159,7 +165,8 @@ ToastrAsset::register($this);
                             'label' => Icon::show('log-out', [], Icon::BSG) . " " . Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')', 
                             'url' => ['/site/disconnect']
                         ];
-    } else { // Cas d'un utilisateur simple connecté
+        //connected user
+    } else { 
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
@@ -268,10 +275,9 @@ ToastrAsset::register($this);
     </div>
 </div>
 
-
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; OpenSILEX - PHIS v.2.6 - 20 September 2018 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
+        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.2.6 - 20 September 2018 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
     </div> 
 </footer> 
 
