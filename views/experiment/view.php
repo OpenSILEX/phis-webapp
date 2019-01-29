@@ -16,12 +16,11 @@ use app\components\widgets\AnnotationGridViewWidget;
 use app\controllers\ExperimentController;
 use app\components\widgets\LinkObjectsWidget;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiExperimentModel */
 /* Implements the view page for an Experiment */
 /* @update [Arnaud Charleroy] 23 august, 2018 (add annotation functionality) */
-/* @update [Andréas Garcia] <andreas.garcia@inra.fr> 15 Jan., 2019: change */
-/* "concern" occurences to "concernedItem" */
+/* @update [Andréas Garcia] 15 Jan., 2019: change "concern" occurences to "concernedItem" */
+/* @var $this yii\web\View */
+/* @var $model app\models\YiiExperimentModel */
 
 $this->title = $model->uri;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['index']];

@@ -2,14 +2,10 @@
 
 //**********************************************************************************************
 //                                       DocumentController.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
+// PHIS-SILEX
+// Copyright © INRA 2017
 // Creation date: June 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  Jan., 2019
-// Subject: implements the CRUD for the documents (ws document model)
 //***********************************************************************************************
 
 namespace app\controllers;
@@ -29,12 +25,11 @@ require_once '../config/config.php';
 
 /**
  * CRUD actions for YiiDocumentModel
+ * @update [Morgane Vidal] 10 August, 2018: add link documents to sensors and vectors
+ * @update [Andréas Garcia] 15 Jan., 2019: change "concern" occurences to "concernedItem"
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiDocumentModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
- * @update [Morgane Vidal] 10 August, 2018: add link documents to sensors and vectors
- * @update [Andréas Garcia] <andreas.garcia@inra.fr> 15 Jan., 2019: 
- * change "concern" occurences to "concernedItem"
  */
 class DocumentController extends Controller {
     

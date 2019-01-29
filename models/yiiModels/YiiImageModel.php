@@ -6,8 +6,6 @@
 // Copyright © INRA 2018
 // Creation date: 3 jan. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date: 3 jan. 2018
-// Subject: The Yii model for the images. 
 //***********************************************************************************************
 
 namespace app\models\yiiModels;
@@ -22,9 +20,8 @@ use Yii;
  * The yii model for the images. 
  * Implements a customized Active Record (WSActiveRecord, for the web services 
  * access)
+ * @update [Andréas Garcia] 25 Jan., 2019: change "concern" occurences to "concernedItem"
  * @author Morgane Vidal <morgane.vidal@inra.fr>
- * @update [Andréas Garcia] <andreas.garcia@inra.fr> 25 Jan., 2019: change 
- * "concern" occurences to "concernedItem"
  */
 class YiiImageModel extends WSActiveRecord {
     

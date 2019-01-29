@@ -6,8 +6,6 @@
 // Copyright © INRA 2018
 // Creation date: 3 jan. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date: 3 jan. 2018
-// Subject: implements the CRUD actions for YiiImageModel
 //******************************************************************************
 
 namespace app\controllers;
@@ -18,11 +16,10 @@ use app\models\yiiModels\ImageSearch;
 
 /**
  * CRUD actions for YiiImageModel
+ * @update [Andréas Garcia] 15 Jan., 2019: change "concern" occurences to "concernedItem"
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiImageModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
- * @update [Andréas Garcia] <andreas.garcia@inra.fr> 15 Jan., 2019: change 
- * "concern" occurences to "concernedItem"
  */
 class ImageController extends \yii\web\Controller {
     

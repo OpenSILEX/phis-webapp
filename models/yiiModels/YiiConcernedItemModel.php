@@ -1,13 +1,11 @@
 <?php
 
-//**********************************************************************************************
+//******************************************************************************
 //                            YiiConcernedItemModel.php
 // PHIS-SILEX
 // Copyright © INRA 2018
 // Creation date: 3 jan. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date: 25 jan. 2019
-// Subject: the Yii model for the concerned items.
 //******************************************************************************
 
 namespace app\models\yiiModels;

@@ -1,15 +1,11 @@
 <?php
 
 //******************************************************************************
-//                                       ImageSearch.php
+//                              ImageSearch.php
 // PHIS-SILEX
 // Copyright © INRA 2018
 // Creation date: 3 jan. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date: 3 jan. 2018
-// Subject: represents the model behind the search form about 
-// app\models\YiiImageModel
-// Based on the Yii2 search basic classes
 //******************************************************************************
 
 namespace app\models\yiiModels;
@@ -18,11 +14,9 @@ use app\models\wsModels\WSConstants;
 use yii\data\ArrayDataProvider;
 
 /**
- * implements the search action for the images
- *
+ * Implements the search action for the images
+ * @update [Andréas Garcia] 15 Jan., 2019: change "concern" occurences to "concernedItem"
  * @author Morgane Vidal <morgane.vidal@inra.fr>
- * @update [Andréas Garcia] <andreas.garcia@inra.fr> 15 Jan., 2019: change 
- * "concern" occurences to "concernedItem"
  */
 class ImageSearch extends YiiImageModel {
     
