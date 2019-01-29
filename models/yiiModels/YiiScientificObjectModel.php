@@ -81,6 +81,12 @@ class YiiScientificObjectModel extends WSActiveRecord {
     public $variety;
     const VARIETY = "variety";
     
+    public $modality;
+    const MODALITY = "modality";
+    
+    public $replication;
+    const REPLICATION = "replication";
+    
     public $parent;
     const ISPARTOF = "ispartof";
 
@@ -120,6 +126,8 @@ class YiiScientificObjectModel extends WSActiveRecord {
         $elementForWebService[YiiScientificObjectModel::GEOMETRY] = $this->geometry;
         $elementForWebService[YiiScientificObjectModel::SPECIES] = $this->species;
         $elementForWebService[YiiScientificObjectModel::VARIETY] = $this->variety;
+        $elementForWebService[YiiScientificObjectModel::MODALITY] = $this->modality;
+        $elementForWebService[YiiScientificObjectModel::REPLICATION] = $this->replication;
         $elementForWebService[YiiScientificObjectModel::ISPARTOF] = $this->parent;
         
         return $elementForWebService;

@@ -294,7 +294,7 @@ class SensorController extends Controller {
         
         //get sensor's linked documents
         $searchDocumentModel = new DocumentSearch();
-        $searchDocumentModel->concernedItem = $id;
+        $searchDocumentModel->concernedItemFilter = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
         //3. get sensor annotations
@@ -340,50 +340,6 @@ class SensorController extends Controller {
         $res = $sensorModel->updateVariables($sessionToken, $sensorUri, $variablesUri);
         
         return json_encode($res, JSON_UNESCAPED_SLASHES);
-    }
-    
-    /**
-     * 
-     * @param string $rdfType (default null)
-     * @return array the list of the sensors uris with their labels
-     * e.g. 
-     * [
-     *      "sensor/uri" => "air_03",
-     *      ...
-     * ]
-     */
-    public function getSensorsUrisAndLabels($rdfType = null) {
-        $sessionToken = Yii::$app->session['access_token'];
-        $sensorSearchModel = new \app\models\yiiModels\SensorSearch();
-        $sensors = null;
-        
-        $sensorSearchModel->rdfType = $rdfType;
-        
-        $sensorSearchModel->totalPages = 1;
-        
-        for ($i = 0; $i <= intval($sensorSearchModel->totalPages); $i++) {
-            $searchParam[\app\models\wsModels\WSConstants::PAGE] = $i;
-            
-            $searchResult = $sensorSearchModel->search($sessionToken, $searchParam);
-            
-            if (is_string($searchResult)) {
-                if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
-                    return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-                } else {
-                    return $this->render('/site/error', [
-                        'name' => Yii::t('app/messages','Internal error'),
-                        'message' => $searchResult]);
-                }
-            } else {
-                $models = $searchResult->getmodels();
-            }
-            
-            foreach ($models as $model) {
-                $sensors[$model->uri] = $model->label;
-            }
-        }
-        
-        return $sensors;
     }
     
     /**
@@ -491,7 +447,7 @@ class SensorController extends Controller {
      * add a sensor profile 
      * @return mixed
      */
-    public function actionCharacterize() {
+    public function actionCharacterize($sensorUri) {
         $sensorModel = new YiiSensorModel();
         
         if ($sensorModel->load(Yii::$app->request->post())) {
@@ -517,76 +473,33 @@ class SensorController extends Controller {
                 return $this->render('/site/error', [
                         'name' => Yii::t('app/messages','Internal error'),
                         'message' => $requestRes]);
-            } else {                
+            } else {          
                 return $this->redirect(['view', 'id' => $requestRes[0]]);
             }
             
         } else {
-            //get all the sensors types 
-            //(the sensor's uris list will be updated when the user will choose a sensor type)
-            $sensorsTypes = $this->getSensorsTypesSimpleAndUri();
-
-            //get all the sensors uris (with labels)
-            $sensors = $this->getSensorsUrisAndLabels();
+            $sensor = $this->findModel($sensorUri);
             
             //get all users emails (for the person in charge if a lens needs to be created)
            $searchUsersModel = new \app\models\yiiModels\UserSearch();
            $users = $this->usersToMap($searchUsersModel->find(Yii::$app->session['access_token'], []));
 
-            if (is_string($sensorsTypes) && $sensorsTypes === "token") { //user must log in
+            if (is_string($sensor) && $sensor === "token") { //user must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else if (is_string($sensorsTypes)) { //server error
+            } else if (is_string($sensor)) { //server error
                 return $this->render('/site/error', [
                         'name' => Yii::t('app/messages','Internal error'),
                         'message' => $sensorsTypes]);
             } else {
                 return $this->render('characterize', [
                    'model' => $sensorModel,
-                   'sensorsTypes' => $sensorsTypes,
-                   'sensorsUris' => $sensors,
+                   'sensor' => $sensor,
                    'users' => $users
                 ]);
             }
         }
     }
-    
-    /**
-     * get the list of the sensors (uri) for a given sensor type ($rdfType)
-     * @param string $rdfType
-     * @return json
-     */
-    public function actionGetSensorsUriByRdfType($rdfType) {
-        $sensorsUrisAndLabels = $this->getSensorsUrisAndLabels(urldecode($rdfType));
-
-        $sensors = null;
-        
-        if ($sensorsUrisAndLabels !== null) {
-        
-            foreach ($sensorsUrisAndLabels as $key => $value) {
-                $sensors[] = ["label" => $value, "uri" => $key];
-            }
-
-            return json_encode($sensors, JSON_UNESCAPED_SLASHES);
-        } else {
-            return json_encode(null);
-        }
-    }
-    
-    /**
-     * Get the rdfType of the given sensor uri
-     * @param string $uri the sensor's uri
-     * @return json the uri of the rdfType of the sensor
-     */
-    public function actionGetSensorsTypeByUri($uri) {        
-        $sensorModel = $this->findModel($uri);
-        
-        if ($sensorModel->rdfType !== null) {
-            return json_encode($sensorModel->rdfType, JSON_UNESCAPED_SLASHES);
-        } else {
-            return json_encode(null);
-        }
-    }
-    
+       
     /**
      * Ajax action which return the HTML graph corresponding to the SensorDataSearch POST parameters
      * @return string

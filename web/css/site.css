@@ -127,6 +127,13 @@ a.desc:after {
     outline: none;
 }
 
+/*SILEX:info
+kartik date range filter
+\SILEX:info*/
+.date-range-input {
+    min-width: 53ch;
+}
+
 /*Pour les astérisques sur les champs obligatoires dans les formulaires*/
 /*SILEX:required*/
 form div.required label.control-label:after {
@@ -226,7 +233,7 @@ table.properties-widget > tbody > tr > th:first-letter {
     -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
     transition: opacity 0.5s, visibility 0s 0.5s;
     background: rgba(0,0,0,0.6);
-    z-index: 1000;
+    z-index: 2000;
 }
 
 #login-overlay form {
@@ -248,4 +255,44 @@ table.properties-widget > tbody > tr > th:first-letter {
 
 #login-overlay form .login-button {
     margin-left: 15%;
+}
+
+#login-overlay.login-demo .login-button {
+    margin-left: 0;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#login-overlay.login-demo .login-button > div {
+    margin-top: 5px;
+}
+
+#login-overlay.login-demo .login-button button, 
+#login-overlay.login-demo .login-button a,
+#login-overlay.login-demo .login-button button:focus, 
+#login-overlay.login-demo .login-button a:focus {
+    border: none;
+    color: rgb(51, 122, 183);
+    background-color: transparent;
+}
+
+#login-overlay.login-demo .login-button a:hover {
+    text-decoration: none;
+}
+
+#login-overlay.login-demo h2 {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#login-overlay.login-demo .fields {
+    display: none;
+}
+
+#login-overlay.login-demo .expiration-message {
+    display: none;
+    text-align: center;
+    font-weight: bold;
+    color: red;
 }

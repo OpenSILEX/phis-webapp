@@ -15,6 +15,7 @@ namespace app\components\helpers;
  */
 class SiteMessages {
     // Page routes
+    const SITE_LOGIN_PAGE_ROUTE = 'site/login';
     const SITE_ERROR_PAGE_ROUTE = '/site/error';
     const SITE_WARNING_PAGE_ROUTE = '/site/warning';
     // Page variables

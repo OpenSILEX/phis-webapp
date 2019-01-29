@@ -61,9 +61,13 @@ ToastrAsset::register($this);
     
     //unconnect user
     if (Yii::$app->session['isGuest'] || Yii::$app->session['isGuest'] === null) {
-        $menuItems = [['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']]];
-    //admin user
-    } else if (Yii::$app->session['isAdmin']) {
+        if (Yii::$app->params['isDemo'] == true) {
+            $menuItems = [['label' => Yii::t('app', 'Login'), 'options' => ['onclick' => "openDemoLogin(event)"]]];
+        } else {
+            $menuItems = [['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']]];            
+        }
+    // admin user
+    } else if (Yii::$app->session['isAdmin']) { 
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
@@ -89,6 +93,10 @@ ToastrAsset::register($this);
                             [
                                 'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
                                 'url' => ['/species/index']
+                            ],
+                            [
+                                'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'), 
+                                'url' => ['/event/index']
                             ],
                             //SILEX:info
                             //Uncomment this code if you want to allow access to annotation index
@@ -193,6 +201,10 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
                                 'url' => ['/species/index']
                             ],
+                            [
+                                'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'), 
+                                'url' => ['/event/index']
+                            ],
                             //SILEX:info
                             //Uncomment this code if you want to allow access to annotation index
 //                            [
@@ -281,10 +293,9 @@ ToastrAsset::register($this);
     </div> 
 </footer> 
 
-<!-- Script for handling user token expiration form -->
+ <!-- Script for handling user token expiration form -->
 <script>
     $(document).ready(function() {
-
         /**
          * Function which display login form overlay when cookie is expires
          */
@@ -292,38 +303,42 @@ ToastrAsset::register($this);
             // Token timeout is determined with cookie value
             var tokenTimeout = Cookies.get("<?= WSConstants::TOKEN_COOKIE_TIMEOUT ?>");
             var delay = parseInt(tokenTimeout, 10) - Math.floor(Date.now() / 1000);
-            
+
             if (delay >= 0) {
                 // Define timeout
                 setTimeout(function() {
+                    $(".expiration-message").show();
                     $("#login-overlay").css({
                         opacity: 1,
                         visibility: "visible"
                     });
                 }, delay * 1000);
             } else {
-                // Redirect to login page if delay is already expired and not already on login page
+                // Redirect to login page if delay is already expired and not already on login page or on index
                 var loginUrl = "<?= Yii::$app->urlManager->createUrl("site/login"); ?>";
-                var currentUrl = window.location.href;
-                var traillingUrl = currentUrl.substring(currentUrl.length - loginUrl.length);
-                if (loginUrl != traillingUrl) {
+                var controller = '<?= $this->context->module->controller->id ?>';
+                var action = '<?= $this->context->module->controller->action->id ?>';
+                var onIndex = (controller == 'site' && action == 'index');
+                var onLogin = (controller == 'site' && action == 'login');
+                
+                if (!onLogin && !onIndex ) {
                     window.location.href = loginUrl;
                 }
             }
         }
-        
+
         // Inital overlay timer call (on page load)
         setOverlayTimer();
-        
+
         var ajaxUrl = '<?php echo Url::to(['site/login-ajax']) ?>';
-        
+
         // When login button is clicked in overlay
         $("#login-form-ajax").submit(function(event) {
             event.preventDefault();
             // Login threw ajax call
             $.post(ajaxUrl, $("#login-form-ajax").serialize(), function(data) {
                 var jsonData = JSON.parse(data);
-                
+
                 if (jsonData.success) {
                     $("#login-overlay .json-error").html("");
                     if (jsonData.sameUser) {
@@ -348,41 +363,95 @@ ToastrAsset::register($this);
             })
         });
     });
-</script>
-<!-- Login form to allow user to reconnect without loosing work when token expires -->
-<div id="login-overlay">
-    <?php 
-        $form = ActiveForm::begin([
-            'id' => 'login-form-ajax',
-            'layout' => 'horizontal',
-            'fieldConfig' => [
-                'template' => "<div class=\"row\">{label}\n<div class=\"col-md-5\">{input}</div>\n<div class=\"col-md-5\">{error}</div></div>",
-                'labelOptions' => ['class' => 'col-md-2 control-label'],
-            ],
-        ]);
-        
-        $model = new \app\models\yiiModels\YiiTokenModel();
-    ?>
-        <h2><?= Yii::t('app/messages','Your session has expired') ?></h2>
+</script> 
 
-        <p>
-            <?= Yii::t('app/messages','Please sign-in again:') ?>
-        </p>
-
-        <p style="color:red;"><b class="json-error"></b></p>
+<?php if (Yii::$app->params['isDemo']): ?>
+    <!-- Script for displaying demo login form -->
+    <script>
+        function openDemoLogin(event) {
+            event.preventDefault();
             
-        <?= $form->field($model, 'email')->textInput(['autofocus' => true]) ?>
+            $("#login-overlay").css({
+                opacity: 1,
+                visibility: "visible"
+            });
+            
+            return false;
+        }
+    </script>
+    <!-- Demo Login form -->
+    <div id="login-overlay" class="login-demo">
+        <?php 
+            $form = ActiveForm::begin([
+                'id' => 'login-form-ajax',
+                'layout' => 'horizontal',
+                'fieldConfig' => [
+                    'template' => "<div class=\"row\">{label}\n<div class=\"col-md-5\">{input}</div>\n<div class=\"col-md-5\">{error}</div></div>",
+                    'labelOptions' => ['class' => 'col-md-2 control-label'],
+                ],
+            ]);
 
-        <?= $form->field($model, 'password')->passwordInput() ?>
+            $model = new \app\models\yiiModels\YiiTokenModel();
+        ?>
+            <h2><?= Yii::t('app/messages','Do you have an account or do you want to try PHIS ?') ?></h2>
 
-        <div class="row">
-            <div class="col-md-offset-2 col-md-10 login-button">
-                <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+            <p class="expiration-message"><?= Yii::t('app/messages','Your session has expired') ?></p>
+            
+            <p style="color:red;"><b class="json-error"></b></p>
+            <div class="fields">
+                <?= $form->field($model, 'email')->hiddenInput(['value' => Yii::$app->params['demoLogin']])->label(false) ?>
+
+                <?= $form->field($model, 'password')->hiddenInput(['value' => Yii::$app->params['demoPassword']])->label(false) ?>
             </div>
-        </div>
+            <div class="row">
+                <div class="col-md-6 login-button">
+                    <?= Html::a('', ['/site/login'], ['class' => 'fa fa-users fa-4x', 'name' => 'login-button']) ?>
+                    <div><?= Yii::t('app/messages','If you already have an account') ?></div>
+                </div>
+                <div class="col-md-6 login-button">
+                    <?= Html::submitButton('', ['class' => 'fa fa-user-secret fa-4x', 'name' => 'login-button']) ?>
+                    <div><?= Yii::t('app/messages','If you want to try PHIS as guest') ?></div>
+                </div>
+            </div>
 
-    <?php ActiveForm::end(); ?>
-</div>
+        <?php ActiveForm::end(); ?>
+    </div>    
+<?php else: ?>
+    <!-- Login form to allow user to reconnect without loosing work when token expires -->
+    <div id="login-overlay">
+        <?php 
+            $form = ActiveForm::begin([
+                'id' => 'login-form-ajax',
+                'layout' => 'horizontal',
+                'fieldConfig' => [
+                    'template' => "<div class=\"row\">{label}\n<div class=\"col-md-5\">{input}</div>\n<div class=\"col-md-5\">{error}</div></div>",
+                    'labelOptions' => ['class' => 'col-md-2 control-label'],
+                ],
+            ]);
+
+            $model = new \app\models\yiiModels\YiiTokenModel();
+        ?>
+            <h2><?= Yii::t('app/messages','Your session has expired') ?></h2>
+
+            <p>
+                <?= Yii::t('app/messages','Please sign-in again:') ?>
+            </p>
+
+            <p style="color:red;"><b class="json-error"></b></p>
+
+            <?= $form->field($model, 'email')->textInput(['autofocus' => true]) ?>
+
+            <?= $form->field($model, 'password')->passwordInput() ?>
+
+            <div class="row">
+                <div class="col-md-offset-2 col-md-10 login-button">
+                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+                </div>
+            </div>
+
+        <?php ActiveForm::end(); ?>
+    </div>
+<?php endif; ?>
 <?php $this->endBody() ?>
 </body>
 </html>

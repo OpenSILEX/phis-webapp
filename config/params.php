@@ -1,10 +1,17 @@
 <?php
 
 return [
-    'adminEmail' => 'admin@example.com',
-    'baseURI' => 'http://www.phenome-fppn.fr/opensilex/',
+    'adminEmail' => 'admin@example.com',    
+    'baseURI' => 'http://www.opensilex.org/demo/',
     'platform' => 'Demo',
-    'platformCode' => 'OSL',
+    'platformCode' => 'DMO',
+    'standardDateTimeFormat' => 'Y-m-dTH:i:sZ',
+    'standardDateTimeFormatPhp' => 'Y-m-d H:i:sP',
+    'dateRangeSeparator' => ' - ',
+    'numberOfConcernedItemsToDisplayInEventIndex' => 3,
+    'isDemo' => false,
+    'demoLogin' => 'guest@opensilex.org',
+    'demoPassword' => 'guest',
     'opensilex-webapp-type' => 'opensilex', //'opensilex' or 'phis' (used to adapt the view)
     
     //ONTOLOGY -----------------------------------------------------------------

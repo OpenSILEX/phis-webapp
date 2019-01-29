@@ -95,7 +95,7 @@ class RadiometricTargetController extends Controller {
 
         //2. Get documents.
         $searchDocumentModel = new DocumentSearch();
-        $searchDocumentModel->concernedItem = $id;
+        $searchDocumentModel->concernedItemFilter = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
 
         //3. get project annotations

@@ -2,14 +2,10 @@
 
 //**********************************************************************************************
 //                                       YiiImageModel.php
-//
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 3 janv. 2018
+// PHIS-SILEX
+// Copyright © INRA 2018
+// Creation date: 3 jan. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  3 janv. 2018
-// Subject: The Yii model for the images. 
 //***********************************************************************************************
 
 namespace app\models\yiiModels;
@@ -17,12 +13,14 @@ namespace app\models\yiiModels;
 use app\models\wsModels\WSImageModel;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSUriModel;
+use \app\models\wsModels\WSConstants;
 use Yii;
 
 /**
  * The yii model for the images. 
- * Implements a customized Active Record
- *  (WSActiveRecord, for the web services access)
+ * Implements a customized Active Record (WSActiveRecord, for the web services 
+ * access)
+ * @update [Andréas Garcia] 25 Jan., 2019: change "concern" occurences to "concernedItem"
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class YiiImageModel extends WSActiveRecord {
@@ -40,12 +38,11 @@ class YiiImageModel extends WSActiveRecord {
     public $rdfType;
     const RDF_TYPE = "rdfType";
     /**
-     * the elements concerned by the image
+     * the items concerned by the image
      * @var mixed (array<YiiConcernModel> or string)
-     * @see YiiConcernModel
+     * @see YiiConcernedItemModel
      */
-    public $concern;
-    const CONCERN = "concern";
+    public $concernedItems;
     const CONCERNED_ITEMS = "concernedItems";
     /**
      * the shooting configuration of the image
@@ -83,7 +80,7 @@ class YiiImageModel extends WSActiveRecord {
         return [
           [['uri', 'rdfType'], 'required'],  
           [['uri', 'rdfType'], 'string', 'max' => 255],
-          [['concern', 'shootingConfiguration', 'fileInformations'], 'safe']
+          [['concernedItems', 'shootingConfiguration', 'fileInformations'], 'safe']
         ];
     }
     
@@ -95,7 +92,7 @@ class YiiImageModel extends WSActiveRecord {
         return [
             'uri' => 'URI',
             'rdfType' => Yii::t('app', 'Type'),
-            'concern' => Yii::t('app', 'Concerned Elements'),
+            'concernedItems' => Yii::t('app', 'Concerned Items'),
             'shootingConfiguration' => Yii::t('app', 'Shooting Configuration'),
             'fileInformations' => Yii::t('app', 'File Informations')
         ];
@@ -109,10 +106,10 @@ class YiiImageModel extends WSActiveRecord {
         $this->uri = $array[YiiImageModel::URI];
         $this->rdfType = $array[YiiImageModel::RDF_TYPE];
         
-        foreach ($array[YiiImageModel::CONCERN] as $concernArray) {
-            $concern = new YiiConcernModel();
-            $concern->arrayToAttributes($concernArray);
-            $this->concern[] = $concern;
+        foreach ($array[YiiImageModel::CONCERNED_ITEMS] as $concernedItemArray) {
+            $concernedItem = new YiiConcernedItemModel();
+            $concernedItem->arrayToAttributes($concernedItemArray);
+            $this->concernedItems[] = $concernedItem;
         }
         
         $shootingConfiguration = new YiiShootingConfigurationModel();
@@ -131,22 +128,22 @@ class YiiImageModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $toReturn[YiiImageModel::URI] = $this->uri;
-        $toReturn[YiiImageModel::RDF_TYPE] = $this->rdfType;
-        if (is_string($this->concern)) {
-            $toReturn[YiiImageModel::CONCERNED_ITEMS] = $this->concern;
+        $attributesArray[YiiImageModel::URI] = $this->uri;
+        $attributesArray[YiiImageModel::RDF_TYPE] = $this->rdfType;
+        if (is_string($this->concernedItems)) {
+            $attributesArray[YiiImageModel::CONCERNED_ITEMS] = $this->concernedItems;
         }
         if (is_string($this->fileInformations)) {
-            $toReturn[YiiImageModel::DATE] = $this->fileInformations;
+            $attributesArray[YiiImageModel::DATE] = $this->fileInformations;
         }
         if ($this->page != null) {
-            $toReturn[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+            $attributesArray[WSConstants::PAGE] = $this->page;
         }
         if ($this->pageSize != null) {
-            $toReturn[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize;
+            $attributesArray[WSConstants::PAGE_SIZE] = $this->pageSize;
         }
         
-        return $toReturn;
+        return $attributesArray;
     }
     
     /**
@@ -164,20 +161,20 @@ class YiiImageModel extends WSActiveRecord {
             $params = null;
             
             if ($this->pageSize !== null) {
-                $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+                $params[WSConstants::PAGE_SIZE] = $this->pageSize; 
             }
             if ($this->page !== null) {
-                $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+                $params[WSConstants::PAGE] = $this->page;
             }
             
             $wsUriModel = new WSUriModel();
             $requestRes = $wsUriModel->getDescendants($sessionToken, $imageConceptUri, $params);
             
             if (!is_string($requestRes)) {
-                if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+                if (isset($requestRes[WSConstants::TOKEN])) {
                     return "token";
                 } else {
-                    foreach ($requestRes[\app\models\wsModels\WSConstants::DATA] as $imageType) {
+                    foreach ($requestRes[WSConstants::DATA] as $imageType) {
                         $imagesTypes[$imageType->uri] = explode("#", $imageType->uri)[1];
                     }
                 }
