@@ -16,10 +16,13 @@ use yii\filters\VerbFilter;
 
 use yii\web\UploadedFile;
 
-use app\models\yiiModels\YiiDocumentModel;
+use app\models\wsModels\WSUriModel;
 use app\models\yiiModels\YiiSensorModel;
 use app\models\yiiModels\YiiVectorModel;
+use app\models\yiiModels\YiiModelsConstants;
+use app\models\yiiModels\YiiInstanceDefinitionModel;
 use app\models\yiiModels\DocumentSearch;
+use app\models\yiiModels\YiiDocumentModel;
 
 require_once '../config/config.php';
 
@@ -153,14 +156,14 @@ class DocumentController extends Controller {
         
         //Get the search params and update pagination
         $searchParams = Yii::$app->request->queryParams;        
-        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
-            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $searchParams[YiiModelsConstants::PAGE]--;
         }
         
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);    
         
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -213,7 +216,7 @@ class DocumentController extends Controller {
         if ($documentModel->load(Yii::$app->request->post())) {
             //1. Set metadata
             //1.1 Add the RDF type of the concerned items
-            $wsUriModel = new \app\models\wsModels\WSUriModel();
+            $wsUriModel = new WSUriModel();
             $concernedItems = null;
 
             //SILEX:info
@@ -231,7 +234,7 @@ class DocumentController extends Controller {
             
             //Prepare the target of the document
             if ($concernedItemUri !== null) {
-                $concernedItem = new \app\models\yiiModels\YiiInstanceDefinitionModel();
+                $concernedItem = new YiiInstanceDefinitionModel();
                 $concernedItem->uri = $concernedItemUri;
                 if ($concernedItemRdfType === null) {
                     //Get concerned item rdfType
@@ -291,7 +294,7 @@ class DocumentController extends Controller {
             } else if (is_array($documentsTypes) && isset($documentsTypes["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
-                $concernedItem = new \app\models\yiiModels\YiiInstanceDefinitionModel();
+                $concernedItem = new YiiInstanceDefinitionModel();
                 $concernedItems = null;
                 $concernedItem->uri = $concernedItemUri;
                 $concernedItem->label = $concernedItemLabel;
@@ -329,7 +332,7 @@ class DocumentController extends Controller {
             //The list of the concerned items cannot be updated yet
             $concernedItemsDecoded = json_decode($concernedItems, JSON_UNESCAPED_SLASHES);
             foreach ($concernedItemsDecoded as $concernedItem) {
-                $concernedItemToSave = new \app\models\yiiModels\YiiInstanceDefinitionModel();
+                $concernedItemToSave = new YiiInstanceDefinitionModel();
                 $concernedItemToSave->uri = $concernedItem["uri"];
                 $concernedItemToSave->rdfType = $concernedItem["typeURI"];
                 $documentModel->concernedItems[] = $concernedItemToSave;
