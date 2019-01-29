@@ -60,4 +60,9 @@ return [
     'Measures displayed are limited to the 80 000 first results.' => 'Les mesures sont affichées dans la limite de 80 000 résultats.',
     'When you change measured variables in the list, click on the check button to update them.' => 'En cas de changement dans la liste des variables mesurées, cliquer sur le bouton de validation pour les mettre à jour',
     'When you change measured variables in the list, click on the check button to update them.' => 'En cas de changement dans la liste des capteurs utilisés, cliquer sur le bouton de validation pour les mettre à jour',
+    'Do you have an account or do you want to try PHIS ?' => 'Possédez-vous un compte ou souhaitez vous essayer PHIS ?',
+    'Your session has expired' => 'Votre session a expirée',
+    'If you already have an account' => 'Vous possédez déjà un compte',
+    'If you want to try PHIS as guest' => 'Vous souhaitez essayer PHIS en tant qu\'invité',
+    'You are on PHIS, the Hybrid Information System about Phenotyping !' => 'Bienvenue dans PHIS, le Système d\'Information Hybride pour le Phénotypage'
 ];
