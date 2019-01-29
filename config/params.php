@@ -2,9 +2,10 @@
 
 return [
     'adminEmail' => 'admin@example.com',
-    'baseURI' => 'http://www.phenome-fppn.fr/phis/',
-    'platform' => 'Phis',
-    'platformCode' => 'PHS',
+    'baseURI' => 'http://www.phenome-fppn.fr/opensilex/',
+    'platform' => 'Demo',
+    'platformCode' => 'OSL',
+    'opensilex-webapp-type' => 'opensilex', //'opensilex' or 'phis' (used to adapt the view)
     
     //ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts
