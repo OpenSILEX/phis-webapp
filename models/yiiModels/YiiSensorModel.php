@@ -40,7 +40,7 @@ class YiiSensorModel extends WSActiveRecord {
     const URI = "uri";
     /**
      * the type uri (concept uri) of the sensor
-     * @example http://www.phenome-fppn.fr/vocabulary/2017#RadiationSensor
+     * @example http://www.opensilex.org/vocabulary/oeso#RadiationSensor
      * @var string
      */
     public $rdfType;
@@ -241,7 +241,7 @@ class YiiSensorModel extends WSActiveRecord {
      * @return list of the sensors types
      */
     public function getSensorsTypes($sessionToken) {
-        $sensorConceptUri = "http://www.phenome-fppn.fr/vocabulary/2017#SensingDevice";
+        $sensorConceptUri = "http://www.opensilex.org/vocabulary/oeso#SensingDevice";
         $params = [];
         if ($this->pageSize !== null) {
            $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
@@ -341,7 +341,7 @@ class YiiSensorModel extends WSActiveRecord {
      * If the key has a "relation" correspondance in the ontology, 
      * return the relation uri else return null
      * @param string $key
-     * @return string e.g. http://www.phenome-fppn.fr/vocabulary/2017#width
+     * @return string e.g. http://www.opensilex.org/vocabulary/oeso#width
      */
     public static function getPropertyFromKey($key) {
         if ($key === "height") {

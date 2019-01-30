@@ -44,7 +44,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
     const GEOMETRY = "geometry";
     /**
      * the rdf type of the scientific object. Must be in the ontology. 
-     *                      (e.g http://www.phenome-fppn.fr/vocabulary/2017#Plot)
+     *                      (e.g http://www.opensilex.org/vocabulary/oeso#Plot)
      * @var string
      */
     public $type;
@@ -105,7 +105,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
     /**
      * allows to fill the attributes with the informations in the array given 
      * @param array $array array key => value which contains the metadata of 
-     *                     an agronommical object
+     *                     an scientific object
      * @throws Exception
      */
     protected function arrayToAttributes($array) {
@@ -139,7 +139,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
      * @return list of the sensors types
      */
     public function getObjectTypes($sessionToken) {
-        $scientificObjectConceptUri = "http://www.phenome-fppn.fr/vocabulary/2017#ScientificObject";
+        $scientificObjectConceptUri = "http://www.opensilex.org/vocabulary/oeso#ScientificObject";
         $params = [];
         if ($this->pageSize !== null) {
            $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 

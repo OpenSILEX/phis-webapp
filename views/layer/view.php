@@ -127,7 +127,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
             selectedFeatures.on(['add', 'remove'], function() {
                 selectedPlots = selectedFeatures.getArray().map(function(feature) {
                     //Tableau représentant un plot 
-                    //[uri, typeElement, alias, species, variety, genotype, experimentModalities, repetition]
+                    //[uri, typeElement, alias, species, variety, genotype, experimentModalities, replication]
                     var plot = [];
                     if (feature.get('uri') !== undefined) {
                         plot.push(feature.get('uri'));
@@ -164,8 +164,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                         } else {
                             plot.push("");
                         }
-                        if (feature.get('repetition') !== undefined) {
-                            plot.push(feature.get('repetition'));
+                        if (feature.get('replication') !== undefined) {
+                            plot.push(feature.get('replication'));
                         } else {
                             plot.push("");
                         }

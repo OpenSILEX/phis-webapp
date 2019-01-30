@@ -84,8 +84,8 @@ class VectorController extends Controller {
      * get the vectors types (complete uri)
      * @return array list of the vectors types uris 
      * e.g. [
-     *          "http://www.phenome-fppn.fr/vocabulary/2017#UAV",
-     *          "http://www.phenome-fppn.fr/vocabulary/2017#Pot"
+     *          "http://www.opensilex.org/vocabulary/oeso#UAV",
+     *          "http://www.opensilex.org/vocabulary/oeso#Pot"
      *      ]
      */
     public function getVectorsTypesUris() {
@@ -138,7 +138,7 @@ class VectorController extends Controller {
      * @param string $vectorType
      * @return string the complete vector type uri corresponding to the given 
      *                vector type
-     *                e.g. http://www.phenome-fppn.fr/vocabulary/2017#UAV
+     *                e.g. http://www.opensilex.org/vocabulary/oeso#UAV
      */
     private function getVectorTypeCompleteUri($vectorType) {
         $vectorsTypes = $this->getVectorsTypesUris();
@@ -274,7 +274,7 @@ class VectorController extends Controller {
     private function vectorsTypesToMap($vectorsTypes) {
         $toReturn;
         foreach($vectorsTypes as $type) {
-            $toReturn["http://www.phenome-fppn.fr/vocabulary/2017#" . $type] = $type;
+            $toReturn["http://www.opensilex.org/vocabulary/oeso#" . $type] = $type;
         }
         
         return $toReturn;

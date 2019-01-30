@@ -33,7 +33,7 @@ class YiiEventModel extends WSActiveRecord {
     const URI = "uri";
     
     /**
-     * @example http://www.phenome-fppn.fr/vocabulary/2018/oeev#MoveFrom
+     * @example http://www.opensilex.org/vocabulary/oeev#MoveFrom
      * @var string
      */
     public $type;
@@ -107,7 +107,7 @@ class YiiEventModel extends WSActiveRecord {
      * @return list of the events types
      */
     public function getEventsTypes($sessionToken) {
-        $eventConceptUri = "http://www.phenome-fppn.fr/vocabulary/2018/oeev#Event";
+        $eventConceptUri = "http://www.opensilex.org/vocabulary/oeev#Event";
         $params = [];
         if ($this->pageSize !== null) {
            $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 

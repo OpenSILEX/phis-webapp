@@ -32,13 +32,13 @@ class WSAcquisitionSession extends \openSILEX\guzzleClientPHP\WSModel {
      * of acquisition session excel document
      * @param String $sessionToken connection user token
      * @param String $vectorRdfTypeUri uri of the vector type
-     * @example http://www.phenome-fppn.fr/vocabulary/2017#UAV
+     * @example http://www.opensilex.org/vocabulary/oeso#UAV
      * @param Array $params contains the data to send to the get service 
      * @example
      * [
      *  "page" => "0",
      *  "pageSize" => "1000",
-     *  "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#UAV" 
+     *  "uri" => "http://www.opensilex.org/vocabulary/oeso#UAV" 
      * ]
      * @return mixed if the acquisition metadata file exist, 
      *                  an array representing these data 

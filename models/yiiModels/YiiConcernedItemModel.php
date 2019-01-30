@@ -28,7 +28,7 @@ class YiiConcernedItemModel extends WSActiveRecord {
     const URI = "uri";
     /**
      * uri of the rdf type of the item 
-     *  (e.g http://www.phenome-fppn.fr/vocabulary/2017#Plot)
+     *  (e.g http://www.opensilex.org/vocabulary/oeso#Plot)
      * @var string
      */
     public $rdfType;

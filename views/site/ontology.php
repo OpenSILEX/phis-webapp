@@ -23,81 +23,81 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <?php 
     $agronomicalObjects = [
-        ['label' => 'Scientific Object', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#ScientificObject'],
-        ['label' => 'Plot', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Plot'],
-        ['label' => 'Plant', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Plant'],
-        ['label' => 'Leaf', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Leaf'],
-        ['label' => 'Rootstock', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Rootstock'],
-        ['label' => 'Scion', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Scion'],
-        ['label' => 'Seed', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Seed'],
-        ['label' => 'Silk', 'uri' => 'http://www.phenome-fppn.fr/vocabulary/2017#Silk'],
+        ['label' => 'Scientific Object', 'uri' => 'http://www.opensilex.org/vocabulary/oeso#ScientificObject'],
+        ['label' => 'Plot', 'uri' => 'http://www.opensilex.org/vocabulary/oeso#Plot'],
+        ['label' => 'Plant', 'uri' => 'http://www.opensilex.org/vocabulary/oeso#Plant'],
+        ['label' => 'Leaf', 'uri' => 'http://www.opensilex.org/vocabulary/oeso#Leaf'],
+        ['label' => 'Rootstock', 'uri' => 'http://www.opensilex.org/vocabulary/oeso#Rootstock'],
+        ['label' => 'Scion', 'uri' => 'http://www.opensilex.org/vocabulary/oeso#Scion'],
+        ['label' => 'Seed', 'uri' => 'http://www.opensilex.org/vocabulary/oeso#Seed'],
+        ['label' => 'Silk', 'uri' => 'http://www.opensilex.org/vocabulary/oeso#Silk'],
     ];
     
     $sensingDevices = [
-        ["label" => "SensingDevice", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#SensingDevice"],
-        ["label" => "Camera", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#Camera"],
-        ["label" => "Humidity Sensor", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#HumiditySensor"],
-        ["label" => "Precipitation Sensor", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#PrecipitationSensor"],
-        ["label" => "Radiation Sensor", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#RadiationSensor"],
-        ["label" => "Spectroradiometer", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#Spectroradiometer"],
-        ["label" => "Temperature Sensor", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#TemperatureSensor"],
-        ["label" => "Weighing Scale", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#WeighingScale"],
-        ["label" => "Wind Sensor", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#WindSensor"],
+        ["label" => "SensingDevice", "uri" => "http://www.opensilex.org/vocabulary/oeso#SensingDevice"],
+        ["label" => "Camera", "uri" => "http://www.opensilex.org/vocabulary/oeso#Camera"],
+        ["label" => "Humidity Sensor", "uri" => "http://www.opensilex.org/vocabulary/oeso#HumiditySensor"],
+        ["label" => "Precipitation Sensor", "uri" => "http://www.opensilex.org/vocabulary/oeso#PrecipitationSensor"],
+        ["label" => "Radiation Sensor", "uri" => "http://www.opensilex.org/vocabulary/oeso#RadiationSensor"],
+        ["label" => "Spectroradiometer", "uri" => "http://www.opensilex.org/vocabulary/oeso#Spectroradiometer"],
+        ["label" => "Temperature Sensor", "uri" => "http://www.opensilex.org/vocabulary/oeso#TemperatureSensor"],
+        ["label" => "Weighing Scale", "uri" => "http://www.opensilex.org/vocabulary/oeso#WeighingScale"],
+        ["label" => "Wind Sensor", "uri" => "http://www.opensilex.org/vocabulary/oeso#WindSensor"],
     ];
     
     $cameras = [
-            ["label" => "Hemispherical Camera", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#HemisphericalCamera"],
-            ["label" => "Hyperspectral Camera", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#HyperspectralCamera"],
-            ["label" => "RGB Camera", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#RGBCamera"],
+            ["label" => "Hemispherical Camera", "uri" => "http://www.opensilex.org/vocabulary/oeso#HemisphericalCamera"],
+            ["label" => "Hyperspectral Camera", "uri" => "http://www.opensilex.org/vocabulary/oeso#HyperspectralCamera"],
+            ["label" => "RGB Camera", "uri" => "http://www.opensilex.org/vocabulary/oeso#RGBCamera"],
         ];
     
     $humiditySensors = [
-            ["label" => "Capacitance Sensor", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#CapacitanceSensor"],
-            ["label" => "Electrical Resistance Block", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#ElectricalResistanceBlock"],
-            ["label" => "Electrical Resistance Humidity Sensor", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#"],
-            ["label" => "Tensiometer", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#ElectricalResistanceHumiditySensor"],
+            ["label" => "Capacitance Sensor", "uri" => "http://www.opensilex.org/vocabulary/oeso#CapacitanceSensor"],
+            ["label" => "Electrical Resistance Block", "uri" => "http://www.opensilex.org/vocabulary/oeso#ElectricalResistanceBlock"],
+            ["label" => "Electrical Resistance Humidity Sensor", "uri" => "http://www.opensilex.org/vocabulary/oeso#"],
+            ["label" => "Tensiometer", "uri" => "http://www.opensilex.org/vocabulary/oeso#ElectricalResistanceHumiditySensor"],
         ];
     
     $capacitanceSensors = [
-           ["label" => "Capacitive Thin Film Polymer", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#CapacitiveThinFilmPolymer"],
+           ["label" => "Capacitive Thin Film Polymer", "uri" => "http://www.opensilex.org/vocabulary/oeso#CapacitiveThinFilmPolymer"],
        ];
 
     $electricalResistanceBlocks = [
-           ["label" => "Fiber Glass Block", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#FiberGlassBlock"],
-           ["label" => "Gypsum Block", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#GypsumBlock"],
-           ["label" => "Nylon Units", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#NylonUnits"],
+           ["label" => "Fiber Glass Block", "uri" => "http://www.opensilex.org/vocabulary/oeso#FiberGlassBlock"],
+           ["label" => "Gypsum Block", "uri" => "http://www.opensilex.org/vocabulary/oeso#GypsumBlock"],
+           ["label" => "Nylon Units", "uri" => "http://www.opensilex.org/vocabulary/oeso#NylonUnits"],
        ];
 
      $precipitationSensors = [
-          ["label" => "Level Measurement Rain Gauge", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#LevelMeasurementRainGauge"],
+          ["label" => "Level Measurement Rain Gauge", "uri" => "http://www.opensilex.org/vocabulary/oeso#LevelMeasurementRainGauge"],
        ];
 
      $radiationSensors = [
-           ["label" => "Net Radiometer Or Net Pyrradiometer Or Net Exchange Radiometer Or Balancemeter", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#NetRadiometerOrNetPyrradiometerOrNetExchangeRadiometerOrBalancemeter"],
-           ["label" => "Pyranometer", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#Pyranometer"],
-           ["label" => "Pyranometer With Shade Ring", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#PyranometerWithShadeRing"],
-           ["label" => "Quantum Sensor", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#QuantumSensor"],
-           ["label" => "Surface Temperature Radiometer", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#SurfaceTemperatureRadiometer"],
+           ["label" => "Net Radiometer Or Net Pyrradiometer Or Net Exchange Radiometer Or Balancemeter", "uri" => "http://www.opensilex.org/vocabulary/oeso#NetRadiometerOrNetPyrradiometerOrNetExchangeRadiometerOrBalancemeter"],
+           ["label" => "Pyranometer", "uri" => "http://www.opensilex.org/vocabulary/oeso#Pyranometer"],
+           ["label" => "Pyranometer With Shade Ring", "uri" => "http://www.opensilex.org/vocabulary/oeso#PyranometerWithShadeRing"],
+           ["label" => "Quantum Sensor", "uri" => "http://www.opensilex.org/vocabulary/oeso#QuantumSensor"],
+           ["label" => "Surface Temperature Radiometer", "uri" => "http://www.opensilex.org/vocabulary/oeso#SurfaceTemperatureRadiometer"],
        ];
 
        $spectroradiometers = [
-           ["label" => "Green Seeker", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#GreenSeeker"],
+           ["label" => "Green Seeker", "uri" => "http://www.opensilex.org/vocabulary/oeso#GreenSeeker"],
        ];
 
        $temperatureSensors = [
-           ["label" => "Electrical Resistance Thermometer", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#ElectricalResistanceThermometer"],
-           ["label" => "Thermistor", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#Thermistor"],
-           ["label" => "Thermocouple", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#Thermocouple"],
+           ["label" => "Electrical Resistance Thermometer", "uri" => "http://www.opensilex.org/vocabulary/oeso#ElectricalResistanceThermometer"],
+           ["label" => "Thermistor", "uri" => "http://www.opensilex.org/vocabulary/oeso#Thermistor"],
+           ["label" => "Thermocouple", "uri" => "http://www.opensilex.org/vocabulary/oeso#Thermocouple"],
        ];
 
        $windSensors = [
-           ["label" => "CupAnemometer", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#Tensiometer"],
-           ["label" => "Propeller Anemometer", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#PropellerAnemometer"],
-           ["label" => "Ultrasonic Wind Sensor", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#UltrasonicWindSensor"],
+           ["label" => "CupAnemometer", "uri" => "http://www.opensilex.org/vocabulary/oeso#Tensiometer"],
+           ["label" => "Propeller Anemometer", "uri" => "http://www.opensilex.org/vocabulary/oeso#PropellerAnemometer"],
+           ["label" => "Ultrasonic Wind Sensor", "uri" => "http://www.opensilex.org/vocabulary/oeso#UltrasonicWindSensor"],
        ];
 
        $weighingScale = [
-           ["label" => "Weighing Scale", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#WeighingScale"],
+           ["label" => "Weighing Scale", "uri" => "http://www.opensilex.org/vocabulary/oeso#WeighingScale"],
        ];
 
     $sensingDevicesNumber = count($cameras) + count($humiditySensors) + count($capacitanceSensors) 
@@ -106,19 +106,19 @@ $this->params['breadcrumbs'][] = $this->title;
             + count($windSensors);
     
     $images = [
-           ["label" => "Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#Image"],
-           ["label" => "Hemispherical Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#HemisphericalImage"],
-           ["label" => "Multispectral Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#MultispectralImage"],
-           ["label" => "NIR Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#NIRImage"],
-           ["label" => "RGB Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#RGBImage"],
-           ["label" => "TIR Image", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#TIRImage"],
+           ["label" => "Image", "uri" => "http://www.opensilex.org/vocabulary/oeso#Image"],
+           ["label" => "Hemispherical Image", "uri" => "http://www.opensilex.org/vocabulary/oeso#HemisphericalImage"],
+           ["label" => "Multispectral Image", "uri" => "http://www.opensilex.org/vocabulary/oeso#MultispectralImage"],
+           ["label" => "NIR Image", "uri" => "http://www.opensilex.org/vocabulary/oeso#NIRImage"],
+           ["label" => "RGB Image", "uri" => "http://www.opensilex.org/vocabulary/oeso#RGBImage"],
+           ["label" => "TIR Image", "uri" => "http://www.opensilex.org/vocabulary/oeso#TIRImage"],
        ];
     
     
     $vectors = [
-        ["label" => "Field Robot", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#FieldRobot"],
-        ["label" => "Gantry", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#Gantry"],
-        ["label" => "UAV", "uri" => "http://www.phenome-fppn.fr/vocabulary/2017#UAV"]
+        ["label" => "Field Robot", "uri" => "http://www.opensilex.org/vocabulary/oeso#FieldRobot"],
+        ["label" => "Gantry", "uri" => "http://www.opensilex.org/vocabulary/oeso#Gantry"],
+        ["label" => "UAV", "uri" => "http://www.opensilex.org/vocabulary/oeso#UAV"]
     ]
     
 ?>

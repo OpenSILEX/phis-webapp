@@ -38,7 +38,7 @@ class YiiVectorModel extends WSActiveRecord {
     const URI = "uri";
     /**
      * the type uri (concept uri) of the vector
-     *  (e.g. http://www.phenome-fppn.fr/vocabulary/2017#CarSupport)
+     *  (e.g. http://www.opensilex.org/vocabulary/oeso#CarSupport)
      * @var string
      */
     public $rdfType;
@@ -184,7 +184,7 @@ class YiiVectorModel extends WSActiveRecord {
      * @return list of the sensors types
      */
     public function getVectorsTypes($sessionToken) {
-        $vectorConceptUri = "http://www.phenome-fppn.fr/vocabulary/2017#Vector";
+        $vectorConceptUri = "http://www.opensilex.org/vocabulary/oeso#Vector";
         $params = [];
         if ($this->pageSize !== null) {
            $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 

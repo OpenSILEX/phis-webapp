@@ -43,7 +43,7 @@ class WSRadiometricTargetModel extends \openSILEX\guzzleClientPHP\WSModel {
      *          Object (
      *              rdfType => 
      *              rdfTypeLabels => 
-     *              relation => http://www.phenome-fppn.fr/vocabulary/2017#hasBrand
+     *              relation => http://www.opensilex.org/vocabulary/oeso#hasBrand
      *              relationLabels => 
      *              value => CIRC
      *              valueLabels => 
@@ -53,7 +53,7 @@ class WSRadiometricTargetModel extends \openSILEX\guzzleClientPHP\WSModel {
      *          Object (
      *              rdfType => 
      *              rdfTypeLabels => 
-     *              relation => http://www.phenome-fppn.fr/vocabulary/2017#inServiceDate
+     *              relation => http://www.opensilex.org/vocabulary/oeso#inServiceDate
      *              relationLabels => 
      *              value => 2018-10-28
      *              valueLabels => 

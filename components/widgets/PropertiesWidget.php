@@ -128,7 +128,7 @@ class PropertiesWidget extends Widget {
      *       [values] => [
      *           [0] => [
      *               [relation] => http://www.w3.org/1999/02/22-rdf-syntax-ns#type
-     *               [uri] => http://www.phenome-fppn.fr/vocabulary/2017#Installation
+     *               [uri] => http://www.opensilex.org/vocabulary/oeso#Installation
      *               [label] => installation
      *               [type] => http://www.w3.org/2002/07/owl#Class
      *               [typeLabel] => 
@@ -139,17 +139,17 @@ class PropertiesWidget extends Widget {
      *       [label] => "has part"
      *       [values] => [
      *               [0] => [
-     *                       [relation] => http://www.phenome-fppn.fr/vocabulary/2017#hasPart
+     *                       [relation] => http://www.opensilex.org/vocabulary/oeso#hasPart
      *                       [uri] => http://www.phenome-fppn.fr/m3p/eo/es2/roof
      *                       [label] => PhenoArch: roof
-     *                       [type] => http://www.phenome-fppn.fr/vocabulary/2017#Greenhouse
+     *                       [type] => http://www.opensilex.org/vocabulary/oeso#Greenhouse
      *                       [typeLabel] => greenhouse
      *               ],
      *               [1] => [
-     *                       [relation] => http://www.phenome-fppn.fr/vocabulary/2017#hasPart
+     *                       [relation] => http://www.opensilex.org/vocabulary/oeso#hasPart
      *                       [uri] => http://www.phenome-fppn.fr/m3p/es2
      *                       [label] => PhenoArch: greenhouse
-     *                       [type] => http://www.phenome-fppn.fr/vocabulary/2017#Greenhouse
+     *                       [type] => http://www.opensilex.org/vocabulary/oeso#Greenhouse
      *                       [typeLabel] => greenhouse
      *               ]
      *       ]

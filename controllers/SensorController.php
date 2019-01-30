@@ -59,8 +59,8 @@ class SensorController extends Controller {
      * get the sensors types (complete uri)
      * @return array list of the sensors types uris 
      * e.g. [
-     *          "http://www.phenome-fppn.fr/vocabulary/2017#RGBImage",
-     *          "http://www.phenome-fppn.fr/vocabulary/2017#HemisphericalImage"
+     *          "http://www.opensilex.org/vocabulary/oeso#RGBImage",
+     *          "http://www.opensilex.org/vocabulary/oeso#HemisphericalImage"
      *      ]
      */
     public function getSensorsTypesUris() {
@@ -170,7 +170,7 @@ class SensorController extends Controller {
      * @param string $sensorType
      * @return string the complete sensor type uri corresponding to the given 
      *                sensor type
-     *                e.g. http://www.phenome-fppn.fr/vocabulary/2017#RGBImage
+     *                e.g. http://www.opensilex.org/vocabulary/oeso#RGBImage
      */
     private function getSensorTypeCompleteUri($sensorType) {
         $sensorsTypes = $this->getSensorsTypesUris();

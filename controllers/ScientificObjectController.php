@@ -68,9 +68,9 @@ require_once '../config/config.php';
      const EXPERIMENT_MODALITIES = "ExperimentModalities";
      /**
       * the replication column for the csv files
-      * @var REPETITION
+      * @var REPLICATION
       */
-     const REPETITION = "Repetition";
+     const REPLICATION = "Replication";
      
     /**
       * the replication column for the csv files
@@ -167,7 +167,7 @@ require_once '../config/config.php';
         return [ScientificObjectController::ALIAS, ScientificObjectController::RDF_TYPE,  
                 ScientificObjectController::EXPERIMENT_URI, ScientificObjectController::GEOMETRY, 
                 ScientificObjectController::SPECIES, ScientificObjectController::VARIETY, 
-                ScientificObjectController::EXPERIMENT_MODALITIES, ScientificObjectController::REPETITION];
+                ScientificObjectController::EXPERIMENT_MODALITIES, ScientificObjectController::REPLICATION];
     }
     
     /**
@@ -465,7 +465,7 @@ require_once '../config/config.php';
      * @param string $vectorType
      * @return string the complete vector type uri corresponding to the given 
      *                vector type
-     *                e.g. http://www.phenome-fppn.fr/vocabulary/2017#UAV
+     *                e.g. http://www.opensilex.org/vocabulary/oeso#UAV
      */
     private function getObjectTypeCompleteUri($objectType) {
         $objectTypesList = $this->getObjectsTypesUris();
@@ -481,8 +481,8 @@ require_once '../config/config.php';
      * get the vectors types (complete uri)
      * @return array list of the vectors types uris 
      * e.g. [
-     *          "http://www.phenome-fppn.fr/vocabulary/2017#UAV",
-     *          "http://www.phenome-fppn.fr/vocabulary/2017#Pot"
+     *          "http://www.opensilex.org/vocabulary/oeso#UAV",
+     *          "http://www.opensilex.org/vocabulary/oeso#Pot"
      *      ]
      */
     public function getObjectsTypesUris() {
@@ -569,7 +569,7 @@ require_once '../config/config.php';
         }
         
         if ($scientificObject[YiiScientificObjectModel::REPLICATION] !== null) {
-            $replication["relation"] = Yii::$app->params['hasRepetition'];
+            $replication["relation"] = Yii::$app->params['hasReplication'];
             $replication["value"] = $scientificObject[YiiScientificObjectModel::REPLICATION];
             $p["properties"][] = $replication;
         }
