@@ -31,6 +31,14 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
 
      <h1><?= Html::encode($this->title) ?></h1>
      
+    <h1>
+        <?= Html::encode($this->title) ?>
+        <?php if (Yii::$app->session['isAdmin']) {
+           echo Html::a(Yii::t('app', 'Generate Map'), 
+               ['layer/view', 'objectURI' => $model->objectURI, 'objectType' => Yii::$app->params["Experiment"], 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
+           }
+        ?>
+     </h1>
     <div id="map" class="map"></div>
     <p><i>Use Alt+Shift+Drag to rotate the map. Use Ctrl+Click+Drag to select multiple elements.</i></p>
     <div id="info">
