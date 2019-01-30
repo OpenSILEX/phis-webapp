@@ -43,7 +43,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
     public $geometry;
     const GEOMETRY = "geometry";
     /**
-     * the rdf type of the agronomical object. Must be in the ontology. 
+     * the rdf type of the scientific object. Must be in the ontology. 
      *                      (e.g http://www.opensilex.org/vocabulary/oeso#Plot)
      * @var string
      */
@@ -105,7 +105,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
     /**
      * allows to fill the attributes with the informations in the array given 
      * @param array $array array key => value which contains the metadata of 
-     *                     an agronommical object
+     *                     an scientific object
      * @throws Exception
      */
     protected function arrayToAttributes($array) {
