@@ -167,7 +167,7 @@ require_once '../config/config.php';
         return [ScientificObjectController::ALIAS, ScientificObjectController::RDF_TYPE,  
                 ScientificObjectController::EXPERIMENT_URI, ScientificObjectController::GEOMETRY, 
                 ScientificObjectController::SPECIES, ScientificObjectController::VARIETY, 
-                ScientificObjectController::EXPERIMENT_MODALITIES, ScientificObjectController::REPETITION];
+                ScientificObjectController::EXPERIMENT_MODALITIES, ScientificObjectController::REPLICATION];
     }
     
     /**
