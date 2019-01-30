@@ -31,9 +31,10 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
 
     <h1>
         <?= Html::encode($this->title) ?>
+    </h1>
         <?php if (Yii::$app->session['isAdmin']) {
            echo Html::a(Yii::t('app', 'Generate Map'), 
-               ['layer/view', 'objectURI' => $model->objectURI, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
+               ['layer/view', 'objectURI' => $model->objectURI, 'objectType' => Yii::$app->params["Experiment"], 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
            }
         ?>
      </h1>
