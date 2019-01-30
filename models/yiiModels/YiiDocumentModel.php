@@ -90,14 +90,16 @@ class YiiDocumentModel extends WSActiveRecord {
      * @var array 
      */
     public $concernedItems;
-    const CONCERNED_ITEMS_URIS = "concernedItemsUris";
+    const CONCERNED_ITEMS_URIS = "concernedItems";
     /**
-     * used to search document. Correspond to the element concerned by document
+     * used to search document. Correspond to the element concerned by the document
      * @var string
      */
-    public $concernedItem; 
-    const CONCERN = "concern";
-    const CONCERNED_ITEM = "concernedItem";
+    public $concernedItemFilter; 
+    
+    const CONCERNED_ITEMS_WS_FIELD = "concernedItems";
+    const CONCERNED_ITEM_WS_FIELD = "concernedItem";
+    
     const CONCERNED_ITEM_RDF_TYPE = "typeURI";
     const CONCERNED_ITEM_EXPERIMENT_RDF_TYPE = "http://www.phenome-fppn.fr/vocabulary/2017#Experiment";
     const CONCERNED_ITEM_PROJECT_RDF_TYPE = "http://www.phenome-fppn.fr/vocabulary/2017#Project";
@@ -173,8 +175,8 @@ class YiiDocumentModel extends WSActiveRecord {
           'title' => Yii::t('app', 'Title'),
           'creationDate'=> Yii::t('app', 'Creation Date'),
           'format' => Yii::t('app', 'Format'),
-          'concernedItem' => Yii::t('app', 'Concern'),
-          'concernedItems' => Yii::t('app', 'Concern'),
+          'concernedItem' => Yii::t('app', 'Concerns'),
+          'concernedItems' => Yii::t('app', 'Concerns'),
           'file' => Yii::t('app', 'File'),
           'comment' => Yii::t('app', 'Comment'),
           'status' => Yii::t('app', 'Status'),
@@ -197,7 +199,7 @@ class YiiDocumentModel extends WSActiveRecord {
         $this->comment = $array[YiiDocumentModel::COMMENT];
         
         if (isset($array[YiiDocumentModel::CONCERNED_ITEMS_URIS])) {
-            $this->concernedItem = $array[YiiDocumentModel::CONCERNED_ITEMS_URIS];
+            $this->concernedItemFilter = $array[YiiDocumentModel::CONCERNED_ITEMS_URIS];
         }
     }
 
@@ -219,18 +221,17 @@ class YiiDocumentModel extends WSActiveRecord {
         $elementForWebService[YiiDocumentModel::COMMENT] = $this->comment;
         $elementForWebService[YiiDocumentModel::STATUS] = $this->status;
         
-        
         if ($this->concernedItems !== null) {
-            foreach ($this->concernedItems as $concern) {
-                $item[YiiDocumentModel::URI] = $concern->uri;
-                $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = $concern->rdfType;
-                $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
+            foreach ($this->concernedItems as $concernedItem) {
+                $concernedItemForWebService[YiiDocumentModel::URI] = $concernedItem->uri;
+                $concernedItemForWebService[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = $concernedItem->rdfType;
+                $elementForWebService[YiiDocumentModel::CONCERNED_ITEMS_WS_FIELD][] = $concernedItemForWebService;
             }
         }
         
         //Used for the search
-        if ($this->concernedItem !== null) {
-            $elementForWebService[YiiDocumentModel::CONCERNED_ITEM] = $this->concernedItem;
+        if ($this->concernedItemFilter !== null) {
+            $elementForWebService[YiiDocumentModel::CONCERNED_ITEM_WS_FIELD] = $this->concernedItemFilter;
         }
         
         if( $this->sortByDate != null){
@@ -314,10 +315,10 @@ class YiiDocumentModel extends WSActiveRecord {
         $this->format = $res[0]->format;
         $this->comment = $res[0]->comment;
         foreach ($res[0]->concernedItems as $concernedItem) {
-            $concern = null;
-            $concern->rdfType = $concernedItem->typeURI;
-            $concern->uri = $concernedItem->uri;
-            $this->concernedItems[] = $concern;
+            $concernedItem = null;
+            $concernedItem->rdfType = $concernedItem->typeURI;
+            $concernedItem->uri = $concernedItem->uri;
+            $this->concernedItems[] = $concernedItem;
         }
     }
 }

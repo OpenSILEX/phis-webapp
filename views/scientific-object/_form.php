@@ -75,6 +75,23 @@
             }
         };
         
+        /**
+         * validate an experiment cell value. callback will be true if the value is 
+         * not empty and is an experiment from the experiments list
+         * @param {type} value
+         * @param {type} callback
+         * @returns {undefined} 
+         */
+        var experimentValidator = function(value, callback) {
+            if (isEmpty(value)) {
+                callback(false);
+            } else if (experiments.indexOf(value) > -1) {
+                callback(true);
+            } else {
+                callback(false);
+            }
+        };
+        
         var speciesValidator = function(value, callback) {
           if (isEmpty(value)) {
                 callback(true);
@@ -131,7 +148,7 @@
                     source: experiments,
                     strict: true,
                     required: true,
-                    validator: emptyValidator
+                    validator: experimentValidator
                 },
                 {
                     data: 'geometry',
@@ -156,6 +173,16 @@
                     required: false
                 },
                 {
+                    data: 'modalities',
+                    type: 'text',
+                    required: false
+                },
+                {
+                    data: 'replication',
+                    type: 'text',
+                    required: false
+                },
+                {
                     data: 'insertion status',
                     type: 'text',
                     required: false,
@@ -173,6 +200,8 @@
                 "<b><?= Yii::t('app', 'Parent') ?></b>",
                 "<b><?= Yii::t('app', 'Species') ?></b>",
                 "<b><?= Yii::t('app', 'Variety') ?></b>",
+                "<b><?= Yii::t('app', 'Experiment Modalities') ?></b>",
+                "<b><?= Yii::t('app', 'Replication') ?></b>",
                 "<b><?= Yii::t('app', 'Insertion status') ?></b>"
             ],
             manualRowMove: true,
@@ -183,7 +212,7 @@
             cells: function(row, col, prop) {
                 var cellProperties = {};
                 
-                if (col === 0 || col === 8) {
+                if (col === 0 || col === 10) {
                     cellProperties.renderer = readOnlyColumnRenderer;
                 }
                 
@@ -221,7 +250,7 @@
                         if (data["objectUris"][i] !== null) {
                             handsontable.setDataAtCell(i, 0, data["objectUris"][i]);
                         }
-                        handsontable.setDataAtCell(i, 8, data["messages"][i]);                        
+                        handsontable.setDataAtCell(i, 10, data["messages"][i]);                        
                     }                    
                     $('#objects-save').hide();
                 })

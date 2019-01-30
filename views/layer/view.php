@@ -30,9 +30,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
 <div class="layer-view">
 
      <h1><?= Html::encode($this->title) ?></h1>
-     
-    <h1>
-        <?= Html::encode($this->title) ?>
         <?php if (Yii::$app->session['isAdmin']) {
            echo Html::a(Yii::t('app', 'Generate Map'), 
                ['layer/view', 'objectURI' => $model->objectURI, 'objectType' => Yii::$app->params["Experiment"], 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
@@ -137,8 +134,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                         } else {
                             plot.push("");
                         }
-                        if (feature.get('alias') !== undefined) {
-                            plot.push(feature.get('alias'));
+                        if (feature.get('label') !== undefined) {
+                            plot.push(feature.get('label'));
                         } else {
                             plot.push("");
                         }
@@ -280,7 +277,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                     plots = null;
                 }
                 
-                searchFormData.append("concernedElements", plots);
+                searchFormData.append("concernedItems", plots);
                 
                 $.ajax({
                     url: '<?php echo Url::to(['image/search-from-layer']) ?>', 

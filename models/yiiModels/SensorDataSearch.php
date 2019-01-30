@@ -9,6 +9,7 @@
 //******************************************************************************
 
 namespace app\models\yiiModels;
+use Yii;
 use \app\models\wsModels\WSEnvironmentModel;
 
 /**
@@ -53,6 +54,17 @@ class SensorDataSearch extends \yii\base\Model {
         return [
             [['dateStart', 'dateEnd'], 'safe'],
             [['sensorURI', 'variableURI', 'graphName'], 'string']
+        ];
+    }
+    
+        /**
+     * 
+     * @return array the labels of the attributes
+     */
+    public function attributeLabels() {
+        return [
+          'dateStart' =>  Yii::t('app', 'Date Start'),
+          'dateEnd' => Yii::t('app', 'Date End'),
         ];
     }
     

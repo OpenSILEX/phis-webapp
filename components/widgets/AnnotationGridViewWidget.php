@@ -56,7 +56,6 @@ class AnnotationGridViewWidget extends Widget {
                             [
                                 'label' => Yii::t('app',YiiAnnotationModel::COMMENTS_LABEL),
                                 'attribute' => YiiAnnotationModel::COMMENTS,
-                                'format' => 'html',
                                 'value' => function ($model) {
                                     return implode(('<br>,'), $model->comments);
                                 }

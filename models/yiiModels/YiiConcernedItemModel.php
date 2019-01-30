@@ -1,35 +1,33 @@
 <?php
 
-//**********************************************************************************************
-//                                       YiiConcernModel.php
-//
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 3 janv. 2018
+//******************************************************************************
+//                            YiiConcernedItemModel.php
+// PHIS-SILEX
+// Copyright © INRA 2018
+// Creation date: 3 jan. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  3 janv. 2018
-// Subject: the Yii model for the concerned elements.
-//***********************************************************************************************
+//******************************************************************************
 
 namespace app\models\yiiModels;
+
 use Yii;
+use app\models\wsModels\WSActiveRecord;
 
 /**
- * the model for the concerned elements
+ * Model for the concerned items
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
-class YiiConcernModel extends app\models\wsModels\WSActiveRecord {
+class YiiConcernedItemModel extends WSActiveRecord {
     
     /**
-     * the uri of the element 
+     * uri of the item 
      *  (e.g http://www.phenome-fppn.fr/platform/2017/o1032588)
      * @var string 
      */
     public $uri;
     const URI = "uri";
     /**
-     * the uri of the rdf type of the element 
+     * uri of the rdf type of the item 
      *  (e.g http://www.phenome-fppn.fr/vocabulary/2017#Plot)
      * @var string
      */
@@ -62,20 +60,20 @@ class YiiConcernModel extends app\models\wsModels\WSActiveRecord {
      * @param array $array array key => value which contains the concerned item
      */
     protected function arrayToAttributes($array) {
-        $this->uri = $array[YiiConcernModel::URI];
-        $this->rdfType = $array[YiiConcernModel::RDF_TYPE];
+        $this->uri = $array[YiiConcernedItemModel::URI];
+        $this->rdfType = $array[YiiConcernedItemModel::RDF_TYPE];
     }
 
     /**
-     * Create an array representing the concerned element
+     * Create an array representing the concerned item
      * Used for the web service for example
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $toReturn = parent::attributesToArray();
-        $toReturn[YiiConcernModel::URI] = $this->uri;
-        $toReturn[YiiConcernModel::RDF_TYPE] = $this->rdfType;
+        $attributesArray = parent::attributesToArray();
+        $attributesArray[YiiConcernedItemModel::URI] = $this->uri;
+        $attributesArray[YiiConcernedItemModel::RDF_TYPE] = $this->rdfType;
         
-        return $toReturn;
+        return $attributesArray;
     }
 }
