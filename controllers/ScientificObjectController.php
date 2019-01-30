@@ -569,7 +569,7 @@ require_once '../config/config.php';
         }
         
         if ($scientificObject[YiiScientificObjectModel::REPLICATION] !== null) {
-            $replication["relation"] = Yii::$app->params['hasRepetition'];
+            $replication["relation"] = Yii::$app->params['hasReplication'];
             $replication["value"] = $scientificObject[YiiScientificObjectModel::REPLICATION];
             $p["properties"][] = $replication;
         }
