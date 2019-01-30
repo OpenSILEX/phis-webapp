@@ -199,26 +199,26 @@ class YiiScientificObjectModel extends WSActiveRecord {
      */
     public function getSpeciesUriList() {
         return [
-            "http:// www.phenome-fppn.fr/id/species/betavulgaris", 
-            "http:// www.phenome-fppn.fr/id/species/brassicanapus",
-            "http:// www.phenome-fppn.fr/id/species/canabissativa",
-            "http:// www.phenome-fppn.fr/id/species/glycinemax",
-            "http:// www.phenome-fppn.fr/id/species/gossypiumhirsutum",
-            "http:// www.phenome-fppn.fr/id/species/helianthusannuus",
-            "http:// www.phenome-fppn.fr/id/species/linumusitatissum",
-            "http:// www.phenome-fppn.fr/id/species/lupinusalbus",
-            "http:// www.phenome-fppn.fr/id/species/ordeumvulgare",
-            "http:// www.phenome-fppn.fr/id/species/orizasativa",
-            "http:// www.phenome-fppn.fr/id/species/pennisetumglaucum",
-            "http:// www.phenome-fppn.fr/id/species/pisumsativum",
-            "http:// www.phenome-fppn.fr/id/species/populus",
-            "http:// www.phenome-fppn.fr/id/species/sorghumbicolor",
-            "http:// www.phenome-fppn.fr/id/species/teosinte",
-            "http:// www.phenome-fppn.fr/id/species/triticumaestivum",
-            "http:// www.phenome-fppn.fr/id/species/triticumturgidum",
-            "http:// www.phenome-fppn.fr/id/species/viciafaba",
-            "http:// www.phenome-fppn.fr/id/species/zeamays",
-            "http:// www.phenome-fppn.fr/id/species/maize"
+            "http://www.phenome-fppn.fr/id/species/betavulgaris", 
+            "http://www.phenome-fppn.fr/id/species/brassicanapus",
+            "http://www.phenome-fppn.fr/id/species/canabissativa",
+            "http://www.phenome-fppn.fr/id/species/glycinemax",
+            "http://www.phenome-fppn.fr/id/species/gossypiumhirsutum",
+            "http://www.phenome-fppn.fr/id/species/helianthusannuus",
+            "http://www.phenome-fppn.fr/id/species/linumusitatissum",
+            "http://www.phenome-fppn.fr/id/species/lupinusalbus",
+            "http://www.phenome-fppn.fr/id/species/ordeumvulgare",
+            "http://www.phenome-fppn.fr/id/species/orizasativa",
+            "http://www.phenome-fppn.fr/id/species/pennisetumglaucum",
+            "http://www.phenome-fppn.fr/id/species/pisumsativum",
+            "http://www.phenome-fppn.fr/id/species/populus",
+            "http://www.phenome-fppn.fr/id/species/sorghumbicolor",
+            "http://www.phenome-fppn.fr/id/species/teosinte",
+            "http://www.phenome-fppn.fr/id/species/triticumaestivum",
+            "http://www.phenome-fppn.fr/id/species/triticumturgidum",
+            "http://www.phenome-fppn.fr/id/species/viciafaba",
+            "http://www.phenome-fppn.fr/id/species/zeamays",
+            "http://www.phenome-fppn.fr/id/species/maize"
         ];
     }
 }
