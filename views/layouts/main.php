@@ -289,7 +289,7 @@ ToastrAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.2.6 - 20 September 2018 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
+        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.2.7 - 31 January 2019 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
     </div> 
 </footer> 
 
