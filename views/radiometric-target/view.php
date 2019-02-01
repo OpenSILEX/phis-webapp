@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php if (Yii::$app->session['isAdmin']) { ?>
                <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
                <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]) ?>
-               <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label, 'concernedItemRdfType' => Yii::$app->params["Experiment"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+               <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label, 'concernedItemRdfType' => Yii::$app->params["RadiometricTarget"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
         <?php } ?>
     </p>
     
