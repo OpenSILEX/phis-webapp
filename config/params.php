@@ -84,7 +84,7 @@ return [
     'rdfType' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
     'scanningAngularRange' => 'http://www.opensilex.org/vocabulary/oeso#scanningAngularRange',
     'scanAngularResolution' => 'http://www.opensilex.org/vocabulary/oeso#scanAngularResolution',
-    'serialNumber' => 'http://www.opensilex.org/vocabulary/oeso#serialNumber',
+    'hasSerialNumber' => 'http://www.opensilex.org/vocabulary/oeso#hasSerialNumber',
     'source' => 'http://purl.org/dc/terms/source',
     'spectralSamplingInterval' => 'http://www.opensilex.org/vocabulary/oeso#spectralSamplingInterval',
     'spotHeight' => 'http://www.opensilex.org/vocabulary/oeso#spotHeight',

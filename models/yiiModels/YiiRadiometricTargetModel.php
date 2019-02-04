@@ -264,7 +264,7 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
                 case Yii::$app->params['hasBrand']:
                     $this->brand = $property->value;
                     break;
-                case Yii::$app->params['serialNumber']:
+                case Yii::$app->params['hasSerialNumber']:
                     $this->serialNumber = $property->value;
                     break;                
                 case Yii::$app->params['inServiceDate']:
@@ -426,7 +426,7 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
 
         if ($this->serialNumber) {
             $properties[] = [
-                self::RELATION =>  Yii::$app->params['serialNumber'],
+                self::RELATION =>  Yii::$app->params['hasSerialNumber'],
                 self::VALUE => $this->serialNumber
             ];
         }
