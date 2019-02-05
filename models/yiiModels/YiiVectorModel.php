@@ -167,11 +167,11 @@ class YiiVectorModel extends WSActiveRecord {
         $elementForWebService[YiiVectorModel::IN_SERVICE_DATE] = $this->inServiceDate;
         $elementForWebService[YiiVectorModel::PERSON_IN_CHARGE] = $this->personInCharge;
         
-        if ($this->serialNumber !== null) {
+        if ($this->serialNumber != null) {
             $elementForWebService[YiiVectorModel::SERIAL_NUMBER] = $this->serialNumber;
         }
         
-        if ($this->dateOfPurchase !== null) {
+        if ($this->dateOfPurchase != null) {
             $elementForWebService[YiiVectorModel::DATE_OF_PURCHASE] = $this->dateOfPurchase;
         }
         
