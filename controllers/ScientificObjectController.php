@@ -549,14 +549,14 @@ require_once '../config/config.php';
         
         if ($scientificObject["species"] != null) {
             $species["rdfType"] = Yii::$app->params['Species'];
-            $species["relation"] = Yii::$app->params['fromSpecies'];
+            $species["relation"] = Yii::$app->params['hasSpecies'];
             $species["value"] = $scientificObject["species"];
             $p["properties"][] = $species;
         }
         
         if ($scientificObject["variety"] != null) {
             $variety["rdfType"] = Yii::$app->params['Variety'];
-            $variety["relation"] = Yii::$app->params['fromVariety'];
+            $variety["relation"] = Yii::$app->params['hasVariety'];
             $value = str_replace(" ", "_", $scientificObject["variety"]);
             $variety["value"] = $value;
             $p["properties"][] = $variety;
