@@ -116,7 +116,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'objective',
             //'groups',
             'keywords',
-            'comment:ntext',
+            [
+                'attribute' => 'comment',
+                'contentOptions' => ['class' => 'multi-line'], 
+            ],                    
             [
                 'attribute' => 'groups',
                 'format' => 'raw',

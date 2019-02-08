@@ -296,3 +296,7 @@ table.properties-widget > tbody > tr > th:first-letter {
     font-weight: bold;
     color: red;
 }
+
+.multi-line {
+    white-space: pre-wrap;
+}

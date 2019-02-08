@@ -124,7 +124,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => Html::a($model->website, $model->website)
             ],
             'keywords',
-            'description',
+            [
+                'attribute' => 'description',
+                'contentOptions' => ['class' => 'multi-line'], 
+            ],
         ],
     ])
     ?>
