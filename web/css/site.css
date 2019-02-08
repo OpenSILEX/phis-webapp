@@ -300,3 +300,7 @@ table.properties-widget > tbody > tr > th:first-letter {
 .multi-line {
     white-space: pre-wrap;
 }
+
+.variable-view td {
+    word-break: break-all;
+}
