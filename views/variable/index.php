@@ -48,7 +48,10 @@ $this->params['breadcrumbs'][] = $this->title;
                    'data' => $listTraits,
                    'options' => [
                        'placeholder' => Yii::t('app', 'Select trait alias...')
-                   ]
+                   ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
                  ]),
             ],
             [
@@ -63,7 +66,10 @@ $this->params['breadcrumbs'][] = $this->title;
                      'data' => $listMethods,
                      'options' => [
                          'placeholder' => Yii::t('app', 'Select method alias...')
-                     ]
+                     ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
                  ]),
             ],
             [
@@ -78,7 +84,10 @@ $this->params['breadcrumbs'][] = $this->title;
                      'data' => $listUnits,
                      'options' => [
                          'placeholder' => Yii::t('app', 'Select unit alias...')
-                     ]
+                     ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
                  ]),
             ],
             ['class' => 'yii\grid\ActionColumn',
