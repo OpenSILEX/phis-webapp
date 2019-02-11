@@ -39,7 +39,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'documentType',   
             'creationDate',
             'language',
-            'comment',
+            [
+                'attribute' => 'comment',
+                'contentOptions' => ['class' => 'multi-line'], 
+            ],     
             [
               'attribute' => 'concernedItems',
               'format' => 'raw',

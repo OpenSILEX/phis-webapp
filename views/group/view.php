@@ -43,7 +43,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'uri',
             'name',
             'level',   
-            'description',
+            [
+                'attribute' => 'description',
+                'contentOptions' => ['class' => 'multi-line'], 
+            ],     
             [
               'attribute' => 'users',
               'format' => 'raw',
