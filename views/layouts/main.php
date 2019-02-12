@@ -393,7 +393,7 @@ ToastrAsset::register($this);
 
             $model = new \app\models\yiiModels\YiiTokenModel();
         ?>
-            <h2><?= Yii::t('app/messages','Do you have an account or do you want to try PHIS ?') ?></h2>
+            <h2><?= Yii::t('app/messages','Do you have an account or do you want to try OpenSILEX ?') ?></h2>
 
             <p class="expiration-message"><?= Yii::t('app/messages','Your session has expired') ?></p>
             
@@ -410,7 +410,7 @@ ToastrAsset::register($this);
                 </div>
                 <div class="col-md-6 login-button">
                     <?= Html::submitButton('', ['class' => 'fa fa-user-secret fa-4x', 'name' => 'login-button']) ?>
-                    <div><?= Yii::t('app/messages','If you want to try PHIS as guest') ?></div>
+                    <div><?= Yii::t('app/messages','If you want to try OpenSILEX as guest') ?></div>
                 </div>
             </div>
 
