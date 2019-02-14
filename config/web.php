@@ -39,7 +39,6 @@ $config = [
                 ],
             ],
         ],
-        'db' => require(__DIR__ . '/db.php'),
         //Translation
         'i18n' => [
         'translations' => [
