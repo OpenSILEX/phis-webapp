@@ -159,7 +159,7 @@ class ProjectController extends Controller {
         $sessionToken = Yii::$app->session['access_token'];
         $projectModel = new YiiProjectModel(null, null);
         
-        //Si l'utilisateur a remplis le formulaire, on tente l'insert
+        //If the form is filled, create project
         if ($projectModel->load(Yii::$app->request->post())) {
             $projectModel->isNewRecord = true;
             $dataToSend[] = $projectModel->attributesToArray();
@@ -169,11 +169,10 @@ class ProjectController extends Controller {
             if (is_string($requestRes) && $requestRes === "token") { //L'utilisateur doit se connecter
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
-                return $this->redirect(['view', 'id' => $projectModel->uri]);
+                return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
             }
-            
-        } else { //Sinon c'est qu'il faut afficher ce formulaire
-            //Récupération de la liste des projets existants pour la dropdownList
+        } else { //If the form is not filled, it should be generate
+            //Get the already existing project for the dropdownlist
             //SILEX:conception
             // This quick fix is used to show all users available. We need 
             // to discuss another way to populate dropdown lists.
