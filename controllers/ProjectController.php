@@ -169,7 +169,11 @@ class ProjectController extends Controller {
             if (is_string($requestRes) && $requestRes === "token") { //L'utilisateur doit se connecter
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
-                return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+                if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //project created
+                    return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+                } else {
+                    $this->render('error', "An error occurred...");
+                }
             }
         } else { //If the form is not filled, it should be generate
             //Get the already existing project for the dropdownlist
