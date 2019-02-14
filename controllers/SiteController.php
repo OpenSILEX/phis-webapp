@@ -124,7 +124,10 @@ class SiteController extends Controller
                 $this->getLoggedUsersGroups();
                 $result["success"] = true;
                 $result["sameUser"] = ($previousMail == $newMail);
-                $result["tokenTimeout"] = $_COOKIE[WSConstants::TOKEN_COOKIE_TIMEOUT];
+                $result["tokenTimeout"] = 0;
+                if (isset($_COOKIE[WSConstants::TOKEN_COOKIE_TIMEOUT])) {
+                    $result["tokenTimeout"] = $_COOKIE[WSConstants::TOKEN_COOKIE_TIMEOUT];
+                }
              } else {
                  // Error bad login/pass
                  $result["success"] = false;
