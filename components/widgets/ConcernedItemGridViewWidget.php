@@ -48,7 +48,7 @@ class ConcernedItemGridViewWidget extends Widget {
         if ($this->concernedItems->getCount() == 0) {
             $htmlRendered = "<h3>" . Yii::t('app', 'No item concerned') . "</h3>";
         } else {
-            $htmlRendered = "<h3>" . Yii::t('app', 'Concerned Item(s)') . "</h3>";
+            $htmlRendered = "<h3>" . Yii::t('app', 'Concerned Items') . "</h3>";
             $htmlRendered .= GridView::widget([
                         'dataProvider' => $this->concernedItems,
                         'columns' => [
@@ -61,7 +61,7 @@ class ConcernedItemGridViewWidget extends Widget {
                             ],
                             YiiConcernedItemModel::RDF_TYPE =>
                             [
-                                'label' => Yii::t('app',YiiConcernedItemModel::RDF_TYPE),
+                                'label' => Yii::t('app', 'Type'),
                                 'attribute' => YiiConcernedItemModel::RDF_TYPE,
                                 'value' => function($model) {
                                     return Vocabulary::prettyUri($model->rdfType);
