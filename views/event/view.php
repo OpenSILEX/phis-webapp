@@ -35,11 +35,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
         <!-- Add annotation button -->
         <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
-        <?php
-        if (Yii::$app->session['isAdmin']) {
-         //   echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->acronyme, 'concernedItemRdfType' => Yii::$app->params["Project"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
-        }
-        ?>
     </p>
 
     <?=
@@ -81,36 +76,6 @@ $this->params['breadcrumbs'][] = $this->title;
                  AnnotationGridViewWidget::ANNOTATIONS => ${EventController::ANNOTATIONS_DATA}
             ]
         ); 
-    ?>
-    
-    <?php
-    if ($dataDocumentsProvider->getCount() > 0) {
-        echo "<h3>" . Yii::t('app', 'Linked Documents') . "</h3>";
-        echo GridView::widget([
-            'dataProvider' => $dataDocumentsProvider,
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
-                'title',
-                'creator',
-                [
-                    'attribute' => 'creationDate',
-                    'format' => 'raw',
-                    'value' => function($model) {
-                        return date_format(date_create($model->creationDate), 'jS F Y');
-                    }
-                ],
-                'language',
-                ['class' => 'yii\grid\ActionColumn',
-                    'template' => '{view}',
-                    'buttons' => [
-                        'view' => function($url, $model, $key) {
-                            return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', ['document/view', 'id' => $model->uri]);
-                        },
-                    ]
-                ],
-            ]
-        ]);
-    }
     ?>
 
 </div>
