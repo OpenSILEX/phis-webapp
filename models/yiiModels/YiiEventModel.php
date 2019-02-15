@@ -19,6 +19,7 @@ use app\models\wsModels\WSConstants;
 
 /**
  * The yii model for an event 
+ * @update [Andréas Garcia] 15 Feb., 2019: add properties handling
  * @see app\models\wsModels\WSTripletModel
  * @see app\models\wsModels\WSUriModel
  * @see app\models\wsModels\WSActiveRecord
@@ -75,11 +76,11 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function rules() {
        return [ 
-           [[YiiEventModel::URI], 'required'],
+           [[self::URI], 'required'],
            [[
-                YiiEventModel::TYPE, 
-                YiiEventModel::CONCERNED_ITEMS, 
-                YiiEventModel::DATE
+                self::TYPE, 
+                self::CONCERNED_ITEMS, 
+                self::DATE
             ] , 'safe']
         ]; 
     }
@@ -89,9 +90,9 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function attributeLabels() {
         return [
-            YiiEventModel::URI => 'URI', 
-            YiiEventModel::TYPE => Yii::t('app', 'Type'), 
-            YiiEventModel::DATE => Yii::t('app', 'Date')
+            self::URI => 'URI', 
+            self::TYPE => Yii::t('app', 'Type'), 
+            self::DATE => Yii::t('app', 'Date')
         ];
     }
     
@@ -101,10 +102,10 @@ class YiiEventModel extends WSActiveRecord {
      * an event
      */
     protected function arrayToAttributes($array) {
-        $this->uri = $array[YiiEventModel::URI];
-        $this->type = $array[YiiEventModel::TYPE];
-        if ($array[YiiEventModel::CONCERNED_ITEMS]) {
-            foreach ($array[YiiEventModel::CONCERNED_ITEMS] as $concernedItemInArray) {
+        $this->uri = $array[self::URI];
+        $this->type = $array[self::TYPE];
+        if ($array[self::CONCERNED_ITEMS]) {
+            foreach ($array[self::CONCERNED_ITEMS] as $concernedItemInArray) {
                 $eventConcernedItem  = new YiiConcernedItemModel();
                 $eventConcernedItem->uri = $concernedItemInArray->uri;
                 $eventConcernedItem->rdfType = $concernedItemInArray->typeURI;
@@ -113,28 +114,13 @@ class YiiEventModel extends WSActiveRecord {
             } 
         } 
         if ($array[YiiEventModel::PROPERTIES]) {
-            foreach ($array[YiiEventModel::PROPERTIES] as $propertyInArray) {
+            foreach ($array[self::PROPERTIES] as $propertyInArray) {
                 $property  = new YiiPropertyModel();
                 $property->arrayToAttributes($propertyInArray);
                 $this->properties[] = $property;
             } 
         } 
-        $this->date = $array[YiiEventModel::DATE];
-    }
-    
-    /**
-     * Transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = []; 
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        }
-        return $toReturn;
+        $this->date = $array[self::DATE];
     }
 
     /**
@@ -172,17 +158,17 @@ class YiiEventModel extends WSActiveRecord {
         $eventConceptUri = "http://www.opensilex.org/vocabulary/oeev#Event";
         $params = [];
         if ($this->pageSize !== null) {
-           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+           $params[WSConstants::PAGE_SIZE] = $this->pageSize; 
         }
         if ($this->page !== null) {
-            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+            $params[WSConstants::PAGE] = $this->page;
         }
         
         $wsUriModel = new WSUriModel();
         $requestRes = $wsUriModel->getDescendants($sessionToken, $eventConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[WSConstants::TOKEN])) {
                 return "token";
             } else {
                 return $requestRes;
