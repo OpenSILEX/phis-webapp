@@ -41,6 +41,13 @@ class YiiEventModel extends WSActiveRecord {
     const TYPE = "type";
     
     /**
+     * @example 2019-01-02T00:00:00+01:00
+     * @var string 
+     */
+    public $date;
+    const DATE = "date";
+    
+    /**
      * @var array
      */
     public $concernedItems; 
@@ -50,11 +57,11 @@ class YiiEventModel extends WSActiveRecord {
     const CONCERNED_ITEMS_TYPE_URI = "typeURI";
     
     /**
-     * @example 2019-01-02T00:00:00+01:00
-     * @var string 
+     * The properties of the event
+     * @var array 
      */
-    public $date;
-    const DATE = "date";
+    public $properties;
+    const PROPERTIES = "properties";
     
     public function __construct($pageSize = null, $page = null) {
         $this->wsModel = new WSEventModel();
@@ -98,12 +105,18 @@ class YiiEventModel extends WSActiveRecord {
         $this->type = $array[YiiEventModel::TYPE];
         if ($array[YiiEventModel::CONCERNED_ITEMS]) {
             foreach ($array[YiiEventModel::CONCERNED_ITEMS] as $concernedItemInArray) {
-                error_log("concernediterm :".print_r($concernedItemInArray, true));
                 $eventConcernedItem  = new YiiConcernedItemModel();
                 $eventConcernedItem->uri = $concernedItemInArray->uri;
                 $eventConcernedItem->rdfType = $concernedItemInArray->typeURI;
                 $eventConcernedItem->labels = $concernedItemInArray->labels;
                 $this->concernedItems[] = $eventConcernedItem;
+            } 
+        } 
+        if ($array[YiiEventModel::PROPERTIES]) {
+            foreach ($array[YiiEventModel::PROPERTIES] as $propertyInArray) {
+                $property  = new YiiPropertyModel();
+                $property->arrayToAttributes($propertyInArray);
+                $this->properties[] = $property;
             } 
         } 
         $this->date = $array[YiiEventModel::DATE];
