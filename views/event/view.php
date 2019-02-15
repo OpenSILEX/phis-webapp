@@ -14,6 +14,7 @@ use yii\grid\GridView;
 use yii\data\ArrayDataProvider;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\PropertiesWidget;
 use app\components\widgets\ConcernedItemGridViewWidget;
 use app\controllers\EventController;
 
@@ -49,6 +50,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'date'
         ],
     ])
+    ?>
+    
+    <!-- Properties -->
+    <?=
+    PropertiesWidget::widget([
+        'properties' => $model->properties,
+        'title' =>  Yii::t('app', 'Specific properties')
+    ]);
     ?>
     
     <!-- Concerned items-->
