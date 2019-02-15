@@ -23,6 +23,8 @@ use Yii;
  */
 class PropertiesWidget extends Widget {
 
+    // widget title
+    public $title;
     // Uri of the main object (widget option)
     public $uri;
     // Property type which match the alias value (widget option)
@@ -37,7 +39,7 @@ class PropertiesWidget extends Widget {
     // Basic table options
     public $options = ['class' => 'table table-striped table-bordered properties-widget'];
     // Alias of the main object determined from aliasProperty options
-    private $alias = "";
+    private $alias;
     // Internal representation of fields array, corresponding to $relationOrder option
     private $fields = [];
     // Internal representation of extrafields array, corresponding to properties not described in $relationOrder option
@@ -68,11 +70,6 @@ class PropertiesWidget extends Widget {
             }
         }
         $this->propertyFormatters = $formatters;
-
-        // must be not null
-        if ($this->uri === null) {
-            throw new \Exception("URI isn't set");
-        }
 
         if ($this->properties === null) {
             throw new \Exception("Properties aren't set");
@@ -220,10 +217,17 @@ class PropertiesWidget extends Widget {
      * Render widget
      */
     public function run() {
+        
+        $htmlRendered = "<h3>" . $this->title . "</h3>";
+        
         $rows = [];
 
-        $rows[] = $this->renderAttribute("uri", $this->uri);
-        $rows[] = $this->renderAttribute("alias", $this->alias);
+        if ($this->uri !== null) {
+            $rows[] = $this->renderAttribute("uri", $this->uri);
+        }
+        if ($this->alias !== null) {
+            $rows[] = $this->renderAttribute("alias", $this->alias);
+        }
 
         foreach ($this->fields as $field) {
             $rows[] = $this->renderAttribute($field["label"], $field["values"]);
@@ -232,10 +236,12 @@ class PropertiesWidget extends Widget {
         foreach ($this->extraFields as $field) {
             $rows[] = $this->renderAttribute($field["label"], $field["values"]);
         }
-
+        
+        $htmlRendered .= implode("\n", $rows);
         $options = $this->options;
         $tag = ArrayHelper::remove($options, 'tag', 'table');
-        echo Html::tag($tag, implode("\n", $rows), $options);
+        
+        echo Html::tag($tag, $htmlRendered, $options);
     }
 
     /**
