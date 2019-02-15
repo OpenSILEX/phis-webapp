@@ -4,16 +4,18 @@
 //                                       view.php 
 // PHIS-SILEX
 // Copyright © INRA 2017
-// Creation date: March 2017
+// Creation date: Feb 2019
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //***********************************************************************************************
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use yii\data\ArrayDataProvider;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\controllers\ProjectController;
+use app\components\widgets\ConcernedItemGridViewWidget;
+use app\controllers\EventController;
 
 
 /* @var $this yii\web\View */
@@ -23,14 +25,17 @@ $this->title = $model->uri;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="project-view">
+<div class="event-view">
+
+    <h1><?= Html::encode($model->type) ?></h1>
+    
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
         <!-- Add annotation button -->
         <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
         <?php
         if (Yii::$app->session['isAdmin']) {
-            echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->acronyme, 'concernedItemRdfType' => Yii::$app->params["Project"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
+         //   echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->acronyme, 'concernedItemRdfType' => Yii::$app->params["Project"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
         }
         ?>
     </p>
@@ -40,111 +45,30 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'uri',
-            'rdfType',
-            'date',
-            [
-                'attribute' => 'dateStart',
-                'format' => 'raw',
-                'value' => function($model) {
-                    return date_format(date_create($model->dateStart), 'jS F Y');
-                }
-            ],
-            [
-                'attribute' => 'dateEnd',
-                'format' => 'raw',
-                'value' => function($model) {
-                    return date_format(date_create($model->dateEnd), 'jS F Y');
-                }
-            ],
-            [
-                'attribute' => 'scientificContacts',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    $toReturn = "";
-                    if (count($model->scientificContacts) > 0) {
-                        foreach ($model->scientificContacts as $scientificContact) {
-                            $toReturn .= Html::a($scientificContact["firstName"] . " " . $scientificContact["familyName"], ['user/view', 'id' => $scientificContact["email"]]);
-                            $toReturn .= ", ";
-                        }
-                        $toReturn = rtrim($toReturn, ", ");
-                    }
-                    return $toReturn;
-                }
-            ],
-            [
-                'attribute' => 'administrativeContacts',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    $toReturn = "";
-                    if (count($model->administrativeContacts) > 0) {
-                        foreach ($model->administrativeContacts as $administrativeContact) {
-                            $toReturn .= Html::a($administrativeContact["firstName"] . " " . $administrativeContact["familyName"], ['user/view', 'id' => $administrativeContact["email"]]);
-                            $toReturn .= ", ";
-                        }
-                        $toReturn = rtrim($toReturn, ", ");
-                    }
-                    return $toReturn;
-                }
-            ],
-            [
-                'attribute' => 'projectCoordinatorContacts',
-                'format' => 'raw',
-                'value' => function ($model) {
-                    $toReturn = "";
-                    if (count($model->projectCoordinatorContacts) > 0) {
-                        foreach ($model->projectCoordinatorContacts as $projectCoordinatorContact) {
-                            $toReturn .= Html::a($projectCoordinatorContact["firstName"] . " " . $projectCoordinatorContact["familyName"], ['user/view', 'id' => $projectCoordinatorContact["email"]]);
-                            $toReturn .= ", ";
-                        }
-                        $toReturn = rtrim($toReturn, ", ");
-                    }
-                    return $toReturn;
-                }
-            ],
-            [
-                'attribute' => 'website',
-                'format' => 'raw',
-                'value' => Html::a($model->website, $model->website)
-            ],
-            'keywords',
-            [
-                'attribute' => 'description',
-                'contentOptions' => ['class' => 'multi-line'], 
-            ],
+            'type',
+            'date'
         ],
     ])
     ?>
     
-    <!-- List of experiments -->
-    <?= "<h3>" . Yii::t('app', 'Experiments') . "</h3>"; ?>
-    <?= GridView::widget([
-        'dataProvider' => ${ProjectController::EXPERIMENTS},
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            
-            'uri',
-            'alias',
-            'startDate',
-            'endDate',
-            'field',
-            'campaign',
-
-            ['class' => 'yii\grid\ActionColumn',
-                'template' => '{view}',
-                'buttons' => [
-                    'view' => function($url, $model, $key) {
-                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
-                                        ['experiment/view', 'id' => $model->uri]); 
-                    },
-                ]
-            ],
-        ],
-    ]); ?>
+    <!-- Concerned items-->
+    <?= ConcernedItemGridViewWidget::widget(
+            [
+                 ConcernedItemGridViewWidget::CONCERNED_ITEMS => new ArrayDataProvider([
+                    'models' => $model->concernedItems,
+                    //SILEX:info
+                    //totalCount must be there too to get the pagination in GridView
+                    'totalCount' => count($model->concernedItems)
+                    //\SILEX:info
+                ])
+            ]
+        ); 
+    ?>
     
-    <!-- Project linked Annotation-->
+    <!-- Linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
-                 AnnotationGridViewWidget::ANNOTATIONS => ${ProjectController::ANNOTATIONS_DATA}
+                 AnnotationGridViewWidget::ANNOTATIONS => ${EventController::ANNOTATIONS_DATA}
             ]
         ); 
     ?>

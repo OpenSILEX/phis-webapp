@@ -15,6 +15,7 @@ use Yii;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSUriModel;
 use app\models\wsModels\WSEventModel;
+use app\models\wsModels\WSConstants;
 
 /**
  * The yii model for an event 
@@ -44,6 +45,9 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $concernedItems; 
     const CONCERNED_ITEMS = "concernedItems";
+    const CONCERNED_ITEMS_LABELS = "labels";
+    const CONCERNED_ITEMS_URI = "uri";
+    const CONCERNED_ITEMS_TYPE_URI = "typeURI";
     
     /**
      * @example 2019-01-02T00:00:00+01:00
@@ -93,9 +97,54 @@ class YiiEventModel extends WSActiveRecord {
         $this->uri = $array[YiiEventModel::URI];
         $this->type = $array[YiiEventModel::TYPE];
         if ($array[YiiEventModel::CONCERNED_ITEMS]) {
-            $this->concernedItems = get_object_vars($array[YiiEventModel::CONCERNED_ITEMS]);
+            foreach ($array[YiiEventModel::CONCERNED_ITEMS] as $concernedItemInArray) {
+                error_log("concernediterm :".print_r($concernedItemInArray, true));
+                $eventConcernedItem  = new YiiConcernedItemModel();
+                $eventConcernedItem->uri = $concernedItemInArray->uri;
+                $eventConcernedItem->rdfType = $concernedItemInArray->typeURI;
+                $eventConcernedItem->labels = $concernedItemInArray->labels;
+                $this->concernedItems[] = $eventConcernedItem;
+            } 
         } 
         $this->date = $array[YiiEventModel::DATE];
+    }
+    
+    /**
+     * Transform the json into array
+     * @param json jsonList
+     * @return array
+     */
+    private function jsonListOfArraysToArray($jsonList) {
+        $toReturn = []; 
+        if ($jsonList !== null) {
+            foreach ($jsonList as $value) {
+                $toReturn[] = $value;
+            }
+        }
+        return $toReturn;
+    }
+
+    /**
+     * Get the detailed event corresponding to the given uri
+     * 
+     * @param type $sessionToken
+     * @param type $uri
+     * @return $this
+     */
+    public function getEventDetailed($sessionToken, $uri) {
+        $eventDetailed = $this->wsModel->getEventDetailed($sessionToken, $uri);
+
+        if (!is_string($eventDetailed)) {
+            if (isset($eventDetailed[WSConstants::TOKEN])) {
+                return $eventDetailed;
+            } else {
+                $this->uri = $uri;
+                $this->arrayToAttributes($eventDetailed);
+                return $this;
+            }
+        } else {
+            return $eventDetailed;
+        }
     }
 
     /**

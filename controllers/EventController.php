@@ -12,6 +12,9 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use app\models\yiiModels\EventSearch;
+use app\models\yiiModels\DocumentSearch;
+use app\models\yiiModels\AnnotationSearch;
+use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\YiiModelsConstants;
 use app\models\wsModels\WSConstants;
 use app\components\helpers\SiteMessages;
@@ -23,6 +26,7 @@ use app\components\helpers\SiteMessages;
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class EventController extends Controller {
+    CONST ANNOTATIONS_DATA = "annotations";
     
     /**
      * list the events
@@ -36,7 +40,7 @@ class EventController extends Controller {
             $searchParams[YiiModelsConstants::PAGE]--;
         }
 
-        $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $searchResult = $searchModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN) {
@@ -50,6 +54,39 @@ class EventController extends Controller {
             return $this->render('index', [
                 'searchModel' => $searchModel, 
                 'dataProvider' => $searchResult]);
+        }
+    }
+
+    /**
+     * Display the detail of an event
+     * 
+     * @param $id Uri of the event
+     * @return mixed redirect in case of error otherwise return the "view" view
+     */
+    public function actionView($id) {
+        //1. Fill the event model with the information.
+        $eventModel = new YiiEventModel();
+        $eventDetailed = $eventModel->getEventDetailed(Yii::$app->session['access_token'], $id);
+
+        //2. Get documents.
+        $searchDocumentModel = new DocumentSearch();
+        $searchDocumentModel->concernedItemFilter = $id;
+        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+
+        //3. get annotations
+        $searchAnnotationModel = new AnnotationSearch();
+        $searchAnnotationModel->targets[0] = $id;
+        $annotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+
+        //4. Render the view of the event
+        if (is_array( $eventDetailed) && isset( $eventDetailed["token"])) {
+            return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+        } else {
+            return $this->render('view', [
+                        'model' =>  $eventDetailed,
+                        'dataDocumentsProvider' => $documents,
+                        self::ANNOTATIONS_DATA => $annotations
+            ]);
         }
     }
 }

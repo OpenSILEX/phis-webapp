@@ -88,7 +88,7 @@ class EventSearch extends YiiEventModel {
      * @return mixed DataProvider of the result or string 
      * \app\models\wsModels\WSConstants::TOKEN if the user needs to log in
      */
-    public function search($sessionToken, $searchParams) {
+    public function searchEvents($sessionToken, $searchParams) {
         $this->load($searchParams);
         if (isset($searchParams[YiiModelsConstants::PAGE])) {
             $this->page = $searchParams[YiiModelsConstants::PAGE];
@@ -115,7 +115,9 @@ class EventSearch extends YiiEventModel {
             && $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN) {
             return WSConstants::TOKEN;
         } else {
+            
             $resultSet = $this->jsonListOfArraysToArray($results);
+            error_log("indexd : ".print_r($resultSet, true));
             return new ArrayDataProvider([
                 'models' => $resultSet,
                 'pagination' => [
