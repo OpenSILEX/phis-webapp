@@ -74,11 +74,11 @@ class EventSearch extends YiiEventModel {
      */
     public function attributeLabels() {
         return array_merge(
-                parent::attributeLabels(),
-                [
-                    self::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
-                    self::DATE_RANGE => Yii::t('app', 'Date')
-                ]
+            parent::attributeLabels(),
+            [
+                self::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
+                self::DATE_RANGE => Yii::t('app', 'Date')
+            ]
         );
     }
     
@@ -117,7 +117,6 @@ class EventSearch extends YiiEventModel {
         } else {
             
             $resultSet = $this->jsonListOfArraysToArray($results);
-            error_log("indexd : ".print_r($resultSet, true));
             return new ArrayDataProvider([
                 'models' => $resultSet,
                 'pagination' => [

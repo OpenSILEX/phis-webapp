@@ -50,7 +50,7 @@ class YiiConcernedItemModel extends WSActiveRecord {
      */
     public function rules() {
         return [
-            [['rdfType', 'uri', 'labels'], 'safe']
+            [[self::RDF_TYPE, self::URI, self::LABELS], 'safe']
         ];
     }
     
@@ -60,9 +60,9 @@ class YiiConcernedItemModel extends WSActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'uri' => 'URI',
-            'rdfType' => Yii::t('app', 'Type'),
-            'labels' => Yii::t('app', 'Labels')
+            self::URI => 'URI',
+            self::RDF_TYPE => Yii::t('app', 'Type'),
+            self::LABELS => Yii::t('app', 'Labels')
         ];
     }
     
@@ -71,9 +71,9 @@ class YiiConcernedItemModel extends WSActiveRecord {
      * @param array $array array key => value which contains the concerned item
      */
     protected function arrayToAttributes($array) {
-        $this->uri = $array[YiiConcernedItemModel::URI];
-        $this->rdfType = $array[YiiConcernedItemModel::RDF_TYPE];
-        $this->labels = $array[YiiConcernedItemModel::LABELS];
+        $this->uri = $array[self::URI];
+        $this->rdfType = $array[self::RDF_TYPE];
+        $this->labels = $array[self::LABELS];
     }
 
     /**
@@ -83,9 +83,9 @@ class YiiConcernedItemModel extends WSActiveRecord {
      */
     public function attributesToArray() {
         $attributesArray = parent::attributesToArray();
-        $attributesArray[YiiConcernedItemModel::URI] = $this->uri;
-        $attributesArray[YiiConcernedItemModel::RDF_TYPE] = $this->rdfType;
-        $attributesArray[YiiConcernedItemModel::LABELS] = $this->labels;
+        $attributesArray[self::URI] = $this->uri;
+        $attributesArray[self::RDF_TYPE] = $this->rdfType;
+        $attributesArray[self::LABELS] = $this->labels;
         
         return $attributesArray;
     }
