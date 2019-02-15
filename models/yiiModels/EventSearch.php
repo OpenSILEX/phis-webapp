@@ -62,10 +62,10 @@ class EventSearch extends YiiEventModel {
         return [[
             [
                 YiiEventModel::TYPE,
-                EventSearch::CONCERNED_ITEM_LABEL,
-                EventSearch::DATE_RANGE,
-                EventSearch::DATE_RANGE_START,
-                EventSearch::DATE_RANGE_END
+                self::CONCERNED_ITEM_LABEL,
+                self::DATE_RANGE,
+                self::DATE_RANGE_START,
+                self::DATE_RANGE_END
             ],  'safe']]; 
     }
     
@@ -76,8 +76,8 @@ class EventSearch extends YiiEventModel {
         return array_merge(
                 parent::attributeLabels(),
                 [
-                    EventSearch::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
-                    EventSearch::DATE_RANGE => Yii::t('app', 'Date')
+                    self::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
+                    self::DATE_RANGE => Yii::t('app', 'Date')
                 ]
         );
     }

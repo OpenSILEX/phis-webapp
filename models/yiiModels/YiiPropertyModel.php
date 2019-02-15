@@ -68,12 +68,12 @@ class YiiPropertyModel extends WSActiveRecord {
     public function rules() {
         return [
             [[
-                YiiPropertyModel::VALUE, 
-                YiiPropertyModel::VALUE_LABELS,
-                YiiPropertyModel::RDF_TYPE,
-                YiiPropertyModel::RDF_TYPE_LABELS,
-                YiiPropertyModel::RELATION,
-                YiiPropertyModel::RELATION_LABELS
+                self::VALUE, 
+                self::VALUE_LABELS,
+                self::RDF_TYPE,
+                self::RDF_TYPE_LABELS,
+                self::RELATION,
+                self::RELATION_LABELS
                 ], 'safe']
         ];
     }
@@ -84,12 +84,12 @@ class YiiPropertyModel extends WSActiveRecord {
      */
     public function attributeLabels() {
         return [
-            YiiPropertyModel::VALUE => Yii::t('app', 'Value'),
-            YiiPropertyModel::VALUE_LABELS => Yii::t('app', 'Value Labels'),
-            YiiPropertyModel::RDF_TYPE => Yii::t('app', 'Type'),
-            YiiPropertyModel::RDF_TYPE_LABELS => Yii::t('app', 'Type Labels'),
-            YiiPropertyModel::RELATION => Yii::t('app', 'Relation'),
-            YiiPropertyModel::RELATION_LABELS => Yii::t('app', 'Relation Type Labels')
+            self::VALUE => Yii::t('app', 'Value'),
+            self::VALUE_LABELS => Yii::t('app', 'Value Labels'),
+            self::RDF_TYPE => Yii::t('app', 'Type'),
+            self::RDF_TYPE_LABELS => Yii::t('app', 'Type Labels'),
+            self::RELATION => Yii::t('app', 'Relation'),
+            self::RELATION_LABELS => Yii::t('app', 'Relation Type Labels')
         ];
     }
     
@@ -119,8 +119,8 @@ class YiiPropertyModel extends WSActiveRecord {
      */
     public function attributesToArray() {
         $attributesArray = parent::attributesToArray();
-        $attributesArray[YiiPropertyModel::RDF_TYPE] = $this->rdfType;
-        $attributesArray[YiiPropertyModel::LABELS] = $this->labels;
+        $attributesArray[self::RDF_TYPE] = $this->rdfType;
+        $attributesArray[self::LABELS] = $this->labels;
         
         return $attributesArray;
     }
