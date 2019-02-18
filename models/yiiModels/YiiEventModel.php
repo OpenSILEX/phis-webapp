@@ -2,9 +2,9 @@
 
 //******************************************************************************
 //                             YiiEventModel.php
-// PHIS-SILEX
+// SILEX-PHIS
 // Copyright © INRA 2018
-// Creation date: 02 jan. 2019
+// Creation date: 02 Jan. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
@@ -49,13 +49,11 @@ class YiiEventModel extends WSActiveRecord {
     const DATE = "date";
     
     /**
+     * The concerned items of the event
      * @var array
      */
     public $concernedItems; 
     const CONCERNED_ITEMS = "concernedItems";
-    const CONCERNED_ITEMS_LABELS = "labels";
-    const CONCERNED_ITEMS_URI = "uri";
-    const CONCERNED_ITEMS_TYPE_URI = "typeURI";
     
     /**
      * The properties of the event
@@ -63,6 +61,13 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $properties;
     const PROPERTIES = "properties";
+    
+    /**
+     * The annotations of the event
+     * @var array
+     */
+    public $annotations; 
+    const ANNOTATIONS = "annotations";
     
     public function __construct($pageSize = null, $page = null) {
         $this->wsModel = new WSEventModel();
@@ -79,8 +84,10 @@ class YiiEventModel extends WSActiveRecord {
            [[self::URI], 'required'],
            [[
                 self::TYPE, 
+                self::DATE,
                 self::CONCERNED_ITEMS, 
-                self::DATE
+                self::PROPERTIES, 
+                self::ANNOTATIONS
             ] , 'safe']
         ]; 
     }
@@ -120,6 +127,7 @@ class YiiEventModel extends WSActiveRecord {
                 $this->properties[] = $property;
             } 
         } 
+        $this->annotations = $array[self::ANNOTATIONS];
         $this->date = $array[self::DATE];
     }
 
@@ -132,7 +140,6 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function getEventDetailed($sessionToken, $uri) {
         $eventDetailed = $this->wsModel->getEventDetailed($sessionToken, $uri);
-
         if (!is_string($eventDetailed)) {
             if (isset($eventDetailed[WSConstants::TOKEN])) {
                 return $eventDetailed;
