@@ -171,8 +171,10 @@ class ProjectController extends Controller {
             } else {
                 if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //project created
                     return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
-                } else {
-                    $this->render('error', "An error occurred...");
+                } else { //an error occurred
+                    return $this->render('/site/error', [
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $requestRes->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}]);
                 }
             }
         } else { //If the form is not filled, it should be generate
