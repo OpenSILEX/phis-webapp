@@ -17,7 +17,7 @@ use Yii;
  * Helper to regroup all formatters used by the PropertiesWidget
  * New formatters should be added here for any new type necessary.
  * Actually only Infrastructures are supported.
- * @see app\components\widgets\PropertiesWidget
+ * @see app\components\widgets\PropertyWidget
  * @author Migot Vincent <vincent.migot@inra.fr>
  */
 class PropertyFormatter {

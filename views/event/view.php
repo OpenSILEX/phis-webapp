@@ -15,7 +15,7 @@ use yii\data\ArrayDataProvider;
 use app\components\helpers\Vocabulary;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\PropertiesWidget;
+use app\components\widgets\PropertyWidget;
 use app\components\widgets\ConcernedItemGridViewWidget;
 use app\controllers\EventController;
 
@@ -50,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <!-- Properties -->
     <?=
-    PropertiesWidget::widget([
+    PropertyWidget::widget([
         'properties' => $model->properties,
         'title' =>  Yii::t('app', 'Specific properties')
     ]);
