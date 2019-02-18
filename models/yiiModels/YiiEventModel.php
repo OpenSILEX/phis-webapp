@@ -120,6 +120,7 @@ class YiiEventModel extends WSActiveRecord {
                 $this->concernedItems[] = $eventConcernedItem;
             } 
         } 
+        $this->properties = [];
         if ($array[self::PROPERTIES]) {
             foreach ($array[self::PROPERTIES] as $propertyInArray) {
                 $property  = new YiiPropertyModel();
