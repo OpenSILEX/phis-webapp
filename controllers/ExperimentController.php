@@ -147,11 +147,11 @@ class ExperimentController extends Controller {
         $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
         
         //5. get all variables
-        $variableModel = new \app\models\yiiModels\YiiVariableModel(1000);
+        $variableModel = new \app\models\yiiModels\YiiVariableModel();
         $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
         
         //6. Get all sensors
-        $sensorModel = new \app\models\yiiModels\YiiSensorModel(1000);
+        $sensorModel = new \app\models\yiiModels\YiiSensorModel();
         $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session['access_token']);
         
         if ($res === "token") {
