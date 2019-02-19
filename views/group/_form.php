@@ -49,28 +49,13 @@ function updateName() {
     
     updateURI(name);
 }
-
-function updateURI(name) {
-    var uri = '<?php echo Yii::$app->params['baseURI'] ?>';
-    
-    $("#groupURI").val(uri + name);
-}
 </script>
 
 <div class="project-form well">
     <?php $form = ActiveForm::begin(); ?>
     
     <?php 
-    if ($model->isNewRecord) {
-        echo $form->field($model, 'uri')->textInput([
-            'maxlength' => true,
-            'readonly' => true, 
-            'id' => 'groupURI',
-            'style' => 'background-color:#C4DAE7;',
-            'data-toogle' => 'tooltip',
-            'title' => 'Automatically generated', 
-            'data-placement' => 'left']);
-    } else {
+    if (!$model->isNewRecord) {
         echo $form->field($model, 'uri')->textInput([
             'maxlength' => true,
             'readonly' => true, 
