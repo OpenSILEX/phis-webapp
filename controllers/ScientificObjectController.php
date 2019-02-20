@@ -640,12 +640,16 @@ require_once '../config/config.php';
      * @return mixed 
      */
     public function actionDownloadCsv() {
+        $searchModel = new ScientificObjectSearch();
         if (isset($_GET['model'])) {
             $searchParams = $_GET['model'];
+            $searchModel->alias = $searchParams["alias"];
+            $searchModel->type = $searchParams["type"];
+            $searchModel->experiment = $searchParams["experiment"];
         } else {
             $searchParams = [];
         }
-        $searchModel = new ScientificObjectSearch();
+        
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         
         if (is_string($searchResult)) {
