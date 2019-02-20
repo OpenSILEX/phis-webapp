@@ -24,17 +24,6 @@ $(document).ready(function(){
     $("#experimentURI").tooltip();
     $("#experimentEndDate").tooltip();
 });
-
-/**
- * @action génère l'uri de l'expérimentation à partir de la date de début de l'expérimentation
- **/
-function updateURI(){
-    var campaign = $("#experimentCampaign").val();
-    var uri = '<?php echo Yii::$app->params['baseURI']; ?>';
-    var platformCode = '<?php echo Yii::$app->params['platformCode']; ?>';
-    
-    $("#experimentURI").val(uri + platformCode + campaign + "-?");
-}  
 </script>
 
 <div class="experiment-form well">
@@ -42,18 +31,7 @@ function updateURI(){
     <?php $form = ActiveForm::begin(); ?>
 
     <?php 
-    if ($model->isNewRecord) {
-        echo $form->field($model, 'uri')->textInput([
-                'maxlength' => true, 
-                'readonly' => true, 
-                'id' => 'experimentURI', 
-                'value' => Yii::$app->params['baseURI'],
-                'style' => 'background-color:#C4DAE7;',
-                'data-toggle' => 'tooltip',
-                'title' => 'Automatically generated',
-                'data-placement' => 'left'
-            ]);
-    } else {
+    if (!$model->isNewRecord) {
         echo $form->field($model, 'uri')->textInput([
                 'readonly' => true, 
                 'style' => 'background-color:#C4DAE7;',
