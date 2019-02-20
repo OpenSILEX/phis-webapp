@@ -477,7 +477,7 @@ require_once '../config/config.php';
         return null;
     }
     
-        /**
+    /**
      * get the vectors types (complete uri)
      * @return array list of the vectors types uris 
      * e.g. [
@@ -614,9 +614,22 @@ require_once '../config/config.php';
             $experiments = $this->experimentsToMap($experiments);
             $this->view->params['listExperiments'] = $experiments;
             
+            //Get all the types of scientific objects
+            $objectsTypes = $this->getObjectsTypesUris();
+            if ($objectsTypes === "token") {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            }
+            
+            //Prepare the array for the select of the view
+            $scientificObjectsTypesToReturn = [];
+            foreach ($objectsTypes as $objectType) {
+                $scientificObjectsTypesToReturn[$objectType] = explode("#", $objectType)[1];
+            }
+            
             return $this->render('index', [
                'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+               'dataProvider' => $searchResult,
+               'scientificObjectTypes' => $scientificObjectsTypesToReturn
             ]);
         }
     }
