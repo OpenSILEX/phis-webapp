@@ -5,12 +5,11 @@
 // PHIS-SILEX
 // Copyright © INRA 2017
 // Creation date: Feb 2019
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //***********************************************************************************************
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use yii\grid\GridView;
 use yii\data\ArrayDataProvider;
 use app\components\helpers\Vocabulary;
 use app\components\widgets\AnnotationButtonWidget;
@@ -19,12 +18,11 @@ use app\components\widgets\PropertyWidget;
 use app\components\widgets\ConcernedItemGridViewWidget;
 use app\controllers\EventController;
 
-
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiEventModel */
 
 $this->title = $model->uri;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Event} other{Events}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="event-view">
