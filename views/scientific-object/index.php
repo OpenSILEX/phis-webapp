@@ -54,7 +54,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'data' => $scientificObjectTypes,
                     'options' => [
                         'placeholder' => 'Select object type...'
-                    ]
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
                 ]),
             ],
             [
