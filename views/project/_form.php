@@ -28,21 +28,10 @@ $(document).ready(function(){
     $("#projectKeywords").tooltip();
 });
 
-//remplacement des espaces par des "-"
+//replace spaces by "-"
 function changeSpaces(text, idInput) {
     $("#" + idInput).val(text.replace(" ", '-'));
 }
-
-/**
- * @action ajoute l'acronyme du projet dans l'URI 
- **/
-function updateURI(){
-    var acronyme = $("#projectAcronyme").val();
-    var uri = '<?php echo Yii::$app->params['baseURI']; ?>';
-    
-    $("#projectURI").val(uri + acronyme);
-}    
-
 </script>
 
 <div class="project-form well">
@@ -50,23 +39,12 @@ function updateURI(){
     <?php $form = ActiveForm::begin(); ?>
 
     <?php
-    if ($model->isNewRecord) {
-        echo $form->field($model, 'uri')->textInput([
-                'maxlength' => true,
-                'readonly' => true, 
-                'value' => Yii::$app->params['baseURI'], 
-                'id' => 'projectURI',  
-                'style' => 'background-color:#C4DAE7;', 
-                'data-toogle' => 'tooltip', 
-                'title' => 'Automatically generated', 
-                'data-placement' => 'left']);
-    } else {
-        echo $form->field($model, 'uri')->textInput([
+    if (!$model->isNewRecord) {
+         echo $form->field($model, 'uri')->textInput([
                 'maxlength' => true,
                 'readonly' => true,  
                 'style' => 'background-color:#C4DAE7;', ]);
     }
-    
     ?>
     
     <?php
@@ -75,7 +53,6 @@ function updateURI(){
             'maxlength' => true, 
             'id' => 'projectAcronyme', 
             'onkeyup' => 'changeSpaces(this.value, this.id);',
-            'onChange' => 'updateURI()', 
             'data-toogle' => 'tooltip', 
             'title' => Yii::t('app/messages','No spaces allowed. Used for the URI. Example : drops'), 
             'data-placement' => 'left']);

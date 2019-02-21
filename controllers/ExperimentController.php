@@ -209,26 +209,19 @@ class ExperimentController extends Controller {
         if ($experimentModel->load(Yii::$app->request->post())) {
             $experimentModel->isNewRecord = true;
             
-            //SILEX:todo
-            //the experiment uri is generated here. It needs to be generated in
-            //the web service.
-            //\SILEX:todo
-            
-            //1. search how many experiments has the same campaign
-            $searchModel = new ExperimentSearch();
-            $searchModel->campaign = $experimentModel->campaign;
-            $experiments = $searchModel->search($sessionToken, []);
-            $numberExperiment = $experiments->getCount() + 1;
-            
-            //2. update uri
-            $experimentModel->uri = str_replace("?", $numberExperiment, $experimentModel->uri);
             $dataToSend[] = $experimentModel->attributesToArray();
             
             $requestRes = $experimentModel->insert($sessionToken, $dataToSend);
             if (is_string($requestRes) && $requestRes === "token") { //L'utilisateur doit se connecter
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
-                return $this->redirect(['view', 'id' => $experimentModel->uri]);
+                if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //project created
+                    return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+                } else { //an error occurred
+                    return $this->render('/site/error', [
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $requestRes->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}]);
+                }
             }
         } else { 
             $searchProjectModel = new ProjectSearch();

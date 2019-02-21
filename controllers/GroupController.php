@@ -141,8 +141,12 @@ class GroupController extends Controller {
             
             if (is_string($requestRes) && $requestRes === "token") { //user must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                return $this->redirect(['view', 'id' => $groupModel->uri]);
+            } else if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //group created
+                return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+            } else { //an error occurred
+                return $this->render('/site/error', [
+                    'name' => Yii::t('app/messages','Internal error'),
+                    'message' => $requestRes->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}]);
             }
         } else { 
             if ($sessionToken !== null) {
