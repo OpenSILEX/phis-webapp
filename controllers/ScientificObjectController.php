@@ -643,9 +643,9 @@ require_once '../config/config.php';
         $searchModel = new ScientificObjectSearch();
         if (isset($_GET['model'])) {
             $searchParams = $_GET['model'];
-            $searchModel->alias = $searchParams["alias"];
-            $searchModel->type = $searchParams["type"];
-            $searchModel->experiment = $searchParams["experiment"];
+            $searchModel->alias = isset($searchParams["alias"]) ? $searchParams["alias"] : null;
+            $searchModel->type = isset($searchParams["type"]) ? $searchParams["type"] : null;
+            $searchModel->experiment = isset($searchParams["experiment"]) ? $searchParams["experiment"] : null;
         } else {
             $searchParams = [];
         }
