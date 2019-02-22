@@ -159,7 +159,9 @@ class YiiUserModel extends WSActiveRecord {
         $elementForWebService[YiiUserModel::ADDRESS] = $this->address;
         $elementForWebService[YiiUserModel::PHONE] = $this->phone;
         $elementForWebService[YiiUserModel::AFFILIATION] = $this->affiliation;
-        $elementForWebService[YiiUserModel::ORCID] = $this->orcid;
+        if ($this->orcid !== "") {
+            $elementForWebService[YiiUserModel::ORCID] = $this->orcid;
+        }
         $elementForWebService[YiiUserModel::ADMIN] = $this->isAdmin;
 //        $elementForWebService["available"] = $this->available;
         if ($this->groups != null) {
