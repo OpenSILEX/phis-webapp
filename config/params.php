@@ -10,7 +10,6 @@ return [
     'demoLogin' => 'guest@opensilex.org',
     'demoPassword' => 'guest',
     'opensilex-webapp-type' => 'opensilex', //'opensilex' or 'phis' (used to adapt the view)
-    'webapp-url' => 'http://localhost/phis-webapp/web',
     
     //ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts
