@@ -48,7 +48,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
      * @var string
      */
     public $type;
-    const TYPE = "type";
+    const RDF_TYPE = "rdfType";
     /**
      * the uri of the experiment in which the scientific object is
      *                      (e.g http://www.phenome-fppn.fr/diaphen/DIA2017-1)
@@ -122,7 +122,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
         $elementForWebService[YiiScientificObjectModel::URI] = $this->uri;
         $elementForWebService[YiiScientificObjectModel::EXPERIMENT] = $this->experiment;
         $elementForWebService[YiiScientificObjectModel::ALIAS] = $this->alias;
-        $elementForWebService[YiiScientificObjectModel::TYPE] = $this->type;
+        $elementForWebService[YiiScientificObjectModel::RDF_TYPE] = $this->type;
         $elementForWebService[YiiScientificObjectModel::GEOMETRY] = $this->geometry;
         $elementForWebService[YiiScientificObjectModel::SPECIES] = $this->species;
         $elementForWebService[YiiScientificObjectModel::VARIETY] = $this->variety;
