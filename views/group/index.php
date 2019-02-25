@@ -27,9 +27,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
+    <?php if (Yii::$app->session['isAdmin']) { ?>
     <p>
         <?= Html::a(Yii::t('yii', 'Create') . ' '. Yii::t('app', '{n, plural, =1{Group} other{Groups}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
+    <?php } ?>
     
    <?= GridView::widget([
         'dataProvider' => $dataProvider,
