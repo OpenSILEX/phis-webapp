@@ -144,6 +144,12 @@ form div.required label.control-label:after {
 }
 /*\SILEX:required*/
 
+/*SILEX:required*/
+label.control-label {
+  padding-right: 5px;
+}
+/*\SILEX:required*/
+
 .ul_tiret {
    list-style-type: none;
 }
