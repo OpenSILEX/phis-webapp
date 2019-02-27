@@ -29,6 +29,14 @@ require_once '../config/config.php';
 <div class="document-form well">
     <?php $form = ActiveForm::begin(); ?>
     
+    <script>
+        $(document).ready(function() {
+           $("form#<?= $form->id ?>").submit(function() {
+               $("form#<?= $form->id ?> button[type=submit]").attr("disabled", "disabled");
+           });
+        });
+    </script>
+    
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]); ?>
     
     <?= $form->field($model, 'creator')->textInput(['maxlength' => true]); ?>
