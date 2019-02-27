@@ -6,7 +6,6 @@
 // Creation date: Jan, 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\controllers;
 
 use Yii;
@@ -81,7 +80,8 @@ class EventController extends Controller {
                 'model' =>  $eventDetailed,
                 'dataDocumentsProvider' => $documents,
                 self::ANNOTATIONS_DATA => new ArrayDataProvider([
-                    'models' => $event->annotations
+                    'models' => $event->annotations,
+                    'totalCount' => count($event->annotations)                 
                 ])
             ]);
         }
