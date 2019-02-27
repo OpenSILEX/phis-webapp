@@ -30,6 +30,7 @@ require_once '../config/config.php';
     <?php $form = ActiveForm::begin(); ?>
     
     <script>
+        // On form submission disable creation button to prevent multiple document creation
         $(document).ready(function() {
            $("form#<?= $form->id ?>").submit(function() {
                $("form#<?= $form->id ?> button[type=submit]").attr("disabled", "disabled");
