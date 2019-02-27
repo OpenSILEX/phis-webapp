@@ -32,13 +32,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php
-        if (Yii::$app->session['isAdmin'] || $this->params['canUpdate']) {
-            echo Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']);
+        if (Yii::$app->session['isAdmin'] || $this->params['canUpdate']) { ?>
+            <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->alias, 'concernedItemRdfType' => Yii::$app->params["Experiment"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+            <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
+            <?php
         }
         ?>
-         <!-- Add annotation button -->
-        <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
-        <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->alias, 'concernedItemRdfType' => Yii::$app->params["Experiment"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+        
         <?= Html::a(Yii::t('app', 'Map Visualization'), 
                 ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.opensilex.org/vocabulary/oeso#Experiment', 'depth' => 'true', 'generateFile' => 'false'], ['class' => 'btn btn-info']) ?>
         </p>

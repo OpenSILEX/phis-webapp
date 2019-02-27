@@ -34,7 +34,7 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
     public function rules()
     {
         return [
-            [['uri', 'experiment', 'alias'], 'safe'],
+            [['uri', 'experiment', 'alias', 'type'], 'safe'],
         ];
     }
     
@@ -46,8 +46,10 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
      *               or string "token" if the user needs to log in
      */
     public function search($sessionToken, $params) {
+        
         //1. load the searched params 
         $this->load($params);
+        
         if (isset($params[YiiModelsConstants::PAGE])) {
             $this->page = $params[YiiModelsConstants::PAGE];
         }
@@ -57,7 +59,7 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
             return new \yii\data\ArrayDataProvider();
         }
         
-        //3. Request to the web service and return result
+        //3. Request to the web service and return result        
         $findResult = $this->find($sessionToken, $this->attributesToArray());
         
         if (is_string($findResult)) {

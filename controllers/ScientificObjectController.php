@@ -477,7 +477,7 @@ require_once '../config/config.php';
         return null;
     }
     
-        /**
+    /**
      * get the vectors types (complete uri)
      * @return array list of the vectors types uris 
      * e.g. [
@@ -614,9 +614,22 @@ require_once '../config/config.php';
             $experiments = $this->experimentsToMap($experiments);
             $this->view->params['listExperiments'] = $experiments;
             
+            //Get all the types of scientific objects
+            $objectsTypes = $this->getObjectsTypesUris();
+            if ($objectsTypes === "token") {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            }
+            
+            //Prepare the array for the select of the view
+            $scientificObjectsTypesToReturn = [];
+            foreach ($objectsTypes as $objectType) {
+                $scientificObjectsTypesToReturn[$objectType] = explode("#", $objectType)[1];
+            }
+            
             return $this->render('index', [
                'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+               'dataProvider' => $searchResult,
+               'scientificObjectTypes' => $scientificObjectsTypesToReturn
             ]);
         }
     }
@@ -627,12 +640,16 @@ require_once '../config/config.php';
      * @return mixed 
      */
     public function actionDownloadCsv() {
+        $searchModel = new ScientificObjectSearch();
         if (isset($_GET['model'])) {
             $searchParams = $_GET['model'];
+            $searchModel->alias = isset($searchParams["alias"]) ? $searchParams["alias"] : null;
+            $searchModel->type = isset($searchParams["type"]) ? $searchParams["type"] : null;
+            $searchModel->experiment = isset($searchParams["experiment"]) ? $searchParams["experiment"] : null;
         } else {
             $searchParams = [];
         }
-        $searchModel = new ScientificObjectSearch();
+        
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         
         if (is_string($searchResult)) {

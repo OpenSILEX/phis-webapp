@@ -47,7 +47,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function($model, $key, $index) {
                     return explode("#", $model->rdfType)[1];
-                }
+                },
+                'filter' => \kartik\select2\Select2::widget([
+                    'attribute' => 'type',
+                    'model' => $searchModel,
+                    'data' => $scientificObjectTypes,
+                    'options' => [
+                        'placeholder' => 'Select object type...'
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]),
             ],
             [
                 'attribute' => 'properties',
