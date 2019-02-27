@@ -1,13 +1,12 @@
 <?php
 
-//**********************************************************************************************
+//******************************************************************************
 //                                       view.php 
 // PHIS-SILEX
 // Copyright © INRA 2017
 // Creation date: Feb 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-//***********************************************************************************************
-
+//******************************************************************************
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\data\ArrayDataProvider;
@@ -69,11 +68,12 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
     
     <!-- Linked Annotation-->
-    <?= AnnotationGridViewWidget::widget(
-            [
-                 AnnotationGridViewWidget::ANNOTATIONS => ${EventController::ANNOTATIONS_DATA}
-            ]
-        ); 
+    <?= 
+    AnnotationGridViewWidget::widget(
+        [
+             AnnotationGridViewWidget::ANNOTATIONS => ${EventController::ANNOTATIONS_DATA}
+        ]
+    ); 
     ?>
 
 </div>
