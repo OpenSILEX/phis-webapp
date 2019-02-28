@@ -1,5 +1,4 @@
 <?php
-
 //******************************************************************************
 //                            YiiPropertyModel.php
 // PHIS-SILEX
@@ -7,7 +6,6 @@
 // Creation date: 15 Feb., 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\models\yiiModels;
 
 use Yii;
@@ -20,49 +18,48 @@ use app\models\wsModels\WSActiveRecord;
 class YiiPropertyModel extends WSActiveRecord {
     
     /**
-     * value
+     * Value
      * @var string 
      */
     public $value;
     const VALUE = "value";
     
     /**
-     * value Labels
+     * Value Labels
      * @var string 
      */
     public $valueLabels;
     const VALUE_LABELS = "valueLabels";
     
     /**
-     * rdf Type
+     * RDF Type
      * @var string 
      */
     public $rdfType;
     const RDF_TYPE = "rdfType";
     
     /**
-     * rdf Type Labels
+     * RDF Type Labels
      * @var string 
      */
     public $rdfTypeLabels;
     const RDF_TYPE_LABELS = "rdfTypeLabels";
     
     /**
-     * relation
+     * Relation
      * @var string 
      */
     public $relation;
     const RELATION = "relation";
     
     /**
-     * relationLabels
+     * Relation labels
      * @var string 
      */
     public $relationLabels;
     const RELATION_LABELS = "relationLabels";
     
     /**
-     * 
      * @return array the rules of the attributes
      */
     public function rules() {
@@ -74,12 +71,12 @@ class YiiPropertyModel extends WSActiveRecord {
                 self::RDF_TYPE_LABELS,
                 self::RELATION,
                 self::RELATION_LABELS
-                ], 'safe']
+                ], 'safe'
+            ]
         ];
     }
     
     /**
-     * 
      * @return array the labels of the attributes
      */
     public function attributeLabels() {
@@ -94,7 +91,7 @@ class YiiPropertyModel extends WSActiveRecord {
     }
     
     /**
-     * fills the attributes with the information of the given array
+     * Fill the attributes with the information of the given array
      * @param array $array array key => value
      */
     protected function arrayToAttributes($array) {
@@ -113,8 +110,8 @@ class YiiPropertyModel extends WSActiveRecord {
     }
 
     /**
-     * Create an array representing the concerned item
-     * Used for the web service for example
+     * Create an array representing the concerned item.
+     * Used for the web service for example.
      * @return array with the attributes. 
      */
     public function attributesToArray() {

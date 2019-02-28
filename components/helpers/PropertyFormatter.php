@@ -1,5 +1,4 @@
 <?php
-
 //******************************************************************************
 //                                       PropertyFormatter.php
 // SILEX-PHIS
@@ -7,11 +6,9 @@
 // Creation date: 20 September, 2018
 // Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\components\helpers;
 
 use yii\helpers\Html;
-use Yii;
 
 /**
  * Helper to regroup all formatters used by the PropertiesWidget
@@ -42,6 +39,7 @@ class PropertyFormatter {
 
     // Formatter const used to render a link to the infrastructure details view
     const INFRASTRUCTURE = "infrastructure";
+    
     /**
      * Render a link to an infrastructure based on a property uri, 
      * it will render a pattern "value (type)" as link title.
@@ -81,5 +79,4 @@ class PropertyFormatter {
         
         return $strValue;
     }
-
 }

@@ -1,5 +1,4 @@
 <?php
-
 //******************************************************************************
 //                             PropertyWidget.php
 // SILEX-PHIS
@@ -7,7 +6,6 @@
 // Creation date: 20 September, 2018
 // Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\components\widgets;
 
 use yii\base\Widget;
@@ -18,7 +16,6 @@ use Yii;
 
 /**
  * A widget used to generate a customizable object properties grid
- * 
  * @author Vincent Migot < vincent.migot@inra.fr>
  */
 class PropertyWidget extends Widget {
@@ -317,5 +314,4 @@ class PropertyWidget extends Widget {
             return PropertyFormatter::defaultFormat($value);
         }
     }
-
 }

@@ -7,7 +7,6 @@
 // Creation date: 3 jan. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\models\yiiModels;
 
 use Yii;
@@ -21,7 +20,7 @@ use app\models\wsModels\WSActiveRecord;
 class YiiConcernedItemModel extends WSActiveRecord {
     
     /**
-     * uri of the item 
+     * Uri of the item 
      * @example http://www.phenome-fppn.fr/platform/2017/o1032588
      * @var string 
      */
@@ -29,7 +28,7 @@ class YiiConcernedItemModel extends WSActiveRecord {
     const URI = "uri";
     
     /**
-     * uri of the rdf type of the item 
+     * Uri of the RDF type of the item 
      * @example http://www.opensilex.org/vocabulary/oeso#Plot
      * @var string
      */
@@ -37,7 +36,7 @@ class YiiConcernedItemModel extends WSActiveRecord {
     const RDF_TYPE = "rdfType";
     
     /**
-     * labels 
+     * Labels 
      * @example [Plot Lavalette, Parcelle Lavalette]
      * @var array
      */
@@ -45,7 +44,6 @@ class YiiConcernedItemModel extends WSActiveRecord {
     const LABELS = "labels";
     
     /**
-     * 
      * @return array the rules of the attributes
      */
     public function rules() {
@@ -55,7 +53,6 @@ class YiiConcernedItemModel extends WSActiveRecord {
     }
     
     /**
-     * 
      * @return array the labels of the attributes
      */
     public function attributeLabels() {
@@ -67,7 +64,7 @@ class YiiConcernedItemModel extends WSActiveRecord {
     }
     
     /**
-     * allows to fill the attributes with the informations in the array given 
+     * Allow to fill the attributes with the informations in the array given 
      * @param array $array array key => value which contains the concerned item
      */
     protected function arrayToAttributes($array) {
@@ -77,8 +74,8 @@ class YiiConcernedItemModel extends WSActiveRecord {
     }
 
     /**
-     * Create an array representing the concerned item
-     * Used for the web service for example
+     * Create an array representing the concerned item.
+     * Used for the web service for example.
      * @return array with the attributes. 
      */
     public function attributesToArray() {

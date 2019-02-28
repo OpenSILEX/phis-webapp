@@ -6,7 +6,6 @@
 // Creation date: 23 Aug, 2018
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\components\widgets;
 
 use yii\base\Widget;
@@ -42,7 +41,7 @@ class ConcernedItemGridViewWidget extends Widget {
 
     /**
      * Render the concerned item list
-     * @return string the html string rendered
+     * @return string the HTML string rendered
      */
     public function run() {
         if ($this->concernedItems->getCount() == 0) {

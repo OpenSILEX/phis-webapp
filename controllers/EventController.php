@@ -28,7 +28,7 @@ class EventController extends Controller {
     CONST ANNOTATIONS_DATA = "annotations";
     
     /**
-     * list the events
+     * List the events
      * @return mixed
      */
     public function actionIndex() {
@@ -58,16 +58,15 @@ class EventController extends Controller {
 
     /**
      * Display the detail of an event
-     * 
      * @param $id Uri of the event
      * @return mixed redirect in case of error otherwise return the "view" view
      */
     public function actionView($id) {
-        // Fill the event model with the information.
+        // Fill the event model with the information
         $event = new YiiEventModel();
         $eventDetailed = $event->getEventDetailed(Yii::$app->session['access_token'], $id);
 
-        // Get documents.
+        // Get documents
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);

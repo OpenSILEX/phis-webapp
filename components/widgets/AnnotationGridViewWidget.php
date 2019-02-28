@@ -6,7 +6,6 @@
 // Creation date: 23 Aug, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\components\widgets;
 
 use yii\base\Widget;
@@ -43,7 +42,7 @@ class AnnotationGridViewWidget extends Widget {
 
     /**
      * Render the annotation list
-     * @return string the html string rendered
+     * @return string the HTML string rendered
      */
     public function run() {
         if ($this->annotations->getCount() == 0) {

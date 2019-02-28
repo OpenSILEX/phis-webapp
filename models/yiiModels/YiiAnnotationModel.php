@@ -6,7 +6,6 @@
 // Creation date: 9 Jul, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\models\yiiModels;
 
 use app\models\wsModels\WSAnnotationModel;
@@ -15,9 +14,9 @@ use app\models\wsModels\WSConstants;
 use Yii;
 
 /**
- * The Yii model for the Annotation. Used with web services
- * Implements a customized Active Record
- *  (WSActiveRecord, for the web services access)
+ * The Yii model for the Annotation. Used with web services.
+ * Implements a customized Active Record (WSActiveRecord, for the web services 
+ * access)
  * @see app\models\wsModels\WSAnnotationModel
  * @see app\models\wsModels\WSActiveRecord
  * @author Morgane Vidal <morgane.vidal@inra.fr> 
@@ -31,7 +30,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const LABEL = "Annotation";
 
     /**
-     * uri of the annotation
+     * Uri of the annotation
      * @example http://www.phenome-fppn.fr/platform/id/annotation/3ce85bf7-1d99-4831-9c13-4d7ebdafe1d6
      * @var string
      */
@@ -41,7 +40,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const URI_LABEL = "URI";
 
     /**
-     * the creation date of the annotation
+     * Creation date of the annotation
      * @example 2018-06-25 15:13:59+0200
      * @var string
      */
@@ -51,7 +50,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const CREATION_DATE_LABEL = "Date of Annotation";
 
     /**
-     * the creator of the annotation
+     * Creator of the annotation
      * @example http://www.phenome-fppn.fr/diaphen/id/agent/acharleroy
      * @var string
      */
@@ -61,7 +60,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const CREATOR_LABEL = "Creator";
 
     /**
-     * the purpose of the annotation
+     * Purpose of the annotation
      * @example http://www.w3.org/ns/oa#commenting
      * @var string
      */
@@ -71,7 +70,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const MOTIVATED_BY_LABEL = "Motivated by";
 
     /**
-     * the description of the annotation
+     * Description of the annotation
      * @example http://www.w3.org/ns/oa#commenting
      * @var string
      */
@@ -81,7 +80,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const COMMENTS_LABEL = "Description";
 
     /**
-     *  a target associate to this annotation 
+     * Target associate to this annotation 
      * @example http://www.phenome-fppn.fr/phenovia/2017/o1032481
      * @var string
      */
@@ -100,7 +99,6 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * 
      * @inheritdoc
      */
     public function rules() {
@@ -126,7 +124,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * Permits to fill model parameters from webservice data array 
+     * Permit to fill model parameters from webservice data array 
      * @param array $array key => value with annotation data value
      */
     protected function arrayToAttributes($array) {
@@ -138,9 +136,9 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * @return array used to send to the webservice in order to create a new annotation
-     *        this is a public method in case that the user want to save these annotation data 
-     *        in multiple instances
+     * @return array used to send to the webservice in order to create a new 
+     * annotation. It is a public method in case that the user want to save 
+     * these annotation data in multiple instances.
      */
     public function attributesToArray() {
         $elementForWebService = parent::attributesToArray();
@@ -158,7 +156,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * Find an annotation by this uri
+     * Find an annotation from a uri
      * @param string $sessionToken
      * @param string $uri
      * @return mixed the searched object if it exists or a message if not
@@ -184,5 +182,4 @@ class YiiAnnotationModel extends WSActiveRecord {
             return $requestRes;
         }
     }
-
 }

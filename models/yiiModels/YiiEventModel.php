@@ -1,5 +1,4 @@
 <?php
-
 //******************************************************************************
 //                             YiiEventModel.php
 // SILEX-PHIS
@@ -7,7 +6,6 @@
 // Creation date: 02 Jan. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\models\yiiModels;
 
 use Yii;
@@ -49,21 +47,21 @@ class YiiEventModel extends WSActiveRecord {
     const DATE = "date";
     
     /**
-     * The concerned items of the event
+     * Concerned items of the event
      * @var array
      */
     public $concernedItems; 
     const CONCERNED_ITEMS = "concernedItems";
     
     /**
-     * The properties of the event
+     * Properties of the event
      * @var array 
      */
     public $properties;
     const PROPERTIES = "properties";
     
     /**
-     * The annotations of the event
+     * Annotations of the event
      * @var array
      */
     public $annotations; 
@@ -134,7 +132,6 @@ class YiiEventModel extends WSActiveRecord {
 
     /**
      * Get the detailed event corresponding to the given uri
-     * 
      * @param type $sessionToken
      * @param type $uri
      * @return $this
@@ -155,7 +152,7 @@ class YiiEventModel extends WSActiveRecord {
     }
 
     /**
-     * Calls web service and returns the list of events types
+     * Call web service and return the list of events types
      * //SILEX:todo Not used yet. Will be used to generate a dropdown list to
      * select the event type filter
      * //\SILEX

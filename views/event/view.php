@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
-        <!-- Add annotation button -->
+        <!-- Annotation button -->
         <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
     </p>
 
@@ -67,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ); 
     ?>
     
-    <!-- Linked Annotation-->
+    <!-- Linked Annotations-->
     <?= 
     AnnotationGridViewWidget::widget(
         [
