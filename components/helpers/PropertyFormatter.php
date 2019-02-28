@@ -1,6 +1,6 @@
 <?php
 //******************************************************************************
-//                                       PropertyFormatter.php
+//                           PropertyFormatter.php
 // SILEX-PHIS
 // Copyright © INRA 2018
 // Creation date: 20 September, 2018
@@ -11,7 +11,7 @@ namespace app\components\helpers;
 use yii\helpers\Html;
 
 /**
- * Helper to regroup all formatters used by the PropertiesWidget
+ * Helper to regroup all formatters used by the PropertyWidget
  * New formatters should be added here for any new type necessary.
  * Actually only Infrastructures are supported.
  * @see app\components\widgets\PropertyWidget
