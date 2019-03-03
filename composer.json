@@ -33,6 +33,7 @@
         "miloschuman/yii2-highcharts-widget": "*",
         "openSILEX/guzzle-model-client": "dev-master",
         "openSILEX/handsontable-php": "dev-master",
+        "openSILEX/opencpu-client-php": "dev-master",
         "phpoffice/phpspreadsheet": "^1.4",
         "fxp/composer-asset-plugin": "~1.4",
         "lavrentiev/yii2-toastr": "^2.0",
@@ -82,6 +83,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/niio972/handsontable-php"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/openSILEX/opencpu-client-php"
         }
     ]
 }
