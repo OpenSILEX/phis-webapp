@@ -15,7 +15,6 @@ use yii\filters\VerbFilter;
 use app\models\yiiModels\DataAnalysisAppSearch;
 use app\models\yiiModels\DataAnalysisApp;
 use app\models\wsModels\WSConstants;
-use \yii\data\ArrayDataProvider;
 
 include_once '../config/web_services.php';
 
@@ -62,32 +61,34 @@ class DataAnalysisController extends \yii\web\Controller {
     }
 
     /**
-     * List all Apps
-     * @return mixed
+     * Run specific rpackage function
+     * @param type $rpackage
+     * @param type $function
+     * @return type
      */
-    public function actionRunScript($id = null) {
-        $appNamePath = "niio972/variablesStudy";
-
-        if (!isset($id)) {
+    public function actionRunScript($rpackage = null, $function = null) {
+        // test parameters
+        if (!isset($rpackage) && !isset($function)) {
             Yii::$app->session->setFlash('scriptNotAvailable');
-            return $this->redirect(['data-analysis/index','integrated' => true]);
+            return $this->redirect(['data-analysis/index', 'integrated' => true]);
         }
+
+        // load package configuration
         $searchModel = new DataAnalysisAppSearch();
-        $appConfiguration = $searchModel->getAppConfiguration($appNamePath);
+        $appConfiguration = $searchModel->getAppConfiguration($rpackage);
 
-        if (!isset($appConfiguration["$id"])) {
+        if (!isset($appConfiguration["$function"])) {
             Yii::$app->session->setFlash('scriptNotAvailable');
-            return $this->redirect(['data-analysis/index','integrated' => true]);
+            return $this->redirect(['data-analysis/index', 'integrated' => true]);
         }
-        // function configuration
-        $functionConfiguration = $appConfiguration["$id"];
+       
+        // get yii2 form information
+        $formParameters = $appConfiguration["$function"]["formParameters"];
 
-        $formParameters = $appConfiguration["$id"]["formParameters"];
-
-        // get parameters
+        // get form parameters keys
         $parameters = array_keys($formParameters);
-        // special values
-        $parametersValues = $this->fillParametersFromR($searchModel, $formParameters, $appNamePath);
+        // get data from R function (special values like varaibles lists)
+        $parametersValues = $this->fillParametersFromR($searchModel, $formParameters, $rpackage);
 
         // fill model
         $model = new DataAnalysisApp($parameters, [], $formParameters);
@@ -95,53 +96,32 @@ class DataAnalysisController extends \yii\web\Controller {
         $model->wsUrl = WS_PHIS_PATH;
         // load model data
         if ($model->load(Yii::$app->request->post())) {
-            $session = $searchModel->ocpuserver->makeAppCall($appNamePath, $id, $model->getAttributesForHTTPClient());
+            $session = $searchModel->ocpuserver->makeAppCall($rpackage, $function, $model->getAttributesForHTTPClient());
 
             $plotConfigurations = [];
             $plotWidgetUrls = [];
             $dataGrids = [];
+             // get called function configuration
+            $functionConfiguration = $appConfiguration["$function"];
+            $this->getDataFromRfunctionCall(
+                    $searchModel,
+                    $functionConfiguration,
+                    $rpackage,
+                    $function,
+                    $session,
+                    $formParameters,
+                    $plotConfigurations, 
+                    $plotWidgetUrls, 
+                    $dataGrids);
 
-            // error
-            if ($searchModel->ocpuserver->getServerCallStatus()->getStatus() != 200) {
-                $errorMessage = $searchModel->ocpuserver->getServerCallStatus()->getMessage();
-                Yii::$app->session->setFlash("scriptDidNotWork", $errorMessage);
-            } else {
-                // graphic or grid function
-                if ($functionConfiguration["type"] === "graphic") {
-                    $plotConfigurations[] = $session->getExistingFileUrl("plotlySchema", $session::OPENCPU_SESSION_FILE_JSON_FORMAT);
-                    $plotWidgetUrls[] = $session->getExistingFileUrl($id . "Widget.html");
-                // graphic or grid function    
-                    if (isset($functionConfiguration["linkedFunctions"])) {
-                        foreach ($functionConfiguration["linkedFunctions"] as $function => $linkedFunctionParameters) {
-                            $linkedModel = new DataAnalysisApp($linkedFunctionParameters["parameters"], [], $formParameters);
-                            $linkedModel->load(Yii::$app->request->post());
-                            $linkedFunctionsSession = $searchModel->ocpuserver->makeAppCall($appNamePath, $linkedFunctionParameters["name"], $linkedModel->getAttributesForHTTPClient());
-                            if ($linkedFunctionParameters["type"] === "grid") {
-                                $data = $linkedFunctionsSession->getVal($session::OPENCPU_SESSION_JSON_FORMAT);
-
-                                    $dataProvider = new ArrayDataProvider([
-                                    'allModels' => $data,
-                                    'pagination' => [
-                                        'pageSize' => 10,
-                                    ],
-                                    'totalCount' => count($data)
-                                ]);
-                                if (count($data) !== 0) {
-                                    $columnNames = array_keys($data[0]);
-                                    $dataGrids[] = ["sessionId" => $linkedFunctionsSession->sessionId, "dataProvider" => $dataProvider, "columnNames" => $columnNames];
-                                }
-                            }
-                            if ($linkedFunctionParameters["type"] === "graphic") {
-                                $plotConfigurations[] = $linkedFunctionsSession->getExistingFileUrl("plotlySchema", $session::OPENCPU_SESSION_FILE_JSON_FORMAT);
-                                $plotWidgetUrls[] = $linkedFunctionsSession->getExistingFileUrl($id . "Widget.html");
-                            }
-                        }
-                    }
-                }
-            }
+            // exportGrid Save parameters
+            $exportGridTemporaryParameters = $model->getAttributesForHTTPClient();
+            unset($exportGridTemporaryParameters["wsUrl"]);
+            unset($exportGridTemporaryParameters["token"]);
 
             return $this->render('form', [
-                        'id' => $id,
+                        'rpackage' => $rpackage,
+                        'function' => $function,
                         'model' => $model,
                         'parameters' => $formParameters,
                         'parametersValues' => $parametersValues,
@@ -149,11 +129,13 @@ class DataAnalysisController extends \yii\web\Controller {
                         'plotConfigurations' => $plotConfigurations,
                         'plotWidgetUrls' => $plotWidgetUrls,
                         'dataGrids' => $dataGrids,
-                        'sessionId' => $session->sessionId
+                        'sessionId' => $session->sessionId,
+                        'exportGridParameters' => 'Search parameters' . json_encode($exportGridTemporaryParameters)
             ]);
         } else {
             return $this->render('form', [
-                        'id' => $id,
+                        'rpackage' => $rpackage,
+                        'function' => $function,
                         'model' => $model,
                         'parameters' => $formParameters,
                         'parametersValues' => $parametersValues,
@@ -171,10 +153,18 @@ class DataAnalysisController extends \yii\web\Controller {
             return $plotlySchema;
         }
     }
+    
+     public function actionAjaxSessionGetData($sessionId) {
+            $searchModel = new DataAnalysisAppSearch();
+            $session = new \openSILEX\opencpuClientPHP\classes\OCPUSession($sessionId, $searchModel->ocpuserver->getOpenCPUWebServerClient());
+            $value = $session->getVal( $session::OPENCPU_SESSION_JSON_FORMAT);
+            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            return $value;
+    }
 
     public function actionView() {
         $searchParams = Yii::$app->request->queryParams;
-        return $this->render('view', [
+        return $this->render('iframe-view', [
                     'appUrl' => $searchParams["url"],
                     'appName' => $searchParams["name"]
                         ]
@@ -206,6 +196,51 @@ class DataAnalysisController extends \yii\web\Controller {
             }
         }
         return $parametersValues;
+    }
+    
+   /**
+    * 
+    * @param type $searchModel
+    * @param type $functionConfiguration
+    * @param type $rpackage
+    * @param type $function
+    * @param type $session
+    * @param type $formParameters
+    * @param type $plotConfigurations
+    * @param type $plotWidgetUrls
+    * @param type $dataGrids
+    */
+    private function getDataFromRfunctionCall($searchModel,$functionConfiguration,$rpackage,$function, $session,$formParameters, &$plotConfigurations, &$plotWidgetUrls, &$dataGrids) {
+        // error
+        if ($searchModel->ocpuserver->getServerCallStatus()->getStatus() != 200) {
+            $errorMessage = $searchModel->ocpuserver->getServerCallStatus()->getMessage();
+            Yii::$app->session->setFlash("scriptDidNotWork", $errorMessage);
+        } else {
+            // graphic or grid function
+            if ($functionConfiguration["type"] === "graphic") {
+                $plotConfigurations[] = $session->getExistingFileUrl("plotlySchema", $session::OPENCPU_SESSION_FILE_JSON_FORMAT);
+                $plotWidgetUrls[] = $session->getExistingFileUrl($function . "Widget.html");
+                // graphic or grid function    
+                if (isset($functionConfiguration["linkedFunctions"])) {
+                    foreach ($functionConfiguration["linkedFunctions"] as $linkedFunction => $linkedFunctionParameters) {
+                        $linkedModel = new DataAnalysisApp($linkedFunctionParameters["parameters"], [], $formParameters);
+                        $linkedModel->load(Yii::$app->request->post());
+                        $linkedFunctionsSession = $searchModel->ocpuserver->makeAppCall($rpackage, $linkedFunctionParameters["name"], $linkedModel->getAttributesForHTTPClient());
+                        if ($linkedFunctionParameters["type"] === "grid") {
+                            $data = $linkedFunctionsSession->getVal($session::OPENCPU_SESSION_JSON_FORMAT);
+                            if (count($data) !== 0) {
+                                $columnNames = array_keys($data[0]);
+                                $dataGrids[] = ["sessionId" => $linkedFunctionsSession->sessionId, "data" => $data, "columnNames" => $columnNames];
+                            }
+                        }
+                        if ($linkedFunctionParameters["type"] === "graphic") {
+                            $plotConfigurations[] = $linkedFunctionsSession->getExistingFileUrl("plotlySchema", $session::OPENCPU_SESSION_FILE_JSON_FORMAT);
+                            $plotWidgetUrls[] = $linkedFunctionsSession->getExistingFileUrl($linkedFunction . "Widget.html");
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

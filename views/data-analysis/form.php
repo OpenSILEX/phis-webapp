@@ -5,17 +5,22 @@ use yii\helpers\Html;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
 use yii\helpers\Url;
-use yii\grid\GridView;
+use nullref\datatable\DataTable;
+
+$date = new DateTime();
+
+$this->title = Yii::t('app', $appConfiguration[$function]["label"] . " " . $date->format("Y-m-d") );
+
 ?>
 
 <div class="form">
-    <h2> <?= $appConfiguration[$id]["label"] ?> </h2>
+    <h2> <?= $appConfiguration[$function]["label"] ?> </h2>
     <br>
     <?php
     $form = ActiveForm::begin([
-                'action' => Url::to(["data-analysis/run-script/", "id" => $id]),
+                'action' => Url::to(["data-analysis/run-script/", "function" => $function, 'rpackage' => $rpackage,]),
     ]);
-
+    // construct form
     foreach ($model as $key => $attri) {
         if (isset($parameters[$key]['visibility']) && $parameters[$key]['visibility'] === "hidden") {
             echo $form->field($model, $key)->hiddenInput()->label(false);
@@ -73,6 +78,7 @@ use yii\grid\GridView;
     ?>
     <p class="alert alert-info"> Le résultat de votre script ou les erreurs produites s'afficheront ci-dessous.<p>
         <?php
+        // construct graph
         if (isset($plotConfigurations)) {
             foreach ($plotConfigurations as $plotConfiguration) {
                 
@@ -95,18 +101,46 @@ use yii\grid\GridView;
                 <iframe class="embed-responsive-item" src="<?php echo $plotWidgetUrl ?>" allowfullscreen></iframe>
             </div>
         <?php } ?>
+    
         <?php
+        // construct grid
         if (isset($dataGrids)) {
             foreach ($dataGrids as $dataGrid) {
-                \yii\widgets\Pjax::begin([
-                    'enablePushState' => FALSE,
+                $ajaxColumns =  [];
+                foreach ($dataGrid["columnNames"] as $value) {
+                    $ajaxColumns[] = ["data" => $value];
+                }
+                
+                echo DataTable::widget([
+                    'dom'=> 'Bfrtip',
+                    'buttons' => [
+                        [
+                            'extend' =>'copyHtml5',
+                            'messageTop' => $exportGridParameters
+                        ],
+                        [
+                            'extend' => 'csvHtml5',
+                            'messageTop' => $exportGridParameters
+                        ],
+                        [
+                            'extend' => 'pdfHtml5',
+                            'messageTop' => $exportGridParameters
+                        ],
+                        [
+                            'extend' => 'excelHtml5',
+                            'messageTop' => $exportGridParameters
+                        ],
+                    
+                    ],
+                    "ajax" => [
+                        "url" =>  Url::to(["data-analysis/ajax-session-get-data/", "sessionId" => $dataGrid["sessionId"]]),
+                        "dataSrc" => ""
+                    ],
+                    "columns" => [
+                        $ajaxColumns
+                    ],
+                    'columns' => $dataGrid["columnNames"],
                 ]);
-
-                echo GridView::widget([
-                    'dataProvider' => $dataGrid["dataProvider"],
-                    'columns' => $dataGrid["columnNames"]
-                ]);
-                \yii\widgets\Pjax::end();
             }
         }
     } else {

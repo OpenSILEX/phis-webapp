@@ -7,9 +7,7 @@
 // Creation date: 21 feb. 2019
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-//use Yii;
-use yii\helpers\Html;
-use app\models\yiiModels\DataAnalysisAppSearch;
+
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\EventSearch */

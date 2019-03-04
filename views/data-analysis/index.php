@@ -29,10 +29,10 @@ Yii::$app->session->removeFlash("scriptNotAvailable");
 
 <div class="data-analysis-index">
     <div class="row">
-        <?php foreach ($dataProvider as $appName => $appInfo) { ?>
+        <?php foreach ($dataProvider as $function => $appInfo) {?>
             <div class="col-sm-6 col-md-5">
                 <div class="thumbnail">
-                    <a href="<?= Url::to(($integrated) ? ["data-analysis/run-script/", "id" => $appName] : $appInfo[DataAnalysisAppSearch::APP_INDEX_HREF] )?>">
+                    <a href="<?= Url::to(($integrated) ? ["data-analysis/run-script/", "function" => $function, "rpackage" =>  $appInfo[DataAnalysisAppSearch::R_PACKAGE_NAME]] : $appInfo[DataAnalysisAppSearch::APP_INDEX_HREF] )?>">
                         <?= Html::img($appInfo[DataAnalysisAppSearch::VIGNETTE_IMAGE], ["class" => "img-responsive", "alt" => $appInfo[DataAnalysisAppSearch::APP_SHORT_NAME]]) ?>
                     </a>
                     <center>

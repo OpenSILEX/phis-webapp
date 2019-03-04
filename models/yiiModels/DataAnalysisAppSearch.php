@@ -32,6 +32,7 @@ class DataAnalysisAppSearch {
 
     const VIGNETTE_IMAGE = "vignette";
     const APP_SHORT_NAME = "appShortName";
+    const R_PACKAGE_NAME = "packageName";
     const APP_INDEX_HREF = "appIndexHref";
     const FUNCTION_NAME = "functionName";
     const FUNCTION_HELP = "fucnationHelp";
@@ -57,8 +58,6 @@ class DataAnalysisAppSearch {
         $visualisationsInfo = [];
 
         foreach ($apps as $app) {
-
-
             $functionnalities = $this->getAppFunctionnalities($app);
             foreach ($functionnalities as $functionnalityName) {
                 $applicationWebPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/www";
@@ -67,6 +66,7 @@ class DataAnalysisAppSearch {
                 $visualisationsInfo[$functionnalityName][self::VIGNETTE_IMAGE] = "$descriptionPath/$functionnalityName/$functionnalityName.png";
                 $visualisationsInfo[$functionnalityName][self::FUNCTION_HELP] = $this->getHelpFunctionnality($app, $functionnalityName);
                 $visualisationsInfo[$functionnalityName][self::APP_SHORT_NAME] = explode("/", $app)[1] . "-" . $functionnalityName;
+                $visualisationsInfo[$functionnalityName][self::R_PACKAGE_NAME] = $app;
                 $url = "$applicationWebPath/$functionnalityName.html?access_token=" . Yii::$app->session[WSConstants::ACCESS_TOKEN] . "&wsUrl=" . WS_PHIS_PATH;
                 $visualisationsInfo[$functionnalityName][self::APP_INDEX_HREF] = Url::to(['data-analysis/view', 'url' => $url, 'name' => explode("/", $app)[1]]);
             }
