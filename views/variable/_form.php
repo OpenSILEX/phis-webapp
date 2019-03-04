@@ -300,7 +300,7 @@ use yii\widgets\ActiveForm;
             <li><?= Html::a("AGROPORTAL", "http://agroportal.lirmm.fr/search", ['target' => '_blank']) ?>
                 <i class="glyphicon glyphicon-question-sign" style="color: #337ab7" title="<?=Yii::t('app/messages', 'AgroPortal')?>"></i>
             </li>
-            <li><?= Html::a("AGROVOC", "http://artemide.art.uniroma2.it:8081/agrovoc/agrovoc/en/?clang=fr", ['target' => '_blank']) ?>
+            <li><?= Html::a("AGROVOC", "http://agrovoc.uniroma2.it/agrovoc/agrovoc/en/", ['target' => '_blank']) ?>
                 <i class="glyphicon glyphicon-question-sign" style="color: #337ab7" title="<?=Yii::t('app/messages', 'AgroVoc')?>"></i>
             </li>
             <li><?= Html::a("PLANT ONTOLOGY", "http://www.ontobee.org/ontology/po", ['target' => '_blank']) ?>
