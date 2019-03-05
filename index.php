@@ -11,13 +11,15 @@
 // Last modification date:  March, 2017
 // Subject: index du site
 //***********************************************************************************************
+require_once('./config/config.php');
 
+$params = config::path();
 ?>
 
 <html>
     <head>
-        <title>PHIS</title>
-        <meta http-equiv="refresh" content="0;URL=http://localhost/phis-webapp/web">
+        <title>OpenSILEX</title>
+        <meta http-equiv="refresh" content="0;URL=<?= $params['baseIndexURL'] ?>">
     </head>
     <body></body>
 </html>
