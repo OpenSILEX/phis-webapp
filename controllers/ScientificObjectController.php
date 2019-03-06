@@ -537,7 +537,7 @@ require_once '../config/config.php';
             $p["properties"][] = $alias;
         }
         
-        $p["rdfType"] = $scientificObject["type"];
+        $p["rdfType"] = $scientificObject["rdfType"];
         $p["experiment"] = $scientificObject["experiment"];
         $p["geometry"] = $scientificObject["geometry"];
         
