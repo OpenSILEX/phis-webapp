@@ -78,7 +78,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         'locale'=>['format'=> Yii::$app->params['standardDateTimeFormat']]
                     ]                            
                 ])
-            ]
+            ],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view}',
+                'buttons' => [
+                    'view' => function($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
+                                        ['event/view', 'id' => $model->uri]); 
+                    },
+                ]
+            ],
         ]
     ]); ?>
 </div>

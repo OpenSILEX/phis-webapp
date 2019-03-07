@@ -6,7 +6,6 @@
 // Creation date: 23 Aug, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\components\widgets;
 
 use yii\base\Widget;
@@ -43,7 +42,7 @@ class AnnotationGridViewWidget extends Widget {
 
     /**
      * Render the annotation list
-     * @return string the html string rendered
+     * @return string the HTML string rendered
      */
     public function run() {
         if ($this->annotations->getCount() == 0) {
@@ -51,44 +50,44 @@ class AnnotationGridViewWidget extends Widget {
         } else {
             $htmlRendered = "<h3>" . Yii::t('app', self::LINKED_ANNOTATIONS) . "</h3>";
             $htmlRendered .= GridView::widget([
-                        'dataProvider' => $this->annotations,
-                        'columns' => [
-                            [
-                                'label' => Yii::t('app',YiiAnnotationModel::COMMENTS_LABEL),
-                                'attribute' => YiiAnnotationModel::COMMENTS,
-                                'value' => function ($model) {
-                                    return implode(('<br>,'), $model->comments);
-                                }
-                            ],
-                            YiiAnnotationModel::CREATOR =>
-                            [
-                                'label' => Yii::t('app',YiiAnnotationModel::CREATOR_LABEL),
-                                'attribute' => YiiAnnotationModel::CREATOR,
-                                'value' => function($model) {
-                                    return Vocabulary::prettyUri($model->creator);
-                                },
-                            ],
-                            YiiAnnotationModel::MOTIVATED_BY => 
-                            [
-                                'label' => Yii::t('app',YiiAnnotationModel::MOTIVATED_BY_LABEL),
-                                'attribute' => YiiAnnotationModel::MOTIVATED_BY,
-                                'value' => function($model) {
-                                    return Vocabulary::prettyUri($model->motivatedBy);
-                                }
-                            ],
-                            [
-                                'label' => Yii::t('app',YiiAnnotationModel::CREATION_DATE_LABEL),
-                                'attribute' => YiiAnnotationModel::CREATION_DATE
-                            ],
-                            ['class' => 'yii\grid\ActionColumn',
-                                'template' => '{view}',
-                                'buttons' => [
-                                    'view' => function($url, $model, $key) {
-                                        return Html::a(Icon::show('eye-open', [], Icon::BSG), ['annotation/view', 'id' => $model->uri]);
-                                    },
-                                ]
-                            ],
-                        ],
+                'dataProvider' => $this->annotations,
+                'columns' => [
+                    [
+                        'label' => Yii::t('app',YiiAnnotationModel::COMMENTS_LABEL),
+                        'attribute' => YiiAnnotationModel::COMMENTS,
+                        'value' => function ($model) {
+                            return implode(('<br>,'), $model->comments);
+                        }
+                    ],
+                    YiiAnnotationModel::CREATOR =>
+                    [
+                        'label' => Yii::t('app',YiiAnnotationModel::CREATOR_LABEL),
+                        'attribute' => YiiAnnotationModel::CREATOR,
+                        'value' => function($model) {
+                            return Vocabulary::prettyUri($model->creator);
+                        },
+                    ],
+                    YiiAnnotationModel::MOTIVATED_BY => 
+                    [
+                        'label' => Yii::t('app',YiiAnnotationModel::MOTIVATED_BY_LABEL),
+                        'attribute' => YiiAnnotationModel::MOTIVATED_BY,
+                        'value' => function($model) {
+                            return Vocabulary::prettyUri($model->motivatedBy);
+                        }
+                    ],
+                    [
+                        'label' => Yii::t('app',YiiAnnotationModel::CREATION_DATE_LABEL),
+                        'attribute' => YiiAnnotationModel::CREATION_DATE
+                    ],
+                    ['class' => 'yii\grid\ActionColumn',
+                        'template' => '{view}',
+                        'buttons' => [
+                            'view' => function($url, $model, $key) {
+                                return Html::a(Icon::show('eye-open', [], Icon::BSG), ['annotation/view', 'id' => $model->uri]);
+                            },
+                        ]
+                    ],
+                ],
             ]);
         }
         return $htmlRendered;

@@ -1,13 +1,12 @@
 <?php
 
 //******************************************************************************
-//                                       InfrastructureController.php
+//                           InfrastructureController.php
 // SILEX-PHIS
 // Copyright © INRA 2018
 // Creation date: 21 Aug, 2018
 // Contact: morgane.vidal@inra.fr, vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\controllers;
 
 use Yii;
@@ -92,7 +91,7 @@ class InfrastructureController extends Controller {
         $searchDocumentModel->concernedItemFilter = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
 
-        //3. get project annotations
+        //3. get annotations
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
         $infrastructureAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
