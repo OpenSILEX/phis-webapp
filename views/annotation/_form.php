@@ -19,7 +19,7 @@ use app\controllers\AnnotationController;
  * @var app\models\yiiModels\YiiAnnotationModel $model
  * @var yii\widgets\ActiveForm $form
  * Implements the create page for an annotation 
- * @see app\views\annoation\create.php
+ * @see app\views\annotation\create.php
  */
 ?>
 
