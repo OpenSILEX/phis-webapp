@@ -14,6 +14,7 @@ use yii\data\ArrayDataProvider;
 use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\YiiEventModel;
+use app\models\yiiModels\EventPost;
 use app\models\yiiModels\YiiModelsConstants;
 use app\models\wsModels\WSConstants;
 use app\components\helpers\SiteMessages;
@@ -82,6 +83,65 @@ class EventController extends Controller {
                     'models' => $event->annotations,
                     'totalCount' => count($event->annotations)                 
                 ])
+            ]);
+        }
+    }
+    
+    /**
+     * Get the event types URIs
+     * @return event types URIs 
+     */
+    public function getEventsTypesLabels() {
+        $model = new YiiEventModel();
+        
+        $eventsTypes = [];
+        $model->page = 0;
+        $eventsTypesConcepts = $model->getEventsTypes(Yii::$app->session['access_token']);
+        if ($eventsTypesConcepts === "token") {
+            return "token";
+        } else {
+            $totalPages = $eventsTypesConcepts[WSConstants::PAGINATION][WSConstants::TOTAL_PAGES];
+            foreach ($eventsTypesConcepts[WSConstants::DATA] as $sensorType) {
+                $eventsTypes[] = $sensorType->uri;
+            }
+        }
+        
+        return $eventsTypes;
+    }
+    
+    /**
+     * Display the form to create an event or create it in case of form submission
+     * @return mixed redirect in case of error or after successfully create 
+     * the event otherwise return the "create" view 
+     */
+    public function actionCreate() {
+        $sessionToken = Yii::$app->session['access_token'];
+
+         $eventModel = new EventPost();
+         $eventModel->isNewRecord = true;
+        
+        if ($eventModel->load(Yii::$app->request->post())) {
+            // 1. If post data, insert the submitted form
+            $dataToSend[] =  $eventModel->attributesToArray();
+            $requestRes =  $eventModel->insert($sessionToken, $dataToSend);
+            
+            if (is_string($requestRes) && $requestRes === "token") {
+                return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+            } else {
+                if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //project created
+                    return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+                } else { //an error occurred
+                    return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $requestRes->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}]);
+                }
+            }
+        } else {
+            // If no post data display the create form
+            $this->view->params["eventPossibleTypes"] = $this->getEventsTypesLabels();
+
+            return $this->render('create', [
+                'model' =>  $eventModel
             ]);
         }
     }

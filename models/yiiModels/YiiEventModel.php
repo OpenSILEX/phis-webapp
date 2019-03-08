@@ -18,9 +18,7 @@ use app\models\wsModels\WSConstants;
 /**
  * The yii model for an event 
  * @update [Andréas Garcia] 15 Feb., 2019: add properties handling
- * @see app\models\wsModels\WSTripletModel
- * @see app\models\wsModels\WSUriModel
- * @see app\models\wsModels\WSActiveRecord
+ * @see app\models\wsModels\WSEventModel
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class YiiEventModel extends WSActiveRecord {
@@ -36,8 +34,8 @@ class YiiEventModel extends WSActiveRecord {
      * @example http://www.opensilex.org/vocabulary/oeev#MoveFrom
      * @var string
      */
-    public $type;
-    const TYPE = "type";
+    public $rdfType;
+    const TYPE = "rdfType";
     
     /**
      * @example 2019-01-02T00:00:00+01:00
@@ -102,13 +100,13 @@ class YiiEventModel extends WSActiveRecord {
     }
     
     /**
-     * Allows to fill the attributes with the informations in the array given 
+     * Allows to fill the attributes with the information in the array given 
      * @param array $array array key => value which contains the metadata of 
      * an event
      */
     protected function arrayToAttributes($array) {
         $this->uri = $array[self::URI];
-        $this->type = $array[self::TYPE];
+        $this->rdfType = $array[self::TYPE];
         if ($array[self::CONCERNED_ITEMS]) {
             foreach ($array[self::CONCERNED_ITEMS] as $concernedItemInArray) {
                 $eventConcernedItem  = new YiiConcernedItemModel();
@@ -131,7 +129,7 @@ class YiiEventModel extends WSActiveRecord {
     }
 
     /**
-     * Get the detailed event corresponding to the given uri
+     * Get the detailed event corresponding to the given URI
      * @param type $sessionToken
      * @param type $uri
      * @return $this
@@ -153,9 +151,6 @@ class YiiEventModel extends WSActiveRecord {
 
     /**
      * Call web service and return the list of events types
-     * //SILEX:todo Not used yet. Will be used to generate a dropdown list to
-     * select the event type filter
-     * //\SILEX
      * @param sessionToken
      * @return list of the events types
      */

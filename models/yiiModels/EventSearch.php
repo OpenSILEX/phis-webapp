@@ -262,7 +262,7 @@ class EventSearch extends YiiEventModel {
      */
     public function attributesToArray() {
         return [
-            YiiEventModel::TYPE => $this->type,
+            YiiEventModel::TYPE => $this->rdfType,
             self::CONCERNED_ITEM_LABEL => $this->concernedItemLabel,
             self::DATE_RANGE_START => $this->dateRangeStart,
             self::DATE_RANGE_END => $this->dateRangeEnd
