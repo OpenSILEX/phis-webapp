@@ -30,7 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode(Vocabulary::prettyUri($model->rdfType)) ?></h1>
     
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
         <!-- Annotation button -->
         <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
     </p>
