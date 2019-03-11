@@ -13,6 +13,7 @@ use yii\grid\GridView;
 use app\controllers\InfrastructureController;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\EventButtonWidget;
 use app\components\widgets\PropertyWidget;
 
 /* @var $this yii\web\View */
@@ -35,6 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
         if (Yii::$app->session['isAdmin']) {
             echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label, 'concernedItemRdfType' => Yii::$app->params["Installation"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
             echo AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);
+            echo EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]);
         }
         ?>
     </p>
