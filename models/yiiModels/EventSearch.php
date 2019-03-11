@@ -30,6 +30,14 @@ class EventSearch extends YiiEventModel {
     const CONCERNED_ITEM_LABEL = 'concernedItemLabel';
     
     /**
+     * Concerned item's URI filter
+     * @example Plot 445
+     * @var string
+     */
+    public $concernedItemUri;
+    const CONCERNED_ITEM_URI = 'concernedItemUri';
+    
+    /**
      * Date range filter
      * @example 2019-01-02T00:00:00+01:00 - 2019-01-03T23:00:00+01:00
      * @var string
@@ -61,6 +69,7 @@ class EventSearch extends YiiEventModel {
             [
                 YiiEventModel::TYPE,
                 self::CONCERNED_ITEM_LABEL,
+                self::CONCERNED_ITEM_URI,
                 self::DATE_RANGE,
                 self::DATE_RANGE_START,
                 self::DATE_RANGE_END
@@ -75,6 +84,7 @@ class EventSearch extends YiiEventModel {
             parent::attributeLabels(),
             [
                 self::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
+                self::CONCERNED_ITEM_URI => Yii::t('app', 'Concerned Items'),
                 self::DATE_RANGE => Yii::t('app', 'Date')
             ]
         );

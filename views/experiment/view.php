@@ -11,9 +11,11 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
 use yii\helpers\Url;
+use yii\data\ArrayDataProvider;
 use app\components\widgets\AnnotationButtonWidget;
-use app\components\widgets\EventButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
 use app\controllers\ExperimentController;
 use app\components\widgets\LinkObjectsWidget;
 
@@ -307,6 +309,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ]
         ]);
     }
+    ?>
+    
+    <?= EventGridViewWidget::widget(
+            [
+                 "events" => ${ExperimentController::EVENTS_DATA}
+            ]
+        ); 
     ?>
 
     <?php

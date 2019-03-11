@@ -25,6 +25,11 @@ use app\models\yiiModels\ProjectSearch;
 use app\models\yiiModels\GroupSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\AnnotationSearch;
+use app\models\yiiModels\ScientificObjectSearch;
+use app\models\yiiModels\EventSearch;
+use app\models\yiiModels\YiiVariableModel;
+use app\models\yiiModels\YiiModelsConstants;
+use app\models\yiiModels\YiiSensorModel;
 use app\models\wsModels\WSConstants;
 
 /**
@@ -35,6 +40,7 @@ use app\models\wsModels\WSConstants;
  */
 class ExperimentController extends Controller {
     CONST ANNOTATIONS_DATA = "experimentAnnotations";
+    CONST EVENTS_DATA = "experimentEvents";
     
     /**
      * define the behaviors
@@ -80,14 +86,14 @@ class ExperimentController extends Controller {
         
         //Get the search params and update pagination
         $searchParams = Yii::$app->request->queryParams;        
-        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
-            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $searchParams[YiiModelsConstants::PAGE]--;
         }
         
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
        
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -127,6 +133,8 @@ class ExperimentController extends Controller {
      * @return mixed
      */
     public function actionView($id) {  
+        $searchParams = Yii::$app->request->queryParams;
+        
         //1. Get the experiment's informations
         $res = $this->findModel($id);
         
@@ -136,9 +144,8 @@ class ExperimentController extends Controller {
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
         //3. get experiment's agronomical objects
-        $searchAgronomicalObject = new \app\models\yiiModels\ScientificObjectSearch();
+        $searchAgronomicalObject = new ScientificObjectSearch();
         $searchAgronomicalObject->experiment = $id;
-        $searchParams = Yii::$app->request->queryParams;
         $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session['access_token'], $searchParams);
          
         //4. get project annotations
@@ -146,12 +153,17 @@ class ExperimentController extends Controller {
         $searchAnnotationModel->targets[0] = $id;
         $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
         
+        
+        $searchEventModel = new EventSearch();
+        $searchEventModel->concernedItemUri = $id;
+        $events = $searchEventModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        
         //5. get all variables
-        $variableModel = new \app\models\yiiModels\YiiVariableModel();
+        $variableModel = new YiiVariableModel();
         $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
         
         //6. Get all sensors
-        $sensorModel = new \app\models\yiiModels\YiiSensorModel();
+        $sensorModel = new YiiSensorModel();
         $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session['access_token']);
         
         if ($res === "token") {
@@ -165,6 +177,7 @@ class ExperimentController extends Controller {
                 'dataDocumentsProvider' => $documents,
                 'dataAgronomicalObjectsProvider' => $agronomicalObjects,
                 self::ANNOTATIONS_DATA => $experimentAnnotations,
+                self::EVENTS_DATA => $events,
                 'variables' => $variables,
                 'sensors' => $sensors
             ]);

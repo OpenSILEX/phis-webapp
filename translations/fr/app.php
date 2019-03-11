@@ -13,10 +13,12 @@
  * @update [Arnaud Charleroy] 24 August, 2018: widgets translations
  */
 
-use app\components\widgets\AnnotationGridViewWidget;
 use app\models\yiiModels\YiiAnnotationModel;
-use app\components\widgets\EventButtonWidget;
+use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
+use app\models\yiiModels\YiiEventModel;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
 
 return [
     '{n, plural, =1{Project} other{Projects}}' => '{n, plural, =1{Projet} other{Projets}}',
@@ -36,7 +38,6 @@ return [
     'Add Document Script' => 'Ajouter un script',
     'Add Sensors' => 'Ajouter des Capteurs',
     AnnotationButtonWidget::ADD_ANNOTATION_LABEL => 'Ajouter annotation',
-    EventButtonWidget::ADD_EVENT_LABEL => 'Ajouter événement',
     'Add Vectors' => 'Ajouter des Vecteurs',
     'Address' => 'Adresse',
     'Admin' => 'Administrateur',
@@ -60,10 +61,10 @@ return [
     'Column' => 'Colonne',
     'Comment' => 'Commentaire',
     'Concerns' => 'Concerne',
-    'Concerned Items' => 'Items concernés',
-    'Concerned Item' => 'Item concerné',
-    'Concerned Item Type' => 'Type de l\'item concerné',
-    'Concerned Item URI' => 'URI de l\'item concerné',
+    'Concerned items' => 'Items concernés',
+    'Concerned item' => 'Item concerné',
+    'Concerned item type' => 'Type de l\'item concerné',
+    'Concerned item URI' => 'URI de l\'item concerné',
     'Concerned items URIs' => 'URIs des items Concernés',
     'Concerned Experimentations' => 'Expérimentations Concernées',
     'Concerned Projects' => 'Projets concernés',
@@ -90,6 +91,10 @@ return [
     'Enter date of last calibration' => 'Saisir la date de dernier étalonnage',
     'Enter date of purchase' => 'Saisir la date d\'achat',
     'Enter in service date' => 'Saisir la date de mise en service',
+    EventButtonWidget::ADD_EVENT_LABEL => 'Ajouter événement',
+    EventGridViewWidget::EVENTS_LABEL => "Événements",
+    EventGridViewWidget::NO_EVENT_LABEL => "Pas d'événement",
+    YiiEventModel::TYPE => "Type",
     'Error' => 'Erreur',
     'Experimental Organization' => 'Organisation expérimentale',
     'Experiment Modalities' => 'Modalités Expérimentales',
