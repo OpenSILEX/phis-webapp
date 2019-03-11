@@ -16,6 +16,7 @@
 use app\components\widgets\AnnotationGridViewWidget;
 use app\models\yiiModels\YiiAnnotationModel;
 use app\components\widgets\EventButtonWidget;
+use app\components\widgets\AnnotationButtonWidget;
 
 return [
     '{n, plural, =1{Project} other{Projects}}' => '{n, plural, =1{Projet} other{Projets}}',
@@ -122,7 +123,7 @@ return [
     'Level' => 'Niveau',
     'Linked Agronomical Objects' => 'Objets Agronomiques Liés',
     'Linked Documents' => 'Documents Liés',
-    AnnotationGridViewWidget::LINKED_ANNOTATIONS => "Annotations liée(s)",
+    AnnotationGridViewWidget::LINKED_ANNOTATIONS => "Annotations liées",
     AnnotationGridViewWidget::NO_LINKED_ANNOTATIONS => "Aucune annotation liée",
     'Line' => 'Ligne',
     'Login' => 'Connexion',
