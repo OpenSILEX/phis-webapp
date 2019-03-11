@@ -14,18 +14,19 @@ use kartik\datetime\DateTimePicker;
 use kartik\select2\Select2;
 use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventPost;
+use app\components\helpers\Vocabulary;
 ?>
 <div class="event-form well">
     <?php 
     $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
     
     foreach ($this->params['eventPossibleTypes'] as $eventPossibleType) {
-        $eventPossibleTypes[] = [$eventPossibleType => $eventPossibleType];
+        $eventPossibleTypes[$eventPossibleType] = Html::encode(Vocabulary::prettyUri($eventPossibleType));
     }
     ?>
     <?=
     $form->field($model, YiiEventModel::TYPE)->widget(Select2::classname(), [
-        'data' => $this->params['eventPossibleTypes'],
+        'data' => $eventPossibleTypes,
         'pluginOptions' => [
             'allowClear' => false
         ],
