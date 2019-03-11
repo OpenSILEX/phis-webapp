@@ -16,7 +16,6 @@ use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventPost;
 ?>
 <div class="event-form well">
-
     <?php 
     $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
     
