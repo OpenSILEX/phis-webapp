@@ -39,7 +39,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             YiiEventModel::URI,
-            YiiEventModel::TYPE,
+            [
+                'label' => Yii::t('app', YiiEventModel::TYPE),
+                'value' => Vocabulary::prettyUri($model->rdfType)
+            ],
             YiiEventModel::DATE
         ],
     ])
