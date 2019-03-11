@@ -17,6 +17,7 @@ use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\EventButtonWidget;
 use app\controllers\ProjectController;
 
 
@@ -37,6 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
             <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->acronyme, 'concernedItemRdfType' => Yii::$app->params["Project"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning'])?>
             <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);?>
+            <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
         <?php }
         ?>
     </p>

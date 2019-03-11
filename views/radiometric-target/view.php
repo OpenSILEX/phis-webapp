@@ -10,6 +10,7 @@
 
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\EventButtonWidget;
 use app\controllers\RadiometricTargetController;
 use yii\grid\GridView;
 use yii\widgets\DetailView;
@@ -30,9 +31,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php if (Yii::$app->session['isAdmin']) { ?>
-               <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
-               <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]) ?>
-               <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label, 'concernedItemRdfType' => Yii::$app->params["RadiometricTarget"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+            <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
+            <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]) ?>
+            <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label, 'concernedItemRdfType' => Yii::$app->params["RadiometricTarget"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
         <?php } ?>
     </p>
     

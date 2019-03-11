@@ -12,6 +12,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\EventButtonWidget;
 use app\components\widgets\LinkObjectsWidget;
 use app\controllers\SensorController;
 use yii\grid\GridView;
@@ -58,6 +59,7 @@ foreach ($model->properties as $property) {
             <?= Html::a(Yii::t('app', 'Characterize Sensor'), ['characterize', 'sensorUri' => $model->uri], ['class' => 'btn btn-success']); ?>
             <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
             <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
+            <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
             <?php
         }
         ?>
