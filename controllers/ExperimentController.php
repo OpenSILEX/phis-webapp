@@ -1,17 +1,11 @@
 <?php
-
-//**********************************************************************************************
-//                                       ExperimentController.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
+//******************************************************************************
+//                           ExperimentController.php 
+// SILEX-PHIS
+// Copyright © INRA 2017
 // Creation date: February 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  October, 31 2017 : passage de Trial à Experiment
-// Subject: implements the CRUD actions for Ws Experiment model
-//***********************************************************************************************
-
+// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.f
+//******************************************************************************
 namespace app\controllers;
 
 use Yii;
@@ -34,6 +28,7 @@ use app\models\wsModels\WSConstants;
 
 /**
  * CRUD actions for YiiExperimentModel
+ * @update [Andréas Garcia] 11 March, 2019: Add event widget
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiExperimentModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
@@ -153,16 +148,16 @@ class ExperimentController extends Controller {
         $searchAnnotationModel->targets[0] = $id;
         $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
         
-        
+        //5. get event
         $searchEventModel = new EventSearch();
         $searchEventModel->concernedItemUri = $id;
-        $events = $searchEventModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
-        
-        //5. get all variables
+        $events = $searchEventModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], [EventSearch::CONCERNED_ITEM_URI => $id]);
+        error_log("searchEventModelou ". print_r($events, true));
+        //6. get all variables
         $variableModel = new YiiVariableModel();
         $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
         
-        //6. Get all sensors
+        //7. Get all sensors
         $sensorModel = new YiiSensorModel();
         $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session['access_token']);
         
