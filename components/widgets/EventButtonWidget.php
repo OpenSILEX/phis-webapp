@@ -12,7 +12,7 @@ use yii\base\Widget;
 use yii\helpers\Html;
 use Yii;
 use kartik\icons\Icon;
-use app\models\yiiModels\YiiEventModel;
+use app\models\yiiModels\EventPost;
 
 /**
  * A widget used to generate an event button
@@ -25,21 +25,21 @@ class EventButtonWidget extends Widget {
     CONST CONCERNED_ITEM_LIST_NOT_A_ARRAY = 'The concerned items list is not an array';
     CONST CONCERNED_ITEM_LIST_EMPTY = 'The concerned items list is empty';
     
-    public $concernedItems;
-    const CONCERNED_ITEMS = "concernedItems";
+    public $concernedItemsUris;
+    const CONCERNED_ITEMS_URIS = "concernedItemsUris";
 
     public function init() {
         parent::init();
         // must be not null
-        if ($this->concernedItems === null) {
+        if ($this->concernedItemsUris === null) {
            throw new \Exception(CONCERNED_ITEM_NOT_SET_LABEL);
         }
          // must be an array
-        if (!is_array($this->concernedItems)) {
+        if (!is_array($this->concernedItemsUris)) {
           throw new \Exception(CONCERNED_ITEM_LIST_NOT_A_ARRAY);
         }
          // must contains at least one element
-        if (empty($this->concernedItems)) {
+        if (empty($this->concernedItemsUris)) {
             throw new \Exception(CONCERNED_ITEM_LIST_EMPTY);
         }
     }
@@ -55,8 +55,8 @@ class EventButtonWidget extends Widget {
         return Html::a(
             Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', self::ADD_EVENT_LABEL),
             [
-                'annotation/create',
-                YiiEventModel::CONCERNED_ITEMS => $this->concernedItems,
+                'event/create',
+                EventPost::CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
             ], 
             [
                 'class' => 'btn btn-default',

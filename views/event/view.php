@@ -16,6 +16,7 @@ use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\PropertyWidget;
 use app\components\widgets\ConcernedItemGridViewWidget;
 use app\controllers\EventController;
+use app\models\yiiModels\YiiEventModel;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiEventModel */
@@ -26,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="event-view">
 
-    <h1><?= Html::encode(Vocabulary::prettyUri($model->type)) ?></h1>
+    <h1><?= Html::encode(Vocabulary::prettyUri($model->rdfType)) ?></h1>
     
     <p>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
@@ -38,9 +39,9 @@ $this->params['breadcrumbs'][] = $this->title;
     DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'uri',
-            'type',
-            'date'
+            YiiEventModel::URI,
+            YiiEventModel::TYPE,
+            YiiEventModel::DATE
         ],
     ])
     ?>
@@ -48,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Properties -->
     <?=
     PropertyWidget::widget([
-        'properties' => $model->properties,
+        YiiEventModel::PROPERTIES => $model->properties,
         'title' =>  Yii::t('app', 'Specific properties')
     ]);
     ?>

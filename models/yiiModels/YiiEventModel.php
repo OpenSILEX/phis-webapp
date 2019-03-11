@@ -16,7 +16,7 @@ use app\models\wsModels\WSEventModel;
 use app\models\wsModels\WSConstants;
 
 /**
- * The yii model for an event 
+ * The Yii model for an event 
  * @update [Andréas Garcia] 15 Feb., 2019: add properties handling
  * @see app\models\wsModels\WSEventModel
  * @author Andréas Garcia <andreas.garcia@inra.fr>
@@ -77,14 +77,18 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function rules() {
        return [ 
-           [[self::URI], 'required'],
-           [[
-                self::TYPE, 
-                self::DATE,
-                self::CONCERNED_ITEMS, 
-                self::PROPERTIES, 
-                self::ANNOTATIONS
-            ] , 'safe']
+           [
+                [
+                    self::URI, 
+                    self::DATE,
+                    self::TYPE, 
+                    self::CONCERNED_ITEMS
+                ], 'required'],
+           [
+               [
+                    self::PROPERTIES, 
+                    self::ANNOTATIONS
+                ] , 'safe']
         ]; 
     }
     

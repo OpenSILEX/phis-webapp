@@ -16,6 +16,7 @@ use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventPost;
 use app\models\yiiModels\YiiModelsConstants;
+use app\models\yiiModels\YiiUserModel;
 use app\models\wsModels\WSConstants;
 use app\components\helpers\SiteMessages;
 
@@ -59,7 +60,7 @@ class EventController extends Controller {
 
     /**
      * Display the detail of an event
-     * @param $id Uri of the event
+     * @param $id URI of the event
      * @return mixed redirect in case of error otherwise return the "view" view
      */
     public function actionView($id) {
@@ -115,14 +116,25 @@ class EventController extends Controller {
      * the event otherwise return the "create" view 
      */
     public function actionCreate() {
-        $sessionToken = Yii::$app->session['access_token'];
+        $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
 
-         $eventModel = new EventPost();
-         $eventModel->isNewRecord = true;
+        $eventModel = new EventPost();
+        $eventModel->load(Yii::$app->request->get(), '');
+        $eventModel->isNewRecord = true;
         
         if ($eventModel->load(Yii::$app->request->post())) {
-            // 1. If post data, insert the submitted form
+            // Set date
+            $eventModel->date = str_replace(" ", "T", $eventModel->date);
+            
+            // Set model creator 
+            $userModel = new YiiUserModel();
+            $userModel->findByEmail($sessionToken, Yii::$app->session['email']);
+            $eventModel->creator = $userModel->uri;
+            $eventModel->isNewRecord = true;
+            
+            // If post data, insert the submitted form
             $dataToSend[] =  $eventModel->attributesToArray();
+            error_log("dataToSend ".print_r($dataToSend, true));
             $requestRes =  $eventModel->insert($sessionToken, $dataToSend);
             
             if (is_string($requestRes) && $requestRes === "token") {
@@ -138,7 +150,11 @@ class EventController extends Controller {
             }
         } else {
             // If no post data display the create form
-            $this->view->params["eventPossibleTypes"] = $this->getEventsTypesLabels();
+            $types = [];
+            foreach($this->getEventsTypesLabels() as $type) {
+                $types[$type] = $type;
+            }
+            $this->view->params["eventPossibleTypes"] = $types;
 
             return $this->render('create', [
                 'model' =>  $eventModel

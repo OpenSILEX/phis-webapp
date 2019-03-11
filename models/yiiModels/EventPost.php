@@ -27,11 +27,19 @@ class EventPost extends YiiEventModel {
     
     /**
      * Creator URI
-     * @example http://www.phenome-fppn.fr/diaphen/id/agent/marie_dupond"
+     * @example http://www.phenome-fppn.fr/diaphen/id/agent/marie_dupond
      * @var string
      */
     public $creator;
     const CREATOR = 'creator';
+    
+    /**
+     * Concerned items URI
+     * @example http://www.opensilex.org/demo/DMO2011-1
+     * @var array of strings
+     */
+    public $concernedItemsUris;
+    const CONCERNED_ITEMS_URIS = 'concernedItemsUris';
     
     /**
      * @inheritdoc
@@ -42,7 +50,8 @@ class EventPost extends YiiEventModel {
                 YiiEventModel::TYPE,
                 YiiEventModel::DATE,
                 self::DESCRIPTION,
-                self::CREATOR
+                self::CREATOR,
+                self::CONCERNED_ITEMS_URIS
             ],  'safe']]; 
     }
     
@@ -54,7 +63,8 @@ class EventPost extends YiiEventModel {
             parent::attributeLabels(),
             [
                 self::DESCRIPTION => Yii::t('app', 'Description'),
-                self::CREATOR => Yii::t('app', 'Creator')
+                self::CREATOR => Yii::t('app', 'Creator'),
+                self::CONCERNED_ITEMS_URIS => Yii::t('app', 'Concerned items URIs')
             ]
         );
     }
@@ -64,13 +74,11 @@ class EventPost extends YiiEventModel {
      */
     public function attributesToArray() {
         return [
-            YiiEventModel::TYPE => $this->type,
+            YiiEventModel::TYPE => $this->rdfType,
             YiiEventModel::DATE => $this->date,
             self::DESCRIPTION => $this->description,
             self::CREATOR => $this->creator,
-            'concernedItemsUris' => [
-      "http://www.opensilex.org/andreas-dev/2019/s19001" ,
-      "http://www.opensilex.org/andreas-dev/2019/s19002"] 
+            self::CONCERNED_ITEMS_URIS => $this->concernedItemsUris
         ];
     }
 }

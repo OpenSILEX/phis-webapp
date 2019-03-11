@@ -12,15 +12,19 @@ use yii\widgets\DetailView;
 use yii\grid\GridView;
 use yii\helpers\Url;
 use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\EventButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\controllers\ExperimentController;
 use app\components\widgets\LinkObjectsWidget;
 
-/* Implements the view page for an Experiment */
-/* @update [Arnaud Charleroy] 23 august, 2018 (add annotation functionality) */
-/* @update [Andréas Garcia] 15 Jan., 2019: change "concern" occurences to "concernedItem" */
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiExperimentModel */
+/** 
+ * Implement the view page for an Experiment
+ * @update [Arnaud Charleroy] 23 august, 2018 (add annotation functionality)
+ * @update [Andréas Garcia] 15 Jan., 2019: change "concern" occurences to "concernedItem"
+ * @update [Andréas Garcia] 06 March, 2019: add event button
+ * @var $this yii\web\View
+ * @var $model app\models\YiiExperimentModel 
+ */
 
 $this->title = $model->uri;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['index']];
@@ -36,6 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
             <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->alias, 'concernedItemRdfType' => Yii::$app->params["Experiment"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
             <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
+            <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
             <?php
         }
         ?>

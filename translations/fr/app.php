@@ -3,18 +3,19 @@
 //                                       app.php
 // SILEX-PHIS
 // Copyright © INRA 2017
-// Creation date:  Mar, 2017
+// Creation date:  Mar., 2017
 // Contact: morgane.vidal@inra.fr,arnaud.charleroy, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 /**
  * French translations of this application
  * @link https://www.yiiframework.com/extension/translate
- * @update [Arnaud Charleroy] 24 August, 2018 : widgets translations
+ * @update [Arnaud Charleroy] 24 August, 2018: widgets translations
  */
 
 use app\components\widgets\AnnotationGridViewWidget;
 use app\models\yiiModels\YiiAnnotationModel;
+use app\components\widgets\EventButtonWidget;
 
 return [
     '{n, plural, =1{Project} other{Projects}}' => '{n, plural, =1{Projet} other{Projets}}',
@@ -33,7 +34,8 @@ return [
     'Add Document' => 'Ajouter un document',
     'Add Document Script' => 'Ajouter un script',
     'Add Sensors' => 'Ajouter des Capteurs',
-    app\components\widgets\AnnotationButtonWidget::ADD_ANNOTATION_LABEL => 'Ajouter une Annotation',
+    AnnotationButtonWidget::ADD_ANNOTATION_LABEL => 'Ajouter annotation',
+    EventButtonWidget::ADD_EVENT_LABEL => 'Ajouter événement',
     'Add Vectors' => 'Ajouter des Vecteurs',
     'Address' => 'Adresse',
     'Admin' => 'Administrateur',
@@ -58,8 +60,10 @@ return [
     'Comment' => 'Commentaire',
     'Concerns' => 'Concerne',
     'Concerned Items' => 'Items concernés',
-    'Concerned Item Type' => 'Type de l\'Item Concerné',
-    'Concerned Item URI' => 'URI de l\'Item Concerné',
+    'Concerned Item' => 'Item concerné',
+    'Concerned Item Type' => 'Type de l\'item concerné',
+    'Concerned Item URI' => 'URI de l\'item concerné',
+    'Concerned items URIs' => 'URIs des items Concernés',
     'Concerned Experimentations' => 'Expérimentations Concernées',
     'Concerned Projects' => 'Projets concernés',
     'Creation Date' => 'Date de Création',

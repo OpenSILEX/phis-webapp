@@ -215,13 +215,13 @@ class EventSearch extends YiiEventModel {
              * //\SILEX:info
              */
             $dateStringWithoutT = str_replace("T", " ", $dateString);
-            $date = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormatPhp'], $dateStringWithoutT);
+            $date = DateTime::createFromFormat(Yii::$app->params['dateTimeFormatPhp'], $dateStringWithoutT);
             $dateRangeStartParseErrorCount = DateTime::getLastErrors()['error_count']; 
             if ($dateRangeStartParseErrorCount >= 1) {
                 error_log("dateRangeStartParseErrorMessages ".print_r(DateTime::getLastErrors()['errors'], true)); 
                 return false;
             }
-            else if ($date->format(Yii::$app->params['standardDateTimeFormatPhp']) == $dateStringWithoutT) {
+            else if ($date->format(Yii::$app->params['dateTimeFormatPhp']) == $dateStringWithoutT) {
                 return true;
             }
             else {
