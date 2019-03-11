@@ -124,7 +124,7 @@ class EventController extends Controller {
         
         if ($eventModel->load(Yii::$app->request->post())) {
             // Set date
-            $eventModel->date = str_replace(" ", "T", $eventModel->date);
+            $eventModel->dateWithoutTimezone = str_replace(" ", "T", $eventModel->dateWithoutTimezone);
             
             // Set model creator 
             $userModel = new YiiUserModel();

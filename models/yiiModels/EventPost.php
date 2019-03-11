@@ -34,6 +34,22 @@ class EventPost extends YiiEventModel {
     const CREATOR = 'creator';
     
     /**
+     * Creator timezone offset
+     * @example +01:00
+     * @var string
+     */
+    public $creatorTimeZoneOffset;
+    const CREATOR_TIMEZONE_OFFSET = 'creatorTimeZoneOffset';
+    
+    /**
+     * Date without timezone
+     * @example 1899-12-31T12:00:00
+     * @var string
+     */
+    public $dateWithoutTimezone;
+    const DATE_WITHOUT_TIMEZONE = 'dateWithoutTimezone';
+    
+    /**
      * Concerned items URI
      * @example http://www.opensilex.org/demo/DMO2011-1
      * @var array of strings
@@ -51,6 +67,8 @@ class EventPost extends YiiEventModel {
                 YiiEventModel::DATE,
                 self::DESCRIPTION,
                 self::CREATOR,
+                self::CREATOR_TIMEZONE_OFFSET,
+                self::DATE_WITHOUT_TIMEZONE,
                 self::CONCERNED_ITEMS_URIS
             ],  'safe']]; 
     }
@@ -64,7 +82,9 @@ class EventPost extends YiiEventModel {
             [
                 self::DESCRIPTION => Yii::t('app', 'Description'),
                 self::CREATOR => Yii::t('app', 'Creator'),
-                self::CONCERNED_ITEMS_URIS => Yii::t('app', 'Concerned items URIs')
+                self::CONCERNED_ITEMS_URIS => Yii::t('app', 'Concerned items URIs'),
+                self::CREATOR_TIMEZONE_OFFSET => Yii::t('app', 'Timezone offset'),
+                self::DATE_WITHOUT_TIMEZONE => Yii::t('app', 'Date')
             ]
         );
     }
@@ -75,7 +95,7 @@ class EventPost extends YiiEventModel {
     public function attributesToArray() {
         return [
             YiiEventModel::TYPE => $this->rdfType,
-            YiiEventModel::DATE => $this->date,
+            YiiEventModel::DATE => $this->dateWithoutTimezone.$this->creatorTimeZoneOffset,
             self::DESCRIPTION => $this->description,
             self::CREATOR => $this->creator,
             self::CONCERNED_ITEMS_URIS => $this->concernedItemsUris

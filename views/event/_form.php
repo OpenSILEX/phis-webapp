@@ -33,7 +33,7 @@ use app\models\yiiModels\EventPost;
     ]);
     ?>
     <?=
-    $form->field($model, YiiEventModel::DATE)->widget(DateTimePicker::className(), [
+    $form->field($model, EventPost::DATE_WITHOUT_TIMEZONE)->widget(DateTimePicker::className(), [
         'options' => [
             'placeholder' => Yii::t('app', 'Enter event time')
         ],
@@ -43,12 +43,17 @@ use app\models\yiiModels\EventPost;
         ]
     ])
     ?>
+    <?=
+    $form->field($model, EventPost::CREATOR_TIMEZONE_OFFSET)->textInput([
+        'maxlength' => true
+    ]);
+    ?>
     <script>
-        
-        $("form").on("submit", function (e) {
-            var d = new Date();
-            var offsetTotalInMinutes = d.getTimezoneOffset();
-            var offsetTotalInMinutes = 150;
+        window.onload = setCreatorTimezoneOffset();
+        function setCreatorTimezoneOffset() {
+            // getTimezoneOffset() returns UTC - localTimeZone. 
+            // We want localTimeZone - UTC so we take the reciprocal value
+            var offsetTotalInMinutes = -(new Date()).getTimezoneOffset();
             var offsetTotalInMinutesAbs = Math.abs(offsetTotalInMinutes);
             var offsetSign = offsetTotalInMinutesAbs === offsetTotalInMinutes ? "+" : "-";
             var offsetHours = Math.trunc(offsetTotalInMinutesAbs/60);
@@ -57,12 +62,8 @@ use app\models\yiiModels\EventPost;
             var offsetMinutesString = Math.abs(offsetMinutes) > 10 ? "" + offsetMinutes : "0" + offsetMinutes;
             var offsetInStandardFormat = offsetSign + offsetHoursString + ":" + offsetMinutesString;
             
-            e.preventDefault();//stop submit event
-            var self = $(this);//this form
-            $("#eventpost-date").val($("#eventpost-date").val() + offsetInStandardFormat);//change input
-            $("#w0").off("submit");//need form submit event off.
-            self.submit();//submit form
-        });
+            $("#eventpost-creatortimezoneoffset").val(offsetInStandardFormat);
+        };
     </script>
     <?php
     foreach ($model->concernedItemsUris as $concernedItemUri) {

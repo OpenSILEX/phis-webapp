@@ -181,6 +181,7 @@ return [
     'Subproject Of' => 'Sous-projet de',
     'Team' => 'Équipe',
     'Technical Supervisors' => 'Superviseurs techniques',
+    'Timezone offset' => 'Fuseau horaire',
     'Title' => 'Titre',
     'Tools' => 'Outils',
     'Trait' => 'Trait',
