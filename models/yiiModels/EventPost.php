@@ -61,16 +61,19 @@ class EventPost extends YiiEventModel {
      * @inheritdoc
      */
     public function rules() {
-        return [[
-            [
-                YiiEventModel::TYPE,
-                YiiEventModel::DATE,
-                self::DESCRIPTION,
+        return [
+            [[
+                YiiEventModel::TYPE, 
+                self::DATE_WITHOUT_TIMEZONE,
                 self::CREATOR,
                 self::CREATOR_TIMEZONE_OFFSET,
                 self::DATE_WITHOUT_TIMEZONE,
                 self::CONCERNED_ITEMS_URIS
-            ],  'safe']]; 
+            ],  'required'],
+            [[
+                self::DESCRIPTION, 
+            ],  'safe']
+        ]; 
     }
     
     /**
