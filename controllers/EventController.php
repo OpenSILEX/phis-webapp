@@ -39,10 +39,6 @@ class EventController extends Controller {
         $searchModel = new EventSearch();
         
         $searchParams = Yii::$app->request->queryParams;
-        if (isset($searchParams[YiiModelsConstants::PAGE])) {
-            $searchParams[YiiModelsConstants::PAGE]--;
-        }
-
         $searchResult = $searchModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
