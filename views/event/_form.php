@@ -133,7 +133,9 @@ use app\components\helpers\Vocabulary;
         window.onload = function () {
             
             hidePropertyBlocs(hasPestDiv, fromDiv, toDiv);
-            setEventTypeSelectOnChangeBehaviour(eventTypeSelect, hasPestDiv, fromDiv, toDiv);
+            
+            setEventTypeSelectOnChangeBehaviour();
+            eventTypeSelect.trigger('change');
             
             // Set right property type when the user select new property
             fromSelect.on('change', function (e) {
@@ -157,7 +159,7 @@ use app\components\helpers\Vocabulary;
             propertyTypeSelect.val(value).trigger('change');;
         }
         
-        function setEventTypeSelectOnChangeBehaviour (eventTypeSelect, hasPestDiv, fromDiv, toDiv) {
+        function setEventTypeSelectOnChangeBehaviour () {
             // Show and hide property divs according to the type of event selected
             eventTypeSelect.on('change', function() {
                 switch (this.value)  {
