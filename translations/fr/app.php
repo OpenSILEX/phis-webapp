@@ -57,7 +57,7 @@ return [
     'Column' => 'Colonne',
     'Comment' => 'Commentaire',
     'Concerns' => 'Concerne',
-    'Concerned items' => ' concernés',
+    'Concerned items' => ' Éléments concernés',
     'Concerned item' => 'Élément concerné',
     'Concerned item type' => 'Type de l\'élément concerné',
     'Concerned item URI' => 'URI de l\'élément concerné',
