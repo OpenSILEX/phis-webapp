@@ -36,7 +36,7 @@ class WSEventModel extends WSModel {
      * @param String $sessionToken connection user token
      * @param String $uri uri of the searched event
      * @return if the event exist, an array representing it else the error message
-     * eg. 
+     * @example
      * [
      *      uri => http://www.phenome-fppn.fr/id/event/rt001
      *      label => Test circulaire
