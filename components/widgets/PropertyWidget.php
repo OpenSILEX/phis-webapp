@@ -25,17 +25,17 @@ class PropertyWidget extends Widget {
     // widget title
     public $title;
     
-    // Uri of the main object (widget option)
+    // URI of the main object (widget option)
     public $uri;
+    
+    // is URI required or not
+    public $isUriRequired = false;
     
     // Property type which match the alias value (widget option)
     public $aliasProperty;
     
     // List of object properties (widget option)
     public $properties;
-    
-    // are properties required or not
-    public $arePopertiesRequired = false;
     
     // Array of rdf type, if corresponding values found in $properties, 
     // it will display it first in the given order (widget option)
@@ -82,6 +82,10 @@ class PropertyWidget extends Widget {
             }
         }
         $this->propertyFormatters = $formatters;
+        
+        if ($this->uri === null && $this->isUriRequired) {
+            throw new \Exception("URI isn't set");
+        }
 
         if ($this->properties === null) {
             throw new \Exception("Properties aren't set");
