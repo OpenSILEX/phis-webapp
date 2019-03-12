@@ -17,6 +17,8 @@ use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventPost;
 use app\models\yiiModels\YiiModelsConstants;
 use app\models\yiiModels\YiiUserModel;
+use app\models\yiiModels\YiiExperimentModel;
+use app\models\yiiModels\YiiPropertyModel;
 use app\models\wsModels\WSConstants;
 use app\components\helpers\SiteMessages;
 
@@ -92,22 +94,45 @@ class EventController extends Controller {
      * Get the event types URIs
      * @return event types URIs 
      */
-    public function getEventsTypesLabels() {
+    public function getEventsTypes() {
         $model = new YiiEventModel();
         
         $eventsTypes = [];
         $model->page = 0;
+        $model->pageSize = 1000;
         $eventsTypesConcepts = $model->getEventsTypes(Yii::$app->session['access_token']);
         if ($eventsTypesConcepts === "token") {
             return "token";
         } else {
-            $totalPages = $eventsTypesConcepts[WSConstants::PAGINATION][WSConstants::TOTAL_PAGES];
-            foreach ($eventsTypesConcepts[WSConstants::DATA] as $sensorType) {
-                $eventsTypes[] = $sensorType->uri;
+            foreach ($eventsTypesConcepts[WSConstants::DATA] as $eventType) {
+                $eventsTypes[] = $eventType->uri;
             }
         }
         
         return $eventsTypes;
+    }
+    
+    /**
+     * Get the experiments
+     * @return experiments 
+     */
+    public function getExperiments() {
+        $model = new YiiExperimentModel();
+        
+        $experimentsUris = [];
+        $model->page = 0;
+        $experiments = $model->getExperimentsList(Yii::$app->session['access_token']);
+        error_log("lol");
+        error_log("expéo ".print_r($experiments, true));
+        if ($experiments === "token") {
+            return "token";
+        } else {
+            foreach ($experiments as $experiment) {
+                $experimentsUris[$experiment->uri] = $experiment->alias;
+            }
+        }
+        
+        return $experimentsUris;
     }
     
     /**
@@ -132,6 +157,25 @@ class EventController extends Controller {
             $eventModel->creator = $userModel->uri;
             $eventModel->isNewRecord = true;
             
+            // Set properties
+            $property = new YiiPropertyModel();
+            switch ($eventModel->rdfType) {
+                case "http://www.opensilex.org/vocabulary/oeev#MoveFrom":
+                    $property->value = $eventModel->propertyFrom;
+                    $property->rdfType = "http://www.opensilex.org/vocabulary/oeso#Experiment";
+                    $property->relation = "http://www.opensilex.org/vocabulary/oeev#from";
+                    break;
+                case "http://www.opensilex.org/vocabulary/oeev#MoveTo":
+                    $property->value = $eventModel->propertyTo;
+                    $property->rdfType = "http://www.opensilex.org/vocabulary/oeso#Experiment";
+                    $property->relation = "http://www.opensilex.org/vocabulary/oeev#to";
+                    break;
+                default : 
+                    $property = null;
+                    break;
+            }
+            $eventModel->properties = [$property];
+            
             // If post data, insert the submitted form
             $dataToSend[] =  $eventModel->attributesToArray();
             error_log("dataToSend ".print_r($dataToSend, true));
@@ -151,10 +195,12 @@ class EventController extends Controller {
         } else {
             // If no post data display the create form
             $types = [];
-            foreach($this->getEventsTypesLabels() as $type) {
+            foreach($this->getEventsTypes() as $type) {
                 $types[$type] = $type;
             }
             $this->view->params["eventPossibleTypes"] = $types;
+            
+            $this->view->params["experiments"] = $this->getExperiments();
 
             return $this->render('create', [
                 'model' =>  $eventModel

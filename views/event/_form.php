@@ -33,6 +33,27 @@ use app\components\helpers\Vocabulary;
     ]);
     ?>
     <?=
+    $form->field($model, EventPost::PROPERTY_HAS_PEST)->textInput([
+        'maxlength' => true
+    ]);
+    ?>
+    <?=
+    $form->field($model, EventPost::PROPERTY_FROM)->widget(Select2::classname(), [
+        'data' => $this->params['experiments'],
+        'pluginOptions' => [
+            'allowClear' => false,
+        ]
+    ]);    
+    ?>
+    <?=
+    $form->field($model, EventPost::PROPERTY_TO)->widget(Select2::classname(), [
+        'data' => $this->params['experiments'],
+        'pluginOptions' => [
+            'allowClear' => false
+        ],
+    ]);
+    ?>
+    <?=
     $form->field($model, EventPost::DATE_WITHOUT_TIMEZONE)->widget(DateTimePicker::className(), [
         'options' => [
             'placeholder' => Yii::t('app', 'Enter event time')
@@ -49,7 +70,41 @@ use app\components\helpers\Vocabulary;
     ]);
     ?>
     <script>
-        window.onload = setCreatorTimezoneOffset();
+        window.onload = function () {
+            var hasPestDiv = $('.field-eventpost-propertyhaspest');
+            var fromDiv = $('.field-eventpost-propertyfrom');
+            var toDiv = $('.field-eventpost-propertyto');
+            hidePropertyBlocs(hasPestDiv, fromDiv, toDiv);
+            setSelectOnChangeBehaviour(hasPestDiv, fromDiv, toDiv);
+            setCreatorTimezoneOffset();
+        };
+        
+        function hidePropertyBlocs (hasPestDiv, fromDiv, toDiv) {
+            hasPestDiv.hide();
+            fromDiv.hide();
+            toDiv.hide();
+        }
+        
+        function setSelectOnChangeBehaviour (hasPestDiv, fromDiv, toDiv) {
+            $('#eventpost-rdftype').on('change', function() {
+                switch (this.value)  {
+                    case "http://www.opensilex.org/vocabulary/oeev#MoveFrom":
+                        hasPestDiv.hide();
+                        fromDiv.show();
+                        toDiv.hide();
+                        break;
+                    case "http://www.opensilex.org/vocabulary/oeev#MoveTo":
+                        hasPestDiv.hide();
+                        fromDiv.hide();
+                        toDiv.show();
+                        break;
+                    default:
+                        hidePropertyBlocs(hasPestDiv, fromDiv, toDiv);
+                        break;
+                }
+            });
+        }
+        
         function setCreatorTimezoneOffset() {
             // getTimezoneOffset() returns UTC - localTimeZone. 
             // We want localTimeZone - UTC so we take the reciprocal value

@@ -17,6 +17,7 @@ use app\models\yiiModels\YiiAnnotationModel;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
 use app\models\yiiModels\YiiEventModel;
+use app\models\yiiModels\EventPost;
 use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
 
@@ -95,6 +96,9 @@ return [
     EventGridViewWidget::EVENTS_LABEL => "Événements",
     EventGridViewWidget::NO_EVENT_LABEL => "Pas d'événement",
     YiiEventModel::TYPE => "Type",
+    EventPost::PROPERTY_HAS_PEST_LABEL => "hasPest",
+    EventPost::PROPERTY_FROM_LABEL => "depuis",
+    EventPost::PROPERTY_TO_LABEL => "jusqu'à",
     'Error' => 'Erreur',
     'Experimental Organization' => 'Organisation expérimentale',
     'Experiment Modalities' => 'Modalités Expérimentales',

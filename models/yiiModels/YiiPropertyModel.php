@@ -110,14 +110,15 @@ class YiiPropertyModel extends WSActiveRecord {
     }
 
     /**
-     * Create an array representing the concerned item.
+     * Create an array representing the property.
      * Used for the web service for example.
      * @return array with the attributes. 
      */
     public function attributesToArray() {
         $attributesArray = parent::attributesToArray();
         $attributesArray[self::RDF_TYPE] = $this->rdfType;
-        $attributesArray[self::LABELS] = $this->labels;
+        $attributesArray[self::RELATION] = $this->relation;
+        $attributesArray[self::VALUE] = $this->value;
         
         return $attributesArray;
     }

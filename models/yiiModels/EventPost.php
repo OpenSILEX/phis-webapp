@@ -12,7 +12,7 @@ use Yii;
 use app\models\yiiModels\YiiEventModel;
 
 /**
- * Search action for the events
+ * Event POST model
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class EventPost extends YiiEventModel {
@@ -58,6 +58,30 @@ class EventPost extends YiiEventModel {
     const CONCERNED_ITEMS_URIS = 'concernedItemsUris';
     
     /**
+     * Specific property hasPest
+     * @var YiiPropertyModel
+     */
+    public $propertyHasPest;
+    const PROPERTY_HAS_PEST = 'propertyHasPest';
+    const PROPERTY_HAS_PEST_LABEL = 'hasPest';
+    
+    /**
+     * Specific properties from
+     * @var YiiPropertyModel
+     */
+    public $propertyFrom;
+    const PROPERTY_FROM = 'propertyFrom';
+    const PROPERTY_FROM_LABEL = 'from';
+    
+    /**
+     * Specific properties to
+     * @var YiiPropertyModel
+     */
+    public $propertyTo;
+    const PROPERTY_TO = 'propertyTo';
+    const PROPERTY_TO_LABEL = 'to';
+    
+    /**
      * @inheritdoc
      */
     public function rules() {
@@ -72,6 +96,9 @@ class EventPost extends YiiEventModel {
             ],  'required'],
             [[
                 self::DESCRIPTION, 
+                self::PROPERTY_HAS_PEST, 
+                self::PROPERTY_FROM, 
+                self::PROPERTY_TO, 
             ],  'safe']
         ]; 
     }
@@ -87,7 +114,10 @@ class EventPost extends YiiEventModel {
                 self::CREATOR => Yii::t('app', 'Creator'),
                 self::CONCERNED_ITEMS_URIS => Yii::t('app', 'Concerned items URIs'),
                 self::CREATOR_TIMEZONE_OFFSET => Yii::t('app', 'Timezone offset'),
-                self::DATE_WITHOUT_TIMEZONE => Yii::t('app', 'Date')
+                self::DATE_WITHOUT_TIMEZONE => Yii::t('app', 'Date'),
+                self::PROPERTY_HAS_PEST => Yii::t('app', self::PROPERTY_HAS_PEST_LABEL),
+                self::PROPERTY_FROM => Yii::t('app', self::PROPERTY_FROM_LABEL),
+                self::PROPERTY_TO => Yii::t('app', self::PROPERTY_TO_LABEL),
             ]
         );
     }
@@ -96,12 +126,19 @@ class EventPost extends YiiEventModel {
      * @inheritdoc
      */
     public function attributesToArray() {
+        $propertiesArray = [];
+        foreach ($this->properties as $property) {
+            if(isset($property)) {
+                $propertiesArray[] = $property->attributesToArray();
+            }
+        }
         return [
-            YiiEventModel::TYPE => $this->rdfType,
-            YiiEventModel::DATE => $this->dateWithoutTimezone.$this->creatorTimeZoneOffset,
+            self::TYPE => $this->rdfType,
+            self::DATE => $this->dateWithoutTimezone.$this->creatorTimeZoneOffset,
             self::DESCRIPTION => $this->description,
             self::CREATOR => $this->creator,
-            self::CONCERNED_ITEMS_URIS => $this->concernedItemsUris
+            self::CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
+            self::PROPERTIES => $propertiesArray,
         ];
     }
 }
