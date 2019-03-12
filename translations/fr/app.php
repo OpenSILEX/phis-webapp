@@ -99,6 +99,7 @@ return [
     EventPost::PROPERTY_HAS_PEST_LABEL => "hasPest",
     EventPost::PROPERTY_FROM_LABEL => "depuis",
     EventPost::PROPERTY_TO_LABEL => "jusqu'à",
+    EventPost::PROPERTY_TYPE_LABEL => "Type de la propriété",
     'Error' => 'Erreur',
     'Experimental Organization' => 'Organisation expérimentale',
     'Experiment Modalities' => 'Modalités Expérimentales',

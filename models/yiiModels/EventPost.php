@@ -82,6 +82,14 @@ class EventPost extends YiiEventModel {
     const PROPERTY_TO_LABEL = 'to';
     
     /**
+     * Specific properties type
+     * @var YiiPropertyModel
+     */
+    public $propertyType;
+    const PROPERTY_TYPE = 'propertyType';
+    const PROPERTY_TYPE_LABEL = 'Property type';
+    
+    /**
      * @inheritdoc
      */
     public function rules() {

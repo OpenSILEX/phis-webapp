@@ -1,7 +1,7 @@
 <?php
 
 //******************************************************************************
-//                                       view.php 
+//                                 view.php 
 // PHIS-SILEX
 // Copyright © INRA 2017
 // Creation date: Feb 2019
