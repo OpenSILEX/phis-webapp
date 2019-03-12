@@ -47,6 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?=
     PropertyWidget::widget([
         'uri' => $model->uri,
+        'isUriRequired' => true,
         'properties' => $model->properties,
         'aliasProperty' =>  Yii::$app->params["rdfsLabel"],
         'relationOrder' => [

@@ -96,7 +96,7 @@ class EventSearch extends YiiEventModel {
      * @return mixed DataProvider of the result or string 
      * \app\models\wsModels\WSConstants::TOKEN if the user needs to log in
      */
-    public function searchEvents($sessionToken, $searchParams) {
+    public function search($sessionToken, $searchParams) {
         $this->load($searchParams);
         if (isset($searchParams[YiiModelsConstants::PAGE])) {
             $this->page = $searchParams[YiiModelsConstants::PAGE]-1;

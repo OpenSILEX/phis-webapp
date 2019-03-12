@@ -19,6 +19,7 @@ use Yii;
  * access)
  * @see app\models\wsModels\WSAnnotationModel
  * @see app\models\wsModels\WSActiveRecord
+ * @update [Andréas Garcia] 11 March, 2019: rename field "comments" -> "bodyValues" 
  * @author Morgane Vidal <morgane.vidal@inra.fr> 
  * @author Arnaud Charleroy <arnaud.charleroy@.fr>
  */
@@ -156,7 +157,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * Find an annotation by this URI
+     * Finds an annotation by its URI
      * @param string $sessionToken
      * @param string $uri
      * @return mixed the searched object if it exists or a message if not

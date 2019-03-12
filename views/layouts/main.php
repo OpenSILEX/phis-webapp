@@ -106,8 +106,8 @@ ToastrAsset::register($this);
 //                            ]
                             //\SILEX:info
                         ]];
-        $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
-        $menuItems[] = ['label' => Yii::t('app', 'Installation'),
+//        $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
+        $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
                             [
                                 'label' => Icon::show('camera', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 
@@ -117,10 +117,13 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
                                 'url' => ['/vector/index']
                             ],
-                            [
-                                'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 
-                                'url' => ['/radiometric-target/index']
-                            ],
+                            //SILEX:info
+                            //uncomment for the field instances
+//                            [
+//                                'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 
+//                                'url' => ['/radiometric-target/index']
+//                            ],
+//                            //\SILEX:info
                             //SILEX:info
                             //we have stop maintaining this functionnality for now. 
                             //Uncomment the following block to allow user to download the 4P acquisition session file
@@ -213,7 +216,7 @@ ToastrAsset::register($this);
 //                            ]
                             //\SILEX:info
                         ]];
-        $menuItems[] = ['label' => Yii::t('app', 'Installation'),
+        $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
                             [
                                 'label' => Icon::show('camera', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 
@@ -223,10 +226,13 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
                                 'url' => ['/vector/index']
                             ],
-                            [
-                                'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 
-                                'url' => ['/radiometric-target/index']
-                            ],
+                            //SILEX:info
+                            //uncomment for the field instances
+//                            [
+//                                'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 
+//                                'url' => ['/radiometric-target/index']
+//                            ],
+                            //\SILEX:info
                         ]];
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
