@@ -3,18 +3,23 @@
 //                                       app.php
 // SILEX-PHIS
 // Copyright © INRA 2017
-// Creation date:  Mar, 2017
+// Creation date:  Mar., 2017
 // Contact: morgane.vidal@inra.fr,arnaud.charleroy, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 /**
  * French translations of this application
  * @link https://www.yiiframework.com/extension/translate
- * @update [Arnaud Charleroy] 24 August, 2018 : widgets translations
+ * @update [Arnaud Charleroy] 24 August, 2018: widgets translations
  */
 
-use app\components\widgets\AnnotationGridViewWidget;
 use app\models\yiiModels\YiiAnnotationModel;
+use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\AnnotationButtonWidget;
+use app\models\yiiModels\YiiEventModel;
+use app\models\yiiModels\EventPost;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
 
 return [
     '{n, plural, =1{Project} other{Projects}}' => '{n, plural, =1{Projet} other{Projets}}',
@@ -33,7 +38,7 @@ return [
     'Add Document' => 'Ajouter un document',
     'Add Document Script' => 'Ajouter un script',
     'Add Sensors' => 'Ajouter des Capteurs',
-    app\components\widgets\AnnotationButtonWidget::ADD_ANNOTATION_LABEL => 'Ajouter une Annotation',
+    AnnotationButtonWidget::ADD_ANNOTATION_LABEL => 'Ajouter annotation',
     'Add Vectors' => 'Ajouter des Vecteurs',
     'Address' => 'Adresse',
     'Admin' => 'Administrateur',
@@ -75,6 +80,7 @@ return [
     'Date Of Last Calibration' => 'Date de Dernier Étalonnage',
     'Date Of Purchase' => 'Date d\'Achat',
     'Date Start' => 'Date de début',
+    'Description' => 'Description',
     'Diameter' => 'Diamètre',
     'Diameter (m)' => 'Diamètre (m)',
     'Document Type' => 'Type du Document',
@@ -86,6 +92,14 @@ return [
     'Enter date of last calibration' => 'Saisir la date de dernier étalonnage',
     'Enter date of purchase' => 'Saisir la date d\'achat',
     'Enter in service date' => 'Saisir la date de mise en service',
+    EventButtonWidget::ADD_EVENT_LABEL => 'Ajouter événement',
+    EventGridViewWidget::EVENTS_LABEL => "Événements",
+    EventGridViewWidget::NO_EVENT_LABEL => "Pas d'événement",
+    YiiEventModel::TYPE => "Type",
+    EventPost::PROPERTY_HAS_PEST_LABEL => "hasPest",
+    EventPost::PROPERTY_FROM_LABEL => "depuis",
+    EventPost::PROPERTY_TO_LABEL => "jusqu'à",
+    EventPost::PROPERTY_TYPE_LABEL => "Type de la propriété",
     'Error' => 'Erreur',
     'Experimental Organization' => 'Organisation expérimentale',
     'Experiment Modalities' => 'Modalités Expérimentales',
@@ -119,7 +133,7 @@ return [
     'Level' => 'Niveau',
     'Linked Agronomical Objects' => 'Objets Agronomiques Liés',
     'Linked Documents' => 'Documents Liés',
-    AnnotationGridViewWidget::LINKED_ANNOTATIONS => "Annotations liée(s)",
+    AnnotationGridViewWidget::LINKED_ANNOTATIONS => "Annotations liées",
     AnnotationGridViewWidget::NO_LINKED_ANNOTATIONS => "Aucune annotation liée",
     'Line' => 'Ligne',
     'Login' => 'Connexion',
@@ -153,6 +167,7 @@ return [
     'Real Number' => 'Nombre Réel', 
     'Rectangular' => 'Rectangulaire',
     'Reference URI' => 'URI de Référence',
+    'Register an event' => 'Enregistrer un événement',
     'Related References' => 'Références Externes',
     'Relation' => 'Relation',
     'Relation Type' => 'Type de Relation',
@@ -177,6 +192,7 @@ return [
     'Subproject Of' => 'Sous-projet de',
     'Team' => 'Équipe',
     'Technical Supervisors' => 'Superviseurs techniques',
+    'Timezone offset' => 'Fuseau horaire',
     'Title' => 'Titre',
     'Tools' => 'Outils',
     'Trait' => 'Trait',

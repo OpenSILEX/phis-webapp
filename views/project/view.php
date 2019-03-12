@@ -17,11 +17,16 @@ use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
 use app\controllers\ProjectController;
 
 
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiProjectModel */
+/** 
+ * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
+ * @var $this yii\web\View
+ * @var $model app\models\YiiProjectModel 
+ */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 'url' => ['index']];
@@ -36,6 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
         if (Yii::$app->session['isAdmin']) { ?>
             <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
             <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->acronyme, 'concernedItemRdfType' => Yii::$app->params["Project"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning'])?>
+            <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
             <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);?>
         <?php }
         ?>
@@ -156,6 +162,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
+    
+    <!-- Sensor events -->
+    <?= EventGridViewWidget::widget(
+            [
+                 EventGridViewWidget::EVENTS => ${ProjectController::EVENTS}
+            ]
+        ); 
+    ?>
     
     <!-- Project linked Annotation-->
     <?= AnnotationGridViewWidget::widget(

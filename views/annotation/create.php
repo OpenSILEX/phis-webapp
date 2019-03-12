@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Annotation')];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="event-create">
+<div class="annotation-create">
 
     <h1><?php echo Html::encode($this->title) ?></h1><br />
 

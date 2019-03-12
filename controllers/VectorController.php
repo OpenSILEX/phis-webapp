@@ -1,17 +1,11 @@
 <?php
-
 //******************************************************************************
-//                                       VectorController.php
-//
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
+//                            VectorController.php
+// SILEX-PHIS
+// Copyright © INRA 2018
 // Creation date: 6 avr. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  6 avr. 2018
-// Subject:implements the CRUD actions for the Vector model
 //******************************************************************************
-
 namespace app\controllers;
 
 use Yii;
@@ -19,21 +13,27 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 
 use app\models\yiiModels\YiiVectorModel;
+use app\models\yiiModels\VectorSearch;
+use app\models\yiiModels\YiiUserModel;
 use app\models\yiiModels\UserSearch;
 use app\models\yiiModels\DocumentSearch;
+use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\AnnotationSearch;
+use app\models\yiiModels\YiiModelsConstants;
 use app\models\wsModels\WSConstants;
 
 /**
  * CRUD actions for vector model
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiVectorModel
- * @update [Morgane Vidal] 10 August, 2018 : add link documents to vectors
+ * @update [Morgane Vidal] 10 August, 2018: add link documents to vectors
+ * @update [Andréas Garcia] 11 March, 2019: Add event widget
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class VectorController extends Controller {
     
     CONST ANNOTATIONS_DATA = "vectorAnnotations";
+    CONST EVENTS_DATA = "vectorEvents";
     
     /**
      * define the behaviors
@@ -51,12 +51,13 @@ class VectorController extends Controller {
     }
     
     /**
-     * get the vectors types
+     * Gets the vectors types
      * @return array list of the vectors types uris 
-     * e.g. [
-     *          "UAV",
-     *          "Pot"
-     *      ]
+     * @example
+     * [
+     *   "UAV",
+     *   "Pot"
+     * ]
      */
     public function getVectorsTypes() {
         $model = new YiiVectorModel();
@@ -69,9 +70,9 @@ class VectorController extends Controller {
             if ($vectorDevicesConcepts === "token") {
                 return "token";
             } else {
-                $totalPages = $vectorDevicesConcepts[\app\models\wsModels\WSConstants::PAGINATION][\app\models\wsModels\WSConstants::TOTAL_PAGES];
+                $totalPages = $vectorDevicesConcepts[WSConstants::PAGINATION][WSConstants::TOTAL_PAGES];
 
-                foreach ($vectorDevicesConcepts[\app\models\wsModels\WSConstants::DATA] as $vectorType) {
+                foreach ($vectorDevicesConcepts[WSConstants::DATA] as $vectorType) {
                     $vectorsTypes[] = explode("#", $vectorType->uri)[1];
                 }
             }
@@ -81,12 +82,13 @@ class VectorController extends Controller {
     }
     
     /**
-     * get the vectors types (complete uri)
+     * Gets the vectors types (complete uri)
      * @return array list of the vectors types uris 
-     * e.g. [
-     *          "http://www.opensilex.org/vocabulary/oeso#UAV",
-     *          "http://www.opensilex.org/vocabulary/oeso#Pot"
-     *      ]
+     * @example
+     * [
+     *   "http://www.opensilex.org/vocabulary/oeso#UAV",
+     *   "http://www.opensilex.org/vocabulary/oeso#Pot"
+     * ]
      */
     public function getVectorsTypesUris() {
         $model = new YiiVectorModel();
@@ -99,8 +101,8 @@ class VectorController extends Controller {
             if ($vectorsConcepts === "token") {
                 return "token";
             } else {
-                $totalPages = $vectorsConcepts[\app\models\wsModels\WSConstants::PAGINATION][\app\models\wsModels\WSConstants::TOTAL_PAGES];
-                foreach ($vectorsConcepts[\app\models\wsModels\WSConstants::DATA] as $vectorType) {
+                $totalPages = $vectorsConcepts[WSConstants::PAGINATION][WSConstants::TOTAL_PAGES];
+                foreach ($vectorsConcepts[WSConstants::DATA] as $vectorType) {
                     $vectorsTypes[] = $vectorType->uri;
                 }
             }
@@ -110,7 +112,7 @@ class VectorController extends Controller {
     }
     
     /**
-     * generated the vector creation page
+     * Generates the vector creation page
      * @return mixed
      */
     public function actionCreate() {
@@ -122,7 +124,7 @@ class VectorController extends Controller {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }
         
-        $usersModel = new \app\models\yiiModels\YiiUserModel();
+        $usersModel = new YiiUserModel();
         $users = $usersModel->getPersonsMailsAndName(Yii::$app->session['access_token']);
         
         
@@ -134,11 +136,10 @@ class VectorController extends Controller {
     }
     
     /**
-     * 
      * @param string $vectorType
-     * @return string the complete vector type uri corresponding to the given 
+     * @return string the complete vector type URI corresponding to the given 
      *                vector type
-     *                e.g. http://www.opensilex.org/vocabulary/oeso#UAV
+     * @example http://www.opensilex.org/vocabulary/oeso#UAV
      */
     private function getVectorTypeCompleteUri($vectorType) {
         $vectorsTypes = $this->getVectorsTypesUris();
@@ -151,8 +152,8 @@ class VectorController extends Controller {
     }
     
     /**
-     * create the given vectors
-     * @return string the json of the creation return
+     * Creates the given vectors
+     * @return string the JSON of the creation return
      */
     public function actionCreateMultipleVectors() {
         $vectors = json_decode(Yii::$app->request->post()["vectors"]);
@@ -179,7 +180,7 @@ class VectorController extends Controller {
                 $forWebService[] = $vectorModel->attributesToArray();
                 $insertionResult = $vectorModel->insert($sessionToken, $forWebService);
                 
-                $vectorsUris[] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
+                $vectorsUris[] = $insertionResult->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0];
             }
             return json_encode($vectorsUris, JSON_UNESCAPED_SLASHES); 
         }
@@ -188,8 +189,8 @@ class VectorController extends Controller {
     }
     
     /**
-     * Search a vector by uri.
-     * @param String $uri searched vector's uri
+     * Searches a vector by its URI.
+     * @param String $uri searched vector's URI
      * @return mixed YiiSensorModel : the searched vector
      *               "token" if the user must log in
      */
@@ -208,21 +209,21 @@ class VectorController extends Controller {
     }
     
     /**
-     * list all vectors
+     * Lists all vectors
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new \app\models\yiiModels\VectorSearch();
+        $searchModel = new VectorSearch();
         
         //Get the search params and update pagination
         $searchParams = Yii::$app->request->queryParams;        
-        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
-            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $searchParams[YiiModelsConstants::PAGE]--;
         }
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -242,14 +243,23 @@ class VectorController extends Controller {
      * @return mixed
      */
     public function actionView($id) {
+        //0. Get request parameters
+        $searchParams = Yii::$app->request->queryParams;
+        
         $res = $this->findModel($id);
         
-        //get vector's linked documents
+        //1. get vector's linked documents
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
-        //2. get vector annotations
+        //2. get events
+        $searchEventModel = new EventSearch();
+        $searchEventModel->concernedItemUri = $id;
+        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
+        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        
+        //3. get vector annotations
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
         $vectorAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
@@ -260,6 +270,7 @@ class VectorController extends Controller {
             return $this->render('view', [
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
+                 self::EVENTS_DATA => $events,
                  self::ANNOTATIONS_DATA => $vectorAnnotations
             ]);
         }
@@ -267,7 +278,6 @@ class VectorController extends Controller {
     }
     
     /**
-     * 
      * @param array $vectorsTypes
      * @return arra list of the vectors types
      */
@@ -281,7 +291,6 @@ class VectorController extends Controller {
     }
     
     /**
-     * 
      * @param mixed $users persons list
      * @return ArrayHelper list of the persons 'email' => 'email'
      */
@@ -294,8 +303,8 @@ class VectorController extends Controller {
     }
     
     /**
-     * update a vector
-     * @param string $id uri of the vector to update
+     * Updates a vector
+     * @param string $id URI of the vector to update
      * @return mixed the page to show
      */
     public function actionUpdate($id) {
@@ -303,7 +312,7 @@ class VectorController extends Controller {
         $model = new YiiVectorModel();
         $model->uri = $id;
         
-        //if the form is complete, try to update vector
+        // if the form is complete, try to update vector
         if ($model->load(Yii::$app->request->post())) {
             
             $forWebService[] = $model->attributesToArray();
@@ -317,13 +326,13 @@ class VectorController extends Controller {
         } else {
             $model = $this->findModel($id);
             
-            //list of vector's types
+            // list of vector's types
             $vectorsTypes = $this->getVectorsTypes();
             if ($vectorsTypes === "token") {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             }
         
-            //list of users
+            // list of users
             $searchUserModel = new UserSearch();
             $users = $searchUserModel->find($sessionToken, []);
             

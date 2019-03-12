@@ -30,6 +30,14 @@ class EventSearch extends YiiEventModel {
     const CONCERNED_ITEM_LABEL = 'concernedItemLabel';
     
     /**
+     * Concerned item's URI filter
+     * @example Plot 445
+     * @var string
+     */
+    public $concernedItemUri;
+    const CONCERNED_ITEM_URI = 'concernedItemUri';
+    
+    /**
      * Date range filter
      * @example 2019-01-02T00:00:00+01:00 - 2019-01-03T23:00:00+01:00
      * @var string
@@ -61,6 +69,7 @@ class EventSearch extends YiiEventModel {
             [
                 YiiEventModel::TYPE,
                 self::CONCERNED_ITEM_LABEL,
+                self::CONCERNED_ITEM_URI,
                 self::DATE_RANGE,
                 self::DATE_RANGE_START,
                 self::DATE_RANGE_END
@@ -75,6 +84,7 @@ class EventSearch extends YiiEventModel {
             parent::attributeLabels(),
             [
                 self::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
+                self::CONCERNED_ITEM_URI => Yii::t('app', 'Concerned Items'),
                 self::DATE_RANGE => Yii::t('app', 'Date')
             ]
         );
@@ -89,7 +99,7 @@ class EventSearch extends YiiEventModel {
     public function search($sessionToken, $searchParams) {
         $this->load($searchParams);
         if (isset($searchParams[YiiModelsConstants::PAGE])) {
-            $this->page = $searchParams[YiiModelsConstants::PAGE];
+            $this->page = $searchParams[YiiModelsConstants::PAGE]-1;
         }
         
         if (!$this->validate()) {
@@ -215,13 +225,13 @@ class EventSearch extends YiiEventModel {
              * //\SILEX:info
              */
             $dateStringWithoutT = str_replace("T", " ", $dateString);
-            $date = DateTime::createFromFormat(Yii::$app->params['standardDateTimeFormatPhp'], $dateStringWithoutT);
+            $date = DateTime::createFromFormat(Yii::$app->params['dateTimeFormatPhp'], $dateStringWithoutT);
             $dateRangeStartParseErrorCount = DateTime::getLastErrors()['error_count']; 
             if ($dateRangeStartParseErrorCount >= 1) {
                 error_log("dateRangeStartParseErrorMessages ".print_r(DateTime::getLastErrors()['errors'], true)); 
                 return false;
             }
-            else if ($date->format(Yii::$app->params['standardDateTimeFormatPhp']) == $dateStringWithoutT) {
+            else if ($date->format(Yii::$app->params['dateTimeFormatPhp']) == $dateStringWithoutT) {
                 return true;
             }
             else {
@@ -262,8 +272,11 @@ class EventSearch extends YiiEventModel {
      */
     public function attributesToArray() {
         return [
-            YiiEventModel::TYPE => $this->type,
+            YiiModelsConstants::PAGE => $this->page,
+            YiiModelsConstants::PAGE_SIZE => $this->pageSize,
+            self::TYPE => $this->rdfType,
             self::CONCERNED_ITEM_LABEL => $this->concernedItemLabel,
+            self::CONCERNED_ITEM_URI => $this->concernedItemUri,
             self::DATE_RANGE_START => $this->dateRangeStart,
             self::DATE_RANGE_END => $this->dateRangeEnd
         ];
