@@ -6,7 +6,6 @@
 // Creation date: 23 Aug, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\components\widgets;
 
 use yii\base\Widget;

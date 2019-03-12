@@ -6,7 +6,6 @@
 // Creation date: 9 Jul, 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\models\yiiModels;
 
 use app\models\wsModels\WSAnnotationModel;
@@ -15,9 +14,9 @@ use app\models\wsModels\WSConstants;
 use Yii;
 
 /**
- * The Yii model for the Annotation. Used with web services
- * Implements a customized Active Record
- *  (WSActiveRecord, for the web services access)
+ * The Yii model for the Annotation. Used with web services.
+ * Implements a customized Active Record (WSActiveRecord, for the web services 
+ * access)
  * @see app\models\wsModels\WSAnnotationModel
  * @see app\models\wsModels\WSActiveRecord
  * @author Morgane Vidal <morgane.vidal@inra.fr> 
@@ -100,7 +99,6 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * 
      * @inheritdoc
      */
     public function rules() {
@@ -113,7 +111,6 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * 
      * @inheritdoc
      */
     public function attributeLabels() {
@@ -139,9 +136,9 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * @return array used to send to the webservice in order to create a new annotation
-     *        this is a public method in case that the user want to save these annotation data 
-     *        in multiple instances
+     * @return array used to send to the webservice in order to create a new 
+     * annotation. It is a public method in case that the user want to save 
+     * these annotation data in multiple instances.
      */
     public function attributesToArray() {
         $elementForWebService = parent::attributesToArray();

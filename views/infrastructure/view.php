@@ -13,7 +13,7 @@ use yii\grid\GridView;
 use app\controllers\InfrastructureController;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
-use app\components\widgets\PropertiesWidget;
+use app\components\widgets\PropertyWidget;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiInfrastructureModel */
@@ -40,8 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
     <!-- Infrastructure properties detail-->
     <?=
-    PropertiesWidget::widget([
+    PropertyWidget::widget([
         'uri' => $model->uri,
+        'isUriRequired' => true,
         'properties' => $model->properties,
         'aliasProperty' =>  Yii::$app->params["rdfsLabel"],
         'relationOrder' => [
