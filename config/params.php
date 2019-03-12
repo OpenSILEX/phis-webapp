@@ -21,6 +21,7 @@ return [
     
     // Event
     'eventIndexNumberOfConcernedItemsToDisplay' => 3,
+    'eventWidgetPageSize' => 5,
     
     //ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts

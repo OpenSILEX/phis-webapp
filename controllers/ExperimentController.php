@@ -53,8 +53,8 @@ class ExperimentController extends Controller {
     }
     
     /**
-     * Search an experiment by uri.
-     * @param String $uri searched experiment's uri
+     * Searches an experiment by URI.
+     * @param String $uri searched experiment's URI
      * @return mixed YiiExperimentModel : the searched experiment
      *               "token" if the user must log in
      */
@@ -73,7 +73,7 @@ class ExperimentController extends Controller {
     }
     
     /**
-     * List all Experiments
+     * Lists all Experiments
      * @return mixed
      */
     public function actionIndex() {
@@ -143,16 +143,18 @@ class ExperimentController extends Controller {
         $searchAgronomicalObject->experiment = $id;
         $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session['access_token'], $searchParams);
          
-        //4. get project annotations
+        //4. get annotations
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
         $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
         
-        //5. get event
+        //5. get events
         $searchEventModel = new EventSearch();
         $searchEventModel->concernedItemUri = $id;
-        $events = $searchEventModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], [EventSearch::CONCERNED_ITEM_URI => $id]);
-        error_log("searchEventModelou ". print_r($events, true));
+        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
+        $searchParams[YiiModelsConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+        $events = $searchEventModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+
         //6. get all variables
         $variableModel = new YiiVariableModel();
         $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);

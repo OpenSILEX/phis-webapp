@@ -115,7 +115,6 @@ class EventSearch extends YiiEventModel {
      * @return request result
      */
     private function requestToWSAndReturnResult($sessionToken) {
-        error_log("attributesToArray ". print_r($this->attributesToArray(), true));
         $results = $this->find($sessionToken, $this->attributesToArray());
         
         if (is_string($results)) {
@@ -273,7 +272,9 @@ class EventSearch extends YiiEventModel {
      */
     public function attributesToArray() {
         return [
-            YiiEventModel::TYPE => $this->rdfType,
+            YiiModelsConstants::PAGE => $this->page,
+            YiiModelsConstants::PAGE_SIZE => $this->pageSize,
+            self::TYPE => $this->rdfType,
             self::CONCERNED_ITEM_LABEL => $this->concernedItemLabel,
             self::CONCERNED_ITEM_URI => $this->concernedItemUri,
             self::DATE_RANGE_START => $this->dateRangeStart,
