@@ -268,32 +268,38 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                 $.each(data, function(key, input) {
                     searchFormData.append(input.name, input.value); 
                 });
+                var hasPlotSelected = false;
                 if (typeof selectedPlots !== 'undefined') {
                     for (var i = 0; i < selectedPlots.length; i++) {
-                        searchFormData.append("concernedItems[]", selectedPlots[i][0]);                  
+                        searchFormData.append("concernedItems[]", selectedPlots[i][0]);
+                        hasPlotSelected = true;
                     }
                 } 
                 
-                $.ajax({
-                    url: '<?php echo Url::to(['image/search-from-layer']) ?>', 
-                    type: 'POST',
-                    processData: false,
-                    datatype: 'json',
-                    contentType: false,
-                    data: searchFormData 
-                 }) 
-                   .done(function (data) {
-                     //SILEX:todo
-                     //gestion messages d'erreur
-                     //\SILEX:todo
-                     $('#visualization-images').html(data);
-                  })
-                  .fail(function (jqXHR, textStatus) {
-                     //SILEX:todo
-                     //gestion messages d'erreur
-                     //\SILEX:todo
-                     alert("ERROR : " + jqXHR);
-                  });
+                if (!hasPlotSelected) {
+                    alert("You must select at least one plot before searching for images");
+                } else {
+                    $.ajax({
+                        url: '<?php echo Url::to(['image/search-from-layer']) ?>', 
+                        type: 'POST',
+                        processData: false,
+                        datatype: 'json',
+                        contentType: false,
+                        data: searchFormData 
+                    }) 
+                    .done(function (data) {
+                        //SILEX:todo
+                        //gestion messages d'erreur
+                        //\SILEX:todo
+                        $('#visualization-images').html(data);
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        //SILEX:todo
+                        //gestion messages d'erreur
+                        //\SILEX:todo
+                        alert("ERROR : " + jqXHR);
+                    });
+                }
             });
             
     </script>    
