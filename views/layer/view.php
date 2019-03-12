@@ -268,19 +268,11 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                 $.each(data, function(key, input) {
                     searchFormData.append(input.name, input.value); 
                 });
-                var plots = "";
                 if (typeof selectedPlots !== 'undefined') {
                     for (var i = 0; i < selectedPlots.length; i++) {
-                        plots += selectedPlots[i][0];
-                        if (i < selectedPlots.length-1) {
-                            plots += ",";
-                        } 
+                        searchFormData.append("concernedItems[]", selectedPlots[i][0]);                  
                     }
-                } else {
-                    plots = null;
-                }
-                
-                searchFormData.append("concernedItems", plots);
+                } 
                 
                 $.ajax({
                     url: '<?php echo Url::to(['image/search-from-layer']) ?>', 
