@@ -16,7 +16,7 @@ use yii\filters\VerbFilter;
 
 use app\models\yiiModels\YiiProjectModel;
 use app\models\yiiModels\ProjectSearch;
-use app\models\yiiModels\UserSearch;
+use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
@@ -26,13 +26,15 @@ use app\models\yiiModels\YiiModelsConstants;
  * Implements the controller for the Projects and according to YiiProjectModel
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiProjectModel
+ * @update [Arnaud Charleroy] 14 September, 2018: increase list of users displayed
+ * @update [Andréas Garcia] 11 March, 2019: Add event widget
  * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
- * @update [Arnaud Charleroy] 14 September, 2018 : increase list of users displayed
  */
 class ProjectController extends Controller {
     
     CONST ANNOTATIONS_DATA = "projectAnnotations";
     CONST EXPERIMENTS = "experiments";
+    CONST EVENTS = "events";
     
     /**
      * define the behaviors
@@ -105,6 +107,9 @@ class ProjectController extends Controller {
      * @return mixed
      */
     public function actionView($id) {
+        //0. Get request parameters
+        $searchParams = Yii::$app->request->queryParams;
+        
         //1. get project's metadata
         $res = $this->findModel($id);
         
@@ -126,6 +131,12 @@ class ProjectController extends Controller {
             YiiModelsConstants::PAGE => (Yii::$app->request->get(YiiModelsConstants::PAGE, 1) - 1)
         ]);
         
+        //6. get events
+        $searchEventModel = new EventSearch();
+        $searchEventModel->concernedItemUri = $id;
+        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
+        $events = $searchEventModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
@@ -133,7 +144,8 @@ class ProjectController extends Controller {
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
                 self::ANNOTATIONS_DATA => $projectAnnotations,
-                self::EXPERIMENTS => $projectExperiments
+                self::EXPERIMENTS => $projectExperiments,
+                self::EVENTS => $events
             ]);
         }
     }

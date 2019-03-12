@@ -6,19 +6,22 @@
 // Creation date: 6 Apr, 2017
 // Contact: morgane.vidal@inra.fr, arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\controllers\VectorController;
-use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiVectorModel */
-/* Implements the view page for a vector */
-/* @update [Arnaud Charleroy] 22 august, 2018 (add annotation functionality) */
+/** 
+ * Implements the view page for a vector
+ * @update [Arnaud Charleroy] 22 august, 2018: add annotation functionality
+ * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
+ * @var $this yii\web\View
+ * @var $model app\models\YiiVectorModel
+ */
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 'url' => ['index']];
@@ -34,8 +37,8 @@ $this->params['breadcrumbs'][] = $this->title;
         if (Yii::$app->session['isAdmin']) {?>
             <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
             <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']); ?>
-            <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
             <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
+            <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
         <?php
         }
     ?>
@@ -66,6 +69,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]
     ]); ?>
+    
+    <!-- Linked events -->
+    <?= EventGridViewWidget::widget(
+            [
+                 EventGridViewWidget::EVENTS => ${VectorController::EVENTS_DATA}
+            ]
+        ); 
+    ?>
     
     <!-- Vector linked Annotation-->
     <?= AnnotationGridViewWidget::widget(

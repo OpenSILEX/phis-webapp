@@ -18,8 +18,11 @@ use app\components\widgets\ConcernedItemGridViewWidget;
 use app\controllers\EventController;
 use app\models\yiiModels\YiiEventModel;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiEventModel */
+/** 
+ * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
+ * @var $this yii\web\View
+ * @var $model app\models\YiiEventModel
+ */
 
 $this->title = $model->uri;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Event} other{Events}}', ['n' => 2]), 'url' => ['index']];

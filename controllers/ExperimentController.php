@@ -28,9 +28,9 @@ use app\models\wsModels\WSConstants;
 
 /**
  * CRUD actions for YiiExperimentModel
- * @update [Andréas Garcia] 11 March, 2019: Add event widget
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiExperimentModel
+ * @update [Andréas Garcia] 11 March, 2019: Add event widget
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ExperimentController extends Controller {
@@ -128,6 +128,7 @@ class ExperimentController extends Controller {
      * @return mixed
      */
     public function actionView($id) {  
+        //0. Get request parameters
         $searchParams = Yii::$app->request->queryParams;
         
         //1. Get the experiment's informations
@@ -152,7 +153,6 @@ class ExperimentController extends Controller {
         $searchEventModel = new EventSearch();
         $searchEventModel->concernedItemUri = $id;
         $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $searchParams[YiiModelsConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
         $events = $searchEventModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
 
         //6. get all variables
