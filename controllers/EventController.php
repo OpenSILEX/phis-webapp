@@ -39,7 +39,7 @@ class EventController extends Controller {
             $searchParams[YiiModelsConstants::PAGE]--;
         }
 
-        $searchResult = $searchModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN) {

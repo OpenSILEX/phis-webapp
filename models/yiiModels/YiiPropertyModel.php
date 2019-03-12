@@ -19,6 +19,7 @@ class YiiPropertyModel extends WSActiveRecord {
     
     /**
      * Value
+     * @example http://www.opensilex.org/phenome-fppn/id/pest/10ecffd9-d828-456c-8638-d0524567b8de
      * @var string 
      */
     public $value;
@@ -26,6 +27,7 @@ class YiiPropertyModel extends WSActiveRecord {
     
     /**
      * Value Labels
+     * @example Campagnol
      * @var string 
      */
     public $valueLabels;
@@ -33,6 +35,7 @@ class YiiPropertyModel extends WSActiveRecord {
     
     /**
      * RDF Type
+     * @example http://www.opensilex.org/vocabulary/oeev#Pest
      * @var string 
      */
     public $rdfType;
@@ -40,6 +43,7 @@ class YiiPropertyModel extends WSActiveRecord {
     
     /**
      * RDF Type Labels
+     * @example Pest
      * @var string 
      */
     public $rdfTypeLabels;
@@ -47,6 +51,7 @@ class YiiPropertyModel extends WSActiveRecord {
     
     /**
      * Relation
+     * @example http://www.opensilex.org/vocabulary/oeev#hasPest
      * @var string 
      */
     public $relation;
@@ -54,6 +59,7 @@ class YiiPropertyModel extends WSActiveRecord {
     
     /**
      * Relation labels
+     * @example has pest
      * @var string 
      */
     public $relationLabels;
