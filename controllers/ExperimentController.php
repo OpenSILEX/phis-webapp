@@ -146,11 +146,16 @@ class ExperimentController extends Controller {
         $searchAnnotationModel->targets[0] = $id;
         $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
         
-        //5. get all variables
-        $variableModel = new \app\models\yiiModels\YiiVariableModel();
+        //5. get event
+        $searchEventModel = new EventSearch();
+        $searchEventModel->concernedItemUri = $id;
+        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [EventSearch::CONCERNED_ITEM_URI => $id]);
+        
+        //6. get all variables
+        $variableModel = new YiiVariableModel();
         $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
         
-        //6. Get all sensors
+        //7. Get all sensors
         $sensorModel = new \app\models\yiiModels\YiiSensorModel();
         $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session['access_token']);
         

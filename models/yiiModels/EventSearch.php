@@ -1,5 +1,4 @@
 <?php
-
 //******************************************************************************
 //                               EventSearch.php
 // PHIS-SILEX
@@ -7,7 +6,6 @@
 // Creation date: 02 jan. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\models\yiiModels;
 
 use Yii;
@@ -62,10 +60,10 @@ class EventSearch extends YiiEventModel {
         return [[
             [
                 YiiEventModel::TYPE,
-                EventSearch::CONCERNED_ITEM_LABEL,
-                EventSearch::DATE_RANGE,
-                EventSearch::DATE_RANGE_START,
-                EventSearch::DATE_RANGE_END
+                self::CONCERNED_ITEM_LABEL,
+                self::DATE_RANGE,
+                self::DATE_RANGE_START,
+                self::DATE_RANGE_END
             ],  'safe']]; 
     }
     
@@ -74,11 +72,11 @@ class EventSearch extends YiiEventModel {
      */
     public function attributeLabels() {
         return array_merge(
-                parent::attributeLabels(),
-                [
-                    EventSearch::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
-                    EventSearch::DATE_RANGE => Yii::t('app', 'Date')
-                ]
+            parent::attributeLabels(),
+            [
+                self::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
+                self::DATE_RANGE => Yii::t('app', 'Date')
+            ]
         );
     }
     
@@ -115,6 +113,7 @@ class EventSearch extends YiiEventModel {
             && $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN) {
             return WSConstants::TOKEN;
         } else {
+            
             $resultSet = $this->jsonListOfArraysToArray($results);
             return new ArrayDataProvider([
                 'models' => $resultSet,
@@ -139,8 +138,8 @@ class EventSearch extends YiiEventModel {
         parent::setAttributes($values, $safeOnly);
             
         if (is_array($values)) {
-            if (isset($values[EventSearch::DATE_RANGE])) {
-                $dateRange = $values[EventSearch::DATE_RANGE];
+            if (isset($values[self::DATE_RANGE])) {
+                $dateRange = $values[self::DATE_RANGE];
                 
                 //SILEX:info
                 // We shouldn't control the date range format because the WS 
@@ -264,9 +263,9 @@ class EventSearch extends YiiEventModel {
     public function attributesToArray() {
         return [
             YiiEventModel::TYPE => $this->type,
-            EventSearch::CONCERNED_ITEM_LABEL => $this->concernedItemLabel,
-            EventSearch::DATE_RANGE_START => $this->dateRangeStart,
-            EventSearch::DATE_RANGE_END => $this->dateRangeEnd
+            self::CONCERNED_ITEM_LABEL => $this->concernedItemLabel,
+            self::DATE_RANGE_START => $this->dateRangeStart,
+            self::DATE_RANGE_END => $this->dateRangeEnd
         ];
     }
 }
