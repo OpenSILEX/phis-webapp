@@ -130,6 +130,9 @@ use app\components\helpers\Vocabulary;
 
         var eventTypeSelect = $('#eventpost-rdftype');
             
+        /**
+         * Set up the form on window's load
+         */
         window.onload = function () {
             
             hidePropertyBlocs(hasPestDiv, fromDiv, toDiv);
@@ -148,6 +151,9 @@ use app\components\helpers\Vocabulary;
             setCreatorTimezoneOffset();
         };
         
+        /**
+         * Hide property blocs
+         */
         function hidePropertyBlocs () {
             hasPestDiv.hide();
             fromDiv.hide();
@@ -155,10 +161,17 @@ use app\components\helpers\Vocabulary;
             propertyTypeDiv.hide();
         }
         
+        /**
+         * Set property type
+         */
         function setPropertyType (value) {
             propertyTypeSelect.val(value).trigger('change');;
         }
         
+        
+        /**
+         * Set behaviour on the event type select
+         */
         function setEventTypeSelectOnChangeBehaviour () {
             // Show and hide property divs according to the type of event selected
             eventTypeSelect.on('change', function() {
@@ -180,6 +193,9 @@ use app\components\helpers\Vocabulary;
             });
         }
         
+        /**
+         * Set the creator's timezone oofset
+         */
         function setCreatorTimezoneOffset() {
             // getTimezoneOffset() returns UTC - localTimeZone. 
             // We want localTimeZone - UTC so we take the reciprocal value
