@@ -99,7 +99,7 @@ class EventSearch extends YiiEventModel {
     public function searchEvents($sessionToken, $searchParams) {
         $this->load($searchParams);
         if (isset($searchParams[YiiModelsConstants::PAGE])) {
-            $this->page = $searchParams[YiiModelsConstants::PAGE];
+            $this->page = $searchParams[YiiModelsConstants::PAGE]-1;
         }
         
         if (!$this->validate()) {
