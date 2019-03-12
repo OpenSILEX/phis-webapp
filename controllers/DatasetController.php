@@ -367,11 +367,11 @@ class DatasetController extends Controller {
      *               and the value is the variable uri
      */
     private function getVariablesListUriLabelToShow() {
-        $searchVariableModel = new VariableSearch();
-        $variables = $searchVariableModel->find(Yii::$app->session['access_token'], []);
+        $variableModel = new \app\models\yiiModels\YiiVariableModel();
+        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);     
         
         if ($variables !== null) {
-            return \yii\helpers\ArrayHelper::map($variables, 'uri', 'label');
+            return $variables;
         } else {
             return null;
         }

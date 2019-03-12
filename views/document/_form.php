@@ -29,6 +29,15 @@ require_once '../config/config.php';
 <div class="document-form well">
     <?php $form = ActiveForm::begin(); ?>
     
+    <script>
+        // On form submission disable creation button to prevent multiple document creation
+        $(document).ready(function() {
+           $("form#<?= $form->id ?>").submit(function() {
+               $("form#<?= $form->id ?> button[type=submit]").attr("disabled", "disabled");
+           });
+        });
+    </script>
+    
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]); ?>
     
     <?= $form->field($model, 'creator')->textInput(['maxlength' => true]); ?>

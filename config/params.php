@@ -1,10 +1,7 @@
 <?php
 
 return [
-    'adminEmail' => 'admin@example.com',    
-    'baseURI' => 'http://www.opensilex.org/demo/',
     'platform' => 'Demo',
-    'platformCode' => 'DMO',
     'standardDateTimeFormat' => 'Y-m-dTH:i:sZ',
     'standardDateTimeFormatPhp' => 'Y-m-d H:i:sP',
     'dateRangeSeparator' => ' - ',
@@ -13,6 +10,10 @@ return [
     'demoLogin' => 'guest@opensilex.org',
     'demoPassword' => 'guest',
     'opensilex-webapp-type' => 'opensilex', //'opensilex' or 'phis' (used to adapt the view)
+    //SILEX:info
+    //this param should be removed when the new version of data will be used instead of Dataset
+    'baseURI' => 'http://www.opensilex.org/demo/',
+    //\SILEX:info
     
     //ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts

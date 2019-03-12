@@ -28,7 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
+        <?php if (Yii::$app->session['isAdmin']) { ?>
         <?= Html::a(Yii::t('yii', 'Create') . ' '. Yii::t('app', '{n, plural, =1{Person} other{Persons}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) ?>
+        <?php } ?>
     </p>
     
    <?= GridView::widget([

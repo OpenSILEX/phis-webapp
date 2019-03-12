@@ -26,8 +26,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
+    <p> <?php if (Yii::$app->session['isAdmin'] || $model->email === Yii::$app->session['email']) { ?>
         <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->email], ['class' => 'btn btn-primary']) ?>
+    <?php } ?>
         <?php //Html::a('Delete', ['delete', 'id' => $model->uri], [
 //            'class' => 'btn btn-danger',
 //            'data' => [
