@@ -28,11 +28,8 @@ use yii\helpers\Url;
              <?= $form->field($model, 'rdfType')->widget(\kartik\select2\Select2::classname(),[
                     'data' => $model->getRdfTypes(Yii::$app->session['access_token']),
                     'options' => [
-                        'placeholder' => 'Select an image type if wanted ...'
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
+                        'placeholder' => 'Select an image type ...'
+                    ]
                 ]); ?>
             
             <div class="form-group">
