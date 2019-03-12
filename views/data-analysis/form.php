@@ -6,9 +6,13 @@ use kartik\date\DatePicker;
 use kartik\select2\Select2;
 use yii\helpers\Url;
 use nullref\datatable\DataTable;
+use yii\bootstrap\Tabs;
+use yii\web\View;
+
+/* @var $this yii\web\View */
+/* @var $model app \app\models\yiiModels\DataAnalysisApp */
 
 $date = new DateTime();
-
 $this->title = Yii::t('app', $appConfiguration[$function]["label"] . " " . $date->format("Y-m-d") );
 
 ?>
@@ -21,7 +25,7 @@ $this->title = Yii::t('app', $appConfiguration[$function]["label"] . " " . $date
                 'action' => Url::to(["data-analysis/run-script/", "function" => $function, 'rpackage' => $rpackage,]),
     ]);
     // construct form
-    foreach ($model as $key => $attri) {
+    foreach ($model as $key => $attribute) {
         if (isset($parameters[$key]['visibility']) && $parameters[$key]['visibility'] === "hidden") {
             echo $form->field($model, $key)->hiddenInput()->label(false);
         } else {
@@ -48,7 +52,6 @@ $this->title = Yii::t('app', $appConfiguration[$function]["label"] . " " . $date
                         ]);
                         break;
                     case 'list':
-
                         echo $form->field($model, $key)->widget(Select2::classname(), [
                             'data' => $parametersValues[$key],
                             'size' => Select2::MEDIUM,
@@ -103,54 +106,73 @@ $this->title = Yii::t('app', $appConfiguration[$function]["label"] . " " . $date
         <?php } ?>
     
         <?php
+        
+        $tabItems = [];
+        $active = true;
+        $itemNumber = 1;
         // construct grid
         if (isset($dataGrids)) {
             foreach ($dataGrids as $dataGrid) {
-                $ajaxColumns =  [];
-                foreach ($dataGrid["columnNames"] as $value) {
-                    $ajaxColumns[] = ["data" => $value];
-                }
-                
-                echo DataTable::widget([
-                    'dom'=> 'Bfrtip',
-                    'buttons' => [
-                        [
-                            'extend' =>'copyHtml5',
-                            'messageTop' => $exportGridParameters
-                        ],
-                        [
-                            'extend' => 'csvHtml5',
-                            'messageTop' => $exportGridParameters
-                        ],
-                        [
-                            'extend' => 'pdfHtml5',
-                            'messageTop' => $exportGridParameters
-                        ],
-                        [
-                            'extend' => 'excelHtml5',
-                            'messageTop' => $exportGridParameters
-                        ],
-                    
-                    ],
-                    "ajax" => [
-                        "url" =>  Url::to(["data-analysis/ajax-session-get-data/", "sessionId" => $dataGrid["sessionId"]]),
-                        "dataSrc" => ""
-                    ],
-                    "columns" => [
-                        $ajaxColumns
-                    ],
-                    'columns' => $dataGrid["columnNames"],
-                ]);
-            }
-        }
-    } else {
-        ?>
+                $ajaxColumns = [];
+                    foreach ($dataGrid["columnNames"] as $value) {
+                        $ajaxColumns[] = ["data" => $value];
+                    }
 
-        <?php
+                    $dt = DataTable::widget([
+                                'dom' => 'Bfrtip',
+                                'buttons' => [
+                                    [
+                                        'extend' => 'copyHtml5',
+                                        'messageTop' => $exportGridParameters
+                                    ],
+                                    [
+                                        'extend' => 'csvHtml5',
+                                        'messageTop' => $exportGridParameters
+                                    ],
+                                    [
+                                        'extend' => 'pdfHtml5',
+                                        'messageTop' => $exportGridParameters
+                                    ],
+                                    [
+                                        'extend' => 'excelHtml5',
+                                        'messageTop' => $exportGridParameters
+                                    ],
+                                ],
+                                "ajax" => [
+                                    "url" => Url::to(["data-analysis/ajax-session-get-data/",
+                                        "sessionId" => $dataGrid["sessionId"],
+                                        "dataId" => $dataGrid["dataId"]]),
+                                    "dataSrc" => ""
+                                ],
+                                "columns" => [
+                                    $ajaxColumns
+                                ],
+                                'columns' => $dataGrid["columnNames"],
+                                'responsive' => true,
+                                'autoWidth' => false
+                    ]);
+
+                    $tabItem = [
+                        'label' => 'Dataset ' . $itemNumber,
+                        'content' => $dt,
+                    ];
+                    // first grid
+                    if ($active) {
+                        $tabItem['active'] = $active;
+                        $active = false;
+                    }
+                    $tabItems [] = $tabItem;
+
+                    $itemNumber++;
+                }
+                echo Tabs::widget([
+                    'items' => $tabItems
+                ]);
+            }            
+    } else {
         if (Yii::$app->session->hasFlash("scriptDidNotWork")) {
             Html::tag('pre', Yii::$app->session->getFlash("scriptDidNotWork"));
         }
     }
     ?>
-
 </div><!-- form -->

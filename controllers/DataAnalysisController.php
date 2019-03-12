@@ -77,11 +77,11 @@ class DataAnalysisController extends \yii\web\Controller {
         $searchModel = new DataAnalysisAppSearch();
         $appConfiguration = $searchModel->getAppConfiguration($rpackage);
 
-        if (!isset($appConfiguration["$function"])) {
+        if (!isset($appConfiguration[$function])) {
             Yii::$app->session->setFlash('scriptNotAvailable');
             return $this->redirect(['data-analysis/index', 'integrated' => true]);
         }
-       
+
         // get yii2 form information
         $formParameters = $appConfiguration["$function"]["formParameters"];
 
@@ -101,18 +101,10 @@ class DataAnalysisController extends \yii\web\Controller {
             $plotConfigurations = [];
             $plotWidgetUrls = [];
             $dataGrids = [];
-             // get called function configuration
+            // get called function configuration
             $functionConfiguration = $appConfiguration["$function"];
             $this->getDataFromRfunctionCall(
-                    $searchModel,
-                    $functionConfiguration,
-                    $rpackage,
-                    $function,
-                    $session,
-                    $formParameters,
-                    $plotConfigurations, 
-                    $plotWidgetUrls, 
-                    $dataGrids);
+                    $searchModel, $functionConfiguration, $rpackage, $function, $session, $formParameters, $plotConfigurations, $plotWidgetUrls, $dataGrids);
 
             // exportGrid Save parameters
             $exportGridTemporaryParameters = $model->getAttributesForHTTPClient();
@@ -153,13 +145,24 @@ class DataAnalysisController extends \yii\web\Controller {
             return $plotlySchema;
         }
     }
-    
-     public function actionAjaxSessionGetData($sessionId) {
-            $searchModel = new DataAnalysisAppSearch();
-            $session = new \openSILEX\opencpuClientPHP\classes\OCPUSession($sessionId, $searchModel->ocpuserver->getOpenCPUWebServerClient());
-            $value = $session->getVal( $session::OPENCPU_SESSION_JSON_FORMAT);
-            \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    /**
+     * Return ajax specific json content for datatable plugin
+     * @param type $sessionId opencpu session
+     * @param type $dataId index of a R data list 
+     * @return array array of value
+     */
+    public function actionAjaxSessionGetData($sessionId,$dataId) {
+        $searchModel = new DataAnalysisAppSearch();
+        $session = new \openSILEX\opencpuClientPHP\classes\OCPUSession($sessionId, $searchModel->ocpuserver->getOpenCPUWebServerClient());
+        $value = $session->getVal($session::OPENCPU_SESSION_JSON_FORMAT);
+        
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if(isset($dataId)){
+           return $value[$dataId];
+        }else{
             return $value;
+        }
+        
     }
 
     public function actionView() {
@@ -188,8 +191,8 @@ class DataAnalysisController extends \yii\web\Controller {
                 $parametersValues[$key] = $session->getVal($session::OPENCPU_SESSION_JSON_FORMAT);
                 // special case for listVariables
                 $tmp_array = [];
-                foreach ($parametersValues[$key]["name"] as $keyOption => $value) {
-                    $tmp_array[$parametersValues[$key]["value"][$keyOption]] = $value;
+                foreach ($parametersValues[$key] as $value) {
+                    $tmp_array[$value["value"]] = $value["name"];
                 }
                 $parametersValues[$key] = $tmp_array;
                 // \\ special case for listVariables
@@ -197,20 +200,20 @@ class DataAnalysisController extends \yii\web\Controller {
         }
         return $parametersValues;
     }
-    
-   /**
-    * 
-    * @param type $searchModel
-    * @param type $functionConfiguration
-    * @param type $rpackage
-    * @param type $function
-    * @param type $session
-    * @param type $formParameters
-    * @param type $plotConfigurations
-    * @param type $plotWidgetUrls
-    * @param type $dataGrids
-    */
-    private function getDataFromRfunctionCall($searchModel,$functionConfiguration,$rpackage,$function, $session,$formParameters, &$plotConfigurations, &$plotWidgetUrls, &$dataGrids) {
+
+    /**
+     * 
+     * @param type $searchModel
+     * @param type $functionConfiguration
+     * @param type $rpackage
+     * @param type $function
+     * @param type $session
+     * @param type $formParameters
+     * @param type $plotConfigurations
+     * @param type $plotWidgetUrls
+     * @param type $dataGrids
+     */
+    private function getDataFromRfunctionCall($searchModel, $functionConfiguration, $rpackage, $function, $session, $formParameters, &$plotConfigurations, &$plotWidgetUrls, &$dataGrids) {
         // error
         if ($searchModel->ocpuserver->getServerCallStatus()->getStatus() != 200) {
             $errorMessage = $searchModel->ocpuserver->getServerCallStatus()->getMessage();
@@ -229,8 +232,10 @@ class DataAnalysisController extends \yii\web\Controller {
                         if ($linkedFunctionParameters["type"] === "grid") {
                             $data = $linkedFunctionsSession->getVal($session::OPENCPU_SESSION_JSON_FORMAT);
                             if (count($data) !== 0) {
-                                $columnNames = array_keys($data[0]);
-                                $dataGrids[] = ["sessionId" => $linkedFunctionsSession->sessionId, "data" => $data, "columnNames" => $columnNames];
+                                foreach ($data as $dataId => $idDataArray) {
+                                    $columnNames = array_keys($idDataArray[0]);
+                                    $dataGrids[] = ["sessionId" => $linkedFunctionsSession->sessionId, "dataId" => $dataId,"data" => $data, "columnNames" => $columnNames];
+                                }
                             }
                         }
                         if ($linkedFunctionParameters["type"] === "graphic") {

@@ -7,11 +7,10 @@
 // Creation date: 21 feb. 2019
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-//use Yii;
+
 use yii\helpers\Html;
 use yii\helpers\Markdown;
 use yii\helpers\Url;
-//use kartik\daterange\DateRangePicker;
 use app\models\yiiModels\DataAnalysisAppSearch;
 
 /* @var $this yii\web\View */
@@ -21,9 +20,9 @@ use app\models\yiiModels\DataAnalysisAppSearch;
 $this->title = Yii::t('app', '{n, plural, =1{Stat/Vizu Application} other{Stat/Vizu Applications}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
 if (Yii::$app->session->hasFlash('scriptNotAvailable')){ ?>
-<p class="alert alert-danger">Script not available</p>
+    <p class="alert alert-danger">Script not available</p>
 <?php 
-Yii::$app->session->removeFlash("scriptNotAvailable");
+    Yii::$app->session->removeFlash("scriptNotAvailable");
 }
 ?>
 

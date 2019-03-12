@@ -88,7 +88,7 @@ $config = [
                         'https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css',
                         'https://cdn.datatables.net/buttons/1.5.4/css/buttons.dataTables.min.css',
                     ],
-                    'styling' => false,
+                    'styling' => true,
                 
                 ]
             ],
