@@ -15,21 +15,21 @@ use app\models\wsModels\WSConstants;
 include_once '../config/web_services.php';
 
 /**
- * Encapsulate the access to the events service
+ * Encapsulates the access to the events service
  * @see \openSILEX\guzzleClientPHP\WSModel
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class WSEventModel extends WSModel {
     
     /**
-     * Initialize access to the events service
+     * Initializes access to the events service
      */
     public function __construct() {
         parent::__construct(WS_PHIS_PATH, "events");
     }
     
     /**
-     * Get the details of an event corresponding to the given URI
+     * Gets the details of an event corresponding to the given URI
      * @param String $sessionToken connection user token
      * @param String $uri URI of the searched event
      * @return if the event exist, an array representing it else the error message
