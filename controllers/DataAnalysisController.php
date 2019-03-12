@@ -105,11 +105,12 @@ class DataAnalysisController extends \yii\web\Controller {
             $functionConfiguration = $appConfiguration["$function"];
             $this->getDataFromRfunctionCall(
                     $searchModel, $functionConfiguration, $rpackage, $function, $session, $formParameters, $plotConfigurations, $plotWidgetUrls, $dataGrids);
-
+           
             // exportGrid Save parameters
             $exportGridTemporaryParameters = $model->getAttributesForHTTPClient();
             unset($exportGridTemporaryParameters["wsUrl"]);
             unset($exportGridTemporaryParameters["token"]);
+
 
             return $this->render('form', [
                         'rpackage' => $rpackage,
@@ -121,7 +122,6 @@ class DataAnalysisController extends \yii\web\Controller {
                         'plotConfigurations' => $plotConfigurations,
                         'plotWidgetUrls' => $plotWidgetUrls,
                         'dataGrids' => $dataGrids,
-                        'sessionId' => $session->sessionId,
                         'exportGridParameters' => 'Search parameters' . json_encode($exportGridTemporaryParameters)
             ]);
         } else {
