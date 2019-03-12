@@ -31,7 +31,7 @@ class WSEventModel extends WSModel {
     
     
     /**
-     * Get the details of an eventcorresponding to the given uri
+     * Get the details of an event corresponding to the given uri
      * 
      * @param String $sessionToken connection user token
      * @param String $uri uri of the searched event
