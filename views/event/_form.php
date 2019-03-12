@@ -146,10 +146,11 @@ use app\components\helpers\Vocabulary;
             setCreatorTimezoneOffset();
         };
         
-        function hidePropertyBlocs (hasPestDiv, fromDiv, toDiv) {
+        function hidePropertyBlocs () {
             hasPestDiv.hide();
             fromDiv.hide();
             toDiv.hide();
+            propertyTypeDiv.hide();
         }
         
         function setPropertyType (value) {
