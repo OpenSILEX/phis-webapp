@@ -208,7 +208,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
             });
             
              $(document).ready(function(){
-                $('#visualization-dataset').load('<?php echo Url::to(['dataset/search-from-layer']) ?>');
+//                $('#visualization-dataset').load('<?php //echo Url::to(['dataset/search-from-layer']) ?>');
+                $('#visualization-dataset').load('<?php echo Url::to(['data/search-from-layer']) ?>');
                 $('#visualization-images').load('<?php echo Url::to(['image/search-from-layer'])?>');
              });
              
@@ -240,7 +241,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                             searchFormData.append("agronomicalObjects", plots);
 
                             $.ajax({
-                               url: '<?php echo Url::to(['dataset/search-from-layer']) ?>', 
+                               url: '<?php echo Url::to(['data/search-from-layer']) ?>', 
                                type: 'POST',
                                processData: false,
                                datatype: 'json',
