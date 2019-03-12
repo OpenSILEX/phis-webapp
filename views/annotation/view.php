@@ -49,11 +49,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             YiiAnnotationModel::CREATION_DATE,
-            YiiAnnotationModel::COMMENTS => [
-                'attribute' => YiiAnnotationModel::COMMENTS,
+            YiiAnnotationModel::BODY_VALUES => [
+                'attribute' => YiiAnnotationModel::BODY_VALUES,
                 'value' => function ($model) {
-                     if($model->comments != null){
-                         return implode((', '), $model->comments);
+                     if($model->bodyValues != null){
+                         return implode((', '), $model->bodyValues);
                      }
                      return "";
                 }

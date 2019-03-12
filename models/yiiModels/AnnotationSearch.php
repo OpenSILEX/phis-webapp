@@ -28,7 +28,7 @@ class AnnotationSearch extends YiiAnnotationModel {
      */
     public function rules() {
         return [
-            [[AnnotationSearch::URI, AnnotationSearch::CREATOR, AnnotationSearch::MOTIVATED_BY, AnnotationSearch::COMMENTS, AnnotationSearch::TARGETS], 'safe']
+            [[AnnotationSearch::URI, AnnotationSearch::CREATOR, AnnotationSearch::MOTIVATED_BY, AnnotationSearch::BODY_VALUES, AnnotationSearch::TARGETS], 'safe']
         ];
     }
 
@@ -103,8 +103,8 @@ class AnnotationSearch extends YiiAnnotationModel {
         if (isset($this->targets) && !empty($this->targets)) {
             $elementForWebService[YiiAnnotationModel::TARGET_SEARCH_LABEL] = $this->targets[0];
         }
-        if (isset($this->comments) && !empty($this->comments)) {
-            $elementForWebService[YiiAnnotationModel::COMMENTS] = $this->comments;
+        if (isset($this->bodyValues) && !empty($this->bodyValues)) {
+            $elementForWebService[YiiAnnotationModel::BODY_VALUES] = $this->bodyValues;
         }
         return $elementForWebService;
     }

@@ -19,7 +19,7 @@ use app\controllers\AnnotationController;
  * @var app\models\yiiModels\YiiAnnotationModel $model
  * @var yii\widgets\ActiveForm $form
  * Implements the create page for an annotation 
- * @see app\views\annoation\create.php
+ * @see app\views\annotation\create.php
  */
 ?>
 
@@ -67,7 +67,7 @@ use app\controllers\AnnotationController;
     // Think about putting image, documents and note in the annotation
     //\SILEX-->
     <!--First annotation body-->
-    <?= $form->field($model, YiiAnnotationModel::COMMENTS . "[0]")->textArea(['rows' => 5]); ?>
+    <?= $form->field($model, YiiAnnotationModel::BODY_VALUES . "[0]")->textArea(['rows' => 5]); ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Create'), ['class' => 'btn btn-success']); ?>

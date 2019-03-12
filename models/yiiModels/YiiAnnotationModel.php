@@ -19,6 +19,7 @@ use Yii;
  * access)
  * @see app\models\wsModels\WSAnnotationModel
  * @see app\models\wsModels\WSActiveRecord
+ * @update [Andréas Garcia] 11 March, 2019: rename field "comments" -> "bodyValues" 
  * @author Morgane Vidal <morgane.vidal@inra.fr> 
  * @author Arnaud Charleroy <arnaud.charleroy@.fr>
  */
@@ -30,7 +31,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const LABEL = "Annotation";
 
     /**
-     * Uri of the annotation
+     * URI of the annotation
      * @example http://www.phenome-fppn.fr/platform/id/annotation/3ce85bf7-1d99-4831-9c13-4d7ebdafe1d6
      * @var string
      */
@@ -40,7 +41,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const URI_LABEL = "URI";
 
     /**
-     * Creation date of the annotation
+     * The creation date of the annotation
      * @example 2018-06-25 15:13:59+0200
      * @var string
      */
@@ -50,7 +51,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const CREATION_DATE_LABEL = "Date of Annotation";
 
     /**
-     * Creator of the annotation
+     * The creator of the annotation
      * @example http://www.phenome-fppn.fr/diaphen/id/agent/acharleroy
      * @var string
      */
@@ -60,7 +61,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const CREATOR_LABEL = "Creator";
 
     /**
-     * Purpose of the annotation
+     * The purpose of the annotation
      * @example http://www.w3.org/ns/oa#commenting
      * @var string
      */
@@ -70,17 +71,17 @@ class YiiAnnotationModel extends WSActiveRecord {
     const MOTIVATED_BY_LABEL = "Motivated by";
 
     /**
-     * Description of the annotation
+     * The description of the annotation
      * @example http://www.w3.org/ns/oa#commenting
      * @var string
      */
-    public $comments;
+    public $bodyValues;
 
-    const COMMENTS = "comments";
-    const COMMENTS_LABEL = "Description";
+    const BODY_VALUES = "bodyValues";
+    const BODY_VALUES_LABEL = "Description";
 
     /**
-     * Target associate to this annotation 
+     * A target associate to this annotation 
      * @example http://www.phenome-fppn.fr/phenovia/2017/o1032481
      * @var string
      */
@@ -103,9 +104,9 @@ class YiiAnnotationModel extends WSActiveRecord {
      */
     public function rules() {
         return [
-            [[self::URI, self::CREATOR, self::MOTIVATED_BY, self::COMMENTS, self::TARGETS], 'required'],
-            [[self::URI, self::CREATOR, self::MOTIVATED_BY, self::COMMENTS, self::TARGETS], 'safe'],
-            [[self::COMMENTS], 'string'],
+            [[self::URI, self::CREATOR, self::MOTIVATED_BY, self::BODY_VALUES, self::TARGETS], 'required'],
+            [[self::URI, self::CREATOR, self::MOTIVATED_BY, self::BODY_VALUES, self::TARGETS], 'safe'],
+            [[self::BODY_VALUES], 'string'],
             [[self::URI, self::CREATOR, self::TARGETS], 'string', 'max' => 300]
         ];
     }
@@ -118,19 +119,19 @@ class YiiAnnotationModel extends WSActiveRecord {
             self::URI => self::URI_LABEL,
             self::CREATOR => Yii::t('app', self::CREATOR_LABEL),
             self::MOTIVATED_BY => Yii::t('app', self::MOTIVATED_BY_LABEL),
-            self::COMMENTS => Yii::t('app', self::COMMENTS_LABEL),
+            self::BODY_VALUES => Yii::t('app', self::BODY_VALUES_LABEL),
             self::TARGETS => Yii::t('app', self::TARGETS_LABEL)
         ];
     }
 
     /**
-     * Permit to fill model parameters from webservice data array 
+     * Permits to fill model parameters from web service data array 
      * @param array $array key => value with annotation data value
      */
     protected function arrayToAttributes($array) {
         $this->uri = $array[self::URI];
         $this->creator = $array[self::CREATOR];
-        $this->comments = $array[self::COMMENTS];
+        $this->bodyValues = $array[self::BODY_VALUES];
         $this->motivatedBy = $array[self::MOTIVATED_BY];
         $this->targets = $array[self::TARGETS];
     }
@@ -149,14 +150,14 @@ class YiiAnnotationModel extends WSActiveRecord {
         if (isset($this->targets) && !empty($this->targets)) {
             $elementForWebService[self::TARGETS] = $this->targets;
         }
-        if (isset($this->comments) && !empty($this->comments)) {
-            $elementForWebService[self::COMMENTS] = $this->comments;
+        if (isset($this->bodyValues) && !empty($this->bodyValues)) {
+            $elementForWebService[self::BODY_VALUES] = $this->bodyValues;
         }
         return $elementForWebService;
     }
 
     /**
-     * Find an annotation from a uri
+     * Finds an annotation by its URI
      * @param string $sessionToken
      * @param string $uri
      * @return mixed the searched object if it exists or a message if not
