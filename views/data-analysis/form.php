@@ -52,17 +52,27 @@ $this->title = Yii::t('app', $appConfiguration[$function]["label"] . " " . $date
                         ]);
                         break;
                     case 'list':
+                        $multiple = true;
+                        $pluginOptions = [
+                            'allowClear' => false,
+                        ];
+                        $option = [
+                            'placeholder' => $parameters[$key]['label']
+                        ];
+                        if(isset($parameters[$key]['maxSelectedItem'])){
+                            if($parameters[$key]['maxSelectedItem'] ==  1){
+                                $option['multiple'] = false;
+                            }else{
+                                $pluginOptions["maximumSelectionLength"] = $parameters[$key]['maxSelectedItem'];
+                                $option['multiple'] = true;
+                            }
+                        }
+                        
                         echo $form->field($model, $key)->widget(Select2::classname(), [
                             'data' => $parametersValues[$key],
                             'size' => Select2::MEDIUM,
-                            'options' => [
-                                'placeholder' => $parameters[$key]['label'],
-                                'multiple' => true,
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => false,
-                                "maximumSelectionLength" => 2,
-                            ]
+                            'options' => $option,
+                            'pluginOptions' => $pluginOptions,
                         ])->label($parameters[$key]['label']);
                         break;
                     default:
