@@ -102,7 +102,7 @@ class InfrastructureController extends Controller {
         $searchEventModel = new EventSearch();
         $searchEventModel->concernedItemUri = $id;
         $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $events = $searchEventModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
 
         //4. Get annotations
         $searchAnnotationModel = new AnnotationSearch();

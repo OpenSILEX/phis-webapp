@@ -257,7 +257,7 @@ class VectorController extends Controller {
         $searchEventModel = new EventSearch();
         $searchEventModel->concernedItemUri = $id;
         $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $events = $searchEventModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         //3. get vector annotations
         $searchAnnotationModel = new AnnotationSearch();

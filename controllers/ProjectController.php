@@ -135,7 +135,7 @@ class ProjectController extends Controller {
         $searchEventModel = new EventSearch();
         $searchEventModel->concernedItemUri = $id;
         $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $events = $searchEventModel->searchEvents(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if ($res === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
