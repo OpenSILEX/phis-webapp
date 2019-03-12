@@ -73,15 +73,7 @@ class ConcernedItemGridViewWidget extends Widget {
                                 'value' => function($model) {
                                     return implode((', '), $model->labels);
                                 }
-                            ],
-                            ['class' => 'yii\grid\ActionColumn',
-                                'template' => '{view}',
-                                'buttons' => [
-                                    'view' => function($url, $model, $key) {
-                                        return Html::a(Icon::show('eye-open', [], Icon::BSG), ['annotation/view', 'id' => $model->uri]);
-                                    },
-                                ]
-                            ],
+                            ]
                         ],
             ]);
         }
