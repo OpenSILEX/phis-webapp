@@ -60,10 +60,6 @@ class DataFileSearch extends YiiDataFileModel {
         //3. Request to the web service and return result
         $params = $this->attributesToArray();
         unset($params['uri']);
-        $params["concernedItems"] = [
-            "http://www.phenome-fppn.fr/phenovia/2017/o1032481",
-            "http://www.phenome-fppn.fr/phenovia/2017/o1032482"
-        ];
         $findResult = $this->find($sessionToken, $params);
         
         if (is_string($findResult, $params)) {
