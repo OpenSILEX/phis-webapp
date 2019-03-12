@@ -82,8 +82,9 @@ class DataController extends Controller {
                     $dataToSave[] = (strtotime($model->date))*1000;
                     $dataToSave[] = doubleval($model->value);
                     $agronomicalObject["data"][]= $dataToSave;
-                    $toReturn["agronomicalObjects"][] = $agronomicalObject;
                 }
+                
+                $toReturn["agronomicalObjects"][] = $agronomicalObject;
             }
             
             return $this->renderAjax('_form_data_graph', [

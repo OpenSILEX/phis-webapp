@@ -24,27 +24,33 @@ use miloschuman\highcharts\Highcharts;
  if (isset($data["agronomicalObjects"])) {
           $series = [];
             foreach($data["agronomicalObjects"] as $agronomicalObjectData) {
-                $series[] = ['name' => $agronomicalObjectData["uri"],
-                             'data' => $agronomicalObjectData["data"]];
+                if (array_key_exists("data", $agronomicalObjectData)) {
+                    $series[] = ['name' => $agronomicalObjectData["uri"],
+                            'data' => $agronomicalObjectData["data"]];
+                }
             }
-            echo Highcharts::widget([
-                'id' => 'test',
-                    'options' => [
-                       'title' => ['text' => $this->params['variables'][$data["variable"]]],
-                       'xAxis' => [
-                          'type' => 'datetime',
-                          'title' => 'Date',
-                       ],
-                       'yAxis' => [
-                          'title' => null,
-                           'labels' => [
-                                'format' => '{value:.2f}'
-                           ]
-                       ],
-                        'series' => $series,
-                        
-                    ]
-                 ]);
+            if (count($series) == 0) {
+                echo "<h4 style='text-align:center'>" . Yii::t('app', 'No result found') . "</h4>";
+            } else {
+                echo Highcharts::widget([
+                    'id' => 'test',
+                        'options' => [
+                           'title' => ['text' => $this->params['variables'][$data["variable"]]],
+                           'xAxis' => [
+                              'type' => 'datetime',
+                              'title' => 'Date',
+                           ],
+                           'yAxis' => [
+                              'title' => null,
+                               'labels' => [
+                                    'format' => '{value:.2f}'
+                               ]
+                           ],
+                            'series' => $series,
+
+                        ]
+                     ]);
+            }
         }
         ?>
          
