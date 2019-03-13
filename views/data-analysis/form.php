@@ -92,38 +92,41 @@ $this->title = Yii::t('app', $appConfiguration[$function]["label"] . " " . $date
     <p class="alert alert-info"> Le résultat de votre script ou les erreurs produites s'afficheront ci-dessous.<p>
         <?php
         // construct graph
-        if (isset($plotConfigurations)) {
-            foreach ($plotConfigurations as $plotConfiguration) {
-                
-            }
-            // SILEX:test test to get config file from R package
-            ?>
+        if (Yii::$app->session->hasFlash("scriptDidNotWork")) {
+            echo Html::tag('pre', Yii::$app->session->getFlash("scriptDidNotWork"));
+        } else {
 
-            <!-- Latest compiled and minified plotly.js JavaScript -->
-            <!--<script src="https://cdn.plot.ly/plotly-1.39.0.min.js"></script>-->
-            <!--<div id="myPlot"></div>-->
-           <!--<script>
-            <?php //  Url::to(["data-analysis/ajax-session-json-file-data",['filename'=>'plotlySchema','sessionId'=> $sessionId]]) ?>
-    //               Plotly.d3.json("<?php // echo $plotConfigurationUrl ?>", function(err, plotSchema) {
-    //////                    // assuming json is formatted as { "data": [/* */], "layout": {/* */} }
-    //                     Plotly.newPlot('myPlot', plotSchema.data,plotSchema.layout);
-    //              });
-           </script>-->
-            <?php foreach ($plotWidgetUrls as $plotWidgetUrl) { ?>
-            <div class="embed-responsive embed-responsive-4by3">
-                <iframe class="embed-responsive-item" src="<?php echo $plotWidgetUrl ?>" allowfullscreen></iframe>
-            </div>
-        <?php } ?>
-    
-        <?php
-        
-        $tabItems = [];
-        $active = true;
-        $itemNumber = 1;
-        // construct grid
-        if (isset($dataGrids)) {
-            foreach ($dataGrids as $dataGrid) {
-                $ajaxColumns = [];
+            if (isset($plotConfigurations)) {
+                foreach ($plotConfigurations as $plotConfiguration) {
+                    
+                }
+                // SILEX:test test to get config file from R package
+                ?>
+
+                <!-- Latest compiled and minified plotly.js JavaScript -->
+                <!--<script src="https://cdn.plot.ly/plotly-1.39.0.min.js"></script>-->
+                <!--<div id="myPlot"></div>-->
+               <!--<script>
+                <?php //  Url::to(["data-analysis/ajax-session-json-file-data",['filename'=>'plotlySchema','sessionId'=> $sessionId]]) ?>
+        //               Plotly.d3.json("<?php // echo $plotConfigurationUrl  ?>", function(err, plotSchema) {
+        //////                    // assuming json is formatted as { "data": [/* */], "layout": {/* */} }
+        //                     Plotly.newPlot('myPlot', plotSchema.data,plotSchema.layout);
+        //              });
+               </script>-->
+                <?php foreach ($plotWidgetUrls as $plotWidgetUrl) { ?>
+                <div class="embed-responsive embed-responsive-4by3">
+                    <iframe class="embed-responsive-item" src="<?php echo $plotWidgetUrl ?>" allowfullscreen></iframe>
+                </div>
+            <?php } ?>
+
+            <?php
+            $tabItems = [];
+            $active = true;
+            $itemNumber = 1;
+            // construct grid
+            if (isset($dataGrids)) {
+                foreach ($dataGrids as $dataGrid) {
+                    $ajaxColumns = [];
                     foreach ($dataGrid["columnNames"] as $value) {
                         $ajaxColumns[] = ["data" => $value];
                     }
@@ -178,10 +181,7 @@ $this->title = Yii::t('app', $appConfiguration[$function]["label"] . " " . $date
                 echo Tabs::widget([
                     'items' => $tabItems
                 ]);
-            }            
-    } else {
-        if (Yii::$app->session->hasFlash("scriptDidNotWork")) {
-            Html::tag('pre', Yii::$app->session->getFlash("scriptDidNotWork"));
+            }
         }
     }
     ?>

@@ -97,6 +97,14 @@ class DataAnalysisController extends \yii\web\Controller {
         // load model data
         if ($model->load(Yii::$app->request->post())) {
             $session = $searchModel->ocpuserver->makeAppCall($rpackage, $function, $model->getAttributesForHTTPClient());
+            $status = $searchModel->ocpuserver->getServerCallStatus()->getStatus();
+            $message = $searchModel->ocpuserver->getServerCallStatus()->getMessage();
+            if($status == 400){
+                Yii::$app->session->setFlash("scriptDidNotWork", $session->getConsole());
+            }
+            if($status == 500){
+                Yii::$app->session->setFlash("scriptDidNotWork", $message);
+            }
 
             $plotConfigurations = [];
             $plotWidgetUrls = [];
@@ -104,7 +112,10 @@ class DataAnalysisController extends \yii\web\Controller {
             // get called function configuration
             $functionConfiguration = $appConfiguration["$function"];
             $this->getDataFromRfunctionCall(
-                    $searchModel, $functionConfiguration, $rpackage, $function, $session, $formParameters, $plotConfigurations, $plotWidgetUrls, $dataGrids);
+                    $searchModel, $functionConfiguration, $rpackage, 
+                    $function, $session, $formParameters, $plotConfigurations,
+                    $plotWidgetUrls, $dataGrids
+                    );
            
             // exportGrid Save parameters
             $exportGridTemporaryParameters = $model->getAttributesForHTTPClient();
