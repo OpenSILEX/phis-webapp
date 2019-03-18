@@ -98,11 +98,16 @@ class DataAnalysisController extends \yii\web\Controller {
         if ($model->load(Yii::$app->request->post())) {
             $session = $searchModel->ocpuserver->makeAppCall($rpackage, $function, $model->getAttributesForHTTPClient());
             $status = $searchModel->ocpuserver->getServerCallStatus()->getStatus();
-            $message = $searchModel->ocpuserver->getServerCallStatus()->getMessage();
-            if($status == 400){
-                Yii::$app->session->setFlash("scriptDidNotWork", $session->getConsole());
-            }
-            if($status == 500){
+            
+             // exportGrid Save parameters
+            $exportGridTemporaryParameters = $model->getAttributesForHTTPClient();
+            unset($exportGridTemporaryParameters["wsUrl"]);
+            unset($exportGridTemporaryParameters["token"]);
+            
+            // error managment
+            $exception = $searchModel->ocpuserver->getServerCallStatus()->getException();
+            if($exception != null){
+                $message = $searchModel->ocpuserver->getServerCallStatus()->getException()->getMessage();
                 Yii::$app->session->setFlash("scriptDidNotWork", $message);
             }
 
@@ -117,10 +122,7 @@ class DataAnalysisController extends \yii\web\Controller {
                     $plotWidgetUrls, $dataGrids
                     );
            
-            // exportGrid Save parameters
-            $exportGridTemporaryParameters = $model->getAttributesForHTTPClient();
-            unset($exportGridTemporaryParameters["wsUrl"]);
-            unset($exportGridTemporaryParameters["token"]);
+           
 
 
             return $this->render('form', [
@@ -133,7 +135,7 @@ class DataAnalysisController extends \yii\web\Controller {
                         'plotConfigurations' => $plotConfigurations,
                         'plotWidgetUrls' => $plotWidgetUrls,
                         'dataGrids' => $dataGrids,
-                        'exportGridParameters' => 'Search parameters' . json_encode($exportGridTemporaryParameters)
+                        'exportGridParameters' =>  json_encode($exportGridTemporaryParameters, JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT)
             ]);
         } else {
             return $this->render('form', [

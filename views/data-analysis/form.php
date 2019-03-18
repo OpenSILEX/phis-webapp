@@ -89,13 +89,20 @@ $this->title = Yii::t('app', $appConfiguration[$function]["label"] . " " . $date
     <?php
     ActiveForm::end();
     ?>
-    <p class="alert alert-info"> Le résultat de votre script ou les erreurs produites s'afficheront ci-dessous.<p>
         <?php
-        // construct graph
+        // export searched paramaters
+        if(isset($exportGridParameters)){
+            echo Html::tag('p', 'Search parameters',["class" => "alert alert-warning"]);
+            echo Html::tag('pre', $exportGridParameters);
+        }
+        // errors
         if (Yii::$app->session->hasFlash("scriptDidNotWork")) {
+            echo Html::tag('p', 'Errors',["class" => "alert alert-danger"]);
             echo Html::tag('pre', Yii::$app->session->getFlash("scriptDidNotWork"));
         } else {
+        echo Html::tag('p', 'Results',["class" => "alert alert-success"]);
 
+            // construct graph(s)
             if (isset($plotConfigurations)) {
                 foreach ($plotConfigurations as $plotConfiguration) {
                     
@@ -130,25 +137,25 @@ $this->title = Yii::t('app', $appConfiguration[$function]["label"] . " " . $date
                     foreach ($dataGrid["columnNames"] as $value) {
                         $ajaxColumns[] = ["data" => $value];
                     }
-
-                    $dt = DataTable::widget([
+                    $gridSearchedParameters ='Search parameters ' . $exportGridParameters;
+                    $dt = DataTable::widget([ 
                                 'dom' => 'Bfrtip',
                                 'buttons' => [
                                     [
                                         'extend' => 'copyHtml5',
-                                        'messageTop' => $exportGridParameters
+                                        'messageTop' => $gridSearchedParameters
                                     ],
                                     [
                                         'extend' => 'csvHtml5',
-                                        'messageTop' => $exportGridParameters
+                                        'messageTop' => $gridSearchedParameters
                                     ],
                                     [
                                         'extend' => 'pdfHtml5',
-                                        'messageTop' => $exportGridParameters
+                                        'messageTop' => $gridSearchedParameters
                                     ],
                                     [
                                         'extend' => 'excelHtml5',
-                                        'messageTop' => $exportGridParameters
+                                        'messageTop' => $gridSearchedParameters
                                     ],
                                 ],
                                 "ajax" => [
