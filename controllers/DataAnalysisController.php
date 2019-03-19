@@ -25,6 +25,8 @@ include_once '../config/web_services.php';
  */
 class DataAnalysisController extends \yii\web\Controller {
 
+    const INTEGRATED_FUNCTIONS = "integratedFunctions";
+    const FORM_PARAMETERS = "formParameters";
     /**
      * define the behaviors
      * @return array
@@ -41,7 +43,7 @@ class DataAnalysisController extends \yii\web\Controller {
     }
 
     /**
-     * List all Apps
+     * List all R apps
      * @return mixed
      */
     public function actionIndex($integrated = false) {
@@ -77,29 +79,31 @@ class DataAnalysisController extends \yii\web\Controller {
         $searchModel = new DataAnalysisAppSearch();
         $appConfiguration = $searchModel->getAppConfiguration($rpackage);
 
-        if (!isset($appConfiguration[$function])) {
+        if (!isset($appConfiguration[self::INTEGRATED_FUNCTIONS][$function])) {
             Yii::$app->session->setFlash('scriptNotAvailable');
             return $this->redirect(['data-analysis/index', 'integrated' => true]);
         }
 
         // get yii2 form information
-        $formParameters = $appConfiguration["$function"]["formParameters"];
-
+        $inputParameters = $appConfiguration[self::INTEGRATED_FUNCTIONS][$function][self::FORM_PARAMETERS];
         // get form parameters keys
-        $parameters = array_keys($formParameters);
+        $parameters = array_keys($inputParameters);
         // get data from R function (special values like varaibles lists)
-        $parametersValues = $this->fillParametersFromR($searchModel, $formParameters, $rpackage);
+        $valueParameters = $this->fillParametersFromR($searchModel, $inputParameters, $rpackage);
 
         // fill model
-        $model = new DataAnalysisApp($parameters, [], $formParameters);
+        $model = new DataAnalysisApp($parameters, [], $inputParameters);
         $model->token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         $model->wsUrl = WS_PHIS_PATH;
+        
+        $functionConfiguration = $appConfiguration[self::INTEGRATED_FUNCTIONS][$function];
+        
+        
         // load model data
         if ($model->load(Yii::$app->request->post())) {
             $session = $searchModel->ocpuserver->makeAppCall($rpackage, $function, $model->getAttributesForHTTPClient());
-            $status = $searchModel->ocpuserver->getServerCallStatus()->getStatus();
-            
-             // exportGrid Save parameters
+
+            // exportGrid Save parameters
             $exportGridTemporaryParameters = $model->getAttributesForHTTPClient();
             unset($exportGridTemporaryParameters["wsUrl"]);
             unset($exportGridTemporaryParameters["token"]);
@@ -107,7 +111,7 @@ class DataAnalysisController extends \yii\web\Controller {
             // error managment
             $exception = $searchModel->ocpuserver->getServerCallStatus()->getException();
             if($exception != null){
-                $message = $searchModel->ocpuserver->getServerCallStatus()->getException()->getMessage();
+                $message = $exception->getMessage();
                 Yii::$app->session->setFlash("scriptDidNotWork", $message);
             }
 
@@ -115,23 +119,21 @@ class DataAnalysisController extends \yii\web\Controller {
             $plotWidgetUrls = [];
             $dataGrids = [];
             // get called function configuration
-            $functionConfiguration = $appConfiguration["$function"];
+            
             $this->getDataFromRfunctionCall(
-                    $searchModel, $functionConfiguration, $rpackage, 
-                    $function, $session, $formParameters, $plotConfigurations,
+                    $searchModel, $functionConfiguration, $rpackage,
+                    $session, $inputParameters, $plotConfigurations, 
                     $plotWidgetUrls, $dataGrids
-                    );
-           
-           
-
+                    );           
 
             return $this->render('form', [
                         'rpackage' => $rpackage,
                         'function' => $function,
                         'model' => $model,
-                        'parameters' => $formParameters,
-                        'parametersValues' => $parametersValues,
+                        'inputParameters' => $inputParameters,
+                        'valueParameters' => $valueParameters,
                         'appConfiguration' => $appConfiguration,
+                        'functionConfiguration' => $functionConfiguration,
                         'plotConfigurations' => $plotConfigurations,
                         'plotWidgetUrls' => $plotWidgetUrls,
                         'dataGrids' => $dataGrids,
@@ -142,13 +144,20 @@ class DataAnalysisController extends \yii\web\Controller {
                         'rpackage' => $rpackage,
                         'function' => $function,
                         'model' => $model,
-                        'parameters' => $formParameters,
-                        'parametersValues' => $parametersValues,
+                        'inputParameters' => $inputParameters,
+                        'valueParameters' => $valueParameters,
+                        'functionConfiguration' => $functionConfiguration,
                         'appConfiguration' => $appConfiguration
             ]);
         }
     }
 
+    /**
+     * Retreive json data array from a specific opencpu session
+     * @param string $sessionId opencpu session Id
+     * @param string $filename json file name
+     * @return array
+     */
     public function actionAjaxSessionJsonFileData($sessionId, $filename) {
         if (Yii::$app->request->isAjax) {
             $searchModel = new DataAnalysisAppSearch();
@@ -177,7 +186,11 @@ class DataAnalysisController extends \yii\web\Controller {
         }
         
     }
-
+    
+    /**
+     * Show standalone R app
+     * @return type
+     */
     public function actionView() {
         $searchParams = Yii::$app->request->queryParams;
         return $this->render('iframe-view', [
@@ -188,45 +201,44 @@ class DataAnalysisController extends \yii\web\Controller {
     }
 
     /**
-     * 
+     * Get values from executed function
      * @param DataAnalysisAppSearch $searchModel
      * @param array $parameters
      * @return array
      */
     private function fillParametersFromR($searchModel, $parameters, $appName) {
-        $parametersValues = [];
+        $valueParameters = [];
         $rcallParameters = [];
         $rcallParameters["token"] = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         $rcallParameters["wsUrl"] = WS_PHIS_PATH;
         foreach ($parameters as $key => $parameterOptions) {
             if (array_key_exists("RfunctionValues", $parameterOptions)) {
                 $session = $searchModel->ocpuserver->makeAppCall($appName, $parameterOptions["RfunctionValues"], $rcallParameters);
-                $parametersValues[$key] = $session->getVal($session::OPENCPU_SESSION_JSON_FORMAT);
-                // special case for listVariables
-                $tmp_array = [];
-                foreach ($parametersValues[$key] as $value) {
-                    $tmp_array[$value["value"]] = $value["name"];
+                if($session != null){
+                    $valueParameters[$key] = $session->getVal($session::OPENCPU_SESSION_JSON_FORMAT);
+                    $tmp_array = [];
+                    foreach ($valueParameters[$key] as $value) {
+                        $tmp_array[$value["uri"]] = $value["label"];
+                    }
+                    $valueParameters[$key] = $tmp_array;
                 }
-                $parametersValues[$key] = $tmp_array;
-                // \\ special case for listVariables
             }
         }
-        return $parametersValues;
+        return $valueParameters;
     }
 
     /**
-     * 
-     * @param type $searchModel
-     * @param type $functionConfiguration
-     * @param type $rpackage
-     * @param type $function
-     * @param type $session
-     * @param type $formParameters
-     * @param type $plotConfigurations
-     * @param type $plotWidgetUrls
-     * @param type $dataGrids
+     * Retreive data, create plot and data grid 
+     * @param DataAnalysisAppSearch $searchModel 
+     * @param array $functionConfiguration function configuration
+     * @param string $rpackage r package
+     * @param \openSILEX\opencpuClientPHP\classes\OCPUSession $session opencpu session
+     * @param array $inputParameters form input parameters
+     * @param array $plotConfigurations plot configuration
+     * @param array $plotWidgetUrls plot widget generated
+     * @param array $dataGrids data grid
      */
-    private function getDataFromRfunctionCall($searchModel, $functionConfiguration, $rpackage, $function, $session, $formParameters, &$plotConfigurations, &$plotWidgetUrls, &$dataGrids) {
+    private function getDataFromRfunctionCall($searchModel, $functionConfiguration, $rpackage, $session, $inputParameters, &$plotConfigurations, &$plotWidgetUrls, &$dataGrids) {
         // error
         if ($searchModel->ocpuserver->getServerCallStatus()->getStatus() != 200) {
             $errorMessage = $searchModel->ocpuserver->getServerCallStatus()->getMessage();
@@ -235,11 +247,11 @@ class DataAnalysisController extends \yii\web\Controller {
             // graphic or grid function
             if ($functionConfiguration["type"] === "graphic") {
                 $plotConfigurations[] = $session->getExistingFileUrl("plotlySchema", $session::OPENCPU_SESSION_FILE_JSON_FORMAT);
-                $plotWidgetUrls[] = $session->getExistingFileUrl($function . "Widget.html");
+                $plotWidgetUrls[] = $session->getExistingFileUrl("plotWidget.html");
                 // graphic or grid function    
                 if (isset($functionConfiguration["linkedFunctions"])) {
                     foreach ($functionConfiguration["linkedFunctions"] as $linkedFunction => $linkedFunctionParameters) {
-                        $linkedModel = new DataAnalysisApp($linkedFunctionParameters["parameters"], [], $formParameters);
+                        $linkedModel = new DataAnalysisApp($linkedFunctionParameters["parameters"], [], $inputParameters);
                         $linkedModel->load(Yii::$app->request->post());
                         $linkedFunctionsSession = $searchModel->ocpuserver->makeAppCall($rpackage, $linkedFunctionParameters["name"], $linkedModel->getAttributesForHTTPClient());
                         if ($linkedFunctionParameters["type"] === "grid") {
@@ -253,7 +265,7 @@ class DataAnalysisController extends \yii\web\Controller {
                         }
                         if ($linkedFunctionParameters["type"] === "graphic") {
                             $plotConfigurations[] = $linkedFunctionsSession->getExistingFileUrl("plotlySchema", $session::OPENCPU_SESSION_FILE_JSON_FORMAT);
-                            $plotWidgetUrls[] = $linkedFunctionsSession->getExistingFileUrl($linkedFunction . "Widget.html");
+                            $plotWidgetUrls[] = $linkedFunctionsSession->getExistingFileUrl("plotWidget.html");
                         }
                     }
                 }

@@ -9,7 +9,6 @@
 //******************************************************************************
 
 use yii\helpers\Html;
-use yii\helpers\Markdown;
 use yii\helpers\Url;
 use app\models\yiiModels\DataAnalysisAppSearch;
 
@@ -22,7 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
 if (Yii::$app->session->hasFlash('scriptNotAvailable')){ ?>
     <p class="alert alert-danger">Script not available</p>
 <?php 
-    Yii::$app->session->removeFlash("scriptNotAvailable");
 }
 ?>
 
@@ -35,7 +33,7 @@ if (Yii::$app->session->hasFlash('scriptNotAvailable')){ ?>
                         <?= Html::img($appInfo[DataAnalysisAppSearch::VIGNETTE_IMAGE], ["class" => "img-responsive", "alt" => $appInfo[DataAnalysisAppSearch::APP_SHORT_NAME]]) ?>
                     </a>
                     <center>
-                        <?= Markdown::process($appInfo[DataAnalysisAppSearch::FUNCTION_HELP]) ?>
+                        <?= Html::tag("strong", $appInfo[DataAnalysisAppSearch::FUNCTION_HELP])?>
                     </center>
                 </div>
             </div>
