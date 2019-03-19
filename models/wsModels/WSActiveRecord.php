@@ -14,11 +14,13 @@ namespace app\models\wsModels;
  * Based on the Yii Active Record of relational databases
  * See Yii2 ActiveRecord documentation for more details
  * @see http://www.yiiframework.com/doc-2.0/guide-db-active-record.html
+ * @update [Arnaud Charleroy] 14 September, 2018: Fix totalCount attribute when only 
+ * one element is returned 
+ * @update [Morgane Vidal] 6 November, 2018: Add the management of the page number 
+ * and the page size to send to the web service.
+ * @update [Morgane Vidal] 19 March, 2019: Add generic function to transform a JSON
+ * object into an array
  * @author Morgane Vidal <morgane.vidal@inra.fr>
- * @update [Arnaud Charleroy] 14 September, 2018 : Fix totalCount attribute when only 
- *                                                 one element is returned 
- * @update [Morgane Vidal] 6 November, 2018 : Add the management of the page number 
- *                                            and the page size to send to the web service.
  */
 abstract class WSActiveRecord extends \yii\base\Model {
     
@@ -30,26 +32,31 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @var WSModel
      */
     protected $wsModel;
+    
     /**
      * the number of results to print per page
      * @var string
      */
     public $pageSize;
+    
     /**
      * the number of the page wanted
      * @var string
      */
     public $page;
+    
     /**
      * the total number of pages (given by the web service)
      * @var string
      */
     public $totalPages;
+    
     /**
      * the total number of data (given by the web service)
      * @var string
      */
     public $totalCount;
+    
     /**
      * true if the element is a new record, else false
      * @var boolean 
@@ -57,7 +64,6 @@ abstract class WSActiveRecord extends \yii\base\Model {
     public $isNewRecord;
     
     /**
-     * 
      * @param string $sessionToken the user session token
      * @param Array $attributes list of objects to send to the web service to 
      *                          be recorded. It is a key => value array. The key
@@ -77,7 +83,6 @@ abstract class WSActiveRecord extends \yii\base\Model {
     }
     
     /**
-     * 
      * @param string $sessionToken the user session token
      * @param array $attributes list of objects to send to the web service to 
      *                          be recorded. It is a key => value array. The key
@@ -96,7 +101,6 @@ abstract class WSActiveRecord extends \yii\base\Model {
     }
     
     /**
-     * 
      * @param string $sessionToken the user session token
      * @param array $attributes the search params. It is a key => value array. The key
      *                          is the name of the field.
@@ -127,7 +131,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
     }
     
     /**
-     * Create an array representing the image metadata
+     * Creates an array representing search parameters about pagination
      * Used for the web service for example
      * @return array with the attributes. 
      */
@@ -140,8 +144,24 @@ abstract class WSActiveRecord extends \yii\base\Model {
     }
     
     /**
-     * allows to fill the attributes with the informations in the array given 
+     * Allows to fill the attributes with the information in the array given 
      * @param array $array array key => value which contains the metadata of an image
      */
     abstract protected function arrayToAttributes($array);
+    
+
+    /**
+     * Transforms a JSON object into an array
+     * @param json jsonList
+     * @return array
+     */
+    protected static function jsonListOfArraysToArray($jsonList) {
+        $toReturn = [];
+        if ($jsonList !== null) {
+            foreach ($jsonList as $value) {
+                $toReturn[] = $value;
+            }
+        }
+        return $toReturn;
+    }
 }

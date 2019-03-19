@@ -76,21 +76,6 @@ class AnnotationSearch extends YiiAnnotationModel {
     }
 
     /**
-     * transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = [];
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        }
-        return $toReturn;
-    }
-
-    /**
      * Override inherited method in order to send the right target label parameters name 
      * to the webService
      * @return array

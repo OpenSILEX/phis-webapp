@@ -78,19 +78,4 @@ class MethodSearch extends YiiMethodModel {
             ]);
         }
     }
-    
-    /**
-     * transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = []; 
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        } 
-        return $toReturn;
-    }
 }
