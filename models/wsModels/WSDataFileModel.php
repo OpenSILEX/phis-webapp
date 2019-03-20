@@ -1,24 +1,18 @@
 <?php
-
-//**********************************************************************************************
-//                                       WSImageModel.php
-//
-// Author(s): Morgane Vidal
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 3 janv. 2018
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  3 janv. 2018
-// Subject: corresponds to the images service - extends WSModel
-//***********************************************************************************************
-
+//******************************************************************************
+//                               WSDataFileModel.php
+// PHIS-SILEX
+// Copyright © INRA 2019
+// Creation date: 20 mars 2019
+// Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************
 namespace app\models\wsModels;
 
 include_once '../config/web_services.php';
 
 /**
  * Allows the acces to the images service
- * @author Morgane Vidal <morgane.vidal@inra.fr>
+ * @author Vincent Migot <vincent.migot@inra.fr>
  */
 class WSDataFileModel extends \openSILEX\guzzleClientPHP\WSModel {
     
