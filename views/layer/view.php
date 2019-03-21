@@ -268,40 +268,38 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                 $.each(data, function(key, input) {
                     searchFormData.append(input.name, input.value); 
                 });
-                var plots = "";
+                var hasPlotSelected = false;
                 if (typeof selectedPlots !== 'undefined') {
                     for (var i = 0; i < selectedPlots.length; i++) {
-                        plots += selectedPlots[i][0];
-                        if (i < selectedPlots.length-1) {
-                            plots += ",";
-                        } 
+                        searchFormData.append("concernedItems[]", selectedPlots[i][0]);
+                        hasPlotSelected = true;
                     }
+                } 
+                
+                if (!hasPlotSelected) {
+                    alert("You must select at least one plot before searching for images");
                 } else {
-                    plots = null;
+                    $.ajax({
+                        url: '<?php echo Url::to(['image/search-from-layer']) ?>', 
+                        type: 'POST',
+                        processData: false,
+                        datatype: 'json',
+                        contentType: false,
+                        data: searchFormData 
+                    }) 
+                    .done(function (data) {
+                        //SILEX:todo
+                        //gestion messages d'erreur
+                        //\SILEX:todo
+                        $('#visualization-images').html(data);
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        //SILEX:todo
+                        //gestion messages d'erreur
+                        //\SILEX:todo
+                        alert("ERROR : " + jqXHR);
+                    });
                 }
-                
-                searchFormData.append("concernedItems", plots);
-                
-                $.ajax({
-                    url: '<?php echo Url::to(['image/search-from-layer']) ?>', 
-                    type: 'POST',
-                    processData: false,
-                    datatype: 'json',
-                    contentType: false,
-                    data: searchFormData 
-                 }) 
-                   .done(function (data) {
-                     //SILEX:todo
-                     //gestion messages d'erreur
-                     //\SILEX:todo
-                     $('#visualization-images').html(data);
-                  })
-                  .fail(function (jqXHR, textStatus) {
-                     //SILEX:todo
-                     //gestion messages d'erreur
-                     //\SILEX:todo
-                     alert("ERROR : " + jqXHR);
-                  });
             });
             
     </script>    
