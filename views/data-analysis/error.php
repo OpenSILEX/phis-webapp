@@ -15,11 +15,11 @@ use kartik\icons\Icon;
 $this->title = Yii::t('app', '{n, plural, =1{Stat/Vizu Application} other{Stat/Vizu Applications}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
 if(!isset($message)){
-    $message = 'No application available.';
+    $message = 'An error has occurred';
 }
 
 
-echo Html::tag("h3",
+echo Html::tag("h4",
     Icon::show('window-close-o', ['class' => 'fab fa-large'], Icon::FA) . $message,
-    ["class" => "alert alert-warning col-sm-6 col-md-5 col-md-offset-3 text-center"]
+    ["class" => "alert alert-warning col-sm-5 col-md-4 col-md-offset-3 text-center"]
 );

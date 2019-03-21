@@ -14,12 +14,15 @@ use kartik\icons\Icon;
 
 $this->title = Yii::t('app', '{n, plural, =1{Stat/Vizu Application} other{Stat/Vizu Applications}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
-
-echo Html::tag('h3',
+echo Html::beginTag('div', ['class' => 'row']);
+echo Html::tag('h5',
         Icon::show('flask', ['class' => 'fa-large'], Icon::FA). "Experimental version - Beta test ",
-        ['class' => ' alert alert-warning']
+        ['class' => ' alert alert-info col-sm-4 col-md-3']
         );
+echo Html::endTag('div');
 
+echo Html::beginTag('div', ['class' => 'row']);
 echo Html::beginTag('div', ['class' => 'embed-responsive embed-responsive-4by3', 'style'=> 'overflow: hidden']);
 echo Html::tag('iframe', "",['class' => 'embed-responsive-item', 'src' => $appUrl,'allowfullscreen' => true]);
+echo Html::endTag('div');
 echo Html::endTag('div');
