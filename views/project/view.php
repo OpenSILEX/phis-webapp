@@ -171,11 +171,12 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
     
     <!-- Sensor events -->
-    <?= EventGridViewWidget::widget(
-            [
-                 EventGridViewWidget::EVENTS => ${ProjectController::EVENTS}
-            ]
-        ); 
+    <?php
+//        echo EventGridViewWidget::widget(
+//            [
+//                 EventGridViewWidget::EVENTS => ${ProjectController::EVENTS}
+//            ]
+//        ); 
     ?>
     
     <!-- Project linked Annotation-->
