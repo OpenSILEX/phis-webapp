@@ -13,6 +13,7 @@ use yii\helpers\Html;
 use Yii;
 use kartik\icons\Icon;
 use app\models\yiiModels\EventPost;
+use yii\helpers\Url;
 
 /**
  * A widget used to generate an event button
@@ -57,6 +58,7 @@ class EventButtonWidget extends Widget {
             [
                 'event/create',
                 EventPost::CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
+                EventPost::RETURN_URL => Url::current()
             ], 
             [
                 'class' => 'btn btn-default',
