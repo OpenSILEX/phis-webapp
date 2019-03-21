@@ -60,7 +60,11 @@ class AnnotationController extends Controller {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 $annotationModel->uri = $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
-                return $this->redirect(['view', 'id' => $annotationModel->uri]);
+                if ($annotationModel->returnUrl) {
+                    $this->redirect($annotationModel->returnUrl);
+                } else {
+                    return $this->redirect(['view', 'id' => $annotationModel->uri]);
+                }
             }
         } else {
             return $this->render('create', 
