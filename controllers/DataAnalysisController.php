@@ -53,15 +53,49 @@ class DataAnalysisController extends \yii\web\Controller {
         $searchParams = Yii::$app->request->queryParams;
 
         $searchResult = $searchModel->search($searchParams);
+        if (empty($searchResult)) {
+            return $this->render('error', [
+                        'message' => 'No application available.'
+            ]);
+        } else {
+            return $this->render('index', [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $searchResult,
+                        'integrated' => $integrated
+                            ]
+            );
+        }
+    }
 
-        return $this->render('index', [
-                    'searchModel' => $searchModel,
-                    'dataProvider' => $searchResult,
-                    'integrated' => $integrated
+    /**
+     * Show standalone Demo R app
+     * @return type
+     */
+    public function actionViewDemo() {
+        $searchModel = new DataAnalysisAppSearch();
+        $appDemoInformation = $searchModel->getAppDemoInformation();
+        if (!empty($appDemoInformation)) {
+            $this->redirect($appDemoInformation[DataAnalysisAppSearch::APP_INDEX_HREF]);
+        } else {
+            return $this->render('error', [
+                        'message' => 'Demo application not available.'
+            ]);
+        }
+    }
+
+    /**
+     * Show standalone Demo R app
+     * @return type
+     */
+    public function actionView() {
+        $searchParams = Yii::$app->request->queryParams;
+        return $this->render('iframe-view', [
+                    'appUrl' => $searchParams["url"],
+                    'appName' => $searchParams["name"]
                         ]
         );
     }
-
+    
     /**
      * Run specific rpackage function
      * @param type $rpackage
@@ -126,7 +160,7 @@ class DataAnalysisController extends \yii\web\Controller {
                     $plotWidgetUrls, $dataGrids
                     );           
 
-            return $this->render('form', [
+            return $this->render('run-script', [
                         'rpackage' => $rpackage,
                         'function' => $function,
                         'model' => $model,
@@ -140,7 +174,7 @@ class DataAnalysisController extends \yii\web\Controller {
                         'exportGridParameters' =>  json_encode($exportGridTemporaryParameters, JSON_UNESCAPED_SLASHES|JSON_PRETTY_PRINT)
             ]);
         } else {
-            return $this->render('form', [
+            return $this->render('run-script', [
                         'rpackage' => $rpackage,
                         'function' => $function,
                         'model' => $model,
@@ -186,19 +220,7 @@ class DataAnalysisController extends \yii\web\Controller {
         }
         
     }
-    
-    /**
-     * Show standalone R app
-     * @return type
-     */
-    public function actionView() {
-        $searchParams = Yii::$app->request->queryParams;
-        return $this->render('iframe-view', [
-                    'appUrl' => $searchParams["url"],
-                    'appName' => $searchParams["name"]
-                        ]
-        );
-    }
+
 
     /**
      * Get values from executed function

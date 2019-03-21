@@ -1,7 +1,7 @@
 <?php
 
 //******************************************************************************
-//                                 iframe-view.php
+//                                 error.php
 // PHIS-SILEX
 // Copyright © INRA 2018
 // Creation date: 21 feb. 2019
@@ -14,12 +14,12 @@ use kartik\icons\Icon;
 
 $this->title = Yii::t('app', '{n, plural, =1{Stat/Vizu Application} other{Stat/Vizu Applications}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
+if(!isset($message)){
+    $message = 'No application available.';
+}
 
-echo Html::tag('h3',
-        Icon::show('flask', ['class' => 'fa-large'], Icon::FA). "Experimental version - Beta test ",
-        ['class' => ' alert alert-warning']
-        );
 
-echo Html::beginTag('div', ['class' => 'embed-responsive embed-responsive-4by3', 'style'=> 'overflow: hidden']);
-echo Html::tag('iframe', "",['class' => 'embed-responsive-item', 'src' => $appUrl,'allowfullscreen' => true]);
-echo Html::endTag('div');
+echo Html::tag("h3",
+    Icon::show('window-close-o', ['class' => 'fab fa-large'], Icon::FA) . $message,
+    ["class" => "alert alert-warning col-sm-6 col-md-5 col-md-offset-3 text-center"]
+);
