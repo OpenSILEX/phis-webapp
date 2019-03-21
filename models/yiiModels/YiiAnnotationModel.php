@@ -91,6 +91,10 @@ class YiiAnnotationModel extends WSActiveRecord {
     const TARGETS_LABEL = "Targets";
     const TARGET_SEARCH_LABEL = "target";
 
+    /**
+     * The return url after annotation creation
+     * @var string 
+     */
     public $returnUrl;
     const RETURN_URL = "returnUrl";
         
