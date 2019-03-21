@@ -1,24 +1,27 @@
 <?php
-
 //******************************************************************************
-//                                       view.php
+//                                  view.php
 // SILEX-PHIS
 // Copyright © INRA 2018
 // Creation date: 01 Oct, 2018
 // Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
 use app\controllers\RadiometricTargetController;
 use yii\grid\GridView;
 use yii\widgets\DetailView;
 use yii\helpers\Html;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiRadiometricTargetModel */
-/* @var $dataDocumentsProvider yii\data\DataProviderInterface */
-/* @var $radiometricTargetAnnotations yii\data\DataProviderInterface */
+/**
+ * @var $this yii\web\View
+ * @var $model app\models\YiiRadiometricTargetModel
+ * @var $dataDocumentsProvider yii\data\DataProviderInterface
+ * @var $radiometricTargetAnnotations yii\data\DataProviderInterface
+ * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
+ */
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 'url' => ['index']];
@@ -30,9 +33,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php if (Yii::$app->session['isAdmin']) { ?>
-               <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
-               <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]) ?>
-               <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label, 'concernedItemRdfType' => Yii::$app->params["RadiometricTarget"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+            <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
+            <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
+            <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]) ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label, 'concernedItemRdfType' => Yii::$app->params["RadiometricTarget"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
         <?php } ?>
     </p>
     
@@ -113,7 +117,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => $attributes
     ]); ?>
     
-    <!-- Radiometric target  linked Annotation-->
+    <!-- Radiometric target events -->
+    <?= EventGridViewWidget::widget(
+            [
+                 EventGridViewWidget::EVENTS => ${RadiometricTargetController::EVENTS_DATA}
+            ]
+        ); 
+    ?>
+    
+    <!-- Radiometric target linked Annotations -->
     <?=
     AnnotationGridViewWidget::widget(
             [

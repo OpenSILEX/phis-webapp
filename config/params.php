@@ -1,19 +1,27 @@
 <?php
 
 return [
+    // Global
     'platform' => 'Demo',
-    'standardDateTimeFormat' => 'Y-m-dTH:i:sZ',
-    'standardDateTimeFormatPhp' => 'Y-m-d H:i:sP',
-    'dateRangeSeparator' => ' - ',
-    'numberOfConcernedItemsToDisplayInEventIndex' => 3,
     'isDemo' => false,
     'demoLogin' => 'guest@opensilex.org',
     'demoPassword' => 'guest',
     'opensilex-webapp-type' => 'opensilex', //'opensilex' or 'phis' (used to adapt the view)
+    'dateTimeFormatPhp' => 'Y-m-d H:i:sP',
     //SILEX:info
     //this param should be removed when the new version of data will be used instead of Dataset
     'baseURI' => 'http://www.opensilex.org/demo/',
     //\SILEX:info
+    
+    // Forms
+    'dateTimeFormatDateTimeRangePickerStandard' => 'Y-m-dTH:i:sZ',
+    'dateTimeFormatDateTimePickerUserFriendly' => 'yyyy-mm-dd HH:ii:ss',
+    'dateRangeSeparator' => ' - ',
+    'textAreaRowsNumber' => 6,
+    
+    // Event
+    'eventIndexNumberOfConcernedItemsToDisplay' => 3,
+    'eventWidgetPageSize' => 5,
     
     //ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts

@@ -13,13 +13,17 @@ use yii\grid\GridView;
 use app\controllers\InfrastructureController;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
-use app\components\widgets\PropertiesWidget;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\PropertyWidget;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiInfrastructureModel */
-/* @var $dataDocumentsProvider yii\data\DataProviderInterface */
-/* @update [Arnaud Charleroy] 28 August, 2018 : adding annotation linked to this infrastructure model */
-/* @update [Vincent Migot] 20 Sept, 2018: implement view details from service
+/** 
+ * @update [Arnaud Charleroy] 28 August, 2018: adding annotation linked to this infrastructure model
+ * @update [Vincent Migot] 20 Sept, 2018: implement view details from service
+ * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
+ * @var $this yii\web\View
+ * @var $model app\models\YiiInfrastructureModel
+ * @var $dataDocumentsProvider yii\data\DataProviderInterface
  */
 
 $this->title = $model->label;
@@ -34,14 +38,16 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
         if (Yii::$app->session['isAdmin']) {
             echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label, 'concernedItemRdfType' => Yii::$app->params["Installation"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
+            echo EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]);
             echo AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);
         }
         ?>
     </p>
     <!-- Infrastructure properties detail-->
     <?=
-    PropertiesWidget::widget([
+    PropertyWidget::widget([
         'uri' => $model->uri,
+        'isUriRequired' => true,
         'properties' => $model->properties,
         'aliasProperty' =>  Yii::$app->params["rdfsLabel"],
         'relationOrder' => [
@@ -50,6 +56,14 @@ $this->params['breadcrumbs'][] = $this->title;
             Yii::$app->params["hasPart"],
         ]
     ]);
+    ?>
+    
+    <!-- Sensor events -->
+    <?= EventGridViewWidget::widget(
+            [
+                 EventGridViewWidget::EVENTS => ${InfrastructureController::EVENTS_DATA}
+            ]
+        ); 
     ?>
 
     <!-- Infrastructure linked Annotation-->

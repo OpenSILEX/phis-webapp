@@ -35,10 +35,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             [
-                'label' => YiiAnnotationModel::COMMENTS_LABEL,
-                'attribute' => YiiAnnotationModel::COMMENTS,
+                'label' => YiiAnnotationModel::BODY_VALUES_LABEL,
+                'attribute' => YiiAnnotationModel::BODY_VALUES,
                 'value' => function ($model) {
-                    return implode(('<br>,'), $model->comments);
+                    return implode(('<br>,'), $model->bodyValues);
                 }
             ],
             YiiAnnotationModel::CREATOR =>

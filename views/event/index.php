@@ -30,10 +30,10 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
-                'attribute' => 'type',
+                'attribute' => 'rdfType',
                 'format' => 'raw',
                 'value' => function($model) {
-                    $typeLabel = explode('#', $model->type)[1];
+                    $typeLabel = explode('#', $model->rdfType)[1];
                     return $typeLabel;
                 },
                 'filter' => false
@@ -49,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             $concernedItemLabels .= "<br/>";
                         }
 
-                        if ($currentConcernedItemNumber == Yii::$app->params['numberOfConcernedItemsToDisplayInEventIndex'])
+                        if ($currentConcernedItemNumber == Yii::$app->params['eventIndexNumberOfConcernedItemsToDisplay'])
                         {
                             $concernedItemLabels .= "...";
                             break;
@@ -75,10 +75,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         'autoclose'=>true,
                         'timePicker'=>true,
                         'timePickerIncrement'=>15,
-                        'locale'=>['format'=> Yii::$app->params['standardDateTimeFormat']]
+                        'locale'=>['format'=> Yii::$app->params['dateTimeFormatDateTimeRangePickerStandard']]
                     ]                            
                 ])
-            ]
+            ],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view}',
+                'buttons' => [
+                    'view' => function($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
+                                        ['event/view', 'id' => $model->uri]); 
+                    },
+                ]
+            ],
         ]
     ]); ?>
 </div>

@@ -1,29 +1,32 @@
 <?php
 
 //******************************************************************************
-//                           view.php
+//                                   view.php
 // SILEX-PHIS
 // Copyright © INRA 2018
 // Creation date: 6 Apr, 2017
 // Contact: morgane.vidal@inra.fr, arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
 use app\components\widgets\LinkObjectsWidget;
 use app\controllers\SensorController;
 use yii\grid\GridView;
 use yii\helpers\Url;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiSensorModel */
-/* @var $dataSearchModel app\models\yiiModels\SensorDataSearch */
-/* @var $variables array */
-/* Implements the view page for a sensor */
-/* @update [Arnaud Charleroy] 22 august, 2018 (add annotation functionality) */
-
+/**
+ * Implements the view page for a sensor
+ * @update [Arnaud Charleroy] 22 August, 2018: add annotation functionality
+ * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
+ * @var $this yii\web\View
+ * @var $model app\models\YiiSensorModel
+ * @var $dataSearchModel app\models\yiiModels\SensorDataSearch
+ * @var $variables array
+ */
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -57,6 +60,7 @@ foreach ($model->properties as $property) {
         if (Yii::$app->session['isAdmin']) { ?>
             <?= Html::a(Yii::t('app', 'Characterize Sensor'), ['characterize', 'sensorUri' => $model->uri], ['class' => 'btn btn-success']); ?>
             <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+            <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
             <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
             <?php
         }
@@ -151,6 +155,14 @@ foreach ($model->properties as $property) {
         'model' => $dataSearchModel,
         'variables' => $model->variables
     ]) ?>
+    
+    <!-- Sensor events -->
+    <?= EventGridViewWidget::widget(
+            [
+                 EventGridViewWidget::EVENTS => ${SensorController::EVENTS_DATA}
+            ]
+        ); 
+    ?>
     
     <!-- Sensor linked Annotation-->
     <?= AnnotationGridViewWidget::widget(

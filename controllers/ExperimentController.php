@@ -1,17 +1,11 @@
 <?php
-
-//**********************************************************************************************
-//                                       ExperimentController.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
+//******************************************************************************
+//                           ExperimentController.php 
+// SILEX-PHIS
+// Copyright © INRA 2017
 // Creation date: February 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  October, 31 2017 : passage de Trial à Experiment
-// Subject: implements the CRUD actions for Ws Experiment model
-//***********************************************************************************************
-
+// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.f
+//******************************************************************************
 namespace app\controllers;
 
 use Yii;
@@ -25,16 +19,23 @@ use app\models\yiiModels\ProjectSearch;
 use app\models\yiiModels\GroupSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\AnnotationSearch;
+use app\models\yiiModels\ScientificObjectSearch;
+use app\models\yiiModels\EventSearch;
+use app\models\yiiModels\YiiVariableModel;
+use app\models\yiiModels\YiiModelsConstants;
+use app\models\yiiModels\YiiSensorModel;
 use app\models\wsModels\WSConstants;
 
 /**
  * CRUD actions for YiiExperimentModel
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiExperimentModel
+ * @update [Andréas Garcia] 11 March, 2019: Add event widget
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ExperimentController extends Controller {
     CONST ANNOTATIONS_DATA = "experimentAnnotations";
+    CONST EVENTS_DATA = "experimentEvents";
     
     /**
      * define the behaviors
@@ -52,8 +53,8 @@ class ExperimentController extends Controller {
     }
     
     /**
-     * Search an experiment by uri.
-     * @param String $uri searched experiment's uri
+     * Searches an experiment by URI.
+     * @param String $uri searched experiment's URI
      * @return mixed YiiExperimentModel : the searched experiment
      *               "token" if the user must log in
      */
@@ -72,7 +73,7 @@ class ExperimentController extends Controller {
     }
     
     /**
-     * List all Experiments
+     * Lists all Experiments
      * @return mixed
      */
     public function actionIndex() {
@@ -80,14 +81,14 @@ class ExperimentController extends Controller {
         
         //Get the search params and update pagination
         $searchParams = Yii::$app->request->queryParams;        
-        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
-            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $searchParams[YiiModelsConstants::PAGE]--;
         }
         
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
        
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -127,6 +128,9 @@ class ExperimentController extends Controller {
      * @return mixed
      */
     public function actionView($id) {  
+        //0. Get request parameters
+        $searchParams = Yii::$app->request->queryParams;
+        
         //1. Get the experiment's informations
         $res = $this->findModel($id);
         
@@ -136,22 +140,27 @@ class ExperimentController extends Controller {
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
         //3. get experiment's agronomical objects
-        $searchAgronomicalObject = new \app\models\yiiModels\ScientificObjectSearch();
+        $searchAgronomicalObject = new ScientificObjectSearch();
         $searchAgronomicalObject->experiment = $id;
-        $searchParams = Yii::$app->request->queryParams;
         $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session['access_token'], $searchParams);
          
-        //4. get project annotations
+        //4. get annotations
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
         $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
         
-        //5. get all variables
-        $variableModel = new \app\models\yiiModels\YiiVariableModel();
+        //5. get events
+        $searchEventModel = new EventSearch();
+        $searchEventModel->concernedItemUri = $id;
+        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
+        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+
+        //6. get all variables
+        $variableModel = new YiiVariableModel();
         $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
         
-        //6. Get all sensors
-        $sensorModel = new \app\models\yiiModels\YiiSensorModel();
+        //7. Get all sensors
+        $sensorModel = new YiiSensorModel();
         $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session['access_token']);
         
         if ($res === "token") {
@@ -165,6 +174,7 @@ class ExperimentController extends Controller {
                 'dataDocumentsProvider' => $documents,
                 'dataAgronomicalObjectsProvider' => $agronomicalObjects,
                 self::ANNOTATIONS_DATA => $experimentAnnotations,
+                self::EVENTS_DATA => $events,
                 'variables' => $variables,
                 'sensors' => $sensors
             ]);

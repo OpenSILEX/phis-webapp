@@ -11,22 +11,28 @@
 namespace app\models\yiiModels;
 
 use Yii;
+use app\models\wsModels\WSActiveRecord;
+use app\models\wsModels\WSInfrastructureModel;
+use app\models\wsModels\WSConstants;
 
 /**
  * The Yii model for the infrastructures. Implements a customized Active Record
  * (WSActiveRecord, for the web service access).
+ * @update [Andréas Garcia] 15 Feb., 2019: use Property model + coding style
  * @see app\models\wsModels\WSActiveRecord
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
-class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
+class YiiInfrastructureModel extends WSActiveRecord {
+    
     /**
      * The URI of the infrastructure. 
-     *  (e.g. http://www.phenome-fppn.fr/diaphen)
+     * @example http://www.phenome-fppn.fr/diaphen
      * @var string
      */
     public $uri;
     const URI = "uri";
     const URI_LABEL = "URI";
+    
     /**
      * The alias of the infrastrucure.
      *  (e.g. Diaphen)
@@ -35,6 +41,7 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
     public $label;
     const ALIAS = "label";
     const ALIAS_LABEL = "Alias";
+    
     /**
      * The type of the infrastructure. It is an uri corresponding to an ontology concept.
      *  (e.g. oepo:Infrastructure)
@@ -43,6 +50,7 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
     public $rdfType;
     const RDF_TYPE = "rdfType";
     const RDF_TYPE_LABEL = "Type";
+    
     /**
      * The documents associated to the infrastructure.
      * @see \app\models\yiiModels\YiiDocumentModel
@@ -50,6 +58,7 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
      */
     public $documents;
     const DOCUMENTS = "documents";
+    
     /**
      * The properties of the infrastructure
      * @var array 
@@ -69,7 +78,7 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
      * @param string $page number of the current page 
      */
     public function __construct($pageSize = null, $page = null) {
-        $this->wsModel = new \app\models\wsModels\WSInfrastructureModel();
+        $this->wsModel = new WSInfrastructureModel();
         
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize : $this->pageSize = null;
         ($page !== null || $page !== "") ? $this->page = $page : $this->page = null;
@@ -90,50 +99,36 @@ class YiiInfrastructureModel extends \app\models\wsModels\WSActiveRecord {
     public function getDetails($sessionToken, $uri, $lang) {
         $params = [];
         if ($this->pageSize !== null) {
-           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+           $params[WSConstants::PAGE_SIZE] = $this->pageSize; 
         }
         if ($this->page !== null) {
-            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+            $params[WSConstants::PAGE] = $this->page;
         }
         
-        $params[\app\models\wsModels\WSConstants::LANG] = $lang;
+        $params[WSConstants::LANG] = $lang;
                 
         $requestRes = $this->wsModel->getInfrastructureDetails($sessionToken, $uri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[WSConstants::TOKEN])) {
                 return $requestRes;
             } else {
                 $this->uri = $uri;
-                $this->propertiesArrayToAttributes($requestRes);
+                if ($requestRes[self::PROPERTIES] !== null) {
+                    foreach ($requestRes[self::PROPERTIES] as $propertyInArray) {
+                        $property  = new YiiPropertyModel();
+                        $property->arrayToAttributes($propertyInArray);
+                        
+                        if ($property->relation == Yii::$app->params["rdfsLabel"]) {
+                            $this->label = $property->value;
+                        }
+                        $this->properties[] = $property;
+                    } 
+                } 
                 return $this;
             }
         } else {
             return $requestRes;
-        }
-    }
-    
-    /**
-     * allows to fill the property attribute with the information of the given array
-     * @param array $array array key => value with the properties of an object 
-     * (corresponding to a sensor profile)
-     */
-    protected function propertiesArrayToAttributes($array) {
-        if ($array[self::PROPERTIES] !== null) {
-            foreach ($array[self::PROPERTIES] as $property) {
-                $propertyToAdd = null;
-                $propertyToAdd[self::RELATION] = $property->relation; 
-                $propertyToAdd[self::VALUE] = $property->value;
-                $propertyToAdd[self::RDF_TYPE] = $property->rdfType;
-                $propertyToAdd[self::RELATION_LABELS] = $property->relationLabels; 
-                $propertyToAdd[self::VALUE_LABELS] = $property->valueLabels;
-                $propertyToAdd[self::RDF_TYPE_LABELS] = $property->rdfTypeLabels;     
-                
-                if ($property->relation == Yii::$app->params["rdfsLabel"]) {
-                    $this->label = $property->value;
-                }
-                $this->properties[] = $property;
-            }
         }
     }
     
