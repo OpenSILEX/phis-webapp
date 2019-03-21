@@ -10,3 +10,4 @@
 
 define('WS_PHIS_PATH', 'http://localhost:8080/phis2ws/rest/');
 define('WS_PHIS_PATH_DOC', 'http://localhost:8080/phis2ws');
+
