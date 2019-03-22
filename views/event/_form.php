@@ -20,6 +20,9 @@ use app\components\helpers\Vocabulary;
 <div class="event-form well">
     <?php 
     $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
+
+    // return url after annotation creation
+    echo $form->field($model, EventPost::RETURN_URL)->hiddenInput(['readonly' => 'true'])->label(false);
     
     foreach ($this->params[EventController::EVENT_TYPES] as $eventPossibleType) {
         $eventPossibleTypes[$eventPossibleType] = Html::encode(Vocabulary::prettyUri($eventPossibleType));
