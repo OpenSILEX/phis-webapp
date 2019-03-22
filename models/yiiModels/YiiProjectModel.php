@@ -78,7 +78,7 @@ class YiiProjectModel extends WSActiveRecord {
     const CONTACT_PROJECT_COORDINATOR = "http://www.opensilex.org/vocabulary/oeso/#ProjectCoordinator";
     const CONTACT_ADMINISTRATIVE_CONTACT = "http://www.opensilex.org/vocabulary/oeso/#AdministrativeContact";
     public $scientificContacts;
-    public $administrativeContacts = [];
+    public $administrativeContacts;
     public $projectCoordinatorContacts;
     
     public function __construct($pageSize = null, $page = null) {

@@ -103,7 +103,7 @@ class YiiExperimentModel extends WSActiveRecord {
      *      (e.g http://www.phenome-fppn.fr/diaphen/INRA-LEPSE-DROPS)
      * @var array<string>
      */
-    public $groups = [];
+    public $groups;
     const GROUPS = "groups";
     const GROUPS_URIS = "groupsUris";
     /**

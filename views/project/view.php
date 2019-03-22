@@ -105,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($model) {
                     $toReturn = "";
-                    if (count($model->administrativeContacts) > 0) {
+                    if (is_array($model->administrativeContacts) && count($model->administrativeContacts) > 0) {
                         foreach ($model->administrativeContacts as $administrativeContact) {
                             $toReturn .= Html::a($administrativeContact["firstName"] . " " . $administrativeContact["familyName"], ['user/view', 'id' => $administrativeContact["email"]]);
                             $toReturn .= ", ";

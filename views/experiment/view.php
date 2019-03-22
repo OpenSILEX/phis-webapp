@@ -141,7 +141,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($model) {
                     $toReturn = "";
-                    if (count($model->groups) > 0) {
+                    if (is_array($model->groups) && count($model->groups) > 0) {
                         foreach ($model->groups as $group) {
                             $toReturn .= Html::a($group["name"], ['group/view', 'id' => $group["uri"]]);
                             $toReturn .= ", ";
