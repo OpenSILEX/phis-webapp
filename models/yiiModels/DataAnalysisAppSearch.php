@@ -24,7 +24,8 @@ include_once '../config/web_services.php';
 require_once '../config/config.php';
 
 /**
- * DataAnalysisAppSearch represents the model behind the search form 
+ * DataAnalysisAppSearch search class which makes link
+ * between openSILEX and OpenCPU
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class DataAnalysisAppSearch {
@@ -34,6 +35,9 @@ class DataAnalysisAppSearch {
      */
     public $ocpuserver;
 
+    /**
+     * Configuration file constants
+     */
     const VIGNETTE_IMAGE = "vignette";
     const APP_SHORT_NAME = "appShortName";
     const R_PACKAGE_NAME = "packageName";
@@ -46,7 +50,10 @@ class DataAnalysisAppSearch {
     
     const DEFAULT_DEMO_APP = "niio972/compareVariablesDemo";
 
-
+    /**
+     * Initialize openCPU server connection
+     * @param type $verbose if true, give connection metrics information
+     */
     public function __construct($verbose = false) {
         $this->ocpuserver = new OpenCPUServer(\config::path()['ocpuServer']);
         if ($verbose) {
@@ -55,9 +62,9 @@ class DataAnalysisAppSearch {
     }
 
     /**
-     * Remove special app
-     * @param type $appList
-     * @return type
+     * Remove a choosen app (demo app)
+     * @param array $appList a list of app (github repo list)
+     * @return array list without self::DEFAULT_DEMO_APP app
      */
     private function removeDemoAppFromAppList($appList) {
         foreach ($appList as $key => $app) {
@@ -69,40 +76,47 @@ class DataAnalysisAppSearch {
     }
     
     /**
-     * 
+     * List all available apps
      * @param array $sessionToken used for the data access
      * @param string $params search params
-     * @return mixed DataProvider of the result 
-     *               or string \app\models\wsModels\WSConstants::TOKEN if the user needs to log in
+     * @return array list of app with their informations
      */
     public function search() {
         $appList = $this->ocpuserver->getAvailableApps();
-        
+
         $apps = $this->removeDemoAppFromAppList($appList);
-    
+
         $visualisationsInfo = [];
         foreach ($apps as $app) {
-            
-            $appConfiguration = $this->getAppConfiguration($app);
-            $availableFunctions = $appConfiguration[self::AVAILABLE_FUNCTIONS];
-            $integratedFunctions = $appConfiguration[self::INTEGRATED_FUNCTION];
-            foreach ($availableFunctions as $functionName) {
-                $applicationWebPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/www";
-                $descriptionPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/opensilex/description";
 
-                $descriptionText = $integratedFunctions[$functionName][self::FUNCTION_DESCRIPTION];
-                $visualisationsInfo[$functionName][self::VIGNETTE_IMAGE] = "$descriptionPath/$functionName.png";
-                $visualisationsInfo[$functionName][self::FUNCTION_HELP] = $descriptionText;
-                $visualisationsInfo[$functionName][self::APP_SHORT_NAME] = explode("/", $app)[1] . "-" . $functionName;
-                $visualisationsInfo[$functionName][self::R_PACKAGE_NAME] = $app;
-                $url = "$applicationWebPath/index.html?accessToken=" . Yii::$app->session[WSConstants::ACCESS_TOKEN] . "&wsUrl=" . WS_PHIS_PATH;
-                $visualisationsInfo[$functionName][self::APP_INDEX_HREF] = Url::to(['data-analysis/view', 'url' => $url, 'name' => explode("/", $app)[1]]);
+            $appConfiguration = $this->getAppConfiguration($app);
+
+            if (!empty($appConfiguration) 
+                    && isset($appConfiguration[self::AVAILABLE_FUNCTIONS]) 
+                    && isset($appConfiguration[self::INTEGRATED_FUNCTION])) {
+                $availableFunctions = $appConfiguration[self::AVAILABLE_FUNCTIONS];
+                $integratedFunctions = $appConfiguration[self::INTEGRATED_FUNCTION];
+                foreach ($availableFunctions as $functionName) {
+                    $applicationWebPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/www";
+                    $descriptionPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/opensilex/description";
+
+                    $descriptionText = $integratedFunctions[$functionName][self::FUNCTION_DESCRIPTION];
+                    $visualisationsInfo[$functionName][self::VIGNETTE_IMAGE] = "$descriptionPath/$functionName.png";
+                    $visualisationsInfo[$functionName][self::FUNCTION_HELP] = $descriptionText;
+                    $visualisationsInfo[$functionName][self::APP_SHORT_NAME] = explode("/", $app)[1] . "-" . $functionName;
+                    $visualisationsInfo[$functionName][self::R_PACKAGE_NAME] = $app;
+                    $url = "$applicationWebPath/index.html?accessToken=" . Yii::$app->session[WSConstants::ACCESS_TOKEN] . "&wsUrl=" . WS_PHIS_PATH;
+                    $visualisationsInfo[$functionName][self::APP_INDEX_HREF] = Url::to(['data-analysis/view', 'url' => $url, 'name' => explode("/", $app)[1]]);
+                }
             }
         }
         return $visualisationsInfo;
     }
-    
-  
+
+    /**
+     * Retreive information on demo app only
+     * @return array information on demo app
+     */
     public function getAppDemoInformation() {
         $visualisationsInfo = [];
 
@@ -110,24 +124,28 @@ class DataAnalysisAppSearch {
             $app = self::DEFAULT_DEMO_APP;
 
             $appConfiguration = $this->getAppConfiguration($app);
-            // only one function
-            $functionName = $appConfiguration[self::AVAILABLE_FUNCTIONS][0];
-            $integratedFunctions = $appConfiguration[self::INTEGRATED_FUNCTION];
+            if (!empty($appConfiguration) 
+                    && isset($appConfiguration[self::AVAILABLE_FUNCTIONS][0]) 
+                    && isset($appConfiguration[self::INTEGRATED_FUNCTION])) {
+                // only one function
+                $functionName = $appConfiguration[self::AVAILABLE_FUNCTIONS][0];
+                $integratedFunctions = $appConfiguration[self::INTEGRATED_FUNCTION];
 
-            $applicationWebPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/www";
-            $descriptionPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/opensilex/description";
+                $applicationWebPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/www";
+                $descriptionPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/opensilex/description";
 
-            $descriptionText = $integratedFunctions[$functionName][self::FUNCTION_DESCRIPTION];
-            $visualisationsInfo[self::VIGNETTE_IMAGE] = "$descriptionPath/$functionName.png";
-            $visualisationsInfo[self::FUNCTION_HELP] = $descriptionText;
-            $visualisationsInfo[self::APP_SHORT_NAME] = explode("/", $app)[1] . "-" . $functionName;
-            $visualisationsInfo[self::R_PACKAGE_NAME] = $app;
-            $url = "$applicationWebPath/index.html?accessToken=" . Yii::$app->session[WSConstants::ACCESS_TOKEN] . "&wsUrl=" . WS_PHIS_PATH;
-            $visualisationsInfo[self::APP_INDEX_HREF] = Url::to(['data-analysis/view', 'url' => $url, 'name' => explode("/", $app)[1]]);
+                $descriptionText = $integratedFunctions[$functionName][self::FUNCTION_DESCRIPTION];
+                $visualisationsInfo[self::VIGNETTE_IMAGE] = "$descriptionPath/$functionName.png";
+                $visualisationsInfo[self::FUNCTION_HELP] = $descriptionText;
+                $visualisationsInfo[self::APP_SHORT_NAME] = explode("/", $app)[1] . "-" . $functionName;
+                $visualisationsInfo[self::R_PACKAGE_NAME] = $app;
+                $url = "$applicationWebPath/index.html?accessToken=" . Yii::$app->session[WSConstants::ACCESS_TOKEN] . "&wsUrl=" . WS_PHIS_PATH;
+                $visualisationsInfo[self::APP_INDEX_HREF] = Url::to(['data-analysis/view', 'url' => $url, 'name' => explode("/", $app)[1]]);
+            }
         }
         return $visualisationsInfo;
     }
-    
+
     /**
      * Return exported functionalities 
      * @param string $applicationName 

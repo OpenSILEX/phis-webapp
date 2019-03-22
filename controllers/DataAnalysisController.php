@@ -24,7 +24,9 @@ include_once '../config/web_services.php';
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class DataAnalysisController extends \yii\web\Controller {
-
+    /**
+     * Constants used to parse configuration file
+     */
     const INTEGRATED_FUNCTIONS = "integratedFunctions";
     const FORM_PARAMETERS = "formParameters";
     /**
