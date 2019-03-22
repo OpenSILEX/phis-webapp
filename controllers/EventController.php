@@ -187,8 +187,12 @@ class EventController extends Controller {
             if (is_string($requestRes) && $requestRes === "token") {
                 return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
             } else {
-                if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //project created
-                    return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+                if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //event created
+                    if ($eventModel->returnUrl) {
+                        $this->redirect($eventModel->returnUrl);
+                    } else {
+                        return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+                    }                    
                 } else { //an error occurred
                     return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
                         'name' => Yii::t('app/messages','Internal error'),

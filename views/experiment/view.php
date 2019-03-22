@@ -17,6 +17,7 @@ use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
 use app\controllers\ExperimentController;
 use app\components\widgets\LinkObjectsWidget;
+use app\models\yiiModels\YiiDocumentModel;
 
 /** 
  * Implements the view page for an Experiment
@@ -44,7 +45,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         'document/create', 
                         'concernedItemUri' => $model->uri, 
                         'concernedItemLabel' => $model->alias, 
-                        'concernedItemRdfType' => Yii::$app->params["Experiment"]
+                        'concernedItemRdfType' => Yii::$app->params["Experiment"],
+                        YiiDocumentModel::RETURN_URL => Url::current()
                     ], 
                     ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>            
             <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
@@ -139,7 +141,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($model) {
                     $toReturn = "";
-                    if (count($model->groups) > 0) {
+                    if (is_array($model->groups) && count($model->groups) > 0) {
                         foreach ($model->groups as $group) {
                             $toReturn .= Html::a($group["name"], ['group/view', 'id' => $group["uri"]]);
                             $toReturn .= ", ";

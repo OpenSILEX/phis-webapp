@@ -14,6 +14,8 @@ use app\controllers\RadiometricTargetController;
 use yii\grid\GridView;
 use yii\widgets\DetailView;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use app\models\yiiModels\YiiDocumentModel;
 
 /**
  * @var $this yii\web\View
@@ -36,7 +38,13 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
             <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
             <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]) ?>
-            <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label, 'concernedItemRdfType' => Yii::$app->params["RadiometricTarget"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), [
+                'document/create', 
+                'concernedItemUri' => $model->uri, 
+                'concernedItemLabel' => $model->label, 
+                'concernedItemRdfType' => Yii::$app->params["RadiometricTarget"],
+                YiiDocumentModel::RETURN_URL => Url::current()
+            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
         <?php } ?>
     </p>
     

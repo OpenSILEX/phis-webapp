@@ -88,6 +88,13 @@ class EventPost extends YiiEventModel {
     public $propertyType;
     const PROPERTY_TYPE = 'propertyType';
     const PROPERTY_TYPE_LABEL = 'Property type';
+
+    /**
+     * The return url after annotation creation
+     * @var string 
+     */
+    public $returnUrl;
+    const RETURN_URL = "returnUrl";
     
     /**
      * @inheritdoc
@@ -107,6 +114,7 @@ class EventPost extends YiiEventModel {
                 self::PROPERTY_HAS_PEST, 
                 self::PROPERTY_FROM, 
                 self::PROPERTY_TO, 
+                self::RETURN_URL,
             ],  'safe']
         ]; 
     }

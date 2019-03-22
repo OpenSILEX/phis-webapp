@@ -12,6 +12,7 @@
 // Subject: implements the view page for a Project
 //***********************************************************************************************
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
@@ -20,7 +21,7 @@ use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
 use app\controllers\ProjectController;
-
+use app\models\yiiModels\YiiDocumentModel;
 
 /** 
  * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
@@ -40,8 +41,14 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
         if (Yii::$app->session['isAdmin']) { ?>
             <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
-            <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->acronyme, 'concernedItemRdfType' => Yii::$app->params["Project"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning'])?>
-            <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), [
+                'document/create', 
+                'concernedItemUri' => $model->uri, 
+                'concernedItemLabel' => $model->acronyme, 
+                'concernedItemRdfType' => Yii::$app->params["Project"],
+                YiiDocumentModel::RETURN_URL => Url::current()
+            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning'])?>
+            <?php //echo EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
             <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);?>
         <?php }
         ?>
@@ -98,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($model) {
                     $toReturn = "";
-                    if (count($model->administrativeContacts) > 0) {
+                    if (is_array($model->administrativeContacts) && count($model->administrativeContacts) > 0) {
                         foreach ($model->administrativeContacts as $administrativeContact) {
                             $toReturn .= Html::a($administrativeContact["firstName"] . " " . $administrativeContact["familyName"], ['user/view', 'id' => $administrativeContact["email"]]);
                             $toReturn .= ", ";
@@ -164,11 +171,12 @@ $this->params['breadcrumbs'][] = $this->title;
     ]); ?>
     
     <!-- Sensor events -->
-    <?= EventGridViewWidget::widget(
-            [
-                 EventGridViewWidget::EVENTS => ${ProjectController::EVENTS}
-            ]
-        ); 
+    <?php
+//        echo EventGridViewWidget::widget(
+//            [
+//                 EventGridViewWidget::EVENTS => ${ProjectController::EVENTS}
+//            ]
+//        ); 
     ?>
     
     <!-- Project linked Annotation-->

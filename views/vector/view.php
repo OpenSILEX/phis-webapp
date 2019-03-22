@@ -14,6 +14,8 @@ use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use yii\helpers\Url;
+use app\models\yiiModels\YiiDocumentModel;
 
 /** 
  * Implements the view page for a vector
@@ -36,7 +38,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
         if (Yii::$app->session['isAdmin']) {?>
             <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
-            <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']); ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), [
+                'document/create', 
+                'concernedItemUri' => $model->uri, 
+                'concernedItemLabel' => $model->label,
+                YiiDocumentModel::RETURN_URL => Url::current()
+            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']); ?>
             <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
             <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
         <?php
