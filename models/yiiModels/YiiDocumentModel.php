@@ -137,6 +137,13 @@ class YiiDocumentModel extends WSActiveRecord {
     const SORT_BY_DATE = "sortByDate";
     
     /**
+     * The return url after annotation creation
+     * @var string 
+     */
+    public $returnUrl;
+    const RETURN_URL = "returnUrl";
+    
+    /**
      * Initialize wsModel. In this class, wsModel is a WSDocumentModel
      * @param string $pageSize number of elements per page
      *                               (limited to 150 000)
@@ -155,9 +162,9 @@ class YiiDocumentModel extends WSActiveRecord {
     public function rules() {
         return [
           [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate'], 'required'],
-          [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate', 
+          [['uri', self::RETURN_URL, 'documentType', 'creator', 'language', 'title', 'creationDate', 
               'format', 'concernedItems', 'status', 'file', 'comment','sortByDate'], 'safe'],
-          [['uri', 'creator', 'language', 'title', 'creationDate', 'format', 'comment','sortByDate'], 'string'],
+          [['uri', self::RETURN_URL, 'creator', 'language', 'title', 'creationDate', 'format', 'comment','sortByDate'], 'string'],
           [['file'], 'file', 'skipOnEmpty' => false]
         ];
     }

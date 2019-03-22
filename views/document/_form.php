@@ -37,6 +37,7 @@ require_once '../config/config.php';
            });
         });
     </script>
+    <?= $form->field($model, 'returnUrl')->hiddenInput(['readonly' => 'true'])->label(false); ?>
     
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]); ?>
     

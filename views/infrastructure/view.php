@@ -8,6 +8,7 @@
 // Contact: vincent.migot@inra.fr, morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\controllers\InfrastructureController;
@@ -16,6 +17,7 @@ use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
 use app\components\widgets\PropertyWidget;
+use app\models\yiiModels\YiiDocumentModel;
 
 /** 
  * @update [Arnaud Charleroy] 28 August, 2018: adding annotation linked to this infrastructure model
@@ -37,7 +39,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?php
         if (Yii::$app->session['isAdmin']) {
-            echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernedItemUri' => $model->uri, 'concernedItemLabel' => $model->label, 'concernedItemRdfType' => Yii::$app->params["Installation"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
+            echo Html::a(Yii::t('app', 'Add Document'), [
+                'document/create', 
+                'concernedItemUri' => $model->uri, 
+                'concernedItemLabel' => $model->label, 
+                'concernedItemRdfType' => Yii::$app->params["Installation"],
+                YiiDocumentModel::RETURN_URL => Url::current()
+            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
             echo EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]);
             echo AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);
         }
