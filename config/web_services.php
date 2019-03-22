@@ -8,5 +8,5 @@
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //***********************************************************************************************
 
-define('WS_PHIS_PATH', 'http://localhost:8080/opensilex/rest/');
-define('WS_PHIS_PATH_DOC', 'http://localhost:8080/opensilex');
+define('WS_PHIS_PATH', 'http://www.opensilex.org:8080/openSilexAPI/rest/');
+define('WS_PHIS_PATH_DOC', 'http://www.opensilex.org:8080/openSilexAPI');
