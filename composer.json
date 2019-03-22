@@ -37,7 +37,9 @@
         "fxp/composer-asset-plugin": "v1.4.4",
         "lavrentiev/yii2-toastr": "2.0.2",
         "webtoucher/yii2-js-cookie": "1.0.0",
-        "fortawesome/font-awesome": "v4.7.0"
+        "fortawesome/font-awesome": "v4.7.0",
+        "nullref/yii2-datatables": "v1.0.4",
+        "opensilex/opencpu-client-php": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "2.0.14",
