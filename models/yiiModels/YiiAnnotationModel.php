@@ -91,6 +91,13 @@ class YiiAnnotationModel extends WSActiveRecord {
     const TARGETS_LABEL = "Targets";
     const TARGET_SEARCH_LABEL = "target";
 
+    /**
+     * The return url after annotation creation
+     * @var string 
+     */
+    public $returnUrl;
+    const RETURN_URL = "returnUrl";
+        
     public function __construct($pageSize = null, $page = null) {
         $date = new \DateTime();
         $this->creationDate = $date->format(\DateTime::ATOM);
@@ -105,9 +112,9 @@ class YiiAnnotationModel extends WSActiveRecord {
     public function rules() {
         return [
             [[self::URI, self::CREATOR, self::MOTIVATED_BY, self::BODY_VALUES, self::TARGETS], 'required'],
-            [[self::URI, self::CREATOR, self::MOTIVATED_BY, self::BODY_VALUES, self::TARGETS], 'safe'],
+            [[self::URI, self::RETURN_URL, self::CREATOR, self::MOTIVATED_BY, self::BODY_VALUES, self::TARGETS], 'safe'],
             [[self::BODY_VALUES], 'string'],
-            [[self::URI, self::CREATOR, self::TARGETS], 'string', 'max' => 300]
+            [[self::URI, self::RETURN_URL, self::CREATOR, self::TARGETS], 'string', 'max' => 300]
         ];
     }
 

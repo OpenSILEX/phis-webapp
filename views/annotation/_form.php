@@ -35,7 +35,10 @@ use app\controllers\AnnotationController;
 
     <?= $form->field($model, YiiAnnotationModel::CREATION_DATE)->textInput(['readonly' => 'true']); ?>
 
-
+    <?php
+        // return url after annotation creation
+        echo $form->field($model, YiiAnnotationModel::RETURN_URL)->hiddenInput(['readonly' => 'true'])->label(false);
+    ?>
     <?php
     // Show targets
     foreach ($model->targets as $target) {
