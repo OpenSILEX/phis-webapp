@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "42f0fec26bdff81bbacc04ddf98e7356",
+    "content-hash": "e686906d9f0c6477518041033c8be10c",
     "packages": [
         {
             "name": "borales/yii2-phone-input",
@@ -100,83 +100,6 @@
                 "web"
             ],
             "time": "2019-02-13T15:55:38+00:00"
-        },
-        {
-            "name": "bower-asset/datatables",
-            "version": "1.10.19",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/DataTables/DataTables.git",
-                "reference": "156faa83386460c578e00c460eca9766e38a0c5f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/DataTables/DataTables/zipball/156faa83386460c578e00c460eca9766e38a0c5f",
-                "reference": "156faa83386460c578e00c460eca9766e38a0c5f",
-                "shasum": ""
-            },
-            "require": {
-                "bower-asset/jquery": ">=1.7.0"
-            },
-            "type": "bower-asset-library",
-            "extra": {
-                "bower-asset-main": [
-                    "media/js/jquery.dataTables.js",
-                    "media/css/jquery.dataTables.css",
-                    "media/images/sort_asc.png",
-                    "media/images/sort_asc_disabled.png",
-                    "media/images/sort_both.png",
-                    "media/images/sort_desc.png",
-                    "media/images/sort_desc_disabled.png"
-                ],
-                "bower-asset-ignore": [
-                    "/.*",
-                    "examples",
-                    "media/unit_testing",
-                    "composer.json",
-                    "dataTables.jquery.json",
-                    "package.json"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "keywords": [
-                "datatables",
-                "javascript",
-                "jquery",
-                "library",
-                "table"
-            ],
-            "time": "2018-06-22T15:34:14+00:00"
-        },
-        {
-            "name": "bower-asset/datatables-plugins",
-            "version": "1.10.19",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/DataTables/Plugins.git",
-                "reference": "157acc9888a3e07ba88cdd2dba56eea05c26b413"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/DataTables/Plugins/zipball/157acc9888a3e07ba88cdd2dba56eea05c26b413",
-                "reference": "157acc9888a3e07ba88cdd2dba56eea05c26b413",
-                "shasum": ""
-            },
-            "require": {
-                "bower-asset/datatables": ">=1.10.15",
-                "bower-asset/jquery": ">=1.7.0"
-            },
-            "type": "bower-asset-library",
-            "extra": {
-                "bower-asset-main": [],
-                "bower-asset-ignore": []
-            },
-            "license": [
-                "MIT"
-            ],
-            "time": "2018-06-22T15:09:53+00:00"
         },
         {
             "name": "bower-asset/handsontable",
@@ -2245,59 +2168,6 @@
                 "yii2"
             ],
             "time": "2019-01-21T22:06:44+00:00"
-        },
-        {
-            "name": "nullref/yii2-datatables",
-            "version": "v1.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/NullRefExcep/yii2-datatables.git",
-                "reference": "f0a41a177ea6043b3e02f942d327d677bebdfa8e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/NullRefExcep/yii2-datatables/zipball/f0a41a177ea6043b3e02f942d327d677bebdfa8e",
-                "reference": "f0a41a177ea6043b3e02f942d327d677bebdfa8e",
-                "shasum": ""
-            },
-            "require": {
-                "bower-asset/datatables": "~1.10.15",
-                "bower-asset/datatables-plugins": "~1.10.15",
-                "php": ">=5.4.0",
-                "yiisoft/yii2": "~2.0.13"
-            },
-            "type": "yii2-extension",
-            "autoload": {
-                "psr-4": {
-                    "nullref\\datatable\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Serhiy Vinichuk",
-                    "email": "serhiyvinichuk@gmail.com"
-                },
-                {
-                    "name": "Dmytro Karpovych",
-                    "email": "zayec77@gmail.com"
-                }
-            ],
-            "description": "Yii2 Extension for DataTables jQuery plug-in",
-            "homepage": "https://github.com/NullRefExcep/yii2-datatables",
-            "keywords": [
-                "datatable",
-                "datatables",
-                "jquery",
-                "plugin",
-                "widget",
-                "yii",
-                "yii2"
-            ],
-            "time": "2018-04-03T10:55:48+00:00"
         },
         {
             "name": "oomphinc/composer-installers-extender",
