@@ -208,9 +208,13 @@ class DocumentController extends Controller {
      * @return mixed the creation form, the message error or the view of the 
      *               document created
      */
-    public function actionCreate($concernedItemUri = null, $concernedItemLabel = null, $concernedItemRdfType = null) {
+    public function actionCreate($concernedItemUri = null, $concernedItemLabel = null, $concernedItemRdfType = null, $returnUrl = null) {
         $sessionToken = Yii::$app->session['access_token'];
         $documentModel = new YiiDocumentModel(null, null);
+        
+        if ($returnUrl) {
+            $documentModel->returnUrl = $returnUrl;
+        }
         
         //If the form is complete, try to save the data
         if ($documentModel->load(Yii::$app->request->post())) {
@@ -275,8 +279,12 @@ class DocumentController extends Controller {
                 if (is_string($requestRes) && $requestRes === "token") {
                     return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
                 } else {
-                    $documentUri = $requestRes[0];
-                    return $this->redirect(['view', 'id' => $documentUri]);
+                    if ($documentModel->returnUrl) {
+                        $this->redirect($documentModel->returnUrl);
+                    } else {
+                        $documentUri = $requestRes[0];
+                        return $this->redirect(['view', 'id' => $documentUri]);
+                    }
                 }
             } else {
                 return $this->render('/site/error', [
