@@ -48,7 +48,7 @@ class DataAnalysisAppSearch {
     const FUNCTION_DESCRIPTION = "description";
     const INTEGRATED_FUNCTION = "integratedFunctions";
     
-    const DEFAULT_DEMO_APP = "niio972/compareVariablesDemo";
+    const DEFAULT_DEMO_APP = "opensilex/opensilex-datavis-rapp-demo";
 
     /**
      * Initialize openCPU server connection
@@ -203,8 +203,9 @@ class DataAnalysisAppSearch {
                 $stringBody = (string) $body;
 
                 return Yaml::parse($stringBody);
-            } catch (\Symfony\Component\Yaml\Exception\ParseException $e) {
-                return [];             } catch (RequestException $e) {
+                } catch (\Symfony\Component\Yaml\Exception\ParseException $e) {
+                    return [];            
+                } catch (RequestException $e) {
                 $errorMessage = Psr7\str($e->getRequest());
                 if ($e->hasResponse()) {
                     $errorMessage .= '--' . Psr7\str($e->getResponse());
