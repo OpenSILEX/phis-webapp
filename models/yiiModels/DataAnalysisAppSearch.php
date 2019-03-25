@@ -203,7 +203,8 @@ class DataAnalysisAppSearch {
                 $stringBody = (string) $body;
 
                 return Yaml::parse($stringBody);
-            } catch (RequestException $e) {
+            } catch (\Symfony\Component\Yaml\Exception\ParseException $e) {
+                return [];             } catch (RequestException $e) {
                 $errorMessage = Psr7\str($e->getRequest());
                 if ($e->hasResponse()) {
                     $errorMessage .= '--' . Psr7\str($e->getResponse());
