@@ -74,7 +74,7 @@ if (Yii::$app->session->hasFlash("scriptDidNotWork")) {
         <?php
         foreach ($plotWidgetUrls as $plotWidgetUrl) {
             echo Html::beginTag('div', ['class' => 'embed-responsive embed-responsive-4by3']);
-            echo Html::tag('iframe', ['class' => 'embed-responsive-item', 'src' => $plotWidgetUrl, 'allowfullscreen' => true]);
+            echo Html::tag('iframe', "", ['class' => 'embed-responsive-item', 'src' => $plotWidgetUrl, 'allowfullscreen' => true]);
             echo Html::endTag('div');
         }
 

@@ -161,7 +161,7 @@ class DataAnalysisController extends \yii\web\Controller {
                     $session, $inputParameters, $plotConfigurations, 
                     $plotWidgetUrls, $dataGrids
                     );           
-
+            
             return $this->render('run-script', [
                         'rpackage' => $rpackage,
                         'function' => $function,
