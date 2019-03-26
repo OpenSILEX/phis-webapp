@@ -77,7 +77,6 @@ class EventController extends Controller {
         $searchDocumentModel->concernedItemFilter = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
         
-        error_log("giigi ".print_r($searchParams, true));
         // Get annotations
         $event->pageSize = Yii::$app->params['eventWidgetPageSize'];
         $annotations = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
