@@ -64,6 +64,11 @@ abstract class WSActiveRecord extends \yii\base\Model {
     public $isNewRecord;
     
     /**
+     * name of the id field in the search parameters
+     */
+    CONST ID = "id";
+    
+    /**
      * @param string $sessionToken the user session token
      * @param Array $attributes list of objects to send to the web service to 
      *                          be recorded. It is a key => value array. The key

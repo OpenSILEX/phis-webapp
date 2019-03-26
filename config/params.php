@@ -21,6 +21,7 @@ return [
     
     // Event
     'eventIndexNumberOfConcernedItemsToDisplay' => 3,
+    'eventAnnotationWidgetPageSize' => 5,
     'eventWidgetPageSize' => 5,
     
     //ONTOLOGY -----------------------------------------------------------------

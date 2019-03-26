@@ -67,7 +67,7 @@ class EventSearch extends YiiEventModel {
     public function rules() {
         return [[
             [
-                YiiEventModel::TYPE,
+                self::TYPE,
                 self::CONCERNED_ITEM_LABEL,
                 self::CONCERNED_ITEM_URI,
                 self::DATE_RANGE,
@@ -110,7 +110,7 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * Request to WS and return result
+     * Requests to WS and return result
      * @param $sessionToken
      * @return request result
      */
@@ -165,7 +165,7 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * Validate the date range format and set the dates attributes. The accepted 
+     * Validates the date range format and set the dates attributes. The accepted 
      * date range format is defined in the application parameter 
      * standardDateTimeFormatPhp.
      * @param type $dateRangeString
@@ -199,7 +199,7 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * Validate the submitted date format. The accepted date format is defined 
+     * Validates the submitted date format. The accepted date format is defined 
      * in the application parameter standardDateTimeFormatPhp
      * @param type $dateString
      * @return boolean
@@ -244,27 +244,12 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * Reset the date range filter values
+     * Resets the date range filter values
      */
     private function resetDateRangeFilterValues(){
         $this->dateRangeStart = null;
         $this->dateRangeEnd = null;
         $this->dateRange = null;
-    }
-    
-    /**
-     * Transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = []; 
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        }
-        return $toReturn;
     }
     
     /**

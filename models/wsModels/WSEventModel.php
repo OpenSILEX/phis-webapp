@@ -29,26 +29,12 @@ class WSEventModel extends WSModel {
     }
     
     /**
-     * Gets the details of an event corresponding to the given URI
+     * Gets the event corresponding to the given URI
      * @param String $sessionToken connection user token
      * @param String $uri URI of the searched event
-     * @return if the event exist, an array representing it else the error message
+     * @return if the event exists, an array representing it else the error message
      * @example 
      * [
-     *     "annotations": [
-     *         {
-     *           "uri": "http://www.phenome-fppn.fr/test/id/annotation/e9cb3b9b-bb50-49e2-8a74-40a2bfda18d1",
-     *           "creationDate": "2019-03-07T15:23:52+01:00",
-     *           "creator": "http://www.phenome-fppn.fr/diaphen/id/agent/admin_phis",
-     *           "motivatedBy": "http://www.w3.org/ns/oa#describing",
-     *           "comments": [
-     *             "The displacement was fast"
-     *           ],
-     *           "targets": [
-     *             "http://www.phenome-fppn.fr/test/id/event/c07ea114-e1ef-4341-8b8e-3b3e58b01852"
-     *           ]
-     *         }
-     *       ],
      *       "uri": "http://www.phenome-fppn.fr/test/id/event/c07ea114-e1ef-4341-8b8e-3b3e58b01852",
      *       "type": "http://www.opensilex.org/vocabulary/oeev#MoveFrom",
      *       "concernedItems": [
@@ -78,14 +64,47 @@ class WSEventModel extends WSModel {
      *     }
      * ]
      */
-    public function getEventDetailed($sessionToken, $uri) {
+    public function getEvent($sessionToken, $uri) {
         $subService = "/" . urlencode($uri);
-        $eventDetailed = $this->get($sessionToken, $subService, []);
+        $event = $this->get($sessionToken, $subService, []);
 
-        if (isset($eventDetailed->{WSConstants::RESULT}->{WSConstants::DATA})) {
-            return (array) $eventDetailed->{WSConstants::RESULT}->{WSConstants::DATA}[0];
+        if (isset($event->{WSConstants::RESULT}->{WSConstants::DATA})) {
+            return (array) $event->{WSConstants::RESULT}->{WSConstants::DATA}[0];
         } else {
-            return $eventDetailed;
+            return $event;
+        }
+    }
+    
+    /**
+     * Gets the event's annotations
+     * @param String $sessionToken connection user token
+     * @param String $uri URI of the event
+     * @return if the event exists, an array representing the annotations
+     *  else the error message
+     * @example 
+     * [
+     *   {
+     *     "creator": "http://www.phenome-fppn.fr/diaphen/id/agent/marie_dupond",
+     *     "motivatedBy": "http://www.w3.org/ns/oa#commenting",
+     *     "bodyValues": [
+     *       "string"
+     *     ],
+     *     "targets": [
+     *       "string"
+     *     ],
+     *     "uri": "string",
+     *     "creationDate": "string"
+     *   }
+     * ]
+     */
+    public function getEventAnnotations($sessionToken, $uri) {
+        $subService = "/" . urlencode($uri) . "/annotations";
+        $annotations = $this->get($sessionToken, $subService, []);
+
+        if (isset($annotations->{WSConstants::RESULT}->{WSConstants::DATA})) {
+            return $annotations->{WSConstants::RESULT}->{WSConstants::DATA};
+        } else {
+            return $annotations;
         }
     }
 }

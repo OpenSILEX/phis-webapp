@@ -10,6 +10,7 @@ namespace app\models\yiiModels;
 
 use Yii;
 
+use yii\data\ArrayDataProvider;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSUriModel;
 use app\models\wsModels\WSEventModel;
@@ -17,8 +18,9 @@ use app\models\wsModels\WSConstants;
 
 /**
  * The Yii model for an event 
- * @update [Andréas Garcia] 15 Feb., 2019: add properties handling
  * @see app\models\wsModels\WSEventModel
+ * @update [Andréas Garcia] 15 Feb., 2019: add properties handling
+ * @update [Andréas Garcia] 16 Feb., 2019: use events/{uri}/annotations service
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class YiiEventModel extends WSActiveRecord {
@@ -58,13 +60,6 @@ class YiiEventModel extends WSActiveRecord {
     public $properties;
     const PROPERTIES = "properties";
     
-    /**
-     * Annotations of the event
-     * @var array
-     */
-    public $annotations; 
-    const ANNOTATIONS = "annotations";
-    
     public function __construct($pageSize = null, $page = null) {
         $this->wsModel = new WSEventModel();
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize 
@@ -77,18 +72,15 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function rules() {
        return [ 
-           [
-                [
-                    self::URI, 
-                    self::DATE,
-                    self::TYPE, 
-                    self::CONCERNED_ITEMS
-                ], 'required'],
-           [
-               [
-                    self::PROPERTIES, 
-                    self::ANNOTATIONS
-                ] , 'safe']
+            [[
+                self::URI, 
+                self::DATE,
+                self::TYPE, 
+                self::CONCERNED_ITEMS
+            ], 'required'],
+            [[
+                self::PROPERTIES
+            ] , 'safe']
         ]; 
     }
     
@@ -127,29 +119,57 @@ class YiiEventModel extends WSActiveRecord {
                 $property->arrayToAttributes($propertyInArray);
                 $this->properties[] = $property;
             } 
-        } 
-        $this->annotations = $array[self::ANNOTATIONS];
+        }
         $this->date = $array[self::DATE];
     }
 
     /**
-     * Get the detailed event corresponding to the given URI
+     * Gets the event corresponding to the given URI
      * @param type $sessionToken
      * @param type $uri
      * @return $this
      */
-    public function getEventDetailed($sessionToken, $uri) {
-        $eventDetailed = $this->wsModel->getEventDetailed($sessionToken, $uri);
-        if (!is_string($eventDetailed)) {
-            if (isset($eventDetailed[WSConstants::TOKEN])) {
-                return $eventDetailed;
+    public function getEvent($sessionToken, $uri) {
+        $event = $this->wsModel->getEvent($sessionToken, $uri);
+        if (!is_string($event)) {
+            if (isset($event[WSConstants::TOKEN])) {
+                return $event;
             } else {
                 $this->uri = $uri;
-                $this->arrayToAttributes($eventDetailed);
+                $this->arrayToAttributes($event);
                 return $this;
             }
         } else {
-            return $eventDetailed;
+            return $event;
+        }
+    }
+
+    /**
+     * Get the event's annotations
+     * @param type $sessionToken
+     * @param type $uri
+     * @return the event's annotations
+     */
+    public function getEventAnnotations($sessionToken, $searchParams) {
+        $annotations = $this->wsModel->getEventAnnotations($sessionToken, $searchParams[WSActiveRecord::ID]);
+        if (!is_string($annotations)) {
+            if (isset($annotations[WSConstants::TOKEN])) {
+                return $annotations;
+            } else {
+                return new ArrayDataProvider([
+                    'models' => $annotations,
+                    'pagination' => [
+                        'pageSize' => $this->pageSize,
+                        'totalCount' => count($annotations)
+                    ],
+                    //SILEX:info
+                    //totalCount must be there too to get the pagination in GridView
+                    'totalCount' => count($annotations)
+                    //\SILEX:info
+                ]);;
+            }
+        } else {
+            return $annotations;
         }
     }
 

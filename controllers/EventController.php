@@ -10,12 +10,10 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
-use yii\data\ArrayDataProvider;
 use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventPost;
-use app\models\yiiModels\YiiModelsConstants;
 use app\models\yiiModels\YiiUserModel;
 use app\models\yiiModels\InfrastructureSearch;
 use app\models\yiiModels\YiiPropertyModel;
@@ -51,8 +49,8 @@ class EventController extends Controller {
                 return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
             } else {
                 return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
-                            SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
-                            SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
+                    SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
+                    SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
             }
         } else {
             return $this->render('index', [
@@ -67,15 +65,23 @@ class EventController extends Controller {
      * @return mixed redirect in case of error otherwise return the "view" view
      */
     public function actionView($id) {
+        // Get request parameters
+        $searchParams = Yii::$app->request->queryParams;
+        
         // Fill the event model with the information
         $event = new YiiEventModel();
-        $eventDetailed = $event->getEventDetailed(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);
+        $eventDetailed = $event->getEvent(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);
 
         // Get documents
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
-        $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], ["concernedItem" => $id]);
-
+        $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
+        
+        error_log("giigi ".print_r($searchParams, true));
+        // Get annotations
+        $event->pageSize = Yii::$app->params['eventWidgetPageSize'];
+        $annotations = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        //print_r(print_r($annotations, true));
         // Render the view of the event
         if (is_array($eventDetailed) && isset($eventDetailed[WSConstants::TOKEN])) {
             return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
@@ -83,16 +89,13 @@ class EventController extends Controller {
             return $this->render('view', [
                 'model' =>  $eventDetailed,
                 'dataDocumentsProvider' => $documents,
-                self::ANNOTATIONS_DATA => new ArrayDataProvider([
-                    'models' => $event->annotations,
-                    'totalCount' => count($event->annotations)                 
-                ])
+                self::ANNOTATIONS_DATA => $annotations   
             ]);
         }
     }
     
     /**
-     * Get the event types URIs
+     * Gets the event types URIs
      * @return event types URIs 
      */
     public function getEventsTypes() {
