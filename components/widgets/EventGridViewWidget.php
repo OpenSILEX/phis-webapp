@@ -27,7 +27,7 @@ class EventGridViewWidget extends Widget {
     CONST EVENTS_ARE_NOT_SET_LABEL = "Concerned items aren't set";
     
     /**
-     * Define the events list to show
+     * Defines the list of events to show
      * @var mixed
      */
     public $events;
@@ -42,7 +42,7 @@ class EventGridViewWidget extends Widget {
     }
 
     /**
-     * Render the concerned item list
+     * Renders the list of the concerned items
      * @return string the HTML string rendered
      */
     public function run() {

@@ -147,29 +147,26 @@ class YiiEventModel extends WSActiveRecord {
     /**
      * Get the event's annotations
      * @param type $sessionToken
-     * @param type $uri
-     * @return the event's annotations
+     * @param type $searchParams
+     * @return the event's annotations provider
      */
     public function getEventAnnotations($sessionToken, $searchParams) {
-        $annotations = $this->wsModel->getEventAnnotations($sessionToken, $searchParams[WSActiveRecord::ID]);
-        if (!is_string($annotations)) {
-            if (isset($annotations[WSConstants::TOKEN])) {
-                return $annotations;
-            } else {
+        $searchParams[YiiEventModel::URI] = $searchParams[WSActiveRecord::ID];
+        $response = $this->wsModel->getEventAnnotations($sessionToken, $searchParams);
+        if (!is_string($response)) {
+            if (isset($response[WSConstants::TOKEN])) {
+                return $response;
+            } else {              
+                $annotationWidgetPageSize = Yii::$app->params['annotationWidgetPageSize'];  
                 return new ArrayDataProvider([
-                    'models' => $annotations,
+                    'allModels' => $response,
                     'pagination' => [
-                        'pageSize' => $this->pageSize,
-                        'totalCount' => count($annotations)
-                    ],
-                    //SILEX:info
-                    //totalCount must be there too to get the pagination in GridView
-                    'totalCount' => count($annotations)
-                    //\SILEX:info
+                        'pageSize' => $annotationWidgetPageSize,
+                    ]
                 ]);;
             }
         } else {
-            return $annotations;
+            return $response;
         }
     }
 
@@ -179,7 +176,7 @@ class YiiEventModel extends WSActiveRecord {
      * @return list of the events types
      */
     public function getEventsTypes($sessionToken) {
-        $eventConceptUri = "http://www.opensilex.org/vocabulary/oeev#Event";
+        $eventConceptUri = Yii::$app->params['eventWidgetPageSize'];
         $params = [];
         if ($this->pageSize !== null) {
            $params[WSConstants::PAGE_SIZE] = $this->pageSize; 

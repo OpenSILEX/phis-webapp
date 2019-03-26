@@ -124,16 +124,17 @@ class EventSearch extends YiiEventModel {
             return WSConstants::TOKEN;
         } else {
             
-            $resultSet = $this->jsonListOfArraysToArray($results);
+            $events = $this->jsonListOfArraysToArray($results);
+            $eventsCount = count($events);
             return new ArrayDataProvider([
-                'models' => $resultSet,
+                'models' => $events,
                 'pagination' => [
                     'pageSize' => $this->pageSize,
-                    'totalCount' => $this->totalCount
+                    'totalCount' => $eventsCount
                 ],
                 //SILEX:info
                 //totalCount must be there too to get the pagination in GridView
-                'totalCount' => $this->totalCount
+                'totalCount' => $eventsCount
                 //\SILEX:info
             ]);
         }

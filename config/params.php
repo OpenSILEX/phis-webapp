@@ -19,7 +19,11 @@ return [
     'dateRangeSeparator' => ' - ',
     'textAreaRowsNumber' => 6,
     
+    // Annotation
+    'annotationWidgetPageSize' => 5,
+    
     // Event
+    'eventConceptUri' => 'http://www.opensilex.org/vocabulary/oeev#Event',
     'eventIndexNumberOfConcernedItemsToDisplay' => 3,
     'eventAnnotationWidgetPageSize' => 5,
     'eventWidgetPageSize' => 5,

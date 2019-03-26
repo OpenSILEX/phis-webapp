@@ -27,12 +27,15 @@ use app\components\helpers\SiteMessages;
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class EventController extends Controller {
+    
     CONST ANNOTATIONS_DATA = "annotations";
+    CONST ANNOTATIONS_PAGE = "annotation-page";
     CONST INFRASTRUCTURES_DATA = "infrastructures";
     CONST INFRASTRUCTURES_DATA_URI = "infrastructureUri";
     CONST INFRASTRUCTURES_DATA_LABEL = "infrastructureLabel";
     CONST INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
     CONST EVENT_TYPES = "eventTypes";
+    
     
     /**
      * Lists the events
@@ -69,26 +72,25 @@ class EventController extends Controller {
         $searchParams = Yii::$app->request->queryParams;
         
         // Fill the event model with the information
-        $event = new YiiEventModel();
-        $eventDetailed = $event->getEvent(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);
+        $event = (new YiiEventModel())->getEvent(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);
 
         // Get documents
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
-        $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
+        $documentProvider = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
         
         // Get annotations
-        $event->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $annotations = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
-        //print_r(print_r($annotations, true));
+        $annotationProvider = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $annotationProvider->pagination->pageParam = self::ANNOTATIONS_PAGE;
+
         // Render the view of the event
-        if (is_array($eventDetailed) && isset($eventDetailed[WSConstants::TOKEN])) {
+        if (is_array($event) && isset($event[WSConstants::TOKEN])) {
             return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
         } else {
             return $this->render('view', [
-                'model' =>  $eventDetailed,
-                'dataDocumentsProvider' => $documents,
-                self::ANNOTATIONS_DATA => $annotations   
+                'model' =>  $event,
+                'dataDocumentsProvider' => $documentProvider,
+                self::ANNOTATIONS_DATA => $annotationProvider   
             ]);
         }
     }

@@ -11,6 +11,7 @@ namespace app\models\wsModels;
 
 use \openSILEX\guzzleClientPHP\WSModel;
 use app\models\wsModels\WSConstants;
+use app\models\yiiModels\YiiEventModel;
 
 include_once '../config/web_services.php';
 
@@ -97,14 +98,14 @@ class WSEventModel extends WSModel {
      *   }
      * ]
      */
-    public function getEventAnnotations($sessionToken, $uri) {
-        $subService = "/" . urlencode($uri) . "/annotations";
-        $annotations = $this->get($sessionToken, $subService, []);
+    public function getEventAnnotations($sessionToken, $params) {
+        $subService = "/" . urlencode($params[YiiEventModel::URI]) . "/annotations";
+        $response = $this->get($sessionToken, $subService, $params);
 
-        if (isset($annotations->{WSConstants::RESULT}->{WSConstants::DATA})) {
-            return $annotations->{WSConstants::RESULT}->{WSConstants::DATA};
+        if (isset($response->{WSConstants::RESULT}->{WSConstants::DATA})) {
+            return $response->{WSConstants::RESULT}->{WSConstants::DATA};
         } else {
-            return $annotations;
+            return $response;
         }
     }
 }
