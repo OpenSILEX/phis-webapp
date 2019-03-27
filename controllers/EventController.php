@@ -85,7 +85,7 @@ class EventController extends Controller {
         $documentProvider = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
         
         // Get annotations
-        $annotationProvider = $event->getEventAnnotationsProvider(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $annotationProvider = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         $annotationProvider->pagination->pageParam = self::ANNOTATIONS_PAGE;
 
         // Render the view of the event

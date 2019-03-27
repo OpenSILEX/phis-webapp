@@ -150,9 +150,9 @@ class YiiEventModel extends WSActiveRecord {
      * @param type $searchParams
      * @return the event's annotations provider
      */
-    public function getEventAnnotationsProvider($sessionToken, $searchParams) {
+    public function getEventAnnotations($sessionToken, $searchParams) {
         $searchParams[YiiEventModel::URI] = $searchParams[WSActiveRecord::ID];
-        $response = $this->wsModel->getEventAnnotationsProvider($sessionToken, $searchParams);
+        $response = $this->wsModel->getEventAnnotations($sessionToken, $searchParams);
         if (!is_string($response)) {
             if (isset($response[WSConstants::TOKEN_INVALID])) {
                 return $response;
