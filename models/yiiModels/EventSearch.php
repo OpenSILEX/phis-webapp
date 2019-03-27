@@ -120,7 +120,6 @@ class EventSearch extends YiiEventModel {
             && $results->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS} === WSConstants::TOKEN_INVALID) {
             return WSConstants::TOKEN_INVALID;
         } else {
-        error_log("sgsrg".print_r($results, true));
             
             $events = $this->jsonListOfArraysToArray($results);
             return new ArrayDataProvider([
