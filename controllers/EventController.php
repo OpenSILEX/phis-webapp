@@ -44,7 +44,12 @@ class EventController extends Controller {
         $searchModel = new EventSearch();
         
         $searchParams = Yii::$app->request->queryParams;
+        
+        if (isset($searchParams[WSConstants::PAGE])) {
+            $searchParams[WSConstants::PAGE] = $searchParams[WSConstants::PAGE] - 1;
+        }
         $searchParams[WSConstants::PAGE_SIZE] = Yii::$app->params['indexPageSize'];
+        
         $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
@@ -104,7 +109,7 @@ class EventController extends Controller {
         
         $eventsTypes = [];
         $model->page = 0;
-        $model->pageSize = 1000;
+        $model->pageSize = Yii::$app->params['webServicePageSizeMax'];
         $eventsTypesConcepts = $model->getEventsTypes(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
         if ($eventsTypesConcepts === WSConstants::TOKEN_INVALID) {
             return WSConstants::TOKEN_INVALID;
@@ -188,10 +193,10 @@ class EventController extends Controller {
             error_log("dataToSend ".print_r($dataToSend, true));
             $requestRes =  $eventModel->insert($sessionToken, $dataToSend);
             
-            if (is_string($requestRes) && $requestRes === WSConstants::TOKEN_INVALID) {
+            if (is_string($requestRes) && $requestRes === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
             } else {
-                if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //event created
+                if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0])) { //event created
                     if ($eventModel->returnUrl) {
                         $this->redirect($eventModel->returnUrl);
                     } else {
@@ -200,7 +205,7 @@ class EventController extends Controller {
                 } else { //an error occurred
                     return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
                         'name' => Yii::t('app/messages','Internal error'),
-                        'message' => $requestRes->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}]);
+                        'message' => $requestRes->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}]);
                 }
             }
         } else {

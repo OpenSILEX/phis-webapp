@@ -171,12 +171,12 @@ class YiiEventModel extends WSActiveRecord {
     }
 
     /**
-     * Call web service and return the list of events types
+     * Calls the web service and returns the list of events types
      * @param sessionToken
      * @return list of the events types
      */
     public function getEventsTypes($sessionToken) {
-        $eventConceptUri = Yii::$app->params['eventConceptUri'];
+        $eventConceptUri = Yii::$app->params['event'];
         $params = [];
         if ($this->pageSize !== null) {
            $params[WSConstants::PAGE_SIZE] = $this->pageSize; 

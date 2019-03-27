@@ -34,12 +34,12 @@ use app\models\wsModels\WSConstants;
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ExperimentController extends Controller {
-    const ANNOTATIONS_DATA = "experimentAnnotations";
-    const EVENTS_PAGE = "events-page";
-    const EVENTS_DATA = "experimentEvents";
+    const ANNOTATION_PROVIDER = "experimentAnnotationProvider";
+    const EVENTS_PAGE = "eventsPage";
+    const EVENT_PROVIDER = "experimentEventProvider";
     
     /**
-     * define the behaviors
+     * Defines the behaviours
      * @return array
      */
     public function behaviors() {
@@ -54,7 +54,7 @@ class ExperimentController extends Controller {
     }
     
     /**
-     * Searches an experiment by URI.
+     * Searches an experiment by its URI.
      * @param String $uri searched experiment's URI
      * @return mixed YiiExperimentModel : the searched experiment
      *               "token" if the user must log in
@@ -138,12 +138,12 @@ class ExperimentController extends Controller {
         //2. Get experiment's linked documents 
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
-        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+        $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], ["concernedItem" => $id]);
         
         //3. get experiment's agronomical objects
         $searchAgronomicalObject = new ScientificObjectSearch();
         $searchAgronomicalObject->experiment = $id;
-        $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session['access_token'], $searchParams);
+        $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
          
         //4. get annotations
         $searchAnnotationModel = new AnnotationSearch();
@@ -153,20 +153,24 @@ class ExperimentController extends Controller {
         //5. get events
         $searchEventModel = new EventSearch();
         $searchEventModel->concernedItemUri = $id;
+        $eventSearchParameters = [];
+        if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+            $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE]--;
+        }
+        $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
         
-        $searchParams[WSConstants::PAGE_SIZE] = Yii::$app->params['webServicePageSizeMax'];
-        $eventProvider = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
-        $eventProvider->pagination->pageParam = self::EVENTS_PAGE;
+        $eventProvider = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $eventSearchParameters);
+        $eventProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE;
 
         //6. get all variables
         $variableModel = new YiiVariableModel();
-        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
+        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
         
         //7. Get all sensors
         $sensorModel = new YiiSensorModel();
-        $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session['access_token']);
+        $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
         
-        if ($res === "token") {
+        if ($res === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
             $canUpdate = $this->isUserInExperimentOwnerGroup($res);
@@ -176,8 +180,8 @@ class ExperimentController extends Controller {
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
                 'dataAgronomicalObjectsProvider' => $agronomicalObjects,
-                self::ANNOTATIONS_DATA => $experimentAnnotations,
-                self::EVENTS_DATA => $eventProvider,
+                self::ANNOTATION_PROVIDER => $annotationProvider,
+                self::EVENT_PROVIDER => $eventProvider,
                 'variables' => $variables,
                 'sensors' => $sensors
             ]);

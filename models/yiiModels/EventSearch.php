@@ -103,7 +103,7 @@ class EventSearch extends YiiEventModel {
             return new ArrayDataProvider();
         }
                 
-        return $this->requestToWSAndReturnResult($sessionToken, $searchParams);
+        return $this->getEventProvider($sessionToken, $searchParams);
     }
     
     /**
@@ -111,7 +111,7 @@ class EventSearch extends YiiEventModel {
      * @param $sessionToken
      * @return request result
      */
-    private function requestToWSAndReturnResult($sessionToken, $searchParams) {
+    private function getEventProvider($sessionToken, $searchParams) {
         $results = $this->find($sessionToken, array_merge ($this->attributesToArray(), $searchParams));
         
         if (is_string($results)) {
