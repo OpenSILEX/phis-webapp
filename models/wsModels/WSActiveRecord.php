@@ -112,7 +112,8 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @return an array with the results,
                "token" if the user needs to log in (invalid token).
      */
-    public function find($sessionToken, $attributes) {        
+    public function find($sessionToken, $attributes) {  
+        error_log("okpokpoj".print_r($attributes, true));
         $requestRes = $this->wsModel->get($sessionToken, "", $attributes);
 
         if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION})) {

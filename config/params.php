@@ -13,6 +13,9 @@ return [
     'baseURI' => 'http://www.opensilex.org/demo/',
     //\SILEX:info
     
+    // Index
+    'indexPageSize' => 20,
+  
     // Forms
     'dateTimeFormatDateTimeRangePickerStandard' => 'Y-m-dTH:i:sZ',
     'dateTimeFormatDateTimePickerUserFriendly' => 'yyyy-mm-dd HH:ii:ss',
@@ -28,7 +31,10 @@ return [
     'eventAnnotationWidgetPageSize' => 5,
     'eventWidgetPageSize' => 5,
     
-    //ONTOLOGY -----------------------------------------------------------------
+    // Web service
+    'webServicePageSizeMax' => 2097152,
+    
+    // ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts
     'Lens' => 'http://www.opensilex.org/vocabulary/oeso#Lens',
     'Plot' => 'http://www.opensilex.org/vocabulary/oeso#Plot',

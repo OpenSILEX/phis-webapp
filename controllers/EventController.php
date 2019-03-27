@@ -28,14 +28,13 @@ use app\components\helpers\SiteMessages;
  */
 class EventController extends Controller {
     
-    CONST ANNOTATIONS_DATA = "annotations";
-    CONST ANNOTATIONS_PAGE = "annotation-page";
-    CONST INFRASTRUCTURES_DATA = "infrastructures";
-    CONST INFRASTRUCTURES_DATA_URI = "infrastructureUri";
-    CONST INFRASTRUCTURES_DATA_LABEL = "infrastructureLabel";
-    CONST INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
-    CONST EVENT_TYPES = "eventTypes";
-    
+    const ANNOTATIONS_DATA = "annotations";
+    const ANNOTATIONS_PAGE = "annotations-page";
+    const INFRASTRUCTURES_DATA = "infrastructures";
+    const INFRASTRUCTURES_DATA_URI = "infrastructureUri";
+    const INFRASTRUCTURES_DATA_LABEL = "infrastructureLabel";
+    const INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
+    const EVENT_TYPES = "eventTypes";
     
     /**
      * Lists the events
@@ -45,6 +44,7 @@ class EventController extends Controller {
         $searchModel = new EventSearch();
         
         $searchParams = Yii::$app->request->queryParams;
+        $searchParams[WSConstants::PAGE_SIZE] = Yii::$app->params['indexPageSize'];
         $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
@@ -80,7 +80,7 @@ class EventController extends Controller {
         $documentProvider = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
         
         // Get annotations
-        $annotationProvider = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $annotationProvider = $event->getEventAnnotationsProvider(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         $annotationProvider->pagination->pageParam = self::ANNOTATIONS_PAGE;
 
         // Render the view of the event

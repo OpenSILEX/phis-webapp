@@ -34,8 +34,9 @@ use app\models\wsModels\WSConstants;
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ExperimentController extends Controller {
-    CONST ANNOTATIONS_DATA = "experimentAnnotations";
-    CONST EVENTS_DATA = "experimentEvents";
+    const ANNOTATIONS_DATA = "experimentAnnotations";
+    const EVENTS_PAGE = "events-page";
+    const EVENTS_DATA = "experimentEvents";
     
     /**
      * define the behaviors
@@ -152,8 +153,10 @@ class ExperimentController extends Controller {
         //5. get events
         $searchEventModel = new EventSearch();
         $searchEventModel->concernedItemUri = $id;
-        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        
+        $searchParams[WSConstants::PAGE_SIZE] = Yii::$app->params['webServicePageSizeMax'];
+        $eventProvider = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $eventProvider->pagination->pageParam = self::EVENTS_PAGE;
 
         //6. get all variables
         $variableModel = new YiiVariableModel();
@@ -174,7 +177,7 @@ class ExperimentController extends Controller {
                 'dataDocumentsProvider' => $documents,
                 'dataAgronomicalObjectsProvider' => $agronomicalObjects,
                 self::ANNOTATIONS_DATA => $experimentAnnotations,
-                self::EVENTS_DATA => $events,
+                self::EVENTS_DATA => $eventProvider,
                 'variables' => $variables,
                 'sensors' => $sensors
             ]);

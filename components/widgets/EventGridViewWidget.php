@@ -22,16 +22,16 @@ use kartik\icons\Icon;
  */
 class EventGridViewWidget extends Widget {
 
-    CONST EVENTS_LABEL = "Events";
-    CONST NO_EVENT_LABEL = "No events";
-    CONST EVENTS_ARE_NOT_SET_LABEL = "Concerned items aren't set";
+    const EVENTS_LABEL = "Events";
+    const NO_EVENT_LABEL = "No events";
+    const EVENTS_ARE_NOT_SET_LABEL = "Concerned items aren't set";
     
     /**
      * Defines the list of events to show
      * @var mixed
      */
     public $events;
-    CONST EVENTS = "events";
+    const EVENTS = "events";
 
     public function init() {
         parent::init();

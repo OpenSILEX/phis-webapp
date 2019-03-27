@@ -98,15 +98,12 @@ class EventSearch extends YiiEventModel {
      */
     public function search($sessionToken, $searchParams) {
         $this->load($searchParams);
-        if (isset($searchParams[YiiModelsConstants::PAGE])) {
-            $this->page = $searchParams[YiiModelsConstants::PAGE]-1;
-        }
         
         if (!$this->validate()) {
             return new ArrayDataProvider();
         }
-        
-        return $this->requestToWSAndReturnResult($sessionToken);
+                
+        return $this->requestToWSAndReturnResult($sessionToken, $searchParams);
     }
     
     /**
@@ -114,28 +111,25 @@ class EventSearch extends YiiEventModel {
      * @param $sessionToken
      * @return request result
      */
-    private function requestToWSAndReturnResult($sessionToken) {
-        $results = $this->find($sessionToken, $this->attributesToArray());
+    private function requestToWSAndReturnResult($sessionToken, $searchParams) {
+        $results = $this->find($sessionToken, array_merge ($this->attributesToArray(), $searchParams));
         
         if (is_string($results)) {
             return $results;
-        }  else if (isset($results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-            && $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN) {
+        }  else if (isset($results->{WSConstants::DATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}) 
+            && $results->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS} === WSConstants::TOKEN) {
             return WSConstants::TOKEN;
         } else {
+        error_log("sgsrg".print_r($results, true));
             
             $events = $this->jsonListOfArraysToArray($results);
-            $eventsCount = count($events);
             return new ArrayDataProvider([
                 'models' => $events,
                 'pagination' => [
-                    'pageSize' => $this->pageSize,
-                    'totalCount' => $eventsCount
+                    'pageSize' => $searchParams[WSConstants::PAGE_SIZE],
+                    'totalCount' => $this->totalCount
                 ],
-                //SILEX:info
-                //totalCount must be there too to get the pagination in GridView
-                'totalCount' => $eventsCount
-                //\SILEX:info
+                'totalCount' => $this->totalCount
             ]);
         }
     }

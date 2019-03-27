@@ -150,9 +150,9 @@ class YiiEventModel extends WSActiveRecord {
      * @param type $searchParams
      * @return the event's annotations provider
      */
-    public function getEventAnnotations($sessionToken, $searchParams) {
+    public function getEventAnnotationsProvider($sessionToken, $searchParams) {
         $searchParams[YiiEventModel::URI] = $searchParams[WSActiveRecord::ID];
-        $response = $this->wsModel->getEventAnnotations($sessionToken, $searchParams);
+        $response = $this->wsModel->getEventAnnotationsProvider($sessionToken, $searchParams);
         if (!is_string($response)) {
             if (isset($response[WSConstants::TOKEN])) {
                 return $response;
@@ -176,7 +176,7 @@ class YiiEventModel extends WSActiveRecord {
      * @return list of the events types
      */
     public function getEventsTypes($sessionToken) {
-        $eventConceptUri = Yii::$app->params['eventWidgetPageSize'];
+        $eventConceptUri = Yii::$app->params['eventConceptUri'];
         $params = [];
         if ($this->pageSize !== null) {
            $params[WSConstants::PAGE_SIZE] = $this->pageSize; 
@@ -190,7 +190,7 @@ class YiiEventModel extends WSActiveRecord {
         
         if (!is_string($requestRes)) {
             if (isset($requestRes[WSConstants::TOKEN])) {
-                return "token";
+                return WSConstants::TOKEN;
             } else {
                 return $requestRes;
             }
