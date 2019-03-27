@@ -32,11 +32,11 @@ use app\models\wsModels\WSConstants;
  */
 class VectorController extends Controller {
     
-    CONST ANNOTATIONS_DATA = "vectorAnnotations";
-    CONST EVENTS_DATA = "vectorEvents";
+    CONST ANNOTATIONS_PROVIDER = "annotationsProvider";
+    CONST EVENTS_PROVIDER = "eventsProvider";
     
     /**
-     * define the behaviors
+     * Defines the behaviors
      * @return array
      */
     public function behaviors() {
@@ -66,9 +66,9 @@ class VectorController extends Controller {
         $totalPages = 1;
         for ($i = 0; $i < $totalPages; $i++) {
             $model->page = $i;
-            $vectorDevicesConcepts = $model->getVectorsTypes(Yii::$app->session['access_token']);
-            if ($vectorDevicesConcepts === "token") {
-                return "token";
+            $vectorDevicesConcepts = $model->getVectorsTypes(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+            if ($vectorDevicesConcepts === WSConstants::TOKEN) {
+                return WSConstants::TOKEN;
             } else {
                 $totalPages = $vectorDevicesConcepts[WSConstants::PAGINATION][WSConstants::TOTAL_PAGES];
 
@@ -82,8 +82,8 @@ class VectorController extends Controller {
     }
     
     /**
-     * Gets the vectors types (complete uri)
-     * @return array list of the vectors types uris 
+     * Gets the vectors types (complete URI)
+     * @return array list of the vectors types URIs 
      * @example
      * [
      *   "http://www.opensilex.org/vocabulary/oeso#UAV",
@@ -97,9 +97,9 @@ class VectorController extends Controller {
         $totalPages = 1;
         for ($i = 0; $i < $totalPages; $i++) {
             $model->page = $i;
-            $vectorsConcepts = $model->getVectorsTypes(Yii::$app->session['access_token']);
-            if ($vectorsConcepts === "token") {
-                return "token";
+            $vectorsConcepts = $model->getVectorsTypes(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+            if ($vectorsConcepts === WSConstants::TOKEN) {
+                return WSConstants::TOKEN;
             } else {
                 $totalPages = $vectorsConcepts[WSConstants::PAGINATION][WSConstants::TOTAL_PAGES];
                 foreach ($vectorsConcepts[WSConstants::DATA] as $vectorType) {
@@ -116,16 +116,15 @@ class VectorController extends Controller {
      * @return mixed
      */
     public function actionCreate() {
-        $sessionToken = Yii::$app->session['access_token'];
         $model = new YiiVectorModel();
         
         $vectorsTypes = $this->getVectorsTypes();
-        if ($vectorsTypes === "token") {
+        if ($vectorsTypes === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }
         
         $usersModel = new YiiUserModel();
-        $users = $usersModel->getPersonsMailsAndName(Yii::$app->session['access_token']);
+        $users = $usersModel->getPersonsMailsAndName(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
         
         
         return $this->render('create', [
@@ -157,7 +156,7 @@ class VectorController extends Controller {
      */
     public function actionCreateMultipleVectors() {
         $vectors = json_decode(Yii::$app->request->post()["vectors"]);
-        $sessionToken = Yii::$app->session['access_token'];
+        $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         
         $vectorsUris = null;
         if (count($vectors) > 0) {
@@ -195,14 +194,14 @@ class VectorController extends Controller {
      *               "token" if the user must log in
      */
     public function findModel($uri) {
-        $sessionToken = Yii::$app->session['access_token'];
+        $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         $vectorModel = new YiiVectorModel();
         $requestRes = $vectorModel->findByURI($sessionToken, $uri);
         
         if ($requestRes === true) {
             return $vectorModel;
-        } else if(isset($requestRes["token"])) {
-            return "token";
+        } else if(isset($requestRes[WSConstants::TOKEN])) {
+            return WSConstants::TOKEN;
         } else {
            throw new NotFoundHttpException('The requested page does not exist');
         }
@@ -220,7 +219,7 @@ class VectorController extends Controller {
         if (isset($searchParams[YiiModelsConstants::PAGE])) {
             $searchParams[YiiModelsConstants::PAGE]--;
         }
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN_INVALID) {
@@ -251,27 +250,32 @@ class VectorController extends Controller {
         //1. get vector's linked documents
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
-        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+        $documentsProvider = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], ["concernedItem" => $id]);
         
         //2. get events
         $searchEventModel = new EventSearch();
         $searchEventModel->concernedItemUri = $id;
-        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $eventSearchParameters = [];
+        if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+            $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+        }
+        $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+        $eventsProvider = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $eventSearchParameters);
+        $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE;
         
         //3. get vector annotations
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
-        $vectorAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+        $annotationsProvider = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
      
-        if ($res === "token") {
+        if ($res === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
             return $this->render('view', [
                 'model' => $res,
-                'dataDocumentsProvider' => $documents,
-                 self::EVENTS_DATA => $events,
-                 self::ANNOTATIONS_DATA => $vectorAnnotations
+                'dataDocumentsProvider' => $documentsProvider,
+                 self::EVENTS_PROVIDER => $eventsProvider,
+                 self::ANNOTATIONS_PROVIDER => $annotationsProvider
             ]);
         }
         
@@ -308,7 +312,7 @@ class VectorController extends Controller {
      * @return mixed the page to show
      */
     public function actionUpdate($id) {
-        $sessionToken = Yii::$app->session['access_token'];
+        $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         $model = new YiiVectorModel();
         $model->uri = $id;
         
@@ -318,7 +322,7 @@ class VectorController extends Controller {
             $forWebService[] = $model->attributesToArray();
             $requestRes = $model->update($sessionToken, $forWebService);
             
-            if (is_string($requestRes) && $requestRes === "token") { //user must log in
+            if (is_string($requestRes) && $requestRes === WSConstants::TOKEN) { //user must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->redirect(['view', 'id' => $model->uri]);
@@ -328,7 +332,7 @@ class VectorController extends Controller {
             
             // list of vector's types
             $vectorsTypes = $this->getVectorsTypes();
-            if ($vectorsTypes === "token") {
+            if ($vectorsTypes === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             }
         

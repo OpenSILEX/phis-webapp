@@ -60,14 +60,14 @@ class ExperimentController extends Controller {
      *               "token" if the user must log in
      */
     public function findModel($uri) {
-        $sessionToken = Yii::$app->session['access_token'];
+        $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         $experimentModel = new YiiExperimentModel(null, null);
         $requestRes = $experimentModel->findByURI($sessionToken, $uri);
         
         if ($requestRes === true) {
             return $experimentModel;
-        } else if(isset($requestRes["token"])) {
-            return "token";
+        } else if(isset($requestRes[WSConstants::TOKEN])) {
+            return WSConstants::TOKEN;
         } else {
            throw new NotFoundHttpException('The requested page does not exist');
         }
@@ -86,7 +86,7 @@ class ExperimentController extends Controller {
             $searchParams[YiiModelsConstants::PAGE]--;
         }
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
        
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN_INVALID) {

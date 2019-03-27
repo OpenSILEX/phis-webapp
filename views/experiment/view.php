@@ -290,7 +290,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS => ${ExperimentController::EVENT_PROVIDER}
+                 EventGridViewWidget::EVENTS_PROVIDER => ${ExperimentController::EVENT_PROVIDER}
             ]
         ); 
     ?>

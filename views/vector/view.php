@@ -80,7 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Linked events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS => ${VectorController::EVENTS_DATA}
+                 EventGridViewWidget::EVENTS_PROVIDER => ${VectorController::EVENTS_PROVIDER}
             ]
         ); 
     ?>
@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Vector linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
-                AnnotationGridViewWidget::ANNOTATIONS => ${VectorController::ANNOTATIONS_DATA}
+                AnnotationGridViewWidget::ANNOTATIONS => ${VectorController::ANNOTATIONS_PROVIDER}
             ]
         ); 
     ?>
