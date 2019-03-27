@@ -190,7 +190,7 @@ class YiiUserModel extends WSActiveRecord {
 
         $requestRes = $this->wsModel->getUserByEmail($sessionToken, $email, $params);
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);
@@ -218,7 +218,7 @@ class YiiUserModel extends WSActiveRecord {
 
         $requestRes = $this->wsModel->getUserByEmail($sessionToken, $uri, $params);
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);

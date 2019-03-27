@@ -48,7 +48,7 @@ class EventController extends Controller {
         $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
-            if ($searchResult === WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
             } else {
                 return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
@@ -84,7 +84,7 @@ class EventController extends Controller {
         $annotationProvider->pagination->pageParam = self::ANNOTATIONS_PAGE;
 
         // Render the view of the event
-        if (is_array($event) && isset($event[WSConstants::TOKEN])) {
+        if (is_array($event) && isset($event[WSConstants::TOKEN_INVALID])) {
             return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
         } else {
             return $this->render('view', [
@@ -106,8 +106,8 @@ class EventController extends Controller {
         $model->page = 0;
         $model->pageSize = 1000;
         $eventsTypesConcepts = $model->getEventsTypes(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
-        if ($eventsTypesConcepts === WSConstants::TOKEN) {
-            return WSConstants::TOKEN;
+        if ($eventsTypesConcepts === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
         } else {
             foreach ($eventsTypesConcepts[WSConstants::DATA] as $eventType) {
                 $eventsTypes[$eventType->uri] = $eventType->uri;
@@ -126,8 +126,8 @@ class EventController extends Controller {
         $model->page = 0;
         $infrastructuresUrisTypesLabels = [];
         $infrastructures = $model->search(Yii::$app->session['access_token'], null);
-        if ($infrastructures === WSConstants::TOKEN) {
-            return WSConstants::TOKEN;
+        if ($infrastructures === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
         } else {
             foreach ($infrastructures->models as $infrastructure) {
                 $infrastructuresUrisTypesLabels[] =
@@ -167,15 +167,15 @@ class EventController extends Controller {
             // Set properties
             $property = new YiiPropertyModel();
             switch ($eventModel->rdfType) {
-                case "http://www.opensilex.org/vocabulary/oeev#MoveFrom":
+                case $eventConceptUri = Yii::$app->params['moveFrom']:
                     $property->value = $eventModel->propertyFrom;
                     $property->rdfType = $eventModel->propertyType;
-                    $property->relation = "http://www.opensilex.org/vocabulary/oeev#from";
+                    $property->relation = Yii::$app->params['from'];
                     break;
-                case "http://www.opensilex.org/vocabulary/oeev#MoveTo":
+                case $eventConceptUri = Yii::$app->params['moveTo']:
                     $property->value = $eventModel->propertyTo;
                     $property->rdfType = $eventModel->propertyType;
-                    $property->relation = "http://www.opensilex.org/vocabulary/oeev#to";
+                    $property->relation = Yii::$app->params['to'];
                     break;
                 default : 
                     $property = null;
@@ -188,14 +188,14 @@ class EventController extends Controller {
             error_log("dataToSend ".print_r($dataToSend, true));
             $requestRes =  $eventModel->insert($sessionToken, $dataToSend);
             
-            if (is_string($requestRes) && $requestRes === "token") {
+            if (is_string($requestRes) && $requestRes === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
             } else {
                 if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //event created
                     if ($eventModel->returnUrl) {
                         $this->redirect($eventModel->returnUrl);
                     } else {
-                        return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+                        return $this->redirect(['view', 'id' => $requestRes->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0]]);
                     }                    
                 } else { //an error occurred
                     return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [

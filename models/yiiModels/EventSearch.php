@@ -117,8 +117,8 @@ class EventSearch extends YiiEventModel {
         if (is_string($results)) {
             return $results;
         }  else if (isset($results->{WSConstants::DATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}) 
-            && $results->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS} === WSConstants::TOKEN) {
-            return WSConstants::TOKEN;
+            && $results->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS} === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
         } else {
         error_log("sgsrg".print_r($results, true));
             

@@ -66,8 +66,8 @@ class DataFileSearch extends YiiDataFileModel {
         if (is_string($findResult)) {
             return $findResult;
         } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN) {
-            return WSConstants::TOKEN;
+                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
         } else {
             return new ArrayDataProvider([
                 'models' => $findResult,

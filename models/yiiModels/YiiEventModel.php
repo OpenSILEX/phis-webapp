@@ -132,7 +132,7 @@ class YiiEventModel extends WSActiveRecord {
     public function getEvent($sessionToken, $uri) {
         $event = $this->wsModel->getEvent($sessionToken, $uri);
         if (!is_string($event)) {
-            if (isset($event[WSConstants::TOKEN])) {
+            if (isset($event[WSConstants::TOKEN_INVALID])) {
                 return $event;
             } else {
                 $this->uri = $uri;
@@ -154,7 +154,7 @@ class YiiEventModel extends WSActiveRecord {
         $searchParams[YiiEventModel::URI] = $searchParams[WSActiveRecord::ID];
         $response = $this->wsModel->getEventAnnotationsProvider($sessionToken, $searchParams);
         if (!is_string($response)) {
-            if (isset($response[WSConstants::TOKEN])) {
+            if (isset($response[WSConstants::TOKEN_INVALID])) {
                 return $response;
             } else {              
                 $annotationWidgetPageSize = Yii::$app->params['annotationWidgetPageSize'];  
@@ -189,8 +189,8 @@ class YiiEventModel extends WSActiveRecord {
         $requestRes = $wsUriModel->getDescendants($sessionToken, $eventConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[WSConstants::TOKEN])) {
-                return WSConstants::TOKEN;
+            if (isset($requestRes[WSConstants::TOKEN_INVALID])) {
+                return WSConstants::TOKEN_INVALID;
             } else {
                 return $requestRes;
             }

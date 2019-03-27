@@ -265,7 +265,7 @@ class SensorController extends Controller {
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         
         if (is_string($searchResult)) {
-            if ($searchResult === WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -323,7 +323,7 @@ class SensorController extends Controller {
         $variableModel = new YiiVariableModel();
         $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
 
-        if ($res === WSConstants::TOKEN) {
+        if ($res === WSConstants::TOKEN_INVALID) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
             $dataSearchModel = new SensorDataSearch();

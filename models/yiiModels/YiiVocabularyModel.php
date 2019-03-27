@@ -76,7 +76,7 @@ class YiiVocabularyModel extends WSActiveRecord {
 
         $requestRes = $this->wsModel->getNamespaces($sessionToken, $params);
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToNamespaces($requestRes);

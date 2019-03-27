@@ -286,7 +286,7 @@ class YiiExperimentModel extends WSActiveRecord {
         $requestRes = $this->wsModel->getExperimentByURI($sessionToken, $uri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);
@@ -311,7 +311,7 @@ class YiiExperimentModel extends WSActiveRecord {
         $requestRes = $wsModel->getExperimentsList($sessionToken,$params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return "token";
             } else {
                 return $requestRes;

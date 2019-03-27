@@ -80,7 +80,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
     public function insert($sessionToken, $attributes) {
         $requestRes =  $this->wsModel->post($sessionToken, "", $attributes);
         
-        if (isset($requestRes->{WSConstants::TOKEN})) {
+        if (isset($requestRes->{WSConstants::TOKEN_INVALID})) {
             return WEB_SERVICE_TOKEN;
         } else {
             return $requestRes;
@@ -98,7 +98,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
      */
     public function update($sessionToken, $attributes) {
         $requestRes = $this->wsModel->put($sessionToken, "", $attributes);
-        if (isset($requestRes->{WSConstants::TOKEN})) {
+        if (isset($requestRes->{WSConstants::TOKEN_INVALID})) {
             return WEB_SERVICE_TOKEN;
         } else {
             return $requestRes;

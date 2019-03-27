@@ -20,7 +20,8 @@ class WSConstants {
     const RESULT = 'result';
 
     // token
-    const TOKEN = 'Invalid token';
+    const TOKEN = 'token';
+    const TOKEN_INVALID = 'Invalid token';
     const ACCESS_TOKEN = 'access_token';
     const TOKEN_EXPIRES_IN = 'expires_in';
     const TOKEN_COOKIE_TIMEOUT = 'tokenTimeout';
