@@ -72,6 +72,7 @@ class EventGridViewWidget extends Widget {
                         ]
                     ],
                 ],
+                'options' => ['class' => "event-widget"]                    
             ]);
         }
         return $htmlRendered;
