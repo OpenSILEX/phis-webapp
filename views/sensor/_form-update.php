@@ -30,7 +30,7 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'rdfType')->widget(\kartik\select2\Select2::classname(),[
                     'data' => $types,
                     'options' => [
-                        'placeholder' => 'Select type ...',
+                        'placeholder' => Yii::t('app', 'Select type ...'),
                         'multiple' => false
                     ],
                     'pluginOptions' => [
