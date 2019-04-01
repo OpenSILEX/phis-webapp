@@ -43,7 +43,7 @@ class WSConstants {
     const PAGE = "page";
     const EVENT_WIDGET_PAGE = "eventPage";
     const EVENT_WIDGET_PAGE_SIZE = "eventPageSize";
-    const ANNOTATION_WIDGET_PAGE = "eannotationPage";
+    const ANNOTATION_WIDGET_PAGE = "annotationPage";
     const ANNOTATION_WIDGET_PAGE_SIZE = "annotationPageSize";
     
     // data
