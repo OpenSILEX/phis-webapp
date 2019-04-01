@@ -192,15 +192,15 @@ use yii\widgets\ActiveForm;
         var errorMessage = "";
         
         if (!validateField("trait")) {
-            errorMessage += "Missing trait. \n";
+            errorMessage += "<?= Yii::t('app',"Missing trait." )?>" + "\n";
         }
         
         if (!validateField("method")) {
-            errorMessage += "Missing method.\n";
+            errorMessage += "<?= Yii::t('app',"Missing method." )?>" + "\n";
         }
         
         if (!validateField("unit")) {
-            errorMessage += "Missing unit.";
+            errorMessage += "<?= Yii::t('app',"Missing unit." )?>" + "\n";
         }
         
         if (!validation) {
