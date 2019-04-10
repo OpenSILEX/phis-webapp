@@ -225,10 +225,10 @@ class YiiSensorModel extends WSActiveRecord {
         if ($this->serialNumber !== null) {
             $elementForWebService[YiiSensorModel::SERIAL_NUMBER] = $this->serialNumber;
         }
-        if ($this->dateOfLastCalibration !== null) {
+        if ($this->dateOfLastCalibration !== null && $this->dateOfLastCalibration !== "") {
             $elementForWebService[YiiSensorModel::DATE_OF_LAST_CALIBRATION] = $this->dateOfLastCalibration;
         }
-        if ($this->dateOfPurchase !== null) {
+        if ($this->dateOfPurchase !== null && $this->dateOfPurchase !== "") {
            $elementForWebService[YiiSensorModel::DATE_OF_PURCHASE] = $this->dateOfPurchase; 
         }
         
