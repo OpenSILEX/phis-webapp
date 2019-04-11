@@ -92,6 +92,7 @@ foreach ($model->properties as $property) {
             'brand',
             'serialNumber',
             'inServiceDate',
+            'model',
             'dateOfPurchase',
             'dateOfLastCalibration',
             [

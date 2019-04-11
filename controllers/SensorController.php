@@ -226,17 +226,20 @@ class SensorController extends Controller {
               $sensorModel->rdfType = $this->getSensorTypeCompleteUri($sensor[2]);
               $sensorModel->label = $sensor[1];
               $sensorModel->brand = $sensor[3];
-              $sensorModel->inServiceDate = $sensor[6];
-              $sensorModel->personInCharge = $sensor[8];
+              $sensorModel->inServiceDate = $sensor[7];
+              $sensorModel->personInCharge = $sensor[9];
               
               if ($sensor[4] !== "") {
                   $sensorModel->serialNumber = $sensor[4];
               }
               if ($sensor[5] !== "") {
-                  $sensorModel->dateOfPurchase = $sensor[5];
+                  $sensorModel->model = $sensor[5];
               }
-              if ($sensor[7] !== "") {
-                  $sensorModel->dateOfLastCalibration = $sensor[7];
+              if ($sensor[6] !== "") {
+                  $sensorModel->dateOfPurchase = $sensor[6];
+              }
+              if ($sensor[8] !== "") {
+                  $sensorModel->dateOfLastCalibration = $sensor[8];
               }
               
               $forWebService[] = $sensorModel->attributesToArray();

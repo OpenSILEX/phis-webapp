@@ -57,6 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'brand',
             'serialNumber',
+            'model',
             [
               'attribute' => 'inServiceDate',
               'format' => 'raw',
