@@ -403,6 +403,7 @@ require_once '../config/config.php';
      * @return string the json of the creation return
      */
     public function actionCreateMultipleScientificObjects() {
+        
         $objects = json_decode(Yii::$app->request->post()["objects"]);
         $sessionToken = Yii::$app->session['access_token'];
         
@@ -441,7 +442,8 @@ require_once '../config/config.php';
                 }
             }      
           
-        }        
+        }
+        
         return json_encode($return, JSON_UNESCAPED_SLASHES);
     }
     
@@ -516,9 +518,9 @@ require_once '../config/config.php';
      */
     private function getArrayForWebServiceCreate($scientificObject) {
         
-        if ($scientificObject["alias"] != null) {
+        if ($scientificObject["label"] != null) {
             $alias["relation"] = Yii::$app->params['rdfsLabel'];
-            $alias["value"] = $scientificObject["alias"];
+            $alias["value"] = $scientificObject["label"];
             $p["properties"][] = $alias;
         }
         
