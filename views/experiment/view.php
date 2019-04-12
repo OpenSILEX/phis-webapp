@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                         'document/create', 
                         'concernedItemUri' => $model->uri, 
-                        'concernedItemLabel' => $model->alias, 
+                        'concernedItemLabel' => $model->label, 
                         'concernedItemRdfType' => Yii::$app->params["Experiment"],
                         YiiDocumentModel::RETURN_URL => Url::current()
                     ], 

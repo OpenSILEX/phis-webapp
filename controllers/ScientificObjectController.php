@@ -370,21 +370,6 @@ require_once '../config/config.php';
         
         return $errorMessage;
     }
-    
-    /**
-     * check if a string value is empty or not
-     * @param string $value
-     * @return boolean true if not empty
-     */
-    private function valueIsNotEmpty($value) {
-        return $value !== ""
-            && $value !== " "
-            && $value !== "\t"
-            && !empty($value);
-    }
-    
-
-    
 
     /**
      * generated the scientific object creation page
@@ -431,7 +416,7 @@ require_once '../config/config.php';
             foreach ($objects as $object) {
                 $scientificObjectModel = new YiiScientificObjectModel();
                 
-                $scientificObjectModel->alias = $object[1];
+                $scientificObjectModel->label = $object[1];
                 $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
                 $scientificObjectModel->experiment = $object[3];
                 $scientificObjectModel->geometry = $object[4];
@@ -643,7 +628,7 @@ require_once '../config/config.php';
         $searchModel = new ScientificObjectSearch();
         if (isset($_GET['model'])) {
             $searchParams = $_GET['model'];
-            $searchModel->alias = isset($searchParams["alias"]) ? $searchParams["alias"] : null;
+            $searchModel->label = isset($searchParams["alias"]) ? $searchParams["alias"] : null;
             $searchModel->type = isset($searchParams["type"]) ? $searchParams["type"] : null;
             $searchModel->experiment = isset($searchParams["experiment"]) ? $searchParams["experiment"] : null;
         } else {
@@ -689,7 +674,7 @@ require_once '../config/config.php';
                 
                 foreach ($models as $model) {
                     $stringToWrite = $model->uri . ScientificObjectController::DELIM_CSV . 
-                                     $model->alias . ScientificObjectController::DELIM_CSV .
+                                     $model->label . ScientificObjectController::DELIM_CSV .
                                      $model->rdfType . ScientificObjectController::DELIM_CSV .
                                      $model->experiment . ScientificObjectController::DELIM_CSV . 
                                      "\n";
@@ -699,5 +684,81 @@ require_once '../config/config.php';
             }
             Yii::$app->response->sendFile($serverFilePath); 
         }
+    }
+    
+    /**
+     * Generated the scientific object update page.
+     * @return mixed
+     */
+    public function actionUpdate() {
+        $sessionToken = Yii::$app->session['access_token'];
+        $model = new YiiScientificObjectModel();
+        
+        $objectsTypes = $this->getObjectTypes();
+        if ($objectsTypes === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        }
+        $experiments = $this->getExperimentsURI();
+        if ($experiments === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        }        
+        
+        $species = $this->getSpecies();
+        
+        return $this->render('update', [
+            'model' => $model,
+            'objectsTypes' => json_encode($objectsTypes, JSON_UNESCAPED_SLASHES),
+            'experiments' => json_encode($experiments, JSON_UNESCAPED_SLASHES),
+            'species' => json_encode($species,JSON_UNESCAPED_SLASHES)
+        ]);
+    }
+    
+    /**
+     * Update the given objects
+     * @return string the json of the creation return
+     */
+    public function actionUpdateMultipleScientificObjects() {
+        $objects = json_decode(Yii::$app->request->post()["objects"]);
+        $sessionToken = Yii::$app->session['access_token'];
+        
+        $return = [
+            "error" => false,
+            "objectUris" => [],
+            "messages" => []
+        ];        
+
+        if (count($objects) > 0) {
+
+            foreach ($objects as $object) {
+                $scientificObjectModel = new YiiScientificObjectModel();
+                $uri = $object[0];
+                $scientificObjectModel->label = $object[1];
+                $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
+                $experiment = $object[3];
+                $scientificObjectModel->geometry = $object[4];
+                $scientificObjectModel->parent = $object[5];
+                $scientificObjectModel->species = $object[6];
+                $scientificObjectModel->variety = $object[7];  
+                $scientificObjectModel->modality = $object[8];
+                $scientificObjectModel->replication = $object[9];
+                
+                $insertionResult = $scientificObjectModel->updateByExperiment($sessionToken, $uri, $experiment);
+                
+                 if ($insertionResult === \app\models\wsModels\WSConstants::TOKEN) {
+                    return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+                } else if (isset($insertionResult->metadata->status[0]->exception->type)
+                            && $insertionResult->metadata->status[0]->exception->type !== "Error") {
+                    $return["objectUris"][] = $insertionResult->metadata->datafiles[0];
+                    $return["messages"][] = "object updated";
+                }
+                else {
+                    $return["error"] = true;
+                    $return["objectUris"][] = null;
+                    $return["messages"][] = $insertionResult->metadata->status[0]->exception->details;
+                }
+            }      
+          
+        }        
+        return json_encode($return, JSON_UNESCAPED_SLASHES);
     }
  }
