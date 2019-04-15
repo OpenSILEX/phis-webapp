@@ -13,7 +13,7 @@ return [
     'baseURI' => 'http://www.opensilex.org/demo/',
     //\SILEX:info
     
-    //DataAnalysis and visualisation module activation
+    // DataAnalysis and visualisation module activation
     'dataAnalysisModule' => true,
     
     // Forms
