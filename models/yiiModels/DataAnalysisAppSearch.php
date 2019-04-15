@@ -34,25 +34,29 @@ class DataAnalysisAppSearch {
      * @var OpenCPUServer 
      */
     public $ocpuserver;
+    
+    /**
+     * Application information directory
+     */
+    const APP_DESCRIPTION_DIRECTORY = "opensilex";
 
     /**
-     * Configuration file constants
+     * Metadata application constants
      */
-    const VIGNETTE_IMAGE = "vignette";
+    const APP_VIGNETTE_IMAGE = "appVignette";
+    const APP_INDEX_URL = "appUrlIndex";
+    const APP_DESCRIPTION = "description";
     const APP_SHORT_NAME = "appShortName";
-    const R_PACKAGE_NAME = "packageName";
-    const APP_INDEX_HREF = "appIndexHref";
-    const FUNCTION_NAME = "functionName";
-    const FUNCTION_HELP = "functionHelp";
-    const AVAILABLE_FUNCTIONS = "availableFunctions";
-    const FUNCTION_DESCRIPTION = "description";
-    const INTEGRATED_FUNCTION = "integratedFunctions";
+    const APP_NAME = "appName";
     
-    const DEFAULT_DEMO_APP = "opensilex/opensilex-datavis-rapp-demo";
+    /**
+     * Fixed default demo application path (similar to github link)
+     */
+    const DEFAULT_TEST_DEMO_APP = "opensilex/opensilex-datavis-rapp-demo";
 
     /**
      * Initialize openCPU server connection
-     * @param type $verbose if true, give connection metrics information
+     * @param boolean $verbose if true, give connection metrics informations
      */
     public function __construct($verbose = false) {
         $this->ocpuserver = new OpenCPUServer(\config::path()['ocpuServer']);
@@ -62,55 +66,102 @@ class DataAnalysisAppSearch {
     }
 
     /**
-     * Remove a choosen app (demo app)
-     * @param array $appList a list of app (github repo list)
+     * Remove the choosen application from an application list (demo app)
+     * @param string $appName the name of the application
+     * @param array $appList a list of app (github repository path list )
      * @return array list without self::DEFAULT_DEMO_APP app
      */
-    private function removeDemoAppFromAppList($appList) {
-        foreach ($appList as $key => $app) {
-            if ( $app == self::DEFAULT_DEMO_APP) {
-                unset($appList[$key]) ;
-            }
-        }
-        return $appList;
+    private function removeAppFromAppList($appName, $appList) {
+        return \array_diff($appList,[$appName]);
     }
     
     /**
-     * List all available apps
+     * List all available R applications
+     * This function creates all the necessary links to
+     * include R application in OpenSILEX web application 
+     * 
      * @param array $sessionToken used for the data access
      * @param string $params search params
      * @return array list of app with their informations
      */
     public function search() {
+        $serverUrl = $this->ocpuserver->getOpenCPUWebServerUrl();
         $appList = $this->ocpuserver->getAvailableApps();
+        $applications = $this->removeAppFromAppList(self::DEFAULT_TEST_DEMO_APP, $appList);
 
-        $apps = $this->removeDemoAppFromAppList($appList);
+        $applicationsMetaData = [];
 
-        $visualisationsInfo = [];
-        foreach ($apps as $app) {
-
-            $appConfiguration = $this->getAppConfiguration($app);
-
-            if (!empty($appConfiguration) 
-                    && isset($appConfiguration[self::AVAILABLE_FUNCTIONS]) 
-                    && isset($appConfiguration[self::INTEGRATED_FUNCTION])) {
-                $availableFunctions = $appConfiguration[self::AVAILABLE_FUNCTIONS];
-                $integratedFunctions = $appConfiguration[self::INTEGRATED_FUNCTION];
-                foreach ($availableFunctions as $functionName) {
-                    $applicationWebPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/www";
-                    $descriptionPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/opensilex/description";
-
-                    $descriptionText = $integratedFunctions[$functionName][self::FUNCTION_DESCRIPTION];
-                    $visualisationsInfo[$functionName][self::VIGNETTE_IMAGE] = "$descriptionPath/$functionName.png";
-                    $visualisationsInfo[$functionName][self::FUNCTION_HELP] = $descriptionText;
-                    $visualisationsInfo[$functionName][self::APP_SHORT_NAME] = explode("/", $app)[1] . "-" . $functionName;
-                    $visualisationsInfo[$functionName][self::R_PACKAGE_NAME] = $app;
-                    $url = "$applicationWebPath/index.html?accessToken=" . Yii::$app->session[WSConstants::ACCESS_TOKEN] . "&wsUrl=" . WS_PHIS_PATH;
-                    $visualisationsInfo[$functionName][self::APP_INDEX_HREF] = Url::to(['data-analysis/view', 'url' => $url, 'name' => explode("/", $app)[1]]);
-                }
-            }
+        foreach ($applications as $application) {
+            $applicationMetaData = $this->getApplicationInformation($serverUrl, $application);
+            $applicationsMetaData = array_merge($applicationsMetaData, $applicationMetaData);
         }
-        return $visualisationsInfo;
+        
+        return $applicationsMetaData;
+    }
+
+    /**
+     * A base R application structure :
+     * 
+     * Rapplication
+     *   ├── comparevariablesdemo.Rproj
+     *   ├── DESCRIPTION
+     *   ├── inst
+     *   │   ├── opensilex (informations to make a link with OpenSILEX)
+     *   │   │    ├── description.md
+     *   │   │    └── vignette.png
+     *   │   │   
+     *   │   └── www (web application)
+     *   │       ├── css
+     *   │       ├── index.html
+     *   │       └── js
+     *   ├── man R (documentation files)
+     *   │    └── doc.Rd
+     *   ├── NAMESPACE
+     *   ├── R (R functions)
+     *   │   ├── functions.R
+     *   └── README.md
+     * Retreive application informations according to application structure
+     * above
+     * @return array 
+     */
+    private function getApplicationInformation($application) {
+        $serverUrl = $this->ocpuserver->getOpenCPUWebServerUrl();
+
+        $appMetaData = [];
+        if ($this->ocpuserver->status()) {
+            $applicationWebPath = $serverUrl . "apps/" . $application . "/www";
+            $descriptionPath = $serverUrl . "apps/" . $application . "/" . self::APP_DESCRIPTION_DIRECTORY;
+
+            $existVignette = $this->existsRemoteFile("$descriptionPath/vignette.png");
+            if ($existVignette) {
+                $appMetaData[$application][self::APP_VIGNETTE_IMAGE] = "$descriptionPath/vignette.png";
+            } else {
+                $notFoundImage = Yii::getAlias('@web') . "/images/logos/R_logo.png";
+                $appMetaData[$application][self::APP_VIGNETTE_IMAGE] = $notFoundImage;
+            }
+            
+            $descriptionVignette = $this->existsRemoteFile("$descriptionPath/description.md");
+            if ($descriptionVignette) {
+                $appMetaData[$application][self::APP_DESCRIPTION] = "$descriptionPath/description.md";
+            } else {
+                $appMetaData[$application][self::APP_DESCRIPTION] = "No description found.";
+            }
+            
+            $appMetaData[$application][self::APP_SHORT_NAME] = explode("/", $application)[1];
+            
+            $appMetaData[$application][self::APP_NAME] = $application;
+            
+            $url = "$applicationWebPath/index.html?accessToken=" . Yii::$app->session[WSConstants::ACCESS_TOKEN] . "&wsUrl=" . WS_PHIS_PATH;
+            $urlToApplication = Url::to(
+                            [
+                                'data-analysis/view',
+                                'url' => $url,
+                                'name' => explode("/", $application)[1]
+                            ]
+            );
+            $appMetaData[$application][self::APP_INDEX_URL] = $urlToApplication;
+        }
+        return $appMetaData;
     }
 
     /**
@@ -121,7 +172,7 @@ class DataAnalysisAppSearch {
         $visualisationsInfo = [];
 
         if ($this->ocpuserver->status()) {
-            $app = self::DEFAULT_DEMO_APP;
+            $app = self::DEFAULT_TEST_DEMO_APP;
 
             $appConfiguration = $this->getAppConfiguration($app);
             if (!empty($appConfiguration) 
@@ -135,12 +186,12 @@ class DataAnalysisAppSearch {
                 $descriptionPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/opensilex/description";
 
                 $descriptionText = $integratedFunctions[$functionName][self::FUNCTION_DESCRIPTION];
-                $visualisationsInfo[self::VIGNETTE_IMAGE] = "$descriptionPath/$functionName.png";
+                $visualisationsInfo[self::APP_VIGNETTE_IMAGE] = "$descriptionPath/$functionName.png";
                 $visualisationsInfo[self::FUNCTION_HELP] = $descriptionText;
                 $visualisationsInfo[self::APP_SHORT_NAME] = explode("/", $app)[1] . "-" . $functionName;
-                $visualisationsInfo[self::R_PACKAGE_NAME] = $app;
+                $visualisationsInfo[self::APP_NAME] = $app;
                 $url = "$applicationWebPath/index.html?accessToken=" . Yii::$app->session[WSConstants::ACCESS_TOKEN] . "&wsUrl=" . WS_PHIS_PATH;
-                $visualisationsInfo[self::APP_INDEX_HREF] = Url::to(['data-analysis/view', 'url' => $url, 'name' => explode("/", $app)[1]]);
+                $visualisationsInfo[self::APP_INDEX_URL] = Url::to(['data-analysis/view', 'url' => $url, 'name' => explode("/", $app)[1]]);
             }
         }
         return $visualisationsInfo;
@@ -229,4 +280,16 @@ class DataAnalysisAppSearch {
         }
         return [];
     }
+    
+    function existsRemoteFile($url) {
+        try {
+            $this->ocpuserver->getOpenCPUWebServerClient()->head($url);
+            return true;
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            return false;
+        }
+    }
+
 }
+
+   
