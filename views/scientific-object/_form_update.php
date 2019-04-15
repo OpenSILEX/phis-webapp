@@ -20,7 +20,7 @@
     <div id="objects-to-update">
         <div id="object-multiple-update-table"></div>
         <div id="object-multiple-update-button" style="margin-top : 1%">
-            <button type="button" class="btn btn-success" id="objects-update"><?= Yii::t('app', 'Update Scientific Objects') ?></button>
+            <button type="button" class="btn btn-primary" id="objects-update"><?= Yii::t('app', 'Update Scientific Objects') ?></button>
         </div>
     </div>
     <div id="loader" class="loader" style="display:none"></div>
