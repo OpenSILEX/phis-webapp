@@ -9,7 +9,6 @@
 //******************************************************************************
 
 use yii\helpers\Html;
-use yii\helpers\Url;
 use app\models\yiiModels\DataAnalysisAppSearch;
 
 /* @var $this yii\web\View */
@@ -25,25 +24,15 @@ if (Yii::$app->session->hasFlash('scriptNotAvailable')) {
 echo Html::beginTag("div", ["class" => "data-analysis-index"]);
 echo Html::beginTag("div", ["class" => "row"]);
 foreach ($dataProvider as $function => $appInfo) {
-    if ($integrated) {
-        $appHref =  Url::to([
-                    "data-analysis/run-script/", 
-                    "function" => $function,
-                    "rpackage" => $appInfo[DataAnalysisAppSearch::R_PACKAGE_NAME]
-                    ]);
-    } else {
-        $appHref = $appInfo[DataAnalysisAppSearch::APP_INDEX_HREF];
-    }
-    echo Html::beginTag("div", ["class" => "col-sm-6 col-md-5"]);
+    echo Html::beginTag("div", ["class" => "col-sm-5 col-md-4"]);
     echo Html::beginTag("div", ["class" => "thumbnail"]);
-    echo Html::beginTag("a", ["href" => $appHref]);
-    echo Html::img($appInfo[DataAnalysisAppSearch::VIGNETTE_IMAGE],[
+    $image = Html::img($appInfo[DataAnalysisAppSearch::APP_VIGNETTE_IMAGE],[
                 "class" => "img-responsive",
                 "alt" => $appInfo[DataAnalysisAppSearch::APP_SHORT_NAME]
                 ]);
-    echo Html::endTag("a");
+    echo Html::a( $image, $appInfo[DataAnalysisAppSearch::APP_INDEX_URL]);
     echo Html::beginTag("center");
-    echo Html::tag("strong", $appInfo[DataAnalysisAppSearch::FUNCTION_HELP]);
+    echo Html::tag("strong", $appInfo[DataAnalysisAppSearch::APP_DESCRIPTION]);
     echo Html::endTag("center");
     echo Html::endTag("div");
     echo Html::endTag("div");
