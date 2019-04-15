@@ -134,8 +134,8 @@ class DataAnalysisAppSearch {
         if ($this->ocpuserver->status()) {
             $applicationWebPath = $serverUrl . "apps/" . $application . "/www";
             $descriptionPath = $serverUrl . "apps/" . $application . "/" . self::APP_DESCRIPTION_DIRECTORY;
-
             $existVignette = $this->existsRemoteFile("$descriptionPath/vignette.png");
+
             if ($existVignette) {
                 $appMetaData[$application][self::APP_VIGNETTE_IMAGE] = "$descriptionPath/vignette.png";
             } else {
@@ -144,12 +144,21 @@ class DataAnalysisAppSearch {
             }
             
             $descriptionVignette = $this->existsRemoteFile("$descriptionPath/description.md");
+            // description file exist
             if ($descriptionVignette) {
-                $appMetaData[$application][self::APP_DESCRIPTION] = "$descriptionPath/description.md";
+                $description = $this->getRemoteMarkdownFileDescription($application);
+                // not empty description file 
+                if (isset($description) && !empty($description)) {
+                    $appMetaData[$application][self::APP_DESCRIPTION] = $description;
+                 // empty description file 
+                } else {
+                    $appMetaData[$application][self::APP_DESCRIPTION] = self::DESCRIPTION_NOT_FOUND;
+                }
+            // description file doesn't exist
             } else {
                 $appMetaData[$application][self::APP_DESCRIPTION] = self::DESCRIPTION_NOT_FOUND;
             }
-            
+
             $appMetaData[$application][self::APP_SHORT_NAME] = explode("/", $application)[1];
             
             $appMetaData[$application][self::APP_NAME] = $application;
@@ -167,23 +176,26 @@ class DataAnalysisAppSearch {
 
         return $appMetaData;
     }
-    
+        
     /**
      * Check if a remote file is reachable
      * @param string $url any url string
      * @return boolean true if it is reachable
      *                 false if not
      */
-    function existsRemoteFile($url) {
+    private function existsRemoteFile($url) {
         try {
-            $this->ocpuserver->getOpenCPUWebServerClient()->head($url);
-            return true;
+            if ($this->ocpuserver->status()) {
+                $this->ocpuserver->getOpenCPUWebServerClient()->request('GET', $url);
+                return true;
+            }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
-            return false;
+            
         }
+        return false;
     }
-    
-     /**
+
+    /**
      * Remove the choosen application from an application list (demo app)
      * @param string $appName the name of the application
      * @param array $appList a list of app (github repository path list )
@@ -193,6 +205,50 @@ class DataAnalysisAppSearch {
         return \array_diff($appList,[$appName]);
     }
     
+    /**
+     * Retreive a description file write in Markdown by a R developper
+     * from the R application
+     * @param string $application opencpu application name (github name)
+     * @return string null if no description text in file
+     *                string not empty if there is a description
+     */
+    function getRemoteMarkdownFileDescription($application) {
+        if ($this->ocpuserver->status()) {
+            try {
+                $response = $this->ocpuserver->getOpenCPUWebServerClient()->request(
+                        OpenCPUServer::OPENCPU_SERVER_GET_METHOD,
+                        'apps/' . $application . '/opensilex/description.md'
+                        );
+
+                $body = $response->getBody();
+                // retrevies body as a string
+                $stringBody = (string) $body;
+
+                return \yii\helpers\Markdown::process($stringBody);
+            } catch (RequestException $e) {
+                $errorMessage = Psr7\str($e->getRequest());
+                if ($e->hasResponse()) {
+                    $errorMessage .= '--' . Psr7\str($e->getResponse());
+                }
+                $this->serverCallStatus = new CallStatus($errorMessage, $e->getResponse()->getStatusCode(), $e);
+                // ClientException is thrown for 400 level errors
+            } catch (ClientException $e) {
+                $errorMessage = Psr7\str($e->getRequest());
+                if ($e->hasResponse()) {
+                    $errorMessage .= '--' . Psr7\str($e->getResponse());
+                }
+                $this->serverCallStatus = new CallStatus($errorMessage, $e->getResponse()->getStatusCode(), $e);
+                // is thrown for 500 level errors
+            } catch (ServerException $e) {
+                $errorMessage = Psr7\str($e->getRequest());
+                if ($e->hasResponse()) {
+                    $errorMessage .= '--' . Psr7\str($e->getResponse());
+                }
+                $this->serverCallStatus = new CallStatus($errorMessage, $e->getResponse()->getStatusCode(), $e);
+            }
+        }
+        return null;
+    }
 
 }
 
