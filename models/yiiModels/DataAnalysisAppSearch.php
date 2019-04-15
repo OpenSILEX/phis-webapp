@@ -55,6 +55,11 @@ class DataAnalysisAppSearch {
     const DEFAULT_TEST_DEMO_APP = "opensilex/opensilex-datavis-rapp-demo";
 
     /**
+     * Default description not found
+     */
+    const DESCRIPTION_NOT_FOUND = "No description found.";
+    
+    /**
      * Initialize openCPU server connection
      * @param boolean $verbose if true, give connection metrics informations
      */
@@ -144,7 +149,7 @@ class DataAnalysisAppSearch {
             if ($descriptionVignette) {
                 $appMetaData[$application][self::APP_DESCRIPTION] = "$descriptionPath/description.md";
             } else {
-                $appMetaData[$application][self::APP_DESCRIPTION] = "No description found.";
+                $appMetaData[$application][self::APP_DESCRIPTION] = self::DESCRIPTION_NOT_FOUND;
             }
             
             $appMetaData[$application][self::APP_SHORT_NAME] = explode("/", $application)[1];
