@@ -22,12 +22,7 @@ include_once '../config/web_services.php';
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class DataAnalysisController extends \yii\web\Controller {
-    /**
-     * Constants used to parse configuration file
-     */
-    const INTEGRATED_FUNCTIONS = "integratedFunctions";
-    const FORM_PARAMETERS = "formParameters";
-    
+  
     /**
      * define the behaviors
      * @return array
@@ -44,8 +39,11 @@ class DataAnalysisController extends \yii\web\Controller {
     }
 
     /**
-     * List all R apps
-     * @return mixed
+     * Show in a gallery all available R applications
+     * @param boolean $integrated a parameter which 
+     *        will be used to know if an application can
+     *        be intergated
+     * @return string result of a view
      */
     public function actionIndex($integrated = false) {
 
@@ -54,10 +52,15 @@ class DataAnalysisController extends \yii\web\Controller {
         $searchParams = Yii::$app->request->queryParams;
 
         $searchResult = $searchModel->search($searchParams);
+        
+        // no applications returned - connection error or no opencpu applications
+        // have been loaded
         if (empty($searchResult)) {
-            return $this->render('error', [
-                        'message' => 'No application available.'
-            ]);
+             return $this->render('/site/error', [
+                           'name' => Yii::t('app/messages','Internal error'),
+                           'message' => Yii::t('app/messages', 'No application availables.')
+                        ]
+                    );
         } else {
             return $this->render('index', [
                         'searchModel' => $searchModel,
@@ -69,24 +72,31 @@ class DataAnalysisController extends \yii\web\Controller {
     }
 
     /**
-     * Show standalone Demo R app
-     * @return type
+     * Show standalone Demo R application app integrated in a iframe.
+     * The purpose of this application is to test a R function 
+     * which use any OpenSILEX webservice. 
+     * @return string a view result
      */
     public function actionViewDemo() {
         $searchModel = new DataAnalysisAppSearch();
-        $appDemoInformation = $searchModel->getAppDemoInformation();
-        if (!empty($appDemoInformation)) {
-            $this->redirect($appDemoInformation[DataAnalysisAppSearch::APP_INDEX_HREF]);
+        // retreive information on default app
+        $appDemo = $searchModel->getApplicationInformation(
+                $searchModel::DEFAULT_TEST_DEMO_APP
+                );
+        // connection error or application not loaded
+        if (!empty($appDemo)) {
+            $appDemoInformation = $appDemo[$searchModel::DEFAULT_TEST_DEMO_APP];
+            $this->redirect($appDemoInformation[DataAnalysisAppSearch::APP_INDEX_URL]);
         } else {
-            return $this->render('error', [
-                        'message' => 'Demo application not available.'
-            ]);
+            return $this->render('/site/error', [
+                    'name' => Yii::t('app/messages','Internal error'),
+                    'message' => Yii::t('app/messages', 'Demo application not found.')]);
         }
     }
 
     /**
-     * Show standalone Demo R app
-     * @return type
+     * Show standalone Demo R app integrated in a iframe.
+     * @return string a view result
      */
     public function actionView() {
         $searchParams = Yii::$app->request->queryParams;
