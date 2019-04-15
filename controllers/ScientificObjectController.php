@@ -403,7 +403,6 @@ require_once '../config/config.php';
      * @return string the json of the creation return
      */
     public function actionCreateMultipleScientificObjects() {
-        
         $objects = json_decode(Yii::$app->request->post()["objects"]);
         $sessionToken = Yii::$app->session['access_token'];
         
@@ -758,8 +757,7 @@ require_once '../config/config.php';
                     $return["objectUris"][] = null;
                     $return["messages"][] = $insertionResult->metadata->status[0]->exception->details;
                 }
-            }      
-          
+            }
         }        
         return json_encode($return, JSON_UNESCAPED_SLASHES);
     }

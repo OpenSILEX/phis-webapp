@@ -14,6 +14,7 @@
 
 namespace app\models\yiiModels;
 
+use Yii;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSUriModel;
 use app\models\wsModels\WSScientificObjectModel;
@@ -195,16 +196,42 @@ class YiiScientificObjectModel extends WSActiveRecord {
      * Used for the web service for example
      * @return array with the attributes. 
      */
-    protected function attributesToArrayForPut() {
+    public function attributesToArrayForPut() {
         $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiScientificObjectModel::LABEL] = $this->label;
         $elementForWebService[YiiScientificObjectModel::RDF_TYPE] = $this->type;
         $elementForWebService[YiiScientificObjectModel::GEOMETRY] = $this->geometry;
-        $elementForWebService[YiiScientificObjectModel::SPECIES] = $this->species;
-        $elementForWebService[YiiScientificObjectModel::VARIETY] = $this->variety;
-        $elementForWebService[YiiScientificObjectModel::MODALITY] = $this->modality;
-        $elementForWebService[YiiScientificObjectModel::REPLICATION] = $this->replication;
         $elementForWebService[YiiScientificObjectModel::ISPARTOF] = $this->parent;
+        
+        $properties = [];
+        
+        if (!empty($this->species)) {
+            $species["rdfType"] = Yii::$app->params['Species'];
+            $species["relation"] = Yii::$app->params['hasSpecies'];
+            $species["value"] = $this->species;
+            $properties[] = $species;
+        }
+        
+        if (!empty($this->variety)) {
+            $variety["rdfType"] = Yii::$app->params['Variety'];
+            $variety["relation"] = Yii::$app->params['hasVariety'];
+            $variety["value"] = $this->variety;
+            $properties[] = $variety;
+        }
+        
+        if (!empty($this->modality)) {
+            $modality["relation"] = Yii::$app->params['hasExperimentModalities'];
+            $modality["value"] = $this->modality;
+            $properties[] = $modality;
+        }
+        
+        if (!empty($this->replication)) {
+            $replication["relation"] = Yii::$app->params['hasReplication'];
+            $replication["value"] = $this->replication;
+            $properties[] = $replication;
+        }
+        
+        $elementForWebService["properties"] = $properties;
         
         return $elementForWebService;
     }
