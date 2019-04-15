@@ -13,6 +13,9 @@ return [
     'baseURI' => 'http://www.opensilex.org/demo/',
     //\SILEX:info
     
+    //DataAnalysis and visualisation module activation
+    'dataAnalysisModule' => true,
+    
     // Forms
     'dateTimeFormatDateTimeRangePickerStandard' => 'Y-m-dTH:i:sZ',
     'dateTimeFormatDateTimePickerUserFriendly' => 'yyyy-mm-dd HH:ii:ss',
