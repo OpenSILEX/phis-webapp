@@ -14,7 +14,6 @@ use Yii;
 use openSILEX\opencpuClientPHP\OpenCPUServer;
 use app\models\wsModels\WSConstants;
 use yii\helpers\Url;
-use Symfony\Component\Yaml\Yaml;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7;
@@ -25,7 +24,7 @@ require_once '../config/config.php';
 
 /**
  * DataAnalysisAppSearch search class which makes link
- * between openSILEX and OpenCPU
+ * between OpenSILEX and OpenCPU apps
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class DataAnalysisAppSearch {
@@ -45,7 +44,7 @@ class DataAnalysisAppSearch {
      */
     const APP_VIGNETTE_IMAGE = "appVignette";
     const APP_INDEX_URL = "appUrlIndex";
-    const APP_DESCRIPTION = "description";
+    const APP_DESCRIPTION = "appDescription";
     const APP_SHORT_NAME = "appShortName";
     const APP_NAME = "appName";
     
@@ -70,34 +69,25 @@ class DataAnalysisAppSearch {
         }
     }
 
-    /**
-     * Remove the choosen application from an application list (demo app)
-     * @param string $appName the name of the application
-     * @param array $appList a list of app (github repository path list )
-     * @return array list without self::DEFAULT_DEMO_APP app
-     */
-    private function removeAppFromAppList($appName, $appList) {
-        return \array_diff($appList,[$appName]);
-    }
-    
+   
     /**
      * List all available R applications
      * This function creates all the necessary links to
      * include R application in OpenSILEX web application 
      * 
      * @param array $sessionToken used for the data access
-     * @param string $params search params
+     * @param array $params search params (maybe used to filter apps)
      * @return array list of app with their informations
      */
-    public function search() {
-        $serverUrl = $this->ocpuserver->getOpenCPUWebServerUrl();
+    public function search($params = null) {
         $appList = $this->ocpuserver->getAvailableApps();
+        // list all applications
         $applications = $this->removeAppFromAppList(self::DEFAULT_TEST_DEMO_APP, $appList);
 
         $applicationsMetaData = [];
-
+        // retreive each informations on each applications
         foreach ($applications as $application) {
-            $applicationMetaData = $this->getApplicationInformation($serverUrl, $application);
+            $applicationMetaData = $this->getApplicationInformation($application);
             $applicationsMetaData = array_merge($applicationsMetaData, $applicationMetaData);
         }
         
@@ -127,9 +117,17 @@ class DataAnalysisAppSearch {
      *   └── README.md
      * Retreive application informations according to application structure
      * above
-     * @return array 
+     * @return array application metadata
+     * 
+     * ["niio972/opensilex-dataviz-compare-variables"]=> { 
+     *        ["appVignette"]=> "/phis-webapp/web/images/logos/R_logo.png" 
+     *        ["appDescription"]=> "A demo application." 
+     *        ["appShortName"]=> "opensilex-dataviz-compare-variables" 
+     *        ["appName"]=> "niio972/opensilex-dataviz-compare-variables" 
+     *        ["appUrlIndex"]=> "/phis-webapp/web/index.php?r=data-analysis%2Fview....
+     *  }
      */
-    private function getApplicationInformation($application) {
+    public function getApplicationInformation($application) {
         $serverUrl = $this->ocpuserver->getOpenCPUWebServerUrl();
 
         $appMetaData = [];
@@ -166,126 +164,16 @@ class DataAnalysisAppSearch {
             );
             $appMetaData[$application][self::APP_INDEX_URL] = $urlToApplication;
         }
+
         return $appMetaData;
     }
-
-    /**
-     * Retreive information on demo app only
-     * @return array information on demo app
-     */
-    public function getAppDemoInformation() {
-        $visualisationsInfo = [];
-
-        if ($this->ocpuserver->status()) {
-            $app = self::DEFAULT_TEST_DEMO_APP;
-
-            $appConfiguration = $this->getAppConfiguration($app);
-            if (!empty($appConfiguration) 
-                    && isset($appConfiguration[self::AVAILABLE_FUNCTIONS][0]) 
-                    && isset($appConfiguration[self::INTEGRATED_FUNCTION])) {
-                // only one function
-                $functionName = $appConfiguration[self::AVAILABLE_FUNCTIONS][0];
-                $integratedFunctions = $appConfiguration[self::INTEGRATED_FUNCTION];
-
-                $applicationWebPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/www";
-                $descriptionPath = $this->ocpuserver->getOpenCPUWebServerUrl() . "apps/" . $app . "/opensilex/description";
-
-                $descriptionText = $integratedFunctions[$functionName][self::FUNCTION_DESCRIPTION];
-                $visualisationsInfo[self::APP_VIGNETTE_IMAGE] = "$descriptionPath/$functionName.png";
-                $visualisationsInfo[self::FUNCTION_HELP] = $descriptionText;
-                $visualisationsInfo[self::APP_SHORT_NAME] = explode("/", $app)[1] . "-" . $functionName;
-                $visualisationsInfo[self::APP_NAME] = $app;
-                $url = "$applicationWebPath/index.html?accessToken=" . Yii::$app->session[WSConstants::ACCESS_TOKEN] . "&wsUrl=" . WS_PHIS_PATH;
-                $visualisationsInfo[self::APP_INDEX_URL] = Url::to(['data-analysis/view', 'url' => $url, 'name' => explode("/", $app)[1]]);
-            }
-        }
-        return $visualisationsInfo;
-    }
-
-    /**
-     * Return exported functionalities 
-     * @param string $applicationName 
-     * @return array functionalities
-     */
-    function getAppFunctionalities($applicationName) {
-         if ($this->ocpuserver->status()) {
-            try {
-                $response = $this->ocpuserver->getOpenCPUWebServerClient()->request(OpenCPUServer::OPENCPU_SERVER_GET_METHOD, 'apps/' . $applicationName . '/opensilex/descriptions');
-                $body = $response->getBody();
-                // retrevies body as a string
-                $stringBody = (string) $body;
-                $sessionValuesResults = explode("\n", $stringBody);
-                $cleansessionValuesResults = array_filter($sessionValuesResults);
-
-                return $cleansessionValuesResults;
-            } catch (RequestException $e) {
-                $errorMessage = Psr7\str($e->getRequest());
-                if ($e->hasResponse()) {
-                    $errorMessage .= '--' . Psr7\str($e->getResponse());
-                }
-                $this->serverCallStatus = new CallStatus($errorMessage, $e->getResponse()->getStatusCode(), $e);
-                // ClientException is thrown for 400 level errors
-            } catch (ClientException $e) {
-                $errorMessage = Psr7\str($e->getRequest());
-                if ($e->hasResponse()) {
-                    $errorMessage .= '--' . Psr7\str($e->getResponse());
-                }
-                $this->serverCallStatus = new CallStatus($errorMessage, $e->getResponse()->getStatusCode(), $e);
-                // is thrown for 500 level errors
-            } catch (ServerException $e) {
-                $errorMessage = Psr7\str($e->getRequest());
-                if ($e->hasResponse()) {
-                    $errorMessage .= '--' . Psr7\str($e->getResponse());
-                }
-                $this->serverCallStatus = new CallStatus($errorMessage, $e->getResponse()->getStatusCode(), $e);
-            }
-        }
-        return [];
-    }
-
-  
-     /**
-     * Return R application configuration
-     * @param string $app
-     * @return array
-     */
-    function getAppConfiguration($app) {
-        if ($this->ocpuserver->status()) {
-            try {
-                $response = $this->ocpuserver->getOpenCPUWebServerClient()->request(OpenCPUServer::OPENCPU_SERVER_GET_METHOD, 'apps/' . $app . '/opensilex/webAppConfig.yml');
-
-                $body = $response->getBody();
-                // retrevies body as a string
-                $stringBody = (string) $body;
-
-                return Yaml::parse($stringBody);
-                } catch (\Symfony\Component\Yaml\Exception\ParseException $e) {
-                    return [];            
-                } catch (RequestException $e) {
-                $errorMessage = Psr7\str($e->getRequest());
-                if ($e->hasResponse()) {
-                    $errorMessage .= '--' . Psr7\str($e->getResponse());
-                }
-                $this->serverCallStatus = new CallStatus($errorMessage, $e->getResponse()->getStatusCode(), $e);
-                // ClientException is thrown for 400 level errors
-            } catch (ClientException $e) {
-                $errorMessage = Psr7\str($e->getRequest());
-                if ($e->hasResponse()) {
-                    $errorMessage .= '--' . Psr7\str($e->getResponse());
-                }
-                $this->serverCallStatus = new CallStatus($errorMessage, $e->getResponse()->getStatusCode(), $e);
-                // is thrown for 500 level errors
-            } catch (ServerException $e) {
-                $errorMessage = Psr7\str($e->getRequest());
-                if ($e->hasResponse()) {
-                    $errorMessage .= '--' . Psr7\str($e->getResponse());
-                }
-                $this->serverCallStatus = new CallStatus($errorMessage, $e->getResponse()->getStatusCode(), $e);
-            }
-        }
-        return [];
-    }
     
+    /**
+     * Check if a remote file is reachable
+     * @param string $url any url string
+     * @return boolean true if it is reachable
+     *                 false if not
+     */
     function existsRemoteFile($url) {
         try {
             $this->ocpuserver->getOpenCPUWebServerClient()->head($url);
@@ -294,6 +182,17 @@ class DataAnalysisAppSearch {
             return false;
         }
     }
+    
+     /**
+     * Remove the choosen application from an application list (demo app)
+     * @param string $appName the name of the application
+     * @param array $appList a list of app (github repository path list )
+     * @return array list without self::DEFAULT_DEMO_APP app
+     */
+    private function removeAppFromAppList($appName, $appList) {
+        return \array_diff($appList,[$appName]);
+    }
+    
 
 }
 
