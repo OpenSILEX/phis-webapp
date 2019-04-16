@@ -152,44 +152,35 @@ class EventController extends GenericController {
         if ($eventModel->load(Yii::$app->request->post())) {
             $eventModel->isNewRecord = true;
             
-            // Set properties
-            $property = new YiiPropertyModel();
-            switch ($eventModel->rdfType) {
-                case $eventConceptUri = Yii::$app->params['moveFrom']:
-                    $property->value = $eventModel->propertyFrom;
-                    $property->rdfType = $eventModel->propertyType;
-                    $property->relation = Yii::$app->params['from'];
-                    break;
-                case $eventConceptUri = Yii::$app->params['moveTo']:
-                    $property->value = $eventModel->propertyTo;
-                    $property->rdfType = $eventModel->propertyType;
-                    $property->relation = Yii::$app->params['to'];
-                    break;
-                default : 
-                    $property = null;
-                    break;
-            }
-            $eventModel->properties = [$property];
+            $this->completeEventAttributes($eventModel);
+            $this->completeEventAnnotationAttributes($eventModel, $sessionToken);
             
             // If post data, insert the submitted form
             $dataToSend[] =  $eventModel->attributesToArray();
-            error_log("dataToSend ".print_r($dataToSend, true));
-            $requestRes =  $eventModel->insert($sessionToken, $dataToSend);
-            
+            $requestResults =  $eventModel->insert($sessionToken, $dataToSend);
+            return $this->handlePostResponse($requestResults, $eventModel->returnUrl);
+        } else {
+            $this->loadFormParams();
+            return $this->render('create', ['model' =>  $eventModel]);
+        }
+    }
+
+    /**
+     * Displays the form to update an event.
+     * @return mixed redirect in case of error or after successfully create 
+     * the radiometric target otherwise return the "create" view 
+     */
+    public function actionUpdate($id) {
+        $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
+
+        $event = new EventPut();
+        
+        if ( $event->load(Yii::$app->request->put())) {
+
             if (is_string($requestRes) && $requestRes === WSConstants::TOKEN) {
-                return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+            return $this->redirectToLoginPage();
             } else {
-                if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0])) { //event created
-                    if ($eventModel->returnUrl) {
-                        $this->redirect($eventModel->returnUrl);
-                    } else {
-                        return $this->redirect(['view', 'id' => $requestRes->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0]]);
-                    }                    
-                } else { //an error occurred
-                    return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
-                        'name' => Yii::t('app/messages','Internal error'),
-                        'message' => $requestRes->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}]);
-                }
+                return $this->redirect(['view', 'id' =>  $event->uri]);
             }
         } else {
             $event =  $event->getEvent($sessionToken, $id);
