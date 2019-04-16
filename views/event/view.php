@@ -29,11 +29,8 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Event
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="event-view">
-
     <h1><?= Html::encode(Vocabulary::prettyUri($model->rdfType)) ?></h1>
-    
-    <p>
-        <!-- Annotation button -->
+        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
         <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
     </p>
 
