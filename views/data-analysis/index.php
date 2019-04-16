@@ -21,7 +21,7 @@ $this->title = Yii::t('app',
         );
 $this->params['breadcrumbs'][] = $this->title;
 if (Yii::$app->session->hasFlash('scriptNotAvailable')) {
-    echo Html::tag("p", "Script not available", ["class" => "alert alert-danger"]);
+    echo Html::tag("p", Yii::t('app/messages', 'Application not available'), ["class" => "alert alert-danger"]);
 }
 
 echo Html::beginTag("div", ["class" => "data-analysis-index"]);
@@ -37,7 +37,7 @@ foreach ($dataProvider as $function => $appInfo) {
                 ]);
     echo Html::a( $image, $appInfo[DataAnalysisAppSearch::APP_INDEX_URL]);
     echo Html::beginTag("center");
-    echo Html::tag("strong", $appInfo[DataAnalysisAppSearch::APP_DESCRIPTION]);
+    echo Html::tag("strong", Yii::t('app/messages', $appInfo[DataAnalysisAppSearch::APP_DESCRIPTION]));
     echo Html::endTag("center");
     echo Html::endTag("div");
     echo Html::endTag("div");

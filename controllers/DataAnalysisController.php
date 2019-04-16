@@ -53,7 +53,7 @@ class DataAnalysisController extends \yii\web\Controller {
         if (empty($searchResult)) {
             return $this->render('/site/error', [
                         'name' => Yii::t('app/messages', 'Internal error'),
-                        'message' => Yii::t('app/messages', 'No application available.')
+                        'message' => Yii::t('app/messages', 'No application available')
                         ]
             );
         } else {
@@ -85,7 +85,7 @@ class DataAnalysisController extends \yii\web\Controller {
         } else {
             return $this->render('/site/error', [
                         'name' => Yii::t('app/messages', 'Internal error'),
-                        'message' => Yii::t('app/messages', 'Demo application not found.')
+                        'message' => Yii::t('app/messages', 'Demonstration application not avaiblable')
                         ]
             );
         }

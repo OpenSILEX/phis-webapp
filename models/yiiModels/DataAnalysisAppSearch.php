@@ -79,7 +79,7 @@ class DataAnalysisAppSearch {
     /**
      * Default description not found
      */
-    const DESCRIPTION_NOT_FOUND = "No description found.";
+    const DESCRIPTION_NOT_FOUND = "No description found";
     
     /**
      * Initialize openCPU server connection
@@ -174,11 +174,11 @@ class DataAnalysisAppSearch {
                     $appMetaData[$application][self::APP_DESCRIPTION] = $description;
                     // empty description file 
                 } else {
-                    $appMetaData[$application][self::APP_DESCRIPTION] = Yii::t('app/messages', self::DESCRIPTION_NOT_FOUND);
+                    $appMetaData[$application][self::APP_DESCRIPTION] = self::DESCRIPTION_NOT_FOUND;
                 }
                 // description file doesn't exist
             } else {
-                $appMetaData[$application][self::APP_DESCRIPTION] = Yii::t('app/messages', self::DESCRIPTION_NOT_FOUND);
+                $appMetaData[$application][self::APP_DESCRIPTION] = self::DESCRIPTION_NOT_FOUND;
             }
 
             $appMetaData[$application][self::APP_SHORT_NAME] = explode("/", $application)[1];
