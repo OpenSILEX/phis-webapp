@@ -6,7 +6,7 @@
 // Creation date: 15 Apr. 2098
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-namespace yii\web;
+namespace app\controllers;
 
 use Yii;
 use app\models\wsModels\WSConstants;

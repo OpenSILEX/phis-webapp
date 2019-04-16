@@ -9,8 +9,8 @@
 namespace app\controllers;
 
 use Yii;
-use yii\web\GenericController;
 use yii\data\ArrayDataProvider;
+use app\controllers\GenericController;
 use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\YiiEventModel;
