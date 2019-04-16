@@ -62,7 +62,7 @@ class EventController extends Controller {
     }
 
     /**
-     * Displays the detail of an event
+     * Displays the detail of an event.
      * @param $id URI of the event
      * @return mixed redirect in case of error otherwise return the "view" view
      */
@@ -77,8 +77,8 @@ class EventController extends Controller {
         $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], ["concernedItem" => $id]);
 
         // Render the view of the event
-        if (is_array($eventDetailed) && isset($eventDetailed[WSConstants::TOKEN])) {
-            return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+        if (is_array($event) && isset($event[WSConstants::TOKEN_INVALID])) {
+            return redirectToLoginPage();
         } else {
             return $this->render('view', [
                 'model' =>  $eventDetailed,
@@ -151,27 +151,20 @@ class EventController extends Controller {
         $eventModel->isNewRecord = true;
         
         if ($eventModel->load(Yii::$app->request->post())) {
-            // Set date
-            $eventModel->dateWithoutTimezone = str_replace(" ", "T", $eventModel->dateWithoutTimezone);
-            
-            // Set model creator 
-            $userModel = new YiiUserModel();
-            $userModel->findByEmail($sessionToken, Yii::$app->session['email']);
-            $eventModel->creator = $userModel->uri;
             $eventModel->isNewRecord = true;
             
             // Set properties
             $property = new YiiPropertyModel();
             switch ($eventModel->rdfType) {
-                case "http://www.opensilex.org/vocabulary/oeev#MoveFrom":
+                case $eventConceptUri = Yii::$app->params['moveFrom']:
                     $property->value = $eventModel->propertyFrom;
                     $property->rdfType = $eventModel->propertyType;
-                    $property->relation = "http://www.opensilex.org/vocabulary/oeev#from";
+                    $property->relation = Yii::$app->params['from'];
                     break;
-                case "http://www.opensilex.org/vocabulary/oeev#MoveTo":
+                case $eventConceptUri = Yii::$app->params['moveTo']:
                     $property->value = $eventModel->propertyTo;
                     $property->rdfType = $eventModel->propertyType;
-                    $property->relation = "http://www.opensilex.org/vocabulary/oeev#to";
+                    $property->relation = Yii::$app->params['to'];
                     break;
                 default : 
                     $property = null;
@@ -184,28 +177,80 @@ class EventController extends Controller {
             error_log("dataToSend ".print_r($dataToSend, true));
             $requestRes =  $eventModel->insert($sessionToken, $dataToSend);
             
-            if (is_string($requestRes) && $requestRes === "token") {
+            if (is_string($requestRes) && $requestRes === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
             } else {
-                if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //event created
+                if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0])) { //event created
                     if ($eventModel->returnUrl) {
                         $this->redirect($eventModel->returnUrl);
                     } else {
-                        return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+                        return $this->redirect(['view', 'id' => $requestRes->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0]]);
                     }                    
                 } else { //an error occurred
                     return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
                         'name' => Yii::t('app/messages','Internal error'),
-                        'message' => $requestRes->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}]);
+                        'message' => $requestRes->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}]);
                 }
             }
         } else {
-            // If no post data display the create form
-           
-            $this->view->params[self::EVENT_TYPES] = $this->getEventsTypes();
-            $this->view->params[self::INFRASTRUCTURES_DATA] = $this->getInfrastructuresUrisTypesLabels();
-
-            return $this->render('create', ['model' =>  $eventModel]);
+            $event =  $event->getEvent($sessionToken, $id);
+            $this->loadFormParams();
+            return $this->render('update', ['model' =>  $event]);
         }
+    }
+    
+    /**
+     * Loads params used by the forms (creation or update).
+     */
+    private function loadFormParams() {
+        $this->view->params[self::EVENT_TYPES] = $this->getEventsTypes();
+        $this->view->params[self::INFRASTRUCTURES_DATA] = $this->getInfrastructuresUrisTypesLabels();
+    }
+    
+    /**
+     * Gets a property object according to the data entered in the creation form.
+     * @param type $eventModel
+     */
+    private function getPropertyInCreation($eventModel) {
+        $property = new YiiPropertyModel();
+        switch ($eventModel->rdfType) {
+            case $eventConceptUri = Yii::$app->params['moveFrom']:
+                $property->value = $eventModel->propertyFrom;
+                $property->rdfType = $eventModel->propertyType;
+                $property->relation = Yii::$app->params['from'];
+                break;
+            case $eventConceptUri = Yii::$app->params['moveTo']:
+                $property->value = $eventModel->propertyTo;
+                $property->rdfType = $eventModel->propertyType;
+                $property->relation = Yii::$app->params['to'];
+                break;
+            default : 
+                $property = null;
+                break;
+        }
+    }
+    
+    /**
+     * Gets the creator of an event.
+     */
+    private function getCreatorUri($sessionToken) {
+        $userModel = new YiiUserModel();
+        $userModel->findByEmail($sessionToken, Yii::$app->session['email']);
+        return $userModel->uri;
+    }
+    
+    /**
+     * Completes the event attributes;
+     */
+    private function completeEventAttributes($eventModel) {
+        $eventModel->dateWithoutTimezone = str_replace(" ", "T", $eventModel->dateWithoutTimezone);
+        $eventModel->properties = [$this->getPropertyInCreation($eventModel)];
+    }
+    
+    /**
+     * Completes the event annotation attributes;
+     */
+    private function completeEventAnnotationAttributes($eventModel, $sessionToken) {
+        $eventModel->creator = $this->getCreatorUri($sessionToken);
     }
 }

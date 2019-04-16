@@ -90,7 +90,7 @@ class EventPost extends YiiEventModel {
     const PROPERTY_TYPE_LABEL = 'Property type';
 
     /**
-     * The return url after annotation creation
+     * The return URL after annotation creation
      * @var string 
      */
     public $returnUrl;
