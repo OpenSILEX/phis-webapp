@@ -112,7 +112,7 @@ class EventSearch extends YiiEventModel {
      * @return request result
      */
     private function getEventProvider($sessionToken, $searchParams) {
-        $results = $this->find($sessionToken, $this->attributesToArray());
+        $results = $this->find($sessionToken, array_merge ($this->attributesToArray(), $searchParams));
         
         if (is_string($results)) {
             return $results;
