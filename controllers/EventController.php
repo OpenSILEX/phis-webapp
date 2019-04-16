@@ -22,7 +22,7 @@ use app\models\wsModels\WSConstants;
 use app\components\helpers\SiteMessages;
 
 /**
- * Controller for the Events according to YiiEventModel
+ * Controller for the events.
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiEventModel
  * @author Andréas Garcia <andreas.garcia@inra.fr>
@@ -36,7 +36,7 @@ class EventController extends GenericController {
     CONST EVENT_TYPES = "eventTypes";
     
     /**
-     * Lists the events
+     * Lists the events.
      * @return mixed
      */
     public function actionIndex() {
@@ -91,7 +91,7 @@ class EventController extends GenericController {
     }
     
     /**
-     * Get the event types URIs
+     * Gets the event types URIs.
      * @return event types URIs 
      */
     public function getEventsTypes() {
@@ -113,7 +113,7 @@ class EventController extends GenericController {
     }
     
     /**
-     * Get all infrastructures
+     * Gets all infrastructures.
      * @return experiments 
      */
     public function getInfrastructuresUrisTypesLabels() {
@@ -138,7 +138,7 @@ class EventController extends GenericController {
     }
     
     /**
-     * Display the form to create an event or create it in case of form submission
+     * Displays the form to create an event or creates it in case of form submission.
      * @return mixed redirect in case of error or after successfully create 
      * the event otherwise return the "create" view 
      */
