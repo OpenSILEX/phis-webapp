@@ -11,6 +11,8 @@ use yii\helpers\Html;
 use kartik\icons\Icon;
 
 /* @var $this yii\web\View */
+/* @var $appUrl string */
+/* @var $appName string */
 
 $this->title = Yii::t('app', '{n, plural, =1{Stat/Vizu Application} other{Stat/Vizu Applications}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;

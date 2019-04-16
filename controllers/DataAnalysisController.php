@@ -7,7 +7,6 @@
 // Creation date: 21 feb 2019
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\controllers;
 
 use Yii;
@@ -40,12 +39,9 @@ class DataAnalysisController extends \yii\web\Controller {
 
     /**
      * Show in a gallery all available R applications
-     * @param boolean $integrated a parameter which 
-     *        will be used to know if an application can
-     *        be intergated
      * @return string result of a view
      */
-    public function actionIndex($integrated = false) {
+    public function actionIndex() {
 
         $searchModel = new DataAnalysisAppSearch();
 
@@ -54,32 +50,32 @@ class DataAnalysisController extends \yii\web\Controller {
         $searchResult = $searchModel->search($searchParams);
         
         // no applications returned - connection error or no opencpu applications
-        // have been loaded
+        // are available
         if (empty($searchResult)) {
              return $this->render('/site/error', [
-                           'name' => Yii::t('app/messages','Internal error'),
-                           'message' => Yii::t('app/messages', 'No application available.')
+                            'name' => Yii::t('app/messages','Internal error'),
+                            'message' => Yii::t('app/messages', 'No application available.')
                         ]
                     );
         } else {
             return $this->render('index', [
-                        'searchModel' => $searchModel,
-                        'dataProvider' => $searchResult,
-                        'integrated' => $integrated
-                            ]
-            );
+                            'searchModel' => $searchModel,
+                            'dataProvider' => $searchResult,
+                        ]
+                    );
         }
     }
 
     /**
      * Show standalone Demo R application app integrated in a iframe.
      * The purpose of this application is to test a R function 
-     * which use any OpenSILEX webservice. 
+     * which use any OpenSILEX webservice.
+     * It is a specific demo application that why it is fixed.
      * @return string a view result
      */
     public function actionViewDemo() {
         $searchModel = new DataAnalysisAppSearch();
-        // retreive information on default app
+        // retreive information on default demo application
         $appDemo = $searchModel->getApplicationInformation(
                 $searchModel::DEFAULT_TEST_DEMO_APP
                 );
@@ -90,21 +86,22 @@ class DataAnalysisController extends \yii\web\Controller {
         } else {
             return $this->render('/site/error', [
                     'name' => Yii::t('app/messages','Internal error'),
-                    'message' => Yii::t('app/messages', 'Demo application not found.')]);
+                    'message' => Yii::t('app/messages', 'Demo application not found.')
+                ]
+            );
         }
     }
 
     /**
-     * Show standalone Demo R app integrated in a iframe.
+     * Show standalone Demo R application integrated in a iframe.
      * @return string a view result
      */
     public function actionView() {
         $searchParams = Yii::$app->request->queryParams;
         return $this->render('iframe-view', [
-                    'appUrl' => $searchParams["url"],
-                    'appName' => $searchParams["name"]
-                        ]
+                        'appUrl' => $searchParams["url"],
+                        'appName' => $searchParams["name"]
+                    ]
         );
     }
-
 }

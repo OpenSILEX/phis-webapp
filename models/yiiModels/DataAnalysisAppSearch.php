@@ -135,7 +135,7 @@ class DataAnalysisAppSearch {
             $applicationWebPath = $serverUrl . "apps/" . $application . "/www";
             $descriptionPath = $serverUrl . "apps/" . $application . "/" . self::APP_DESCRIPTION_DIRECTORY;
             $existVignette = $this->existsRemoteFile("$descriptionPath/vignette.png");
-
+            // test if the vignette.png image exist 
             if ($existVignette) {
                 $appMetaData[$application][self::APP_VIGNETTE_IMAGE] = "$descriptionPath/vignette.png";
             } else {
@@ -144,7 +144,7 @@ class DataAnalysisAppSearch {
             }
             
             $descriptionVignette = $this->existsRemoteFile("$descriptionPath/description.md");
-            // description file exist
+            // test if the description.md file exist
             if ($descriptionVignette) {
                 $description = $this->getRemoteMarkdownFileDescription($application);
                 // not empty description file 
@@ -168,7 +168,7 @@ class DataAnalysisAppSearch {
                             [
                                 'data-analysis/view',
                                 'url' => $url,
-                                'name' => explode("/", $application)[1]
+                                'name' => $appMetaData[$application][self::APP_SHORT_NAME]
                             ]
             );
             $appMetaData[$application][self::APP_INDEX_URL] = $urlToApplication;
@@ -190,7 +190,6 @@ class DataAnalysisAppSearch {
                 return true;
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
-            
         }
         return false;
     }
@@ -223,7 +222,7 @@ class DataAnalysisAppSearch {
                 $body = $response->getBody();
                 // retrevies body as a string
                 $stringBody = (string) $body;
-
+                // process markdown file
                 return \yii\helpers\Markdown::process($stringBody);
             } catch (RequestException $e) {
                 $errorMessage = Psr7\str($e->getRequest());

@@ -12,8 +12,8 @@ use yii\helpers\Html;
 use app\models\yiiModels\DataAnalysisAppSearch;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\yiiModels\DataAnalysisAppSearch; */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $searchModel app\models\yiiModels\DataAnalysisAppSearch */
+/* @var $dataProvider array */
 
 $this->title = Yii::t('app', '{n, plural, =1{Stat/Vizu Application} other{Stat/Vizu Applications}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
@@ -23,6 +23,7 @@ if (Yii::$app->session->hasFlash('scriptNotAvailable')) {
 
 echo Html::beginTag("div", ["class" => "data-analysis-index"]);
 echo Html::beginTag("div", ["class" => "row"]);
+// each thumbnail (R application vignette)
 foreach ($dataProvider as $function => $appInfo) {
     echo Html::beginTag("div", ["class" => "col-sm-5 col-md-4"]);
     echo Html::beginTag("div", ["class" => "thumbnail"]);
