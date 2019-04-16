@@ -130,16 +130,7 @@ require_once '../config/config.php';
      */
     public function getExperimentsURI() {
         $model = new YiiExperimentModel();
-        $experimentsURI = [];
-        $experiments = $model->getExperimentsList(Yii::$app->session['access_token']);
-        if ($experiments === "token") {
-            return "token";
-        } else {
-            foreach ($experiments as $experiment){
-                $experimentsURI[] = $experiment->uri;
-            }
-            return $experimentsURI;
-        }
+        return $model->getExperimentsList(Yii::$app->session['access_token']);
     }
     
     /**
@@ -147,13 +138,8 @@ require_once '../config/config.php';
      * @return array list of species
      */
     public function getSpecies() {
-        $model = new YiiScientificObjectModel();
-        
-        $species = array();
-        $speciesURIList = $model->getSpeciesUriList(Yii::$app->session['access_token']);
-
-                
-        return $speciesURIList;
+        $speciesModel = new \app\models\yiiModels\YiiSpeciesModel();
+        return $speciesModel->getSpeciesList(Yii::$app->session['access_token']);
     }
     
     

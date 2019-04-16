@@ -97,4 +97,35 @@ class YiiSpeciesModel extends WSActiveRecord {
         
         return $elementForWebService;
     }
+    
+    /**
+     * Get the list of uri of the species.
+     * @param string $sessionToken
+     * @return Array
+     * @example [
+     *      "http://www.opensilex.org/id/species/betavulgaris", 
+     *      "http://www.opensilex.org/id/species/brassicanapus"
+     * ]
+     */
+    public function getSpeciesList($sessionToken) {
+        $species = $this->find($sessionToken, $this->attributesToArray());
+        $speciesToReturn = [];
+        
+        if ($species !== null) {
+            //1. get the URIs
+            foreach($species as $specie) {
+                $speciesToReturn[] = $specie->uri;
+            }
+            
+            //2. if there are other pages, get the other species
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextSpecies = $this->getSpeciesList($sessionToken);
+                
+                $speciesToReturn = array_merge($speciesToReturn, $nextSpecies);
+            }
+            
+            return $speciesToReturn;
+        }
+    }
 }
