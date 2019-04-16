@@ -15,7 +15,10 @@ use app\models\yiiModels\DataAnalysisAppSearch;
 /* @var $searchModel app\models\yiiModels\DataAnalysisAppSearch */
 /* @var $dataProvider array */
 
-$this->title = Yii::t('app', '{n, plural, =1{Stat/Vizu Application} other{Stat/Vizu Applications}}', ['n' => 2]);
+$this->title = Yii::t('app', 
+        '{n, plural, =1{Statistical/Visualization Application} other{Statistical/Visualization Applications}}',
+        ['n' => 2]
+        );
 $this->params['breadcrumbs'][] = $this->title;
 if (Yii::$app->session->hasFlash('scriptNotAvailable')) {
     echo Html::tag("p", "Script not available", ["class" => "alert alert-danger"]);

@@ -14,7 +14,10 @@ use kartik\icons\Icon;
 /* @var $appUrl string */
 /* @var $appName string */
 
-$this->title = Yii::t('app', '{n, plural, =1{Stat/Vizu Application} other{Stat/Vizu Applications}}', ['n' => 2]);
+$this->title = Yii::t('app', 
+        '{n, plural, =1{Statistical/Visualization Application} other{Statistical/Visualization Applications}}',
+        ['n' => 2]
+        );
 $this->params['breadcrumbs'][] = $this->title;
 echo Html::beginTag('div', ['class' => 'row']);
 echo Html::tag('h5',

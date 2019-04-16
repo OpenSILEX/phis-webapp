@@ -23,7 +23,7 @@ include_once '../config/web_services.php';
 class DataAnalysisController extends \yii\web\Controller {
   
     /**
-     * define the behaviors
+     * Define the behaviors of the controller
      * @return array
      */
     public function behaviors() {
@@ -66,7 +66,7 @@ class DataAnalysisController extends \yii\web\Controller {
     }
 
     /**
-     * Show standalone Demo R application app integrated in a iframe.
+     * Show standalone Demo R application integrated in a iframe.
      * The purpose of this application is to test a R function 
      * which use any OpenSILEX webservice.
      * It is a specific demo application that why it is fixed.
