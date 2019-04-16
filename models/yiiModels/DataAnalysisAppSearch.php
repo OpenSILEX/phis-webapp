@@ -137,8 +137,8 @@ class DataAnalysisAppSearch {
      *   ├── R (R functions)
      *   │   ├── functions.R
      *   └── README.md
-     * Retreive application informations according to application structure
-     * above
+     * Retreive application informations from opencpu according 
+     * to application structure above
      * @return array application metadata
      * 
      * ["niio972/opensilex-dataviz-compare-variables"]=> { 

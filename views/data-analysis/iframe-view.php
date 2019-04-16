@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 echo Html::beginTag('div', ['class' => 'row']);
 echo Html::tag('h5',
-        Icon::show('flask', ['class' => 'fa-large'], Icon::FA). "Experimental version",
+        Icon::show('flask', ['class' => 'fa-large'], Icon::FA). Yii::t('app/messages',"Experimental version"),
         ['class' => ' alert alert-info col-sm-4 col-md-3']
         );
 echo Html::endTag('div');
