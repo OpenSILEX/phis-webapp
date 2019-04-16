@@ -42,27 +42,26 @@ class DataAnalysisController extends \yii\web\Controller {
      * @return string result of a view
      */
     public function actionIndex() {
-
         $searchModel = new DataAnalysisAppSearch();
 
         $searchParams = Yii::$app->request->queryParams;
 
         $searchResult = $searchModel->search($searchParams);
-        
+
         // no applications returned - connection error or no opencpu applications
         // are available
         if (empty($searchResult)) {
-             return $this->render('/site/error', [
-                            'name' => Yii::t('app/messages','Internal error'),
-                            'message' => Yii::t('app/messages', 'No application available.')
+            return $this->render('/site/error', [
+                        'name' => Yii::t('app/messages', 'Internal error'),
+                        'message' => Yii::t('app/messages', 'No application available.')
                         ]
-                    );
+            );
         } else {
             return $this->render('index', [
-                            'searchModel' => $searchModel,
-                            'dataProvider' => $searchResult,
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $searchResult,
                         ]
-                    );
+            );
         }
     }
 
@@ -78,16 +77,16 @@ class DataAnalysisController extends \yii\web\Controller {
         // retreive information on default demo application
         $appDemo = $searchModel->getApplicationInformation(
                 $searchModel::DEFAULT_TEST_DEMO_APP
-                );
+        );
         // connection error or application not loaded
         if (!empty($appDemo)) {
             $appDemoInformation = $appDemo[$searchModel::DEFAULT_TEST_DEMO_APP];
             $this->redirect($appDemoInformation[DataAnalysisAppSearch::APP_INDEX_URL]);
         } else {
             return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => Yii::t('app/messages', 'Demo application not found.')
-                ]
+                        'name' => Yii::t('app/messages', 'Internal error'),
+                        'message' => Yii::t('app/messages', 'Demo application not found.')
+                        ]
             );
         }
     }
@@ -99,8 +98,8 @@ class DataAnalysisController extends \yii\web\Controller {
     public function actionView() {
         $searchParams = Yii::$app->request->queryParams;
         return $this->render('iframe-view', [
-                        'appUrl' => $searchParams["url"],
-                        'appName' => $searchParams["name"]
+                    'appUrl' => $searchParams["url"],
+                    'appName' => $searchParams["name"]
                     ]
         );
     }

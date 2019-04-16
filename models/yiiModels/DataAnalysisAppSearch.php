@@ -90,7 +90,7 @@ class DataAnalysisAppSearch {
             $applicationMetaData = $this->getApplicationInformation($application);
             $applicationsMetaData = array_merge($applicationsMetaData, $applicationMetaData);
         }
-        
+
         return $applicationsMetaData;
     }
 
@@ -142,7 +142,7 @@ class DataAnalysisAppSearch {
                 $notFoundImage = Yii::getAlias('@web') . "/images/logos/R_logo.png";
                 $appMetaData[$application][self::APP_VIGNETTE_IMAGE] = $notFoundImage;
             }
-            
+
             $descriptionVignette = $this->existsRemoteFile("$descriptionPath/description.md");
             // test if the description.md file exist
             if ($descriptionVignette) {
@@ -150,19 +150,19 @@ class DataAnalysisAppSearch {
                 // not empty description file 
                 if (isset($description) && !empty($description)) {
                     $appMetaData[$application][self::APP_DESCRIPTION] = $description;
-                 // empty description file 
+                    // empty description file 
                 } else {
                     $appMetaData[$application][self::APP_DESCRIPTION] = self::DESCRIPTION_NOT_FOUND;
                 }
-            // description file doesn't exist
+                // description file doesn't exist
             } else {
                 $appMetaData[$application][self::APP_DESCRIPTION] = self::DESCRIPTION_NOT_FOUND;
             }
 
             $appMetaData[$application][self::APP_SHORT_NAME] = explode("/", $application)[1];
-            
+
             $appMetaData[$application][self::APP_NAME] = $application;
-            
+
             $url = "$applicationWebPath/index.html?accessToken=" . Yii::$app->session[WSConstants::ACCESS_TOKEN] . "&wsUrl=" . WS_PHIS_PATH;
             $urlToApplication = Url::to(
                             [
@@ -190,6 +190,7 @@ class DataAnalysisAppSearch {
                 return true;
             }
         } catch (\GuzzleHttp\Exception\ClientException $e) {
+            
         }
         return false;
     }
@@ -215,9 +216,8 @@ class DataAnalysisAppSearch {
         if ($this->ocpuserver->status()) {
             try {
                 $response = $this->ocpuserver->getOpenCPUWebServerClient()->request(
-                        OpenCPUServer::OPENCPU_SERVER_GET_METHOD,
-                        'apps/' . $application . '/opensilex/description.md'
-                        );
+                        OpenCPUServer::OPENCPU_SERVER_GET_METHOD, 'apps/' . $application . '/opensilex/description.md'
+                );
 
                 $body = $response->getBody();
                 // retrevies body as a string
