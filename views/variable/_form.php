@@ -31,7 +31,7 @@ use yii\widgets\ActiveForm;
     var basicOptions = {};
     $(document).ready(function() {
         $('#yiivariablemodel-label').tooltip();
-//        
+        
         $("#yiivariablemodel-ontologiesreferences-0-entity option").each(function() {
             options[$(this).val()] = $(this).text();
             basicOptions[$(this).val()] = $(this).text();
@@ -168,9 +168,50 @@ use yii\widgets\ActiveForm;
            alert('bad uri/url given');
         }
     }
+    
+    /**
+     * validate a field (trait, method or unit)
+     * @param {string} fieldName it should be trait, method or unit.
+     * @returns {Boolean} true if it is filled, 
+     *                    false if not.
+     */
+    function validateField(fieldName) {
+        var selectModel = $("#" + fieldName + " option:selected").val();
+        var newModelLabel = $("#new" + fieldName).val();
+        
+        return selectModel !== "" || newModelLabel !== "";
+    }
+    
+    /**
+     * Check if the trait, method and unit are filled.
+     * @returns {Boolean} true if the method, trait and unit are filled
+     *                    false if one of them is missing.
+     */
+    function validateRequiedFields() {
+        var validation = validateField("trait") && validateField("method") && validateField("unit");
+        var errorMessage = "";
+        
+        if (!validateField("trait")) {
+            errorMessage += "<?= Yii::t('app',"Missing trait." )?>" + "\n";
+        }
+        
+        if (!validateField("method")) {
+            errorMessage += "<?= Yii::t('app',"Missing method." )?>" + "\n";
+        }
+        
+        if (!validateField("unit")) {
+            errorMessage += "<?= Yii::t('app',"Missing unit." )?>" + "\n";
+        }
+        
+        if (!validation) {
+            alert(errorMessage);
+        }
+        
+        return validation;
+    }    
 </script>
 
-<div class="variable-form well">
+<div class="variable-form well" onSubmit="return validateRequiedFields();">
     <?php $form = ActiveForm::begin(); ?>
     
     <div class="row">
@@ -195,7 +236,7 @@ use yii\widgets\ActiveForm;
     
     <div class="row">
         <div class="col-md-3">
-            <h2><?= Yii::t('app', 'Trait') ?></h2>
+            <h2><?= Yii::t('app', 'Trait') ?><strong style="color:red"> *</strong></h2>
             <div class="row">
                 <?= $form->field($modelVariable, 'trait')->widget(\kartik\select2\Select2::classname(), [
                     'data' =>$listTraits,
@@ -226,7 +267,7 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
         <div class="col-md-3 col-md-offset-1">
-            <h2><?= Yii::t('app', 'Method') ?></h2>
+            <h2><?= Yii::t('app', 'Method') ?><strong style="color:red"> *</strong></h2>
             <div class="row">
                 <?= $form->field($modelVariable, 'method')->widget(\kartik\select2\Select2::classname(), [
                     'data' =>$listMethods,
@@ -257,7 +298,7 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
         <div class="col-md-3 col-md-offset-1">
-            <h2><?= Yii::t('app', 'Unit') ?></h2>
+            <h2><?= Yii::t('app', 'Unit') ?><strong style="color:red"> *</strong></h2>
             <div class="row">
             <?= $form->field($modelVariable, 'unit')->widget(\kartik\select2\Select2::classname(), [
                     'data' =>$listUnits,
