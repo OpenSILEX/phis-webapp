@@ -19,6 +19,7 @@ $this->title = Yii::t('app',
         ['n' => 2]
         );
 $this->params['breadcrumbs'][] = $this->title;
+
 echo Html::beginTag('div', ['class' => 'row']);
 echo Html::tag('h5',
         Icon::show('flask', ['class' => 'fa-large'], Icon::FA). "Experimental version",

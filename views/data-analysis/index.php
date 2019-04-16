@@ -26,11 +26,12 @@ if (Yii::$app->session->hasFlash('scriptNotAvailable')) {
 
 echo Html::beginTag("div", ["class" => "data-analysis-index"]);
 echo Html::beginTag("div", ["class" => "row"]);
+
 // each thumbnail (R application vignette)
 foreach ($dataProvider as $function => $appInfo) {
     echo Html::beginTag("div", ["class" => "col-sm-5 col-md-4"]);
     echo Html::beginTag("div", ["class" => "thumbnail"]);
-    $image = Html::img($appInfo[DataAnalysisAppSearch::APP_VIGNETTE_IMAGE],[
+    $image = Html::img($appInfo[DataAnalysisAppSearch::APP_VIGNETTE_PATH],[
                 "class" => "img-responsive",
                 "alt" => $appInfo[DataAnalysisAppSearch::APP_SHORT_NAME]
                 ]);

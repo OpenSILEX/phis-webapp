@@ -29,23 +29,46 @@ require_once '../config/config.php';
  */
 class DataAnalysisAppSearch {
     /**
-     *
      * @var OpenCPUServer 
      */
     public $ocpuserver;
     
     /**
-     * Application information directory
+     * Application information directory.
      */
     const APP_DESCRIPTION_DIRECTORY = "opensilex";
 
     /**
-     * Metadata application constants
+     * Metadata application constants to 
+     * define application informations array keys.
+     * For more explanation,
+     * see getApplicationInformation() function.
      */
-    const APP_VIGNETTE_IMAGE = "appVignette";
+    /**
+     * path of the vignette image.
+     */
+    const APP_VIGNETTE_PATH = "appVignette";
+
+    /**
+     * Application index url.
+     */
     const APP_INDEX_URL = "appUrlIndex";
+
+    /**
+     * Application description.md file content
+     * or default message.
+     */
     const APP_DESCRIPTION = "appDescription";
+
+    /**
+     * Application description.md file content
+     * or default message.
+     */
     const APP_SHORT_NAME = "appShortName";
+    /**
+     * Application name (github path)
+     * without provider name.
+     */
     const APP_NAME = "appName";
     
     /**
@@ -68,7 +91,6 @@ class DataAnalysisAppSearch {
             $this->ocpuserver::$ENABLE_CALL_STATS = true;
         }
     }
-
    
     /**
      * List all available R applications
@@ -137,10 +159,10 @@ class DataAnalysisAppSearch {
             $existVignette = $this->existsRemoteFile("$descriptionPath/vignette.png");
             // test if the vignette.png image exist 
             if ($existVignette) {
-                $appMetaData[$application][self::APP_VIGNETTE_IMAGE] = "$descriptionPath/vignette.png";
+                $appMetaData[$application][self::APP_VIGNETTE_PATH] = "$descriptionPath/vignette.png";
             } else {
                 $notFoundImage = Yii::getAlias('@web') . "/images/logos/R_logo.png";
-                $appMetaData[$application][self::APP_VIGNETTE_IMAGE] = $notFoundImage;
+                $appMetaData[$application][self::APP_VIGNETTE_PATH] = $notFoundImage;
             }
 
             $descriptionVignette = $this->existsRemoteFile("$descriptionPath/description.md");
@@ -152,11 +174,11 @@ class DataAnalysisAppSearch {
                     $appMetaData[$application][self::APP_DESCRIPTION] = $description;
                     // empty description file 
                 } else {
-                    $appMetaData[$application][self::APP_DESCRIPTION] = self::DESCRIPTION_NOT_FOUND;
+                    $appMetaData[$application][self::APP_DESCRIPTION] = Yii::t('app/messages', self::DESCRIPTION_NOT_FOUND);
                 }
                 // description file doesn't exist
             } else {
-                $appMetaData[$application][self::APP_DESCRIPTION] = self::DESCRIPTION_NOT_FOUND;
+                $appMetaData[$application][self::APP_DESCRIPTION] = Yii::t('app/messages', self::DESCRIPTION_NOT_FOUND);
             }
 
             $appMetaData[$application][self::APP_SHORT_NAME] = explode("/", $application)[1];
@@ -248,7 +270,4 @@ class DataAnalysisAppSearch {
         }
         return null;
     }
-
 }
-
-   
