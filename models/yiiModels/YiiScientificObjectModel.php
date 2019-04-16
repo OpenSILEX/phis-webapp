@@ -215,7 +215,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
         if (!empty($this->variety)) {
             $variety["rdfType"] = Yii::$app->params['Variety'];
             $variety["relation"] = Yii::$app->params['hasVariety'];
-            $variety["value"] = $this->variety;
+            $variety["value"] = str_replace(" ", "_", $this->variety);
             $properties[] = $variety;
         }
         
