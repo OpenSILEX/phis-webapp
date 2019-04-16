@@ -9,13 +9,12 @@
 namespace app\controllers;
 
 use Yii;
-use yii\web\Controller;
+use yii\web\GenericController;
 use yii\data\ArrayDataProvider;
 use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventPost;
-use app\models\yiiModels\YiiModelsConstants;
 use app\models\yiiModels\YiiUserModel;
 use app\models\yiiModels\InfrastructureSearch;
 use app\models\yiiModels\YiiPropertyModel;
@@ -28,7 +27,7 @@ use app\components\helpers\SiteMessages;
  * @see app\models\yiiModels\YiiEventModel
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
-class EventController extends Controller {
+class EventController extends GenericController {
     CONST ANNOTATIONS_DATA = "annotations";
     CONST INFRASTRUCTURES_DATA = "infrastructures";
     CONST INFRASTRUCTURES_DATA_URI = "infrastructureUri";
