@@ -248,7 +248,7 @@ ToastrAsset::register($this);
 //                            ],
                             //\SILEX:info
                         ]];
-          if (Yii::$app->params['dataAnalysisModule'] == true) {
+        if (Yii::$app->params['dataAnalysisModule'] == true) {
             $menuItems[] = ['label' => Yii::t('app', 'Data Analysis'), 
                             'items' => [
                                 [
