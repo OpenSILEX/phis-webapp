@@ -54,16 +54,6 @@ class WSExperimentModel extends \openSILEX\guzzleClientPHP\WSModel {
             return $requestRes;
         }
     }
-    
-    public function getExperimentsList($sessionToken,$params) {
-        $requestRes = $this->get($sessionToken, "", $params);
-        
-        if (isset($requestRes->{WSConstants::RESULT}->{WSConstants::DATA}))  {
-            return (array) $requestRes->{WSConstants::RESULT}->{WSConstants::DATA};
-        } else {
-            return $requestRes;
-        }
-    }
 
     /**
      * Call the webservice to update the list of measured variable by the given experiment

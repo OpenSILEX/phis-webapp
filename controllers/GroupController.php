@@ -150,8 +150,8 @@ class GroupController extends Controller {
             }
         } else { 
             if ($sessionToken !== null) {
-                $searchUsersModel = new \app\models\yiiModels\UserSearch();
-                $users = $this->usersToMap($searchUsersModel->find($sessionToken, []));
+                $userModel = new \app\models\yiiModels\YiiUserModel();
+                $users = $userModel->getPersonsMailsAndName($sessionToken);
                 $this->view->params['listUsers'] = $users;
                 $groupModel->isNewRecord = true;
                 return $this->render('create', [
@@ -193,8 +193,9 @@ class GroupController extends Controller {
                     }
                 }
                 
-                $searchUsersModel = new \app\models\yiiModels\UserSearch();
-                $users = $this->usersToMap($searchUsersModel->find($sessionToken, []));
+                $userModel = new \app\models\yiiModels\YiiUserModel();
+                $users = $userModel->getPersonsMailsAndName($sessionToken);
+                
                 $this->view->params['listUsers'] = $users;
                 $this->view->params['listActualMembers'] = $actualMember;
                 $model->isNewRecord = false;
