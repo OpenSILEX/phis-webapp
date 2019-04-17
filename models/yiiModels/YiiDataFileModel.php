@@ -140,7 +140,7 @@ class YiiDataFileModel extends WSActiveRecord {
             $requestRes = $wsUriModel->getDescendants($sessionToken, $imageConceptUri, $params);
             
             if (!is_string($requestRes)) {
-                if (isset($requestRes[WSConstants::TOKEN])) {
+                if (isset($requestRes[WSConstants::TOKEN_INVALID])) {
                     return "token";
                 } else {
                     foreach ($requestRes[WSConstants::DATA] as $imageType) {

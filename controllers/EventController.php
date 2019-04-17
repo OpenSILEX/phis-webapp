@@ -35,6 +35,14 @@ class EventController extends GenericController {
     CONST INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
     CONST EVENT_TYPES = "eventTypes";
     
+    const ANNOTATIONS_DATA = "annotations";
+    const ANNOTATIONS_PAGE = "annotations-page";
+    const INFRASTRUCTURES_DATA = "infrastructures";
+    const INFRASTRUCTURES_DATA_URI = "infrastructureUri";
+    const INFRASTRUCTURES_DATA_LABEL = "infrastructureLabel";
+    const INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
+    const EVENT_TYPES = "eventTypes";
+    
     /**
      * Lists the events.
      * @return mixed
@@ -43,15 +51,21 @@ class EventController extends GenericController {
         $searchModel = new EventSearch();
         
         $searchParams = Yii::$app->request->queryParams;
+        
+        if (isset($searchParams[WSConstants::PAGE])) {
+            $searchParams[WSConstants::PAGE] = $searchParams[WSConstants::PAGE] - 1;
+        }
+        $searchParams[WSConstants::PAGE_SIZE] = Yii::$app->params['indexPageSize'];
+        
         $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
         if (is_string($searchResult)) {
-            if ($searchResult === WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
             } else {
                 return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
-                            SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
-                            SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
+                    SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
+                    SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
             }
         } else {
             return $this->render('index', [
@@ -66,26 +80,29 @@ class EventController extends GenericController {
      * @return mixed redirect in case of error otherwise return the "view" view
      */
     public function actionView($id) {
+        // Get request parameters
+        $searchParams = Yii::$app->request->queryParams;
+        
         // Fill the event model with the information
-        $event = new YiiEventModel();
-        $eventDetailed = $event->getEventDetailed(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);
+        $event = (new YiiEventModel())->getEvent(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);
 
         // Get documents
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
-        $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], ["concernedItem" => $id]);
+        $documentProvider = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
+        
+        // Get annotations
+        $annotationProvider = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $annotationProvider->pagination->pageParam = self::ANNOTATIONS_PAGE;
 
         // Render the view of the event
         if (is_array($event) && isset($event[WSConstants::TOKEN_INVALID])) {
             return redirectToLoginPage();
         } else {
             return $this->render('view', [
-                'model' =>  $eventDetailed,
-                'dataDocumentsProvider' => $documents,
-                self::ANNOTATIONS_DATA => new ArrayDataProvider([
-                    'models' => $event->annotations,
-                    'totalCount' => count($event->annotations)                 
-                ])
+                'model' =>  $event,
+                'dataDocumentsProvider' => $documentProvider,
+                self::ANNOTATIONS_DATA => $annotationProvider   
             ]);
         }
     }
@@ -99,10 +116,10 @@ class EventController extends GenericController {
         
         $eventsTypes = [];
         $model->page = 0;
-        $model->pageSize = 1000;
+        $model->pageSize = Yii::$app->params['webServicePageSizeMax'];
         $eventsTypesConcepts = $model->getEventsTypes(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
-        if ($eventsTypesConcepts === WSConstants::TOKEN) {
-            return WSConstants::TOKEN;
+        if ($eventsTypesConcepts === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
         } else {
             foreach ($eventsTypesConcepts[WSConstants::DATA] as $eventType) {
                 $eventsTypes[$eventType->uri] = $eventType->uri;
@@ -121,8 +138,8 @@ class EventController extends GenericController {
         $model->page = 0;
         $infrastructuresUrisTypesLabels = [];
         $infrastructures = $model->search(Yii::$app->session['access_token'], null);
-        if ($infrastructures === WSConstants::TOKEN) {
-            return WSConstants::TOKEN;
+        if ($infrastructures === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
         } else {
             foreach ($infrastructures->models as $infrastructure) {
                 $infrastructuresUrisTypesLabels[] =

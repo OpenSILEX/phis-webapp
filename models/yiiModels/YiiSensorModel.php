@@ -254,7 +254,7 @@ class YiiSensorModel extends WSActiveRecord {
         $requestRes = $wsUriModel->getDescendants($sessionToken, $sensorConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return "token";
             } else {
                 return $requestRes;
@@ -280,7 +280,7 @@ class YiiSensorModel extends WSActiveRecord {
         $requestRes = $this->wsModel->getSensorByUri($sessionToken, $uri, $params);
         
         if (!is_string($requestRes) && !is_object($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);
@@ -308,7 +308,7 @@ class YiiSensorModel extends WSActiveRecord {
         $requestRes = $this->wsModel->getSensorProfile($sessionToken, $uri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->propertiesArrayToAttributes($requestRes);

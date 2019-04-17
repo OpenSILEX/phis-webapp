@@ -20,7 +20,7 @@ use Yii;
  */
 class PropertyWidget extends Widget {
 
-    CONST NO_PROPERTY = "No Specific Property";
+    const NO_PROPERTY = "No Specific Property";
 
     // widget title
     public $title;

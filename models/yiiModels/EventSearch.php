@@ -67,7 +67,7 @@ class EventSearch extends YiiEventModel {
     public function rules() {
         return [[
             [
-                YiiEventModel::TYPE,
+                self::TYPE,
                 self::CONCERNED_ITEM_LABEL,
                 self::CONCERNED_ITEM_URI,
                 self::DATE_RANGE,
@@ -98,43 +98,37 @@ class EventSearch extends YiiEventModel {
      */
     public function search($sessionToken, $searchParams) {
         $this->load($searchParams);
-        if (isset($searchParams[YiiModelsConstants::PAGE])) {
-            $this->page = $searchParams[YiiModelsConstants::PAGE]-1;
-        }
         
         if (!$this->validate()) {
             return new ArrayDataProvider();
         }
-        
-        return $this->requestToWSAndReturnResult($sessionToken);
+                
+        return $this->getEventProvider($sessionToken, $searchParams);
     }
     
     /**
-     * Request to WS and return result
+     * Requests to WS and return result
      * @param $sessionToken
      * @return request result
      */
-    private function requestToWSAndReturnResult($sessionToken) {
-        $results = $this->find($sessionToken, $this->attributesToArray());
+    private function getEventProvider($sessionToken, $searchParams) {
+        $results = $this->find($sessionToken, array_merge ($this->attributesToArray(), $searchParams));
         
         if (is_string($results)) {
             return $results;
-        }  else if (isset($results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-            && $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN) {
-            return WSConstants::TOKEN;
+        }  else if (isset($results->{WSConstants::DATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}) 
+            && $results->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS} === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
         } else {
             
-            $resultSet = $this->jsonListOfArraysToArray($results);
+            $events = $this->jsonListOfArraysToArray($results);
             return new ArrayDataProvider([
-                'models' => $resultSet,
+                'models' => $events,
                 'pagination' => [
-                    'pageSize' => $this->pageSize,
+                    'pageSize' => $searchParams[WSConstants::PAGE_SIZE],
                     'totalCount' => $this->totalCount
                 ],
-                //SILEX:info
-                //totalCount must be there too to get the pagination in GridView
                 'totalCount' => $this->totalCount
-                //\SILEX:info
             ]);
         }
     }
@@ -165,7 +159,7 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * Validate the date range format and set the dates attributes. The accepted 
+     * Validates the date range format and set the dates attributes. The accepted 
      * date range format is defined in the application parameter 
      * standardDateTimeFormatPhp.
      * @param type $dateRangeString
@@ -199,7 +193,7 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * Validate the submitted date format. The accepted date format is defined 
+     * Validates the submitted date format. The accepted date format is defined 
      * in the application parameter standardDateTimeFormatPhp
      * @param type $dateString
      * @return boolean
@@ -244,27 +238,12 @@ class EventSearch extends YiiEventModel {
     }
     
     /**
-     * Reset the date range filter values
+     * Resets the date range filter values
      */
     private function resetDateRangeFilterValues(){
         $this->dateRangeStart = null;
         $this->dateRangeEnd = null;
         $this->dateRange = null;
-    }
-    
-    /**
-     * Transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = []; 
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        }
-        return $toReturn;
     }
     
     /**

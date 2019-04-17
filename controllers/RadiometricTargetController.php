@@ -68,7 +68,7 @@ class RadiometricTargetController extends Controller {
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
 
         if (is_string($searchResult)) {
-            if ($searchResult === WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [

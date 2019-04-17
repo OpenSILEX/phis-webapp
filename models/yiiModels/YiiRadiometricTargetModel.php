@@ -238,7 +238,7 @@ class YiiRadiometricTargetModel extends WSActiveRecord {
         $requestRes = $this->wsModel->getDetails($sessionToken, $uri);
 
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->uri = $uri;

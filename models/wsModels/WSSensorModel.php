@@ -92,7 +92,7 @@ class WSSensorModel extends \openSILEX\guzzleClientPHP\WSModel {
         $subService = "/profiles";
         $requestRes = $this->post($sessionToken, $subService, $params);
         
-        if (isset($requestRes->{WSConstants::TOKEN})) {
+        if (isset($requestRes->{WSConstants::TOKEN_INVALID})) {
             return WEB_SERVICE_TOKEN;
         } else {
             return $requestRes;
@@ -111,7 +111,7 @@ class WSSensorModel extends \openSILEX\guzzleClientPHP\WSModel {
         $subService = "/" . urlencode($sensorUri) . "/variables";
         $requestRes = $this->put($sessionToken, $subService, $variablesUri);
 
-        if (isset($requestRes->{WSConstants::TOKEN})) {
+        if (isset($requestRes->{WSConstants::TOKEN_INVALID})) {
             return WEB_SERVICE_TOKEN;
         } else {
             return $requestRes;

@@ -259,7 +259,7 @@ class DatasetController extends Controller {
         $variableSearchModel->label = $variableLabel;
         $searchResult = $variableSearchModel->search(Yii::$app->session['access_token'], []);
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
                  throw new Exception("user must log in");
             } else {
                 throw new Exception("error getting variable uri");

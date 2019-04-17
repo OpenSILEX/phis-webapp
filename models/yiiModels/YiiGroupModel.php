@@ -177,7 +177,7 @@ class YiiGroupModel extends WSActiveRecord {
         
         $requestRes = $this->wsModel->getGroupByName($sessionToken, $name, $params);
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);

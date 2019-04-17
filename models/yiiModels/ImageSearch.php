@@ -64,8 +64,8 @@ class ImageSearch extends YiiImageModel {
         if (is_string($findResult)) {
             return $findResult;
         } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN) {
-            return WSConstants::TOKEN;
+                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
             return new ArrayDataProvider([
@@ -80,20 +80,5 @@ class ImageSearch extends YiiImageModel {
                 //\SILEX:info
             ]);
         }
-    }
-    
-    /**
-     * transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = []; 
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        } 
-        return $toReturn;
     }
 }

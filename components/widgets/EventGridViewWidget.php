@@ -22,36 +22,36 @@ use kartik\icons\Icon;
  */
 class EventGridViewWidget extends Widget {
 
-    CONST EVENTS_LABEL = "Events";
-    CONST NO_EVENT_LABEL = "No events";
-    CONST EVENTS_ARE_NOT_SET_LABEL = "Concerned items aren't set";
+    const EVENTS_LABEL = "Events";
+    const NO_EVENT_LABEL = "No events";
+    const EVENTS_ARE_NOT_SET_LABEL = "Concerned items aren't set";
     
     /**
-     * Define the events list to show
+     * Defines the list of events to show
      * @var mixed
      */
-    public $events;
-    CONST EVENTS = "events";
+    public $eventsProvider;
+    const EVENTS_PROVIDER = "eventsProvider";
 
     public function init() {
         parent::init();
         // must be not null
-        if ($this->events === null) {
+        if ($this->eventsProvider === null) {
             throw new \Exception(self::EVENTS_ARE_NOT_SET_LABEL);
         }
     }
 
     /**
-     * Render the concerned item list
+     * Renders the list of the concerned items
      * @return string the HTML string rendered
      */
     public function run() {
-        if ($this->events->getCount() == 0) {
+        if ($this->eventsProvider->getCount() == 0) {
             $htmlRendered = "<h3>" . Yii::t('app', self::NO_EVENT_LABEL) . "</h3>";
         } else {
             $htmlRendered = "<h3>" . Yii::t('app', self::EVENTS_LABEL) . "</h3>";
             $htmlRendered .= GridView::widget([
-                'dataProvider' => $this->events,
+                'dataProvider' => $this->eventsProvider,
                 'columns' => [
                     [
                         'label' => Yii::t('app', YiiEventModel::TYPE),
@@ -72,6 +72,7 @@ class EventGridViewWidget extends Widget {
                         ]
                     ],
                 ],
+                'options' => ['class' => "event-widget"]                    
             ]);
         }
         return $htmlRendered;
