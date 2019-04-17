@@ -140,7 +140,7 @@ class DataAnalysisAppSearch {
      * Retreive application informations from opencpu according 
      * to application structure above
      * @return array application metadata
-     * 
+     * @example
      * ["niio972/opensilex-dataviz-compare-variables"]=> { 
      *        ["appVignette"]=> "/phis-webapp/web/images/logos/R_logo.png" 
      *        ["appDescription"]=> "A demo application." 
