@@ -10,6 +10,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\wsModels\WSConstants;
+use app\components\helpers\SiteMessages;
 
 /**
  * Web controller with generic functions.
@@ -22,7 +23,7 @@ class GenericController extends \yii\web\Controller
      * @param type $requestResults
      * @return type
      */
-    private function doesWebserviceRequestReturnTokenConstant($requestResults) {
+    private function didWebserviceRequestReturnTokenConstant($requestResults) {
         return is_string($requestResults) && $requestResults === WSConstants::TOKEN;
     }
     
@@ -37,9 +38,10 @@ class GenericController extends \yii\web\Controller
      * Renders a page when an error occured during a request.
      */
     private function renderPageErrorWhenWebServiceInternalError($requestResult) {
-        $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+        return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
             'name' => Yii::t('app/messages','Internal error'),
-            'message' => $requestResult->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}]);
+            'message' => $requestResult->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}
+            ]);
     }
     
     /**
@@ -64,7 +66,7 @@ class GenericController extends \yii\web\Controller
      * @return type
      */
     protected function handlePostResponse($requestResults, $objectReturnUrl) {
-        if ($this->doesWebserviceRequestReturnTokenConstant($requestResults)) {
+        if ($this->didWebserviceRequestReturnTokenConstant($requestResults)) {
             return $this->redirectToLoginPage();
         } else {
             if ($this->areResourceCreated($requestResults)) { // resource created
