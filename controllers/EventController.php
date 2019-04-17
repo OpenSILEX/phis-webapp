@@ -9,13 +9,13 @@
 namespace app\controllers;
 
 use Yii;
-use yii\data\ArrayDataProvider;
 use app\controllers\GenericController;
 use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\DocumentSearch;
-use app\models\yiiModels\YiiEventModel;
-use app\models\yiiModels\EventPost;
 use app\models\yiiModels\YiiUserModel;
+use app\models\yiiModels\YiiEventModel;
+use app\models\yiiModels\EventCreation;
+use app\models\yiiModels\EventUpdate;
 use app\models\yiiModels\InfrastructureSearch;
 use app\models\yiiModels\YiiPropertyModel;
 use app\models\wsModels\WSConstants;
@@ -27,14 +27,7 @@ use app\components\helpers\SiteMessages;
  * @see app\models\yiiModels\YiiEventModel
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
-class EventController extends GenericController {
-    CONST ANNOTATIONS_DATA = "annotations";
-    CONST INFRASTRUCTURES_DATA = "infrastructures";
-    CONST INFRASTRUCTURES_DATA_URI = "infrastructureUri";
-    CONST INFRASTRUCTURES_DATA_LABEL = "infrastructureLabel";
-    CONST INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
-    CONST EVENT_TYPES = "eventTypes";
-    
+class EventController extends GenericController {    
     const ANNOTATIONS_DATA = "annotations";
     const ANNOTATIONS_PAGE = "annotations-page";
     const INFRASTRUCTURES_DATA = "infrastructures";
@@ -42,6 +35,15 @@ class EventController extends GenericController {
     const INFRASTRUCTURES_DATA_LABEL = "infrastructureLabel";
     const INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
     const EVENT_TYPES = "eventTypes";
+    
+    const PARAM_CONCERNED_ITEMS_URIS = 'concernedItemsUris';
+    const PARAM_RETURN_URL = "returnUrl";
+
+    /**
+     * The return URL after annotation creation
+     * @var string 
+     */
+    public $returnUrl;
     
     /**
      * Lists the events.
@@ -161,48 +163,45 @@ class EventController extends GenericController {
      */
     public function actionCreate() {
         $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
-
-        $eventModel = new EventPost();
-        $eventModel->load(Yii::$app->request->get(), '');
+        $eventModel = new EventCreation();
         $eventModel->isNewRecord = true;
         
-        if ($eventModel->load(Yii::$app->request->post())) {
-            $eventModel->isNewRecord = true;
+        if (!$eventModel->load(Yii::$app->request->post())) { //display form
+            $eventModel->load(Yii::$app->request->get(), '');
+            $eventModel->creator = $this->getCreatorUri($sessionToken);
+            $this->loadFormParams();
+            return $this->render('create', ['model' =>  $eventModel]);
             
+        } else { // submit form
             $this->completeEventAttributes($eventModel);
             $this->completeEventAnnotationAttributes($eventModel, $sessionToken);
             
-            // If post data, insert the submitted form
             $dataToSend[] =  $eventModel->attributesToArray();
             $requestResults =  $eventModel->insert($sessionToken, $dataToSend);
             return $this->handlePostResponse($requestResults, $eventModel->returnUrl);
-        } else {
-            $this->loadFormParams();
-            return $this->render('create', ['model' =>  $eventModel]);
         }
     }
 
     /**
      * Displays the form to update an event.
-     * @return mixed redirect in case of error or after successfully create 
-     * the radiometric target otherwise return the "create" view 
+     * @return mixed redirect in case of error or after successfully updating 
+     * the event otherwise returns the "update" view 
      */
     public function actionUpdate($id) {
         $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
 
-        $event = new EventPut();
+        $event = new EventUpdate();
         
-        if ( $event->load(Yii::$app->request->put())) {
-
-            if (is_string($requestRes) && $requestRes === WSConstants::TOKEN) {
-            return $this->redirectToLoginPage();
-            } else {
-                return $this->redirect(['view', 'id' =>  $event->uri]);
-            }
-        } else {
+        if (!$event->load(Yii::$app->request->post())) {
             $event =  $event->getEvent($sessionToken, $id);
             $this->loadFormParams();
             return $this->render('update', ['model' =>  $event]);
+        } else {
+            if (is_string($requestRes) && $requestRes === WSConstants::TOKEN) {
+                return $this->redirectToLoginPage();
+            } else {
+                return $this->redirect(['view', 'id' =>  $event->uri]);
+            }
         }
     }
     
@@ -215,49 +214,11 @@ class EventController extends GenericController {
     }
     
     /**
-     * Gets a property object according to the data entered in the creation form.
-     * @param type $eventModel
-     */
-    private function getPropertyInCreation($eventModel) {
-        $property = new YiiPropertyModel();
-        switch ($eventModel->rdfType) {
-            case $eventConceptUri = Yii::$app->params['moveFrom']:
-                $property->value = $eventModel->propertyFrom;
-                $property->rdfType = $eventModel->propertyType;
-                $property->relation = Yii::$app->params['from'];
-                break;
-            case $eventConceptUri = Yii::$app->params['moveTo']:
-                $property->value = $eventModel->propertyTo;
-                $property->rdfType = $eventModel->propertyType;
-                $property->relation = Yii::$app->params['to'];
-                break;
-            default : 
-                $property = null;
-                break;
-        }
-    }
-    
-    /**
      * Gets the creator of an event.
      */
     private function getCreatorUri($sessionToken) {
         $userModel = new YiiUserModel();
         $userModel->findByEmail($sessionToken, Yii::$app->session['email']);
         return $userModel->uri;
-    }
-    
-    /**
-     * Completes the event attributes;
-     */
-    private function completeEventAttributes($eventModel) {
-        $eventModel->dateWithoutTimezone = str_replace(" ", "T", $eventModel->dateWithoutTimezone);
-        $eventModel->properties = [$this->getPropertyInCreation($eventModel)];
-    }
-    
-    /**
-     * Completes the event annotation attributes;
-     */
-    private function completeEventAnnotationAttributes($eventModel, $sessionToken) {
-        $eventModel->creator = $this->getCreatorUri($sessionToken);
     }
 }

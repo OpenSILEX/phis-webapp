@@ -135,8 +135,8 @@ class YiiEventModel extends WSActiveRecord {
             if (isset($event[WSConstants::TOKEN_INVALID])) {
                 return $event;
             } else {
-                $this->uri = $uri;
                 $this->arrayToAttributes($event);
+                $this->uri = $uri;
                 return $this;
             }
         } else {
