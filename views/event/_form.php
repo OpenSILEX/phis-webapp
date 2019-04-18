@@ -16,7 +16,6 @@ use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventCreation;
 use app\models\yiiModels\EventUpdate;
 use app\models\yiiModels\EventAction;
-use app\models\yiiModels\YiiConcernedItemModel;
 use app\controllers\EventController;
 use app\components\helpers\Vocabulary;
 ?>
@@ -103,7 +102,8 @@ use app\components\helpers\Vocabulary;
         $options['placeholder'] = Yii::t('app', 'Enter event time');
     }
     ?>
-    <?= $form->field($model, EventAction::DATE_WITHOUT_TIMEZONE)->widget(DateTimePicker::className(), [
+    <?= $form->field($model, EventAction::DATE_WITHOUT_TIMEZONE)
+            ->widget(DateTimePicker::className(), [
         'options' => $options,
         'pluginOptions' => [
             'autoclose' => true,
@@ -117,13 +117,15 @@ use app\components\helpers\Vocabulary;
     ]);
     ?>
     <?php
+    // Concerned items
+    
+    // construct data provider
     $concernedItemsDataProviderModel = [];
     $i = 0;
-    $position = "position";
-    $value = "value";
     foreach ($model->concernedItems as $concernedItem) {
         $concernedItemsDataProviderModel[$i]->isNewRecord = $model->isNewRecord;
         $concernedItemsDataProviderModel[$i]->uri = $concernedItem->uri;
+        $concernedItemsDataProviderModel[$i]->inputNameRoot = $eventInputsNameRoot;
         $i++;
     }
     $concernedItemsDataProvider = new ArrayDataProvider([
@@ -140,18 +142,10 @@ use app\components\helpers\Vocabulary;
                 'label' => Yii::t('app', "Concerned items URIs"),
                 'value' => function($model){
         
-                    // the root of the name of the input has to be the model class name
-                    $eventInputsNameRoot = "";
-                    if ($model->isNewRecord) {
-                        $eventInputsNameRoot = substr(EventCreation::class, strrpos(EventCreation::class, '\\') + 1);
-                    }
-                    else {
-                        $eventInputsNameRoot = substr(EventUpdate::class, strrpos(EventUpdate::class, '\\') + 1);
-                    }
-                    
+                    // the root of the name of the input has to be the model class name                    
                     $concernedItemDiv = "<div class=\"form-group field-eventcreation-concerneditemuri\">";
                     $concernedItemDiv .= Html::textInput(
-                            $eventInputsNameRoot . "[" . EventAction::CONCERNED_ITEMS_URIS . "][]",
+                            $model->inputNameRoot . "[" . EventAction::CONCERNED_ITEMS_URIS . "][]",
                             $model->uri, 
                             [
                                 'class' => 'form-control',
@@ -216,7 +210,7 @@ use app\components\helpers\Vocabulary;
         };
         
         /**
-         * Hide property blocs
+         * Hides property blocs.
          */
         function hidePropertyBlocs () {
             hasPestDiv.hide();
@@ -226,7 +220,7 @@ use app\components\helpers\Vocabulary;
         }
         
         /**
-         * Set property type
+         * Sets property type.
          */
         function setPropertyType (value) {
             propertyTypeSelect.val(value).trigger('change');;
@@ -234,11 +228,11 @@ use app\components\helpers\Vocabulary;
         
         
         /**
-         * Set behaviour on the event type select
+         * Sets behaviour on the event type select.
          */
         function setEventTypeSelectOnChangeBehaviour () {
             // Show and hide property divs according to the type of event selected
-            eventTypeSelect.on('change', function() {
+            typeSelect.on('change', function() {
                 switch (this.value)  {
                     case "http://www.opensilex.org/vocabulary/oeev#MoveFrom":
                         hasPestDiv.hide();
@@ -258,7 +252,7 @@ use app\components\helpers\Vocabulary;
         }
         
         /**
-         * Set the user's timezone oofset
+         * Sets the user's timezone oofset.
          */
         function setDateTimezoneOffsetWithUserDefaultOne() {
             // getTimezoneOffset() returns UTC - localTimeZone. 
