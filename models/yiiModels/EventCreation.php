@@ -70,17 +70,4 @@ class EventCreation extends EventAction {
             self::CREATOR => $this->creator
         ]);
     }
-    
-    /**
-     * @inheritdoc
-     */
-    public function setAttributes($values, $safeOnly = true) {
-        parent::setAttributes($values, $safeOnly);
-
-        foreach ($this->concernedItemsUris as $concernedItemUri) {
-            $concernedItem = new YiiConcernedItemModel();
-            $concernedItem->uri = $concernedItemUri;
-            $this->concernedItems[] = $concernedItem;
-        }
-    }
 }
