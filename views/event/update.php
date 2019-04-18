@@ -10,7 +10,7 @@
 
 use yii\helpers\Html;
 
-$this->title = Yii::t('yii', 'Update event');
+$this->title = Yii::t('app', 'Update event');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Event} other{Events}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
