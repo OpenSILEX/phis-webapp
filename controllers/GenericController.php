@@ -48,7 +48,8 @@ class GenericController extends \yii\web\Controller
      * Tells if a request created resources or not according to its results.
      * @param type $requestResult
      */
-    private function areResourceCreated($requestResult) {
+    private function didOperationSucceed($requestResult) {
+        error_log("retourdsv ".print_r($requestResult));
         return isset($requestResult->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0]);
     }
     
@@ -62,16 +63,16 @@ class GenericController extends \yii\web\Controller
     /**
      * Handles a POST response from a web service.
      * @param type $requestResults
-     * @param type $objectReturnUrl
+     * @param type $UrlToRedirectIfSuccess
      * @return type
      */
-    protected function handlePostResponse($requestResults, $objectReturnUrl) {
+    protected function handlePostPutResponse($requestResults, $UrlToRedirectIfSuccess) {
         if ($this->didWebserviceRequestReturnTokenConstant($requestResults)) {
             return $this->redirectToLoginPage();
         } else {
-            if ($this->areResourceCreated($requestResults)) { // resource created
-                if ($objectReturnUrl) {
-                    $this->redirect($objectReturnUrl);
+            if ($this->didOperationSucceed($requestResults)) { // resource created or updated with success
+                if ($UrlToRedirectIfSuccess) {
+                    $this->redirect($UrlToRedirectIfSuccess);
                 } else {
                     return $this->redirectToFirstCreatedResource($requestResults);
                 }                    
