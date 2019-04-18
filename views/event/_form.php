@@ -179,27 +179,29 @@ use app\components\helpers\Vocabulary;
     <script>
         var selectClass = "select";
 
-        var hasPestDiv = $('.field-eventcreation-propertyhaspest');
-        var fromDiv = $('.field-eventcreation-propertyfrom');
-        var toDiv = $('.field-eventcreation-propertyto');
-        var propertyTypeDiv = $('.field-eventcreation-propertytype');
+        var hasPestDiv = $('div[class*="propertyhaspest"]');
+        var fromDiv = $('div[class*="propertyfrom"]');
+        var toDiv = $('div[class*="propertyto"]');
+        var propertyTypeDiv = $('div[class*="propertytype"]');
 
         var toSelect = toDiv.find(selectClass);
         var fromSelect = fromDiv.find(selectClass);
         var hasPestSelect = hasPestDiv.find(selectClass);
         var propertyTypeSelect = propertyTypeDiv.find(selectClass);
 
-        var eventTypeSelect = $('#eventcreation-rdftype');
+        var typeSelect = $('select[id*="rdftype"]');
+            
+        var dateOffsetInput = $('input[id*="datetimezoneoffset"]');
             
         /**
-         * Set up the form on window's load
+         * Sets up the form on window's load.
          */
         window.onload = function () {
             
-            hidePropertyBlocs(hasPestDiv, fromDiv, toDiv);
+            hidePropertyBlocs();
             
             setEventTypeSelectOnChangeBehaviour();
-            eventTypeSelect.trigger('change');
+            typeSelect.trigger('change');
             
             // Set right property type when the user select new property
             fromSelect.on('change', function (e) {
@@ -208,8 +210,9 @@ use app\components\helpers\Vocabulary;
             toSelect.on('change', function (e) {
                 setPropertyType(toSelect.val());
             }); 
-            
-            setDateTimezoneOffsetWithUserDefaultOne();
+            if(!dateOffsetInput.val() || dateOffsetInput.val() === "") { // if event creation
+                setDateTimezoneOffsetWithUserDefaultOne();
+            }
         };
         
         /**
@@ -269,7 +272,7 @@ use app\components\helpers\Vocabulary;
             var offsetMinutesString = Math.abs(offsetMinutes) > 10 ? "" + offsetMinutes : "0" + offsetMinutes;
             var offsetInStandardFormat = offsetSign + offsetHoursString + ":" + offsetMinutesString;
             
-            $("#eventcreation-datetimezoneoffset").val(offsetInStandardFormat);
+            dateOffsetInput.val(offsetInStandardFormat);
         };
     </script>
 
