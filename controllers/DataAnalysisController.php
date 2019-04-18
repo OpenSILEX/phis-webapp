@@ -103,4 +103,36 @@ class DataAnalysisController extends \yii\web\Controller {
                     ]
         );
     }
+    
+    public function actionGallery() {
+        $dataProvider =[
+            'spatial' =>
+                [
+                    'label' => 'Spatial vizualisation',
+                    'items' => [
+                        'mapField' => [
+                                'htmlDescriptionFilePath' => 'mapField/mapField.html', 
+                                'RfunctionPath' => 'mapField/mapField.R',
+                                'vignette' => 'mapField/vignette.png'
+                                    ]
+                        ]
+                ]
+        ];
+        
+        
+        return $this->render('gallery', [
+                    'galleryFilePath' => '@app/web/RGallery',
+                    'dataProvider' => $dataProvider
+                    ]
+        );
+    }
+    
+    public function actionViewGalleryItem() {
+        $searchParams = Yii::$app->request->queryParams;
+        return $this->render('view-gallery-item', [
+                    'htmlDescriptionFilePath' => $searchParams["htmlDescriptionFilePath"],
+                    'RfunctionPath' => $searchParams["RfunctionPath"]
+                    ]
+        );
+    }
 }
