@@ -112,8 +112,17 @@ use app\components\helpers\Vocabulary;
     ]);
     ?>
     <?php
+    $concernedItemsDataProviderModel = [];
+    $i = 0;
+    $position = "position";
+    $value = "value";
+    foreach ($model->concernedItems as $concernedItem) {
+        $concernedItemsDataProviderModel[$i]->isNewRecord = $model->isNewRecord;
+        $concernedItemsDataProviderModel[$i]->uri = $concernedItem->uri;
+        $i++;
+    }
     $concernedItemsDataProvider = new ArrayDataProvider([
-        'allModels' => $model->concernedItems,
+        'allModels' => $concernedItemsDataProviderModel,
         'pagination' => [
             'pageSize' => 10,
         ],
@@ -125,10 +134,26 @@ use app\components\helpers\Vocabulary;
             [
                 'label' => Yii::t('app', "Concerned items URIs"),
                 'value' => function($model){
-                    return ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']])
-                            ->field($model, YiiConcernedItemModel::URI, ['errorOptions' => ['tag' => false]])
-                            ->textInput(['readonly' => true])
-                            ->label(false);
+        
+                    // the root of the name of the input has to be the model class name
+                    $eventInputsNameRoot = "";
+                    if ($model->isNewRecord) {
+                        $eventInputsNameRoot = substr(EventCreation::class, strrpos(EventCreation::class, '\\') + 1);
+                    }
+                    else {
+                        $eventInputsNameRoot = substr(EventUpdate::class, strrpos(EventUpdate::class, '\\') + 1);
+                    }
+                    
+                    $concernedItemDiv = "<div class=\"form-group field-eventcreation-concerneditemuri\">";
+                    $concernedItemDiv .= Html::textInput(
+                            $eventInputsNameRoot . "[" . EventAction::CONCERNED_ITEMS_URIS . "][]",
+                            $model->uri, 
+                            [
+                                'class' => 'form-control',
+                                'readonly'=> true
+                            ]);
+                    $concernedItemDiv .= "</div>";
+                    return $concernedItemDiv;
                 },
                 'format' => 'raw'
             ]
