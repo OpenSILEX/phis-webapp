@@ -22,6 +22,11 @@ use app\components\helpers\Vocabulary;
 ?>
 <div class="event-form well">
     <?php 
+    // generate inputs name root and  inputs id root
+    $eventClassWithNamespace = $model->isNewRecord ? EventCreation::class : EventUpdate::class;
+    $eventInputsNameRoot = substr($eventClassWithNamespace, strrpos($eventClassWithNamespace, '\\') + 1);
+    $eventInputsIdRoot = strtolower($eventInputsNameRoot);
+    
     $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]);
 
     // return URL after creation
