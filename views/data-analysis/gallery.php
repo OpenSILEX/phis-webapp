@@ -30,20 +30,25 @@ echo Html::beginTag("div", ["class" => "row"]);
 //echo $this->renderFile($galleryFilePath . 'spatial/mapField/mapField.html');
 // each thumbnail (R application vignette)
 foreach ($dataProvider as $category => $categoryInfo) {
-    echo Html::tag("h2", Yii::t('app',$categoryInfo["label"]));
+    echo Html::beginTag("div", ["class" => "row"]);
+    $numberOfItems = count(($categoryInfo['items']));
+    echo Html::tag("hr");
+    echo Html::tag("h2", Yii::t('app',$categoryInfo["label"]) . ' ('. $numberOfItems .')');
+    echo Html::tag("hr");
+
     foreach ($categoryInfo['items'] as $categoryItem => $categoryItemInfo) {
 
-        echo Html::beginTag("div", ["class" => "col-sm-5 col-md-4"]);
+        echo Html::beginTag("div", ["class" => "col-sm-4 col-md-3"]);
         echo Html::beginTag("div", ["class" => "thumbnail"]);
-        $image = Html::img('RGallery/'. $category . '/'. $categoryItemInfo['vignette'], [
+        $image = Html::img('RGallery/'. $category .'/' . $categoryItem .  '/vignette.png', [
                     "class" => "img-responsive",
                     "alt" => $categoryItem
         ]);
         $exampleUrl = Url::to(
                         [
                             'data-analysis/view-gallery-item',
-                            'htmlDescriptionFilePath' => $galleryFilePath . '/'. $category . '/'. $categoryItemInfo['htmlDescriptionFilePath'],
-                            'RfunctionPath' => $galleryFilePath . '/'. $category . '/'. $categoryItemInfo['RfunctionPath']
+                            'descriptionFilePath' => $galleryFilePath . '/'. $category . '/'. $categoryItemInfo['descriptionFilePath'],
+                            'RfunctionPath' => $galleryFilePath . '/'. $category . '/'. $categoryItemInfo['RfunctionPath'],
                         ]
         );
         echo Html::a($image, $exampleUrl);
@@ -53,6 +58,7 @@ foreach ($dataProvider as $category => $categoryInfo) {
         echo Html::endTag("div");
         echo Html::endTag("div");
     }
+     echo Html::endTag("div");
 }
 
 echo Html::endTag("div");

@@ -63,7 +63,7 @@ ToastrAsset::register($this);
                                 'label' => Yii::t('app', 'Data Analysis'), 
                                     'items' => [
                                         [
-                                            'label' => Icon::show('flask', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'R Gallery'), 
+                                            'label' => Icon::show('area-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'R Gallery'), 
                                             'url' => ['/data-analysis/gallery'],
                                         ],
                                         [

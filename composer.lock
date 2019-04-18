@@ -4,8 +4,51 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a81ff6872bbd8b0fdf3f387ebc99092a",
+    "content-hash": "2522ebb2acf1d8afe910fffd5f2106dd",
     "packages": [
+        {
+            "name": "alcea/yii2-prism-syntax-highlighter",
+            "version": "v1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alceanicu/yii2-prism-syntax-highlighter.git",
+                "reference": "cd2c59ce783f243fa2cffadb2525836410485673"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alceanicu/yii2-prism-syntax-highlighter/zipball/cd2c59ce783f243fa2cffadb2525836410485673",
+                "reference": "cd2c59ce783f243fa2cffadb2525836410485673",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "alcea\\yii2PrismSyntaxHighlighter\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT License"
+            ],
+            "authors": [
+                {
+                    "name": "Niku Alcea",
+                    "email": "nicu.alcea@gmail.com"
+                }
+            ],
+            "description": "Prism Syntax Highlighter for Yii2",
+            "keywords": [
+                "SyntaxHighlighter",
+                "php",
+                "prism",
+                "yii2"
+            ],
+            "time": "2016-12-30T22:58:11+00:00"
+        },
         {
             "name": "borales/yii2-phone-input",
             "version": "0.1.2",

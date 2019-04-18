@@ -111,9 +111,18 @@ class DataAnalysisController extends \yii\web\Controller {
                     'label' => 'Spatial vizualisation',
                     'items' => [
                         'mapField' => [
-                                'htmlDescriptionFilePath' => 'mapField/mapField.html', 
+                                'descriptionFilePath' => 'mapField/mapField.html', 
                                 'RfunctionPath' => 'mapField/mapField.R',
-                                'vignette' => 'mapField/vignette.png'
+                                    ]
+                        ],
+                ],
+            'timeSeries' =>
+                [
+                    'label' => 'Time series',
+                    'items' => [
+                        'plotVar' => [
+                                'descriptionFilePath' => 'plotVar/plotVar.png', 
+                                'RfunctionPath' => 'plotVar/plotVar.R',
                                     ]
                         ]
                 ]
@@ -130,7 +139,7 @@ class DataAnalysisController extends \yii\web\Controller {
     public function actionViewGalleryItem() {
         $searchParams = Yii::$app->request->queryParams;
         return $this->render('view-gallery-item', [
-                    'htmlDescriptionFilePath' => $searchParams["htmlDescriptionFilePath"],
+                    'descriptionFilePath' => $searchParams["descriptionFilePath"],
                     'RfunctionPath' => $searchParams["RfunctionPath"]
                     ]
         );
