@@ -163,19 +163,19 @@ class EventController extends GenericController {
      */
     public function actionCreate() {
         $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
-        $eventModel = new EventCreation();
-        $eventModel->isNewRecord = true;
+        $event = new EventCreation();
+        $event->isNewRecord = true;
         
-        if (!$eventModel->load(Yii::$app->request->post())) { //display form
-            $eventModel->load(Yii::$app->request->get(), '');
-            $eventModel->creator = $this->getCreatorUri($sessionToken);
+        if (!$event->load(Yii::$app->request->post())) { //display form
+            $event->load(Yii::$app->request->get(), '');
+            $event->creator = $this->getCreatorUri($sessionToken);
             $this->loadFormParams();
-            return $this->render('create', ['model' =>  $eventModel]);
+            return $this->render('create', ['model' =>  $event]);
             
         } else { // submit form         
-            $dataToSend[] = $eventModel->attributesToArray(); 
-            $requestResults =  $eventModel->insert($sessionToken, $dataToSend);
-            return $this->handlePostResponse($requestResults, $eventModel->returnUrl);
+            $dataToSend[] = $event->attributesToArray(); 
+            $requestResults =  $event->insert($sessionToken, $dataToSend);
+            return $this->handlePostPutResponse($requestResults, $event->returnUrl);
         }
     }
 
@@ -186,19 +186,18 @@ class EventController extends GenericController {
      */
     public function actionUpdate($id) {
         $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
-
         $event = new EventUpdate();
+        $event->isNewRecord = false;
         
         if (!$event->load(Yii::$app->request->post())) {
-            $event =  $event->getEvent($sessionToken, $id);
+            $event = $event->getEvent($sessionToken, $id);
+            error_log("eventdkopdkop ".print_r($event, true));
             $this->loadFormParams();
             return $this->render('update', ['model' =>  $event]);
         } else {
-            if (is_string($requestRes) && $requestRes === WSConstants::TOKEN) {
-                return $this->redirectToLoginPage();
-            } else {
-                return $this->redirect(['view', 'id' =>  $event->uri]);
-            }
+            $dataToSend[] = $event->attributesToArray(); 
+            $requestResults =  $event->update($sessionToken, $dataToSend);
+            return $this->handlePostPutResponse($requestResults, $event->uri);
         }
     }
     
