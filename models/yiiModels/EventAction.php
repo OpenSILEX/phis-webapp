@@ -163,10 +163,6 @@ class EventAction extends YiiEventModel {
      */
     public function setAttributes($values, $safeOnly = true) {
         parent::setAttributes($values, $safeOnly);
-        
-        foreach($this->concernedItemsUris as $concernedItemUri) {
-            
-        }
         $this->dateWithoutTimezone = str_replace(" ", "T", $this->dateWithoutTimezone);
         $this->properties = [$this->getPropertyInCreation($this)];
     }
