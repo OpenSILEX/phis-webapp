@@ -114,6 +114,10 @@ ToastrAsset::register($this);
                                 'url' => ['/sensor/index']
                             ],
                             [
+                                'label' => Icon::show('bullhorn', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Actuator} other{Actuators}}', ['n' => 2]), 
+                                'url' => ['/actuator/index']
+                            ],
+                            [
                                 'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
                                 'url' => ['/vector/index']
                             ],
@@ -221,6 +225,10 @@ ToastrAsset::register($this);
                             [
                                 'label' => Icon::show('camera', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 
                                 'url' => ['/sensor/index']
+                            ],
+                            [
+                                'label' => Icon::show('bullhorn', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Actuator} other{Actuators}}', ['n' => 2]), 
+                                'url' => ['/actuator/index']
                             ],
                             [
                                 'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
