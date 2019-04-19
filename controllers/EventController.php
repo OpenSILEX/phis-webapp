@@ -17,7 +17,6 @@ use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventCreation;
 use app\models\yiiModels\EventUpdate;
 use app\models\yiiModels\InfrastructureSearch;
-use app\models\yiiModels\YiiPropertyModel;
 use app\models\wsModels\WSConstants;
 use app\components\helpers\SiteMessages;
 
@@ -191,13 +190,12 @@ class EventController extends GenericController {
         
         if (!$event->load(Yii::$app->request->post())) {
             $event = $event->getEvent($sessionToken, $id);
-            error_log("eventdkopdkop ".print_r($event, true));
             $this->loadFormParams();
             return $this->render('update', ['model' =>  $event]);
         } else {
             $dataToSend[] = $event->attributesToArray(); 
             $requestResults =  $event->update($sessionToken, $dataToSend);
-            return $this->handlePostPutResponse($requestResults, $event->uri);
+            return $this->handlePostPutResponse($requestResults, ['view', 'id' =>  $event->uri]);
         }
     }
     
