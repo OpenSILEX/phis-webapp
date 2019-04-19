@@ -71,4 +71,13 @@ class EventCreation extends EventAction {
                     self::CREATOR => $this->creator
                 ]);
     }
+    
+    public function setAttributes($values, $safeOnly = true) {
+        parent::setAttributes($values, $safeOnly);
+        foreach ($values[self::CONCERNED_ITEMS_URIS] as $concernedItemUri) {
+            $concernedItem = new YiiConcernedItemModel();
+            $concernedItem->uri = $concernedItemUri;
+            $this->concernedItems[] = $concernedItem;
+        }
+    }
 }
