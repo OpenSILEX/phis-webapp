@@ -1,9 +1,8 @@
 <?php
-
 //******************************************************************************
 //                                 view.php 
-// PHIS-SILEX
-// Copyright © INRA 2017
+// SILEX-PHIS
+// Copyright © INRA 2019
 // Creation date: Feb 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
@@ -13,8 +12,8 @@ use yii\data\ArrayDataProvider;
 use app\components\helpers\Vocabulary;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\PropertyWidget;
-use app\components\widgets\ConcernedItemGridViewWidget;
+use app\components\widgets\PropertyWidgetWithoutActions;
+use app\components\widgets\ConcernedItemGridViewWidgetWithoutActions;
 use app\controllers\EventController;
 use app\models\yiiModels\YiiEventModel;
 
@@ -50,16 +49,16 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <!-- Properties -->
     <?=
-    PropertyWidget::widget([
+    PropertyWidgetWithoutActions::widget([
         YiiEventModel::PROPERTIES => $model->properties,
         'title' =>  Yii::t('app', 'Specific properties')
     ]);
     ?>
     
     <!-- Concerned items-->
-    <?= ConcernedItemGridViewWidget::widget(
+    <?= ConcernedItemGridViewWidgetWithoutActions::widget(
             [
-                 ConcernedItemGridViewWidget::CONCERNED_ITEMS => new ArrayDataProvider([
+                 ConcernedItemGridViewWidgetWithoutActions::CONCERNED_ITEMS => new ArrayDataProvider([
                     'models' => $model->concernedItems,
                     //SILEX:info
                     //totalCount must be there too to get the pagination in GridView
@@ -78,5 +77,4 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ); 
     ?>
-
 </div>
