@@ -39,13 +39,20 @@ use yii\helpers\Url;
     <?php
         if (isset($errors) && $errors !== null):
     ?>
-    <div>
-        <h3 class="alert alert-danger" style="margin:3%;">Errors found in dataset </h3>
+    <div class="alert alert-danger" >
+        <h3 style="margin:3%;">Errors found in dataset :</h3>
         <ul>
         <?php 
+            $errorMessages = [];
             foreach($errors as $error) {
-                echo '<li>' . $error->exception->details . '</li>';
+                $errorMessages[] =  $error->exception->details;
             }
+            
+            $errorMessages = array_unique($errorMessages);
+            foreach ($errorMessages as $errorMessage) {
+                 echo '<li>' . $errorMessage . '</li>';
+            }
+            
         ?>
         </ul>
     </div>

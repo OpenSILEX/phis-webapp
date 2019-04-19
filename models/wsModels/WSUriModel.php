@@ -186,7 +186,7 @@ class WSUriModel extends \openSILEX\guzzleClientPHP\WSModel {
      *  "pageSize" => "1000"
      * ]
      * @return mixed The given uri data if it exist
-     *         mixed Error (unknwon, web service error, ...)
+     *         mixed Error (Unknown, web service error, ...)
      */
     public function getByUri($sessionToken, $uri, $params) {
         $subService = "/" . urlencode($uri);
