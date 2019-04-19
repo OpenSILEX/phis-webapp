@@ -380,6 +380,12 @@ class DatasetController extends Controller {
         }
     }
 
+    /**
+     * Create provenance from an alias and a comment
+     * @param type $alias
+     * @param type $comment
+     * @return boolean
+     */
     private function createProvenance($alias, $comment) {
         $provenanceService = new WSProvenanceModel();
         $date = new \DateTime();
@@ -400,10 +406,11 @@ class DatasetController extends Controller {
     }
 
     /**
-     * update the added documents to say that they are linked to an object
+     * Link list of documents to the given provenance uri
      * (unlinked -> linked)
-     * @param YiiDatasetModel $datasetModel
-     * @return boolean|string
+     * @param string $provenanceUri
+     * @param array $documents
+     * @return boolean
      */
     private function linkDocumentsToProvenance($provenanceUri, $documents) {
         $documentModel = new YiiDocumentModel(null, null);
