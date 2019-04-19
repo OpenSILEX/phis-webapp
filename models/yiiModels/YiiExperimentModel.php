@@ -306,7 +306,7 @@ class YiiExperimentModel extends WSActiveRecord {
      *      "http://www.opensilex.org/demo/DMO2019-2"
      * ]
      */
-    public function getExperimentsList($sessionToken) {
+    public function getExperimentsURIList($sessionToken) {
         $experiments = $this->find($sessionToken, $this->attributesToArray());
         $experimentsToReturn = [];
         
@@ -319,7 +319,38 @@ class YiiExperimentModel extends WSActiveRecord {
             //2. if there are other pages, get the other experiments
             if ($this->totalPages > $this->page) {
                 $this->page++; //next page
-                $nextExperiments = $this->getExperimentsList($sessionToken);
+                $nextExperiments = $this->getExperimentsURIList($sessionToken);
+                
+                $experimentsToReturn = array_merge($experimentsToReturn, $nextExperiments);
+            }
+            
+            return $experimentsToReturn;
+        }
+    }
+    
+    /**
+     * Get the list of uri of the experiments.
+     * @param string $sessionToken
+     * @return Array
+     * @example [
+     *      "http://www.opensilex.org/demo/DMO2019-1" => "LO1", 
+     *      "http://www.opensilex.org/demo/DMO2019-2" => "L02"
+     * ]
+     */
+    public function getExperimentsURIAndLabelList($sessionToken) {
+        $experiments = $this->find($sessionToken, $this->attributesToArray());
+        $experimentsToReturn = [];
+        
+        if ($experiments !== null) {
+            //1. get the URIs
+            foreach($experiments as $experiment) {
+                $experimentsToReturn[$experiment->uri] = $experiment->alias;
+            }
+            
+            //2. if there are other pages, get the other experiments
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextExperiments = $this->getExperimentsURIList($sessionToken);
                 
                 $experimentsToReturn = array_merge($experimentsToReturn, $nextExperiments);
             }
