@@ -53,10 +53,10 @@ class EventCreation extends EventAction {
     public function attributeLabels() {
         return array_merge(
             parent::attributeLabels(),
-            [
-                self::DESCRIPTION => Yii::t('app', 'Description'),
-                self::CREATOR => Yii::t('app', 'Creator'),
-            ]
+                [
+                    self::DESCRIPTION => Yii::t('app', 'Description'),
+                    self::CREATOR => Yii::t('app', 'Creator'),
+                ]
         );
     }
     
@@ -65,9 +65,10 @@ class EventCreation extends EventAction {
      */
     public function attributesToArray() {
         return array_merge(
-            parent::attributesToArray(),[
-            self::DESCRIPTION => $this->description,
-            self::CREATOR => $this->creator
-        ]);
+            parent::attributesToArray(),
+                [
+                    self::DESCRIPTION => $this->description,
+                    self::CREATOR => $this->creator
+                ]);
     }
 }
