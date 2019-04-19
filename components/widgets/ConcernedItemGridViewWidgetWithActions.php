@@ -16,15 +16,21 @@ use yii\helpers\Html;
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class ConcernedItemGridViewWidgetWithActions extends ConcernedItemGridViewWidget {
+    
+    CONST INPUT_MODEL_CLASS = "inputModelClass";
+    public $inputModelClass;
+    
+    CONST INPUT_MODEL_CONCERNED_ITEMS_URIS_ATTRIBUTE_NAME = "inputModelConcernedItemsUrisAttributeName";
+    public $inputModelConcernedItemsUrisAttributeName;
 
     protected function getColumns(): array {
         return [
             [
             'label' => Yii::t('app', "Concerned items URIs"),
             'value' => function($model){
-                $concernedItemDiv = "<div class=\"form-group " . $model->divSpecificClass . "\">";
+                $concernedItemDiv = "<div class=\"form-group " . "field-" . $this->inputModelClass . "-concerneditem\">";
                 $concernedItemDiv .= Html::textInput(
-                    $model->inputName,
+                    $this->inputModelClass . "[" . $this->inputModelConcernedItemsUrisAttributeName . "][]",
                     $model->uri, 
                     [
                         'class' => 'form-control',

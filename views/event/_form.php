@@ -117,43 +117,34 @@ use app\components\widgets\ConcernedItemGridViewWidgetWithActions;
         'maxlength' => true
     ]);
     ?>
-    <?php
-    // Concerned items
-    
-    // construct data provider
-    $concernedItemsDataProviderModel = [];
-    $i = 0;
-    foreach ($model->concernedItems as $concernedItem) {
-        $concernedItemsDataProviderModel[$i]->isNewRecord = $model->isNewRecord;
-        $concernedItemsDataProviderModel[$i]->uri = $concernedItem->uri;
-        $concernedItemsDataProviderModel[$i]->inputName 
-                = $eventInputsNameRoot . "[" . EventAction::CONCERNED_ITEMS_URIS . "][]";
-        $concernedItemsDataProviderModel[$i]->divSpecificClass 
-                = "field-" . $eventInputsNameRoot . "-concerneditem";
-        $i++;
-    }
-    $concernedItemsDataProvider = new ArrayDataProvider([
-        'allModels' => $concernedItemsDataProviderModel,
-        'pagination' => [
-            'pageSize' => 10,
-        ],
-    ]);
-    ?>
-    
-    <!-- Concerned items-->
     <?= ConcernedItemGridViewWidgetWithActions::widget(
-        [ConcernedItemGridViewWidgetWithActions::CONCERNED_ITEMS => $concernedItemsDataProvider]
+        [
+            ConcernedItemGridViewWidgetWithActions::CONCERNED_ITEMS => new ArrayDataProvider([
+                'allModels' => $model->concernedItems,
+                'pagination' => ['pageSize' => 10],
+            ]),
+            ConcernedItemGridViewWidgetWithActions::INPUT_MODEL_CLASS => $eventInputsNameRoot,
+            ConcernedItemGridViewWidgetWithActions::INPUT_MODEL_CONCERNED_ITEMS_URIS_ATTRIBUTE_NAME 
+                => EventAction::CONCERNED_ITEMS_URIS
+        ]
     ); 
     ?>
     
     <?php 
+    error_log("oijoijoij ". print_r($model->concernedItems, true));
     if ($model->isNewRecord) {
-        echo $form->field($model, EventCreation::DESCRIPTION)->textarea(['rows' => Yii::$app->params['textAreaRowsNumber']]);
+        echo $form->field(
+                $model, 
+                EventCreation::DESCRIPTION)->textarea(['rows' => Yii::$app->params['textAreaRowsNumber']]);
     }
     ?>
 
     <div class="form-group">
-    <?= Html::submitButton($model->isNewRecord ? Yii::t('yii', 'Create') : Yii::t('yii', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    <?= Html::submitButton(
+            $model->isNewRecord ? Yii::t('yii', 'Create') : Yii::t('yii', 'Update'), 
+            ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']
+        ) 
+    ?>
     </div>
     
     <script>
