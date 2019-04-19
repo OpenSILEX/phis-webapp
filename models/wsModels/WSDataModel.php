@@ -25,4 +25,12 @@ class WSDataModel extends\openSILEX\guzzleClientPHP\WSModel {
     public function __construct() {
         parent::__construct(WS_PHIS_PATH, "data");
     }
+    
+    public function postData($token, $values) {
+        $subService = "/";
+        $body = json_encode($values, $options = JSON_UNESCAPED_SLASHES);
+        $dataResult = $this->post($token, $subService, $values);
+
+        return $dataResult;
+    }
 }

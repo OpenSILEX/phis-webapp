@@ -28,7 +28,7 @@ $this->title = Yii::t('app', 'Dataset created');
     
     <h1><?= Html::encode($this->title) ?></h1>
     <div class="alert alert-success">
-        <h4><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <?= $intertedDataNumber ?> data inserted : </h4>
+        <h4><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <?= $insertedDataNumber ?> data inserted : </h4>
         <!--<p>Inserted data summary : </p>-->
     </div>
     

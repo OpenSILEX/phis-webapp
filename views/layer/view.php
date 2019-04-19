@@ -209,7 +209,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
             });
             
              $(document).ready(function(){
-//                $('#visualization-dataset').load('<?php //echo Url::to(['dataset/search-from-layer']) ?>');
                 $('#visualization-dataset').load('<?php echo Url::to(['data/search-from-layer']) ?>');
                 $('#visualization-images').load('<?php echo Url::to(['image/search-from-layer'])?>');
              });

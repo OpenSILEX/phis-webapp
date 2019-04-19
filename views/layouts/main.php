@@ -106,7 +106,7 @@ ToastrAsset::register($this);
 //                            ]
                             //\SILEX:info
                         ]];
-//        $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
+        $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
                             [
