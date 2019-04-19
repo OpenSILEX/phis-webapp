@@ -9,12 +9,10 @@
 namespace app\components\widgets;
 
 use yii\base\Widget;
-use yii\helpers\Html;
 use Yii;
 use app\models\yiiModels\YiiConcernedItemModel;
 use yii\grid\GridView;
 use app\components\helpers\Vocabulary;
-use kartik\icons\Icon;
 
 /**
  * A widget used to generate a customisable concerned item GridView interface
@@ -50,33 +48,41 @@ class ConcernedItemGridViewWidget extends Widget {
             $htmlRendered = "<h3>" . Yii::t('app', 'Concerned Items') . "</h3>";
             $htmlRendered .= GridView::widget([
                         'dataProvider' => $this->concernedItems,
-                        'columns' => [
-                            [
-                                'label' => Yii::t('app',YiiConcernedItemModel::URI),
-                                'attribute' => YiiConcernedItemModel::URI,
-                                'value' => function ($model) {
-                                    return Vocabulary::prettyUri($model->uri);
-                                }
-                            ],
-                            YiiConcernedItemModel::RDF_TYPE =>
-                            [
-                                'label' => Yii::t('app', 'Type'),
-                                'attribute' => YiiConcernedItemModel::RDF_TYPE,
-                                'value' => function($model) {
-                                    return Vocabulary::prettyUri($model->rdfType);
-                                },
-                            ],
-                            YiiConcernedItemModel::LABELS => 
-                            [
-                                'label' => Yii::t('app', YiiConcernedItemModel::LABELS),
-                                'attribute' => YiiConcernedItemModel::LABELS,
-                                'value' => function($model) {
-                                    return implode((', '), $model->labels);
-                                }
-                            ]
-                        ],
+                        'columns' => $this->getColumns(),
             ]);
         }
         return $htmlRendered;
+    }
+    
+    /**
+     * Returns the columns of the GridView.
+     * @return array
+     */
+    protected function getColumns(): array {
+        return [
+            [
+                'label' => Yii::t('app',YiiConcernedItemModel::URI),
+                'attribute' => YiiConcernedItemModel::URI,
+                'value' => function ($model) {
+                    return Vocabulary::prettyUri($model->uri);
+                }
+            ],
+            YiiConcernedItemModel::RDF_TYPE =>
+            [
+                'label' => Yii::t('app', 'Type'),
+                'attribute' => YiiConcernedItemModel::RDF_TYPE,
+                'value' => function($model) {
+                    return Vocabulary::prettyUri($model->rdfType);
+                },
+            ],
+            YiiConcernedItemModel::LABELS => 
+            [
+                'label' => Yii::t('app', YiiConcernedItemModel::LABELS),
+                'attribute' => YiiConcernedItemModel::LABELS,
+                'value' => function($model) {
+                    return implode((', '), $model->labels);
+                }
+            ]
+        ];
     }
 }

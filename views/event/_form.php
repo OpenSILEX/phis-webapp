@@ -18,6 +18,7 @@ use app\models\yiiModels\EventUpdate;
 use app\models\yiiModels\EventAction;
 use app\controllers\EventController;
 use app\components\helpers\Vocabulary;
+use app\components\widgets\ConcernedItemGridViewWidgetWithActions;
 ?>
 <div class="event-form well">
     <?php 
@@ -125,7 +126,10 @@ use app\components\helpers\Vocabulary;
     foreach ($model->concernedItems as $concernedItem) {
         $concernedItemsDataProviderModel[$i]->isNewRecord = $model->isNewRecord;
         $concernedItemsDataProviderModel[$i]->uri = $concernedItem->uri;
-        $concernedItemsDataProviderModel[$i]->inputNameRoot = $eventInputsNameRoot;
+        $concernedItemsDataProviderModel[$i]->inputName 
+                = $eventInputsNameRoot . "[" . EventAction::CONCERNED_ITEMS_URIS . "][]";
+        $concernedItemsDataProviderModel[$i]->divSpecificClass 
+                = "field-" . $eventInputsNameRoot . "-concerneditem";
         $i++;
     }
     $concernedItemsDataProvider = new ArrayDataProvider([
@@ -135,29 +139,11 @@ use app\components\helpers\Vocabulary;
         ],
     ]);
     ?>
-    <?= GridView::widget([
-        'dataProvider' => $concernedItemsDataProvider,
-        'columns' => [
-            [
-                'label' => Yii::t('app', "Concerned items URIs"),
-                'value' => function($model){
-        
-                    // the root of the name of the input has to be the model class name                    
-                    $concernedItemDiv = "<div class=\"form-group field-eventcreation-concerneditemuri\">";
-                    $concernedItemDiv .= Html::textInput(
-                            $model->inputNameRoot . "[" . EventAction::CONCERNED_ITEMS_URIS . "][]",
-                            $model->uri, 
-                            [
-                                'class' => 'form-control',
-                                'readonly'=> true
-                            ]);
-                    $concernedItemDiv .= "</div>";
-                    return $concernedItemDiv;
-                },
-                'format' => 'raw'
-            ]
-        ],
-    ]);
+    
+    <!-- Concerned items-->
+    <?= ConcernedItemGridViewWidgetWithActions::widget(
+        [ConcernedItemGridViewWidgetWithActions::CONCERNED_ITEMS => $concernedItemsDataProvider]
+    ); 
     ?>
     
     <?php 
