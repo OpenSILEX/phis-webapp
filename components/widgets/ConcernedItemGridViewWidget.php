@@ -18,7 +18,7 @@ use app\components\helpers\Vocabulary;
  * A widget used to generate a customisable concerned item GridView interface
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
-class ConcernedItemGridViewWidget extends Widget {
+abstract class ConcernedItemGridViewWidget extends Widget {
 
     CONST CONCERNED_ITEMS = "concernedItems";
     CONST NO_CONCERNED_ITEMS = "No items concerned";
@@ -58,31 +58,5 @@ class ConcernedItemGridViewWidget extends Widget {
      * Returns the columns of the GridView.
      * @return array
      */
-    protected function getColumns(): array {
-        return [
-            [
-                'label' => Yii::t('app',YiiConcernedItemModel::URI),
-                'attribute' => YiiConcernedItemModel::URI,
-                'value' => function ($model) {
-                    return Vocabulary::prettyUri($model->uri);
-                }
-            ],
-            YiiConcernedItemModel::RDF_TYPE =>
-            [
-                'label' => Yii::t('app', 'Type'),
-                'attribute' => YiiConcernedItemModel::RDF_TYPE,
-                'value' => function($model) {
-                    return Vocabulary::prettyUri($model->rdfType);
-                },
-            ],
-            YiiConcernedItemModel::LABELS => 
-            [
-                'label' => Yii::t('app', YiiConcernedItemModel::LABELS),
-                'attribute' => YiiConcernedItemModel::LABELS,
-                'value' => function($model) {
-                    return implode((', '), $model->labels);
-                }
-            ]
-        ];
-    }
+    protected abstract function getColumns(): array;
 }
