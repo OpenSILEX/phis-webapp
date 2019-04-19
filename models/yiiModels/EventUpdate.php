@@ -17,6 +17,18 @@ use Yii;
 class EventUpdate extends EventAction {
     
     /**
+     * @inheritdoc
+     */
+    public function rules() {
+        return array_merge(
+            parent::rules(), [
+            [[
+                self::URI
+            ],  'required']
+        ]); 
+    }
+    
+    /**
      * @return array the labels of the attributes
      */
     public function attributeLabels() {
