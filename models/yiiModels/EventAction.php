@@ -164,29 +164,30 @@ class EventAction extends YiiEventModel {
     public function setAttributes($values, $safeOnly = true) {
         parent::setAttributes($values, $safeOnly);
         $this->dateWithoutTimezone = str_replace(" ", "T", $this->dateWithoutTimezone);
-        $this->properties = [$this->getPropertyInCreation($this)];
+        $this->properties = [$this->getPropertyInCreation()];
     }
     
     /**
      * Gets a property object according to the data entered in the creation form.
      * @param type $eventModel
      */
-    private function getPropertyInCreation($eventModel) {
+    private function getPropertyInCreation() {
         $property = new YiiPropertyModel();
-        switch ($eventModel->rdfType) {
-            case $eventConceptUri = Yii::$app->params['moveFrom']:
-                $property->value = $eventModel->propertyFrom;
-                $property->rdfType = $eventModel->propertyType;
+        switch ($this->rdfType) {
+            case Yii::$app->params['moveFrom']:
+                $property->value = $this->propertyFrom;
+                $property->rdfType = $this->propertyType;
                 $property->relation = Yii::$app->params['from'];
                 break;
-            case $eventConceptUri = Yii::$app->params['moveTo']:
-                $property->value = $eventModel->propertyTo;
-                $property->rdfType = $eventModel->propertyType;
+            case Yii::$app->params['moveTo']:
+                $property->value = $this->propertyTo;
+                $property->rdfType = $this->propertyType;
                 $property->relation = Yii::$app->params['to'];
                 break;
             default : 
                 $property = null;
                 break;
         }
+        return $property;
     }
 }
