@@ -46,6 +46,7 @@ foreach ($model->properties as $property) {
             && $propertyLabel !== "hasBrand" 
             && $propertyLabel !== "hasLens" 
             && $propertyLabel !== "measures"
+            && $propertyLabel !== "hasModel"
     ) {
         $sensorProfilePropertiesCount++;
     }
@@ -137,6 +138,7 @@ foreach ($model->properties as $property) {
                                 && $propertyLabel !== "hasBrand" 
                                 && $propertyLabel !== "hasLens" 
                                 && $propertyLabel !== "measures"
+                                && $propertyLabel !== "hasModel"
                         ) {
                             $toReturn .= "<li>"
                                     . "<b>" . explode("#", $property->relation)[1] . "</b>"
