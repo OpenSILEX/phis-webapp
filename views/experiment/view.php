@@ -335,7 +335,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
                 'uri',
-                'alias',
+                'label',
                 [
                     'attribute' => 'rdfType',
                     'format' => 'raw',
