@@ -180,6 +180,7 @@ return [
     'Scientific Supervisors' => 'Superviseurs scientifiques',
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',
+    'Select type...' => 'Sélectionez le type',
     'Select unit alias...' => 'Sélectionnez l\'alias de l\'unité',
     'Sensor Position' => 'Position du Capteur',
     'Sensor Profile' => 'Profil du Capteur',
