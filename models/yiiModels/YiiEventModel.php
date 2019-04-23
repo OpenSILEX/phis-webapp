@@ -2,8 +2,8 @@
 //******************************************************************************
 //                             YiiEventModel.php
 // SILEX-PHIS
-// Copyright © INRA 2018
-// Creation date: 02 Jan. 2019
+// Copyright © INRA 2019
+// Creation date: 2 Jan. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 namespace app\models\yiiModels;
@@ -25,12 +25,16 @@ use app\models\wsModels\WSConstants;
  */
 class YiiEventModel extends WSActiveRecord {
     
+    const EVENTS_LABEL = "Events";
+    const EVENT_LABEL = "Event";
+    
     /**
      * @example http://www.phenome-fppn.fr/id/event/96e72788-6bdc-4f8e-abd1-ce9329371e8e
      * @var string
      */
     public $uri;
     const URI = "uri";
+    const URI_LABEL = "URI";
     
     /**
      * @example http://www.opensilex.org/vocabulary/oeev#MoveFrom
@@ -38,6 +42,7 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $rdfType;
     const TYPE = "rdfType";
+    const TYPE_LABEL = "Type";
     
     /**
      * @example 2019-01-02T00:00:00+01:00
@@ -45,6 +50,7 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $date;
     const DATE = "date";
+    const DATE_LABEL = "Date";
     
     /**
      * Concerned items of the event
@@ -52,6 +58,7 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $concernedItems; 
     const CONCERNED_ITEMS = "concernedItems";
+    const CONCERNED_ITEMS_LABEL = "Concerned items";
     
     /**
      * Properties of the event
@@ -89,9 +96,10 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function attributeLabels() {
         return [
-            self::URI => 'URI', 
-            self::TYPE => Yii::t('app', 'Type'), 
-            self::DATE => Yii::t('app', 'Date')
+            self::URI => Yii::t('app', self::URI_LABEL), 
+            self::TYPE => Yii::t('app', self::TYPE_LABEL), 
+            self::DATE => Yii::t('app', self::DATE_LABEL), 
+            self::CONCERNED_ITEMS => Yii::t('app', self::CONCERNED_ITEMS_LABEL)
         ];
     }
     
