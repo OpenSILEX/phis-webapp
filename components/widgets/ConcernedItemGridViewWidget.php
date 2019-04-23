@@ -13,13 +13,13 @@ use Yii;
 use yii\grid\GridView;
 
 /**
- * A widget used to generate a customisable concerned item GridView interface
+ * Concerned item GridView widget.
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 abstract class ConcernedItemGridViewWidget extends Widget {
 
-    CONST NO_CONCERNED_ITEMS_LABEL = "No items concerned";
-    CONST CONCERNED_ITEMS_LABEL = "Concerned Items";
+    const NO_CONCERNED_ITEMS_LABEL = "No items concerned";
+    const CONCERNED_ITEMS_LABEL = "Concerned Items";
     CONST URI_LABEL = "URI";
     CONST RDF_TYPE_LABEL = "Type";
     CONST LABELS_LABEL = "Labels";
