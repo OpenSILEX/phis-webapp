@@ -174,7 +174,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
         echo EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS_PROVIDER => ${ProjectController::EVENTS_PROVIDER}
+                 EventGridViewWidget::DATA_PROVIDER => ${ProjectController::EVENTS_PROVIDER}
             ]
         ); 
     ?>

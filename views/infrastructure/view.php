@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Sensor events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS_PROVIDER => ${InfrastructureController::EVENTS_PROVIDER}
+                 EventGridViewWidget::DATA_PROVIDER => ${InfrastructureController::EVENTS_PROVIDER}
             ]
         ); 
     ?>

@@ -119,7 +119,7 @@ use app\components\widgets\ConcernedItemGridViewWidgetWithActions;
     ?>
     <?= ConcernedItemGridViewWidgetWithActions::widget(
         [
-            ConcernedItemGridViewWidgetWithActions::CONCERNED_ITEMS => new ArrayDataProvider([
+            ConcernedItemGridViewWidgetWithActions::DATA_PROVIDER => new ArrayDataProvider([
                 'allModels' => $model->concernedItems,
                 'pagination' => ['pageSize' => 10],
             ]),

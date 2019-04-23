@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Concerned items-->
     <?= ConcernedItemGridViewWidgetWithoutActions::widget(
         [
-            ConcernedItemGridViewWidgetWithoutActions::CONCERNED_ITEMS_DATA_PROVIDER => new ArrayDataProvider([
+            ConcernedItemGridViewWidgetWithoutActions::DATA_PROVIDER => new ArrayDataProvider([
                 'models' => $model->concernedItems,
                 //SILEX:info
                 //totalCount must be there too to get the pagination in GridView
