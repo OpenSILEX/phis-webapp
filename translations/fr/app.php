@@ -145,6 +145,7 @@ return [
     'Missing method.' => 'La méthode est vide.',
     'Missing trait.' => 'Le trait est vide.',
     'Missing unit.' => 'L\'unité est vide.',
+    'Model' => 'Modèle',
     'Name' => 'Nom',
     'No' => 'Non',
     'No item concerned' => 'Aucun élément concerné',
