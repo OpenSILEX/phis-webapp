@@ -152,8 +152,7 @@ class YiiSensorModel extends WSActiveRecord {
     public function rules() {
        return [ 
            [['rdfType', 'uri', 'inServiceDate'], 'required'], 
-           [['serialNumber', 'model', 'dateOfPurchase', 'dateOfLastCalibration', 'documents',
-              'brand', 'label', 'inServiceDate', 'personInCharge', 'properties'], 'safe']
+           [['serialNumber', 'model', 'dateOfPurchase', 'dateOfLastCalibration', 'documents','brand', 'label', 'inServiceDate', 'personInCharge', 'properties'], 'safe']
         ]; 
     }
     
