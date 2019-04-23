@@ -131,7 +131,6 @@ use app\components\widgets\ConcernedItemGridViewWidgetWithActions;
     ?>
     
     <?php 
-    error_log("oijoijoij ". print_r($model->concernedItems, true));
     if ($model->isNewRecord) {
         echo $form->field(
                 $model, 
