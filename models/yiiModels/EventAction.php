@@ -18,6 +18,10 @@ use app\models\wsModels\WSConstants;
  */
 class EventAction extends YiiEventModel {
     
+    const EVENT_UNUPDATABLE_DUE_TO_UNUPDATABLE_PROPRTY_LABEL = 
+            'The event cannot be updated because one of its specific property'
+            . 'isn\'t manageable by the interface';
+    
     /**
      * Date timezone offset.
      * @example +01:00
@@ -25,6 +29,7 @@ class EventAction extends YiiEventModel {
      */
     public $dateTimezoneOffset;
     const DATE_TIMEZONE_OFFSET = 'dateTimezoneOffset';
+    const DATE_TIMEZONE_OFFSET_LABEL = 'Timezone offset';
     
     /**
      * Date without timezone.
@@ -33,6 +38,7 @@ class EventAction extends YiiEventModel {
      */
     public $dateWithoutTimezone;
     const DATE_WITHOUT_TIMEZONE = 'dateWithoutTimezone';
+    const DATE_WITHOUT_TIMEZONE_LABEL = self::DATE_LABEL;
     
     /**
      * Concerned items URIs.
@@ -41,6 +47,7 @@ class EventAction extends YiiEventModel {
      */
     public $concernedItemsUris;
     const CONCERNED_ITEMS_URIS = 'concernedItemsUris';
+    const CONCERNED_ITEMS_URIS_LABEL = 'Concerned items URIs';
     
     /**
      * Specific property hasPest.
@@ -87,7 +94,7 @@ class EventAction extends YiiEventModel {
     public function rules() {
         return [
             [[
-                YiiEventModel::TYPE, 
+                self::TYPE, 
                 self::DATE_WITHOUT_TIMEZONE,
                 self::DATE_TIMEZONE_OFFSET,
                 self::DATE_WITHOUT_TIMEZONE,
@@ -109,9 +116,9 @@ class EventAction extends YiiEventModel {
         return array_merge(
             parent::attributeLabels(),
             [
-                self::CONCERNED_ITEMS_URIS => Yii::t('app', 'Concerned items URIs'),
-                self::DATE_TIMEZONE_OFFSET => Yii::t('app', 'Timezone offset'),
-                self::DATE_WITHOUT_TIMEZONE => Yii::t('app', 'Date'),
+                self::CONCERNED_ITEMS_URIS => Yii::t('app', self::CONCERNED_ITEMS_URIS_LABEL),
+                self::DATE_TIMEZONE_OFFSET => Yii::t('app', self::DATE_TIMEZONE_OFFSET_LABEL),
+                self::DATE_WITHOUT_TIMEZONE => Yii::t('app', self::DATE_WITHOUT_TIMEZONE_LABEL),
                 self::PROPERTY_HAS_PEST => Yii::t('app', self::PROPERTY_HAS_PEST_LABEL),
                 self::PROPERTY_FROM => Yii::t('app', self::PROPERTY_FROM_LABEL),
                 self::PROPERTY_TO => Yii::t('app', self::PROPERTY_TO_LABEL),

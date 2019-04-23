@@ -19,7 +19,7 @@ use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
 use app\components\widgets\ConcernedItemGridViewWidget;
 use app\models\yiiModels\YiiEventModel;
-use app\models\yiiModels\EventCreation;
+use app\models\yiiModels\EventAction;
 use app\models\yiiModels\YiiConcernedItemModel;
 use app\models\yiiModels\YiiAnnotationModel;
 
@@ -117,10 +117,13 @@ return [
     YiiEventModel::TYPE_LABEL => "Type",
     YiiEventModel::DATE_LABEL => "Date",
     YiiEventModel::CONCERNED_ITEMS_LABEL => "Eléments concernés",
-    EventCreation::PROPERTY_HAS_PEST_LABEL => "Ravageur",
-    EventCreation::PROPERTY_FROM_LABEL => "Depuis",
-    EventCreation::PROPERTY_TO_LABEL => "Jusqu'à",
-    EventCreation::PROPERTY_TYPE_LABEL => "Type de la propriété",
+    EventAction::EVENT_UNUPDATABLE_DUE_TO_UNUPDATABLE_PROPRTY_LABEL => 
+        "L'événement ne peut être mis à jour que via le web service car une de "
+        . "ses propriétés spécifiques n'est actuellement pas compatible avec la webapp.",
+    EventAction::PROPERTY_HAS_PEST_LABEL => "Ravageur",
+    EventAction::PROPERTY_FROM_LABEL => "Depuis",
+    EventAction::PROPERTY_TO_LABEL => "Jusqu'à",
+    EventAction::PROPERTY_TYPE_LABEL => "Type de la propriété",
     EventButtonWidget::ADD_EVENT_LABEL => 'Ajouter événement',
     EventGridViewWidget::EVENTS_LABEL => "Événements",
     EventGridViewWidget::NO_EVENT_LABEL => "Pas d'événement",

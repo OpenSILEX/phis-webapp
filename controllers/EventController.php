@@ -2,8 +2,8 @@
 //******************************************************************************
 //                          EventController.php
 // SILEX-PHIS
-// Copyright © INRA 2018
-// Creation date: Jan, 2019
+// Copyright © INRA 2019
+// Creation date: Jan. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 namespace app\controllers;
@@ -27,7 +27,9 @@ use app\components\helpers\SiteMessages;
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class EventController extends GenericController {    
-    const ANNOTATIONS_DATA = "annotations";
+    const PARAM_ANNOTATIONS_DATA_PROVIDER = "paramAnnotations";
+    const PARAM_UPDATABLE = "paramUpdatable";
+    
     const ANNOTATIONS_PAGE = "annotations-page";
     const INFRASTRUCTURES_DATA = "infrastructures";
     const INFRASTRUCTURES_DATA_URI = "infrastructureUri";
@@ -90,7 +92,9 @@ class EventController extends GenericController {
         // Get documents
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
-        $documentProvider = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
+        $documentProvider = $searchDocumentModel->search(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN], 
+                [YiiEventModel::CONCERNED_ITEMS => $id]);
         
         // Get annotations
         $annotationProvider = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
@@ -103,9 +107,20 @@ class EventController extends GenericController {
             return $this->render('view', [
                 'model' =>  $event,
                 'dataDocumentsProvider' => $documentProvider,
-                self::ANNOTATIONS_DATA => $annotationProvider   
+                self::PARAM_ANNOTATIONS_DATA_PROVIDER => $annotationProvider,
+                self::PARAM_UPDATABLE => !$this->hasUnupdatableProperties($event)   
             ]);
         }
+    }
+    
+    private function hasUnupdatableProperties($eventAction) : bool {
+        foreach($eventAction->properties as $property) {
+            if($property !== Yii::$app->params['moveFrom']
+                    || $property !== Yii::$app->params['moveTo']) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
