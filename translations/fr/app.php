@@ -3,24 +3,25 @@
 //                                       app.php
 // SILEX-PHIS
 // Copyright © INRA 2017
-// Creation date:  Mar., 2017
-// Contact: morgane.vidal@inra.fr,arnaud.charleroy, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Creation date:  Mar. 2017
+// Contact: morgane.vidal@inra.fr, arnaud.charleroy, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 /**
- * French translations of this application
+ * French translations of this application.
  * @link https://www.yiiframework.com/extension/translate
  * @update [Arnaud Charleroy] 24 August, 2018: widgets translations
  */
 
-use app\models\yiiModels\YiiAnnotationModel;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
-use app\models\yiiModels\YiiEventModel;
-use app\models\yiiModels\EventCreation;
 use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
 use app\components\widgets\ConcernedItemGridViewWidget;
+use app\models\yiiModels\YiiEventModel;
+use app\models\yiiModels\EventCreation;
+use app\models\yiiModels\YiiConcernedItemModel;
+use app\models\yiiModels\YiiAnnotationModel;
 
 return [
     '{n, plural, =1{Project} other{Projects}}' => '{n, plural, =1{Projet} other{Projets}}',
@@ -45,7 +46,15 @@ return [
     'Administrative Contacts' => 'Contacts administratifs',
     'Affiliation' => 'Affiliation',
     'All Descendants' => 'Tous les Descendants',
+    
+    // Annotations 
+    YiiAnnotationModel::CREATION_DATE_LABEL => 'Date de l\'annotation',
+    YiiAnnotationModel::MOTIVATED_BY_LABEL  => 'Motivée par',
+    YiiAnnotationModel::TARGETS_LABEL  => 'Entités ciblées',
     AnnotationButtonWidget::ADD_ANNOTATION_LABEL => 'Ajouter annotation',
+    AnnotationGridViewWidget::LINKED_ANNOTATIONS => "Annotations liées",
+    AnnotationGridViewWidget::NO_LINKED_ANNOTATIONS => "Aucune annotation liée",
+    
     'Acquisition session template' => 'Gabarit de session d\'aquisition',
     'Attenuator Filter' => 'Filtre Atténuateur',
     'Available' => 'Disponible',
@@ -62,15 +71,19 @@ return [
     'Circular' => 'Circulaire',
     'Column' => 'Colonne',
     'Comment' => 'Commentaire',
+    
+    // Concerned items
     'Concerns' => 'Concerne',
-    'Concerned items' => ' Éléments concernés',
     'Concerned item' => 'Élément concerné',
     'Concerned item type' => 'Type de l\'élément concerné',
     'Concerned item URI' => 'URI de l\'élément concerné',
     'Concerned items URIs' => 'URIs des éléments Concernés',
-    ConcernedItemGridViewWidget::URI_LABEL => 'URI',
-    ConcernedItemGridViewWidget::RDF_TYPE_LABEL => 'Type',
-    ConcernedItemGridViewWidget::LABELS_LABEL => 'Alias',
+    YiiConcernedItemModel::URI_LABEL => 'URI',
+    YiiConcernedItemModel::RDF_TYPE_LABEL => 'Type',
+    YiiConcernedItemModel::LABELS => 'Alias',
+    ConcernedItemGridViewWidget::CONCERNED_ITEMS_LABEL => 'Eléments concernés',
+    ConcernedItemGridViewWidget::NO_CONCERNED_ITEMS_LABEL => 'Aucun élément concerné',
+    
     'Concerned Experimentations' => 'Expérimentations Concernées',
     'Concerned Projects' => 'Projets concernés',
     'Creation Date' => 'Date de Création',
@@ -96,14 +109,22 @@ return [
     'Enter date of last calibration' => 'Saisir la date de dernier étalonnage',
     'Enter date of purchase' => 'Saisir la date d\'achat',
     'Enter in service date' => 'Saisir la date de mise en service',
-    EventButtonWidget::ADD_EVENT_LABEL => 'Ajouter événement',
-    EventGridViewWidget::EVENTS_LABEL => "Événements",
-    EventGridViewWidget::NO_EVENT_LABEL => "Pas d'événement",
-    YiiEventModel::TYPE => "Type",
+    
+    // Event
+    YiiEventModel::EVENT_LABEL => "Evénement",
+    YiiEventModel::EVENTS_LABEL => "Evénements",
+    YiiEventModel::URI_LABEL => "URI",
+    YiiEventModel::TYPE_LABEL => "Type",
+    YiiEventModel::DATE_LABEL => "Date",
+    YiiEventModel::CONCERNED_ITEMS_LABEL => "Eléments concernés",
     EventCreation::PROPERTY_HAS_PEST_LABEL => "hasPest",
     EventCreation::PROPERTY_FROM_LABEL => "depuis",
     EventCreation::PROPERTY_TO_LABEL => "jusqu'à",
     EventCreation::PROPERTY_TYPE_LABEL => "Type de la propriété",
+    EventButtonWidget::ADD_EVENT_LABEL => 'Ajouter événement',
+    EventGridViewWidget::EVENTS_LABEL => "Événements",
+    EventGridViewWidget::NO_EVENT_LABEL => "Pas d'événement",
+    
     'Error' => 'Erreur',
     'Experimental Organization' => 'Organisation expérimentale',
     'Experiment Modalities' => 'Modalités Expérimentales',
@@ -137,8 +158,6 @@ return [
     'Level' => 'Niveau',
     'Linked Agronomical Objects' => 'Objets Agronomiques Liés',
     'Linked Documents' => 'Documents Liés',
-    AnnotationGridViewWidget::LINKED_ANNOTATIONS => "Annotations liées",
-    AnnotationGridViewWidget::NO_LINKED_ANNOTATIONS => "Aucune annotation liée",
     'Line' => 'Ligne',
     'Login' => 'Connexion',
     'Logout' => 'Déconnexion',
@@ -223,9 +242,6 @@ return [
     'Width (m)' => 'Largeur (m)',
     'wikipedia page' => 'page wikipédia',
     'Yes' => 'Oui',
-    YiiAnnotationModel::CREATION_DATE_LABEL => 'Date de l\'annotation',
-    YiiAnnotationModel::MOTIVATED_BY_LABEL  => 'Motivée par',
-    YiiAnnotationModel::TARGETS_LABEL  => 'Entités ciblées',
     'Back to sensor view' => 'Retour à la vue du capteur',
     'Sensor Data Visualization' => 'Visualisation des données du capteur',
     'Update event' => 'Modifier l\'événement',
