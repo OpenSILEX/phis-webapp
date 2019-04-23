@@ -1,9 +1,9 @@
 <?php
 //******************************************************************************
-//                               EventPut.php
+//                               EventUpdate.php
 // PHIS-SILEX
-// Copyright © INRA 2018
-// Creation date: 06 March 2019
+// Copyright © INRA 2019
+// Creation date: 6 March 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 namespace app\models\yiiModels;
