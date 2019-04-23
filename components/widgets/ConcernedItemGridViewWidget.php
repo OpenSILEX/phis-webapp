@@ -10,9 +10,7 @@ namespace app\components\widgets;
 
 use yii\base\Widget;
 use Yii;
-use app\models\yiiModels\YiiConcernedItemModel;
 use yii\grid\GridView;
-use app\components\helpers\Vocabulary;
 
 /**
  * A widget used to generate a customisable concerned item GridView interface
@@ -20,19 +18,23 @@ use app\components\helpers\Vocabulary;
  */
 abstract class ConcernedItemGridViewWidget extends Widget {
 
-    CONST CONCERNED_ITEMS = "concernedItems";
-    CONST NO_CONCERNED_ITEMS = "No items concerned";
+    CONST NO_CONCERNED_ITEMS_LABEL = "No items concerned";
+    CONST CONCERNED_ITEMS_LABEL = "Concerned Items";
+    CONST URI_LABEL = "URI";
+    CONST RDF_TYPE_LABEL = "Type";
+    CONST LABELS_LABEL = "Labels";
     
     /**
-     * Define the concerned items list to show
+     * Concerned items list to show.
      * @var mixed
      */
-    public $concernedItems;
+    public $concernedItemsDataProvider;
+    CONST CONCERNED_ITEMS_DATA_PROVIDER = "concernedItemsDataProvider";
 
     public function init() {
         parent::init();
         // must be not null
-        if ($this->concernedItems === null) {
+        if ($this->concernedItemsDataProvider === null) {
             throw new \Exception("Concerned items aren't set");
         }
     }
@@ -42,12 +44,12 @@ abstract class ConcernedItemGridViewWidget extends Widget {
      * @return string the HTML string rendered
      */
     public function run() {
-        if ($this->concernedItems->getCount() == 0) {
-            $htmlRendered = "<h3>" . Yii::t('app', 'No item concerned') . "</h3>";
+        if ($this->concernedItemsDataProvider->getCount() == 0) {
+            $htmlRendered = "<h3>" . Yii::t('app', self::NO_CONCERNED_ITEMS_LABEL) . "</h3>";
         } else {
-            $htmlRendered = "<h3>" . Yii::t('app', 'Concerned Items') . "</h3>";
+            $htmlRendered = "<h3>" . Yii::t('app', self::CONCERNED_ITEMS_LABEL) . "</h3>";
             $htmlRendered .= GridView::widget([
-                        'dataProvider' => $this->concernedItems,
+                        'dataProvider' => $this->concernedItemsDataProvider,
                         'columns' => $this->getColumns(),
             ]);
         }

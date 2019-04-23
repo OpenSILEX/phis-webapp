@@ -20,6 +20,7 @@ use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventCreation;
 use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\ConcernedItemGridViewWidget;
 
 return [
     '{n, plural, =1{Project} other{Projects}}' => '{n, plural, =1{Projet} other{Projets}}',
@@ -38,13 +39,13 @@ return [
     'Add Document' => 'Ajouter un document',
     'Add Document Script' => 'Ajouter un script',
     'Add Sensors' => 'Ajouter des Capteurs',
-    AnnotationButtonWidget::ADD_ANNOTATION_LABEL => 'Ajouter annotation',
     'Add Vectors' => 'Ajouter des Vecteurs',
     'Address' => 'Adresse',
     'Admin' => 'Administrateur',
     'Administrative Contacts' => 'Contacts administratifs',
     'Affiliation' => 'Affiliation',
     'All Descendants' => 'Tous les Descendants',
+    AnnotationButtonWidget::ADD_ANNOTATION_LABEL => 'Ajouter annotation',
     'Acquisition session template' => 'Gabarit de session d\'aquisition',
     'Attenuator Filter' => 'Filtre Atténuateur',
     'Available' => 'Disponible',
@@ -67,6 +68,9 @@ return [
     'Concerned item type' => 'Type de l\'élément concerné',
     'Concerned item URI' => 'URI de l\'élément concerné',
     'Concerned items URIs' => 'URIs des éléments Concernés',
+    ConcernedItemGridViewWidget::URI_LABEL => 'URI',
+    ConcernedItemGridViewWidget::RDF_TYPE_LABEL => 'Type',
+    ConcernedItemGridViewWidget::LABELS_LABEL => 'Alias',
     'Concerned Experimentations' => 'Expérimentations Concernées',
     'Concerned Projects' => 'Projets concernés',
     'Creation Date' => 'Date de Création',
@@ -147,7 +151,6 @@ return [
     'Missing unit.' => 'L\'unité est vide.',
     'Name' => 'Nom',
     'No' => 'Non',
-    'No item concerned' => 'Aucun élément concerné',
     'No Specific Property' => 'Aucune Propriété Spécifique',
     'Objective' => 'Objectif',
     'On selected plot(s)' => 'Sur les micro parcelles sélectionnées',

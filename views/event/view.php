@@ -57,16 +57,15 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <!-- Concerned items-->
     <?= ConcernedItemGridViewWidgetWithoutActions::widget(
-            [
-                 ConcernedItemGridViewWidgetWithoutActions::CONCERNED_ITEMS => new ArrayDataProvider([
-                    'models' => $model->concernedItems,
-                    //SILEX:info
-                    //totalCount must be there too to get the pagination in GridView
-                    'totalCount' => count($model->concernedItems)
-                    //\SILEX:info
-                ])
-            ]
-        ); 
+        [
+            ConcernedItemGridViewWidgetWithoutActions::CONCERNED_ITEMS_DATA_PROVIDER => new ArrayDataProvider([
+                'models' => $model->concernedItems,
+                //SILEX:info
+                //totalCount must be there too to get the pagination in GridView
+                'totalCount' => count($model->concernedItems)
+                //\SILEX:info
+            ])
+        ]); 
     ?>
     
     <!-- Linked Annotations-->

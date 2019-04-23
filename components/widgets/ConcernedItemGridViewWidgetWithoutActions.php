@@ -9,7 +9,6 @@
 namespace app\components\widgets;
 
 use Yii;
-use yii\grid\GridView;
 use app\components\helpers\Vocabulary;
 use app\components\widgets\ConcernedItemGridViewWidget;
 use app\models\yiiModels\YiiConcernedItemModel;
@@ -27,7 +26,7 @@ class ConcernedItemGridViewWidgetWithoutActions extends ConcernedItemGridViewWid
     protected function getColumns(): array {
         return [
             [
-                'label' => Yii::t('app',YiiConcernedItemModel::URI),
+                'label' => Yii::t('app', self::URI_LABEL),
                 'attribute' => YiiConcernedItemModel::URI,
                 'value' => function ($model) {
                     return Vocabulary::prettyUri($model->uri);
@@ -35,7 +34,7 @@ class ConcernedItemGridViewWidgetWithoutActions extends ConcernedItemGridViewWid
             ],
             YiiConcernedItemModel::RDF_TYPE =>
             [
-                'label' => Yii::t('app', 'Type'),
+                'label' => Yii::t('app', self::RDF_TYPE_LABEL),
                 'attribute' => YiiConcernedItemModel::RDF_TYPE,
                 'value' => function($model) {
                     return Vocabulary::prettyUri($model->rdfType);
@@ -43,7 +42,7 @@ class ConcernedItemGridViewWidgetWithoutActions extends ConcernedItemGridViewWid
             ],
             YiiConcernedItemModel::LABELS => 
             [
-                'label' => Yii::t('app', YiiConcernedItemModel::LABELS),
+                'label' => Yii::t('app', self::LABELS_LABEL),
                 'attribute' => YiiConcernedItemModel::LABELS,
                 'value' => function($model) {
                     return implode((', '), $model->labels);
