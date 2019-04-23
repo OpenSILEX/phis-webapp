@@ -3,7 +3,7 @@
 //                    ConcernedItemGridViewWidget.php
 // SILEX-PHIS
 // Copyright © INRA 2018
-// Creation date: 23 Aug, 2018
+// Creation date: 23 Aug. 2018
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 namespace app\components\widgets;
@@ -11,6 +11,7 @@ namespace app\components\widgets;
 use yii\base\Widget;
 use Yii;
 use yii\grid\GridView;
+use app\models\yiiModels\YiiConcernedItemModel;
 
 /**
  * Concerned item GridView widget.
@@ -20,21 +21,20 @@ abstract class ConcernedItemGridViewWidget extends Widget {
 
     const NO_CONCERNED_ITEMS_LABEL = "No items concerned";
     const CONCERNED_ITEMS_LABEL = "Concerned Items";
-    CONST URI_LABEL = "URI";
-    CONST RDF_TYPE_LABEL = "Type";
-    CONST LABELS_LABEL = "Labels";
+    
+    const HTML_CLASS = "concerned-item-widget";
     
     /**
      * Concerned items list to show.
      * @var mixed
      */
-    public $concernedItemsDataProvider;
-    CONST CONCERNED_ITEMS_DATA_PROVIDER = "concernedItemsDataProvider";
+    public $dataProvider;
+    CONST DATA_PROVIDER = "dataProvider";
 
     public function init() {
         parent::init();
         // must be not null
-        if ($this->concernedItemsDataProvider === null) {
+        if ($this->dataProvider === null) {
             throw new \Exception("Concerned items aren't set");
         }
     }
@@ -44,13 +44,14 @@ abstract class ConcernedItemGridViewWidget extends Widget {
      * @return string the HTML string rendered
      */
     public function run() {
-        if ($this->concernedItemsDataProvider->getCount() == 0) {
-            $htmlRendered = "<h3>" . Yii::t('app', self::NO_CONCERNED_ITEMS_LABEL) . "</h3>";
+        if ($this->dataProvider->getCount() == 0) {
+            $htmlRendered = "<h3>" . Yii::t('app', YiiConcernedItemModel::URI) . "</h3>";
         } else {
             $htmlRendered = "<h3>" . Yii::t('app', self::CONCERNED_ITEMS_LABEL) . "</h3>";
             $htmlRendered .= GridView::widget([
-                        'dataProvider' => $this->concernedItemsDataProvider,
+                        'dataProvider' => $this->dataProvider,
                         'columns' => $this->getColumns(),
+                        'options' => ['class' => self::HTML_CLASS]     
             ]);
         }
         return $htmlRendered;

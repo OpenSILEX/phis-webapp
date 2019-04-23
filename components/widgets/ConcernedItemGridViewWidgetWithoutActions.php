@@ -26,7 +26,7 @@ class ConcernedItemGridViewWidgetWithoutActions extends ConcernedItemGridViewWid
     protected function getColumns(): array {
         return [
             [
-                'label' => Yii::t('app', self::URI_LABEL),
+                'label' => Yii::t('app', YiiConcernedItemModel::URI_LABEL),
                 'attribute' => YiiConcernedItemModel::URI,
                 'value' => function ($model) {
                     return Vocabulary::prettyUri($model->uri);
@@ -34,7 +34,7 @@ class ConcernedItemGridViewWidgetWithoutActions extends ConcernedItemGridViewWid
             ],
             YiiConcernedItemModel::RDF_TYPE =>
             [
-                'label' => Yii::t('app', self::RDF_TYPE_LABEL),
+                'label' => Yii::t('app', YiiConcernedItemModel::RDF_TYPE_LABEL),
                 'attribute' => YiiConcernedItemModel::RDF_TYPE,
                 'value' => function($model) {
                     return Vocabulary::prettyUri($model->rdfType);
@@ -42,7 +42,7 @@ class ConcernedItemGridViewWidgetWithoutActions extends ConcernedItemGridViewWid
             ],
             YiiConcernedItemModel::LABELS => 
             [
-                'label' => Yii::t('app', self::LABELS_LABEL),
+                'label' => Yii::t('app', YiiConcernedItemModel::LABELS_LABEL),
                 'attribute' => YiiConcernedItemModel::LABELS,
                 'value' => function($model) {
                     return implode((', '), $model->labels);
