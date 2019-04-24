@@ -15,7 +15,7 @@
 
 <div class="scientificObject-form-update">
     <p><i>See the <a href="https://opensilex.github.io/phis-docs-community/experimental-organization/#importing-scientific-objects" target="_blank">documentation</a> to get more informations about the columns contents.</i></p>
-    <div id="objects-updated" class="alert alert-success"><?= Yii::t('app', 'Scientific Objects Updated') ?></div>
+    <!--<div id="objects-updated" class="alert alert-success"><?php // Yii::t('app', 'Scientific Objects Updated') ?></div>-->
     <!--<button type = "button" id="export" id="exportButton">Export</button>-->
     <div id="objects-to-update">
         <div id="object-multiple-update-table"></div>
@@ -250,9 +250,9 @@
                     }                   
                     $('#objects-save').hide();
                     if (data["error"]) {
-                        toastr["error"]("The object update has failed. See insertion status column for more details.");
+                        toastr["error"]("<?= Yii::t('app/messages', 'The object update has failed. See insertion status column for more details.') ?>");
                     } else {
-                        toastr["success"]("Objects successfully updated");
+                        toastr["success"]("<?= Yii::t('app/messages', 'Objects successfully updated') ?>");
                     }
                 })
                 .fail(function (jqXHR, textStatus) {
