@@ -226,17 +226,20 @@ class SensorController extends Controller {
               $sensorModel->rdfType = $this->getSensorTypeCompleteUri($sensor[2]);
               $sensorModel->label = $sensor[1];
               $sensorModel->brand = $sensor[3];
-              $sensorModel->inServiceDate = $sensor[6];
-              $sensorModel->personInCharge = $sensor[8];
+              $sensorModel->inServiceDate = $sensor[7];
+              $sensorModel->personInCharge = $sensor[9];
               
               if ($sensor[4] !== "") {
                   $sensorModel->serialNumber = $sensor[4];
               }
               if ($sensor[5] !== "") {
-                  $sensorModel->dateOfPurchase = $sensor[5];
+                  $sensorModel->model = $sensor[5];
               }
-              if ($sensor[7] !== "") {
-                  $sensorModel->dateOfLastCalibration = $sensor[7];
+              if ($sensor[6] !== "") {
+                  $sensorModel->dateOfPurchase = $sensor[6];
+              }
+              if ($sensor[8] !== "") {
+                  $sensorModel->dateOfLastCalibration = $sensor[8];
               }
               
               $forWebService[] = $sensorModel->attributesToArray();
@@ -455,7 +458,7 @@ class SensorController extends Controller {
      */
     private function usersToMap($users) {
         if ($users !== null) {
-            return ArrayHelper::map($users, 'email', 'email');            
+            return ArrayHelper::map($users, 'email', 'email');
         } else {
             return null;
         }
@@ -535,6 +538,64 @@ class SensorController extends Controller {
             // Render data
             return $this->renderAjax('_view_sensor_graph', [
                 'sensorGraphData' => $sensorGraphData
+            ]);
+        }
+    }
+    
+    /**
+     * @param array $sensorsTypes
+     * @return arra list of the sensors types in the right format
+     * [
+     *      "http://www.opensilex.org/vocabulary/oeso#Thermocouple" => "Thermocouple",
+     *      ...
+     * ]
+     */
+    private function sensorsTypesToMap($sensorsTypes) {
+        $toReturn;
+        foreach($sensorsTypes as $type) {
+            $toReturn["http://www.opensilex.org/vocabulary/oeso#" . $type] = $type;
+        }
+        
+        return $toReturn;
+    }
+    
+    /**
+     * Updates a sensor
+     * @param string $id URI of the sensor to update
+     * @return mixed the page to show
+     */
+    public function actionUpdate($id) {
+        $sessionToken = Yii::$app->session['access_token'];
+        $model = new YiiSensorModel();
+        $model->uri = $id;
+        
+        // if the form is complete, try to update sensor
+        if ($model->load(Yii::$app->request->post())) {
+            
+            $forWebService[] = $model->attributesToArray();
+            $requestRes = $model->update($sessionToken, $forWebService);
+            
+            if (is_string($requestRes) && $requestRes === "token") { //user must log in
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->redirect(['view', 'id' => $model->uri]);
+            }
+        } else {
+            $model = $this->findModel($id);
+            
+            // list of sensor's types
+            $sensorsTypes = $this->getSensorsTypes();
+            if ($sensorsTypes === "token") {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            }
+        
+            $usersModel = new YiiUserModel();
+            $users = $usersModel->getPersonsMailsAndName(Yii::$app->session['access_token']);
+
+            return $this->render('update', [
+                'model' => $model,
+                'types' => $this->sensorsTypesToMap($sensorsTypes),
+                'users' => $users
             ]);
         }
     }
