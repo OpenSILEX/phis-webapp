@@ -15,8 +15,20 @@
 
 <div class="scientificObject-form-update">
     <p><i>See the <a href="https://opensilex.github.io/phis-docs-community/experimental-organization/#importing-scientific-objects" target="_blank">documentation</a> to get more informations about the columns contents.</i></p>
-    <!--<div id="objects-updated" class="alert alert-success"><?php // Yii::t('app', 'Scientific Objects Updated') ?></div>-->
     <!--<button type = "button" id="export" id="exportButton">Export</button>-->
+    <div class="alert alert-info" role="alert">
+        <table class="table table-hover">
+            <tr>
+                <td><p><?= Yii::t('app/messages', 'To change the value of one property (e.g. modality), you need to provide all of its former properties that you want to keep, otherwise this information will be lost.')?></p></td>
+            </tr>
+            <tr>
+                <td><p><?= Yii::t('app/messages', 'It is not possible to change the experiment.')?></p></td>
+            </tr>
+            <tr>
+                <td><p><?= Yii::t('app/messages', 'To assign scientific objects to two experiments, you need to first create the scientific objects in one of the experiments. Then, update the scientific objects with the uri of the second experiment in the "experiment" column and their metadata in the second experiment (e.g. give the new alias and repeat the experimental modality values if they are the same).') ?></p></td>
+            </tr>
+        </table>
+    </div>
     <div id="objects-to-update">
         <div id="object-multiple-update-table"></div>
         <div id="object-multiple-update-button" style="margin-top : 1%">
