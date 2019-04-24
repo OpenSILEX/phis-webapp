@@ -13,7 +13,6 @@ use yii\base\Widget;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\icons\Icon;
-use app\models\yiiModels\EventCreation;
 use app\controllers\EventController;
 
 /**
