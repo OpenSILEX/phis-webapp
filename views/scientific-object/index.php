@@ -27,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
     </p>
     
@@ -41,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                'value' => 'uri',
               'filter' =>false,
             ],
-            'alias',
+            'label',
             [
                 'attribute' => 'rdfType',
                 'format' => 'raw',
