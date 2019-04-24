@@ -19,13 +19,13 @@
     <div class="alert alert-info" role="alert">
         <table class="table table-hover">
             <tr>
-                <td><p><?= Yii::t('app/messages', 'To change the value of one property (e.g. modality), you need to provide all of its former properties that you want to keep, otherwise this information will be lost.')?></p></td>
+                <td><p><?= Yii::t('app/messages', 'Be carefull to write all the new and the former properties of the updated object.')?></p></td>
             </tr>
             <tr>
                 <td><p><?= Yii::t('app/messages', 'It is not possible to change the experiment.')?></p></td>
             </tr>
             <tr>
-                <td><p><?= Yii::t('app/messages', 'To assign scientific objects to two experiments, you need to first create the scientific objects in one of the experiments. Then, update the scientific objects with the uri of the second experiment in the "experiment" column and their metadata in the second experiment (e.g. give the new alias and repeat the experimental modality values if they are the same).') ?></p></td>
+                <td><p><?= Yii::t('app/messages', 'To assign scientific objects to two experiments: (1) create the scientific objects on one of the experiments and (2) update them with the uri of the second experiment.') ?></p></td>
             </tr>
         </table>
     </div>
