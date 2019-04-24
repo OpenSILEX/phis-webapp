@@ -130,7 +130,7 @@ require_once '../config/config.php';
      */
     public function getExperimentsURI() {
         $model = new YiiExperimentModel();
-        return $model->getExperimentsList(Yii::$app->session['access_token']);
+        return $model->getExperimentsURIList(Yii::$app->session['access_token']);
     }
     
     /**
@@ -591,14 +591,9 @@ require_once '../config/config.php';
                         'message' => $searchResult]);
             }
         } else {
-            //Récupération de la liste des expérimentations
-            //SILEX:TODO
-            // ATTENTION : Il faudra ajouter la gestion de la pagination pour la récupération de la liste des expérimentations
-            //\SILEX:TODO
-            $searchExperimentModel = new \app\models\yiiModels\ExperimentSearch();
-            $experiments = $searchExperimentModel->find(Yii::$app->session['access_token'], []);
-            $experiments = $this->experimentsToMap($experiments);
-            $this->view->params['listExperiments'] = $experiments;
+            //Get the experiments list
+            $experimentModel = new YiiExperimentModel();
+            $this->view->params['listExperiments'] = $experimentModel->getExperimentsURIAndLabelList(Yii::$app->session['access_token']);
             
             //Get all the types of scientific objects
             $objectsTypes = $this->getObjectsTypesUris();

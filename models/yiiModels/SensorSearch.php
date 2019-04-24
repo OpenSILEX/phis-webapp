@@ -28,7 +28,7 @@ class SensorSearch extends YiiSensorModel {
     public function rules()
     {
         return [
-            [['brand', 'label', 'inServiceDate', 'dateOfPurchase', 'dateOfLastCalibration'], 'safe'],
+            [['brand', 'label', 'model', 'inServiceDate', 'dateOfPurchase', 'dateOfLastCalibration'], 'safe'],
         ];
     }
     
