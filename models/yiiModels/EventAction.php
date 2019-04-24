@@ -20,7 +20,7 @@ class EventAction extends YiiEventModel {
     
     const EVENT_UNUPDATABLE_DUE_TO_UNUPDATABLE_PROPRTY_LABEL = 
             'The event cannot be updated because one of its specific property'
-            . 'isn\'t manageable by the interface';
+            . ' isn\'t manageable by the interface';
     
     /**
      * Date timezone offset.
