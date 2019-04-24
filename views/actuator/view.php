@@ -69,6 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'brand',
             'serialNumber',
+            'model',
             'inServiceDate',
             'dateOfPurchase',
             'dateOfLastCalibration',

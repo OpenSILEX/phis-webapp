@@ -210,17 +210,20 @@ class ActuatorController extends Controller {
               $actuatorModel->rdfType = $this->getActuatorTypeCompleteUri($actuator[2]);
               $actuatorModel->label = $actuator[1];
               $actuatorModel->brand = $actuator[3];
-              $actuatorModel->inServiceDate = $actuator[6];
-              $actuatorModel->personInCharge = $actuator[8];
+              $actuatorModel->inServiceDate = $actuator[7];
+              $actuatorModel->personInCharge = $actuator[9];
               
               if ($actuator[4] !== "") {
                   $actuatorModel->serialNumber = $actuator[4];
               }
               if ($actuator[5] !== "") {
-                  $actuatorModel->dateOfPurchase = $actuator[5];
+                  $actuatorModel->model = $actuator[5];
               }
-              if ($actuator[7] !== "") {
-                  $actuatorModel->dateOfLastCalibration = $actuator[7];
+              if ($actuator[6] !== "") {
+                  $actuatorModel->dateOfPurchase = $actuator[6];
+              }
+              if ($actuator[8] !== "") {
+                  $actuatorModel->dateOfLastCalibration = $actuator[8];
               }
               
               $forWebService[] = $actuatorModel->attributesToArray();

@@ -133,6 +133,11 @@
                     required: false
                 },
                 {
+                    data: 'model',
+                    type: 'text',
+                    required: false
+                },
+                {
                     data: 'dateOfPurchase',
                     type: 'date',
                     dateFormat: 'YYYY-MM-DD',
@@ -166,6 +171,7 @@
                 "<b><?= Yii::t('app', 'Type') ?></b>",
                 "<b><?= Yii::t('app', 'Brand') ?></b>",
                 "<b><?= Yii::t('app', 'Serial Number') ?></b>",
+                "<b><?= Yii::t('app', 'Model') ?></b>",
                 "<b><?= Yii::t('app', 'Date Of Purchase') ?></b>",
                 "<b><?= Yii::t('app', 'In Service Date') ?></b>",
                 "<b><?= Yii::t('app', 'Date Of Last Calibration') ?></b>",
@@ -186,7 +192,7 @@
                 return cellProperties;
             },
             afterGetColHeader: function (col, th) {
-                if (col === 1 | col === 2 | col === 3 | col === 8) {
+                if (col === 1 | col === 2 | col === 3 | col === 9) {
                     th.style.color = "red";
                 }
             }

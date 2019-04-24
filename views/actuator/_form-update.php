@@ -41,6 +41,8 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'brand')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'serialNumber')->textInput(['maxlength' => true]) ?>
+    
+        <?= $form->field($model, 'model')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'dateOfPurchase')->widget(\kartik\date\DatePicker::className(), [
             'options' => [

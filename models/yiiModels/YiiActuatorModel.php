@@ -64,6 +64,13 @@ class YiiActuatorModel extends WSActiveRecord {
     public $serialNumber;
     const SERIAL_NUMBER = "serialNumber";
     /**
+     * the model of the actuators 
+     * @example mod01
+     * @var string 
+     */
+    public $model;
+    const MODEL = "model";
+    /**
      * the in service date of the actuators
      * @example 2011-05-01
      * @var string
@@ -127,7 +134,7 @@ class YiiActuatorModel extends WSActiveRecord {
     public function rules() {
        return [ 
            [['rdfType', 'uri'], 'required'], 
-           [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents',
+           [['serialNumber', 'model', 'dateOfPurchase', 'dateOfLastCalibration', 'documents',
               'brand', 'label', 'inServiceDate', 'personInCharge', 'properties'], 'safe']
         ]; 
     }
@@ -144,6 +151,7 @@ class YiiActuatorModel extends WSActiveRecord {
             'brand' => Yii::t('app', 'Brand'),
             'serialNumber'=> Yii::t('app', 'Serial Number'),
             'inServiceDate' => Yii::t('app', 'In Service Date'),
+            'model' => Yii::t('app', 'Model'),
             'dateOfPurchase' => Yii::t('app', 'Date Of Purchase'),
             'dateOfLastCalibration' => Yii::t('app', 'Date Of Last Calibration'),
             'personInCharge' => Yii::t('app', 'Person In Charge')
@@ -161,6 +169,7 @@ class YiiActuatorModel extends WSActiveRecord {
         $this->label = $array[YiiSensorModel::LABEL];
         $this->brand = $array[YiiSensorModel::BRAND];
         $this->serialNumber = $array[YiiSensorModel::SERIAL_NUMBER];
+        $this->model = $array[YiiSensorModel::MODEL];
         $this->inServiceDate = $array[YiiSensorModel::IN_SERVICE_DATE];
         $this->dateOfLastCalibration = $array[YiiSensorModel::DATE_OF_LAST_CALIBRATION];
         $this->dateOfPurchase = $array[YiiSensorModel::DATE_OF_PURCHASE];
@@ -191,6 +200,9 @@ class YiiActuatorModel extends WSActiveRecord {
         
         if (!empty($this->serialNumber)) {
             $elementForWebService[YiiSensorModel::SERIAL_NUMBER] = $this->serialNumber;
+        }
+        if (!empty($this->model)) {
+            $elementForWebService[YiiSensorModel::MODEL] = $this->model;
         }
         if (!empty($this->dateOfLastCalibration)) {
             $elementForWebService[YiiSensorModel::DATE_OF_LAST_CALIBRATION] = $this->dateOfLastCalibration;
