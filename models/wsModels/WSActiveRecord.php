@@ -110,7 +110,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @param array $attributes the search params. It is a key => value array. The key
      *                          is the name of the field.
      * @return an array with the results,
-               "token" if the user needs to log in (invalid token).
+     *         "token" if the user needs to log in (invalid token).
      */
     public function find($sessionToken, $attributes) {  
         $requestRes = $this->wsModel->get($sessionToken, "", $attributes);
