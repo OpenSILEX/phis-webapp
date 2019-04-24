@@ -157,7 +157,7 @@ return [
     'Owner' => 'Propriétaire',
     
     // Property
-    PropertyWidget::NO_PROPERTY => 'Aucune propriété spécifique',
+    PropertyWidget::NO_PROPERTY_LABEL => 'Aucune propriété spécifique',
     
     'Password' => 'Mot de passe',
     'Painting' => 'Peinture',
