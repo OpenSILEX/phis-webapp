@@ -20,7 +20,7 @@ use Yii;
  */
 abstract class PropertyWidget extends Widget {
 
-    const NO_PROPERTY = "No Specific Property";
+    const NO_PROPERTY_LABEL = "No Specific Property";
 
     // widget title
     public $title;
@@ -234,7 +234,7 @@ abstract class PropertyWidget extends Widget {
      */
     public function run() {
         if(count($this->properties) == 0) {
-            $htmlRendered = "<h3>" . Yii::t('app', self::NO_PROPERTY) . "</h3>";
+            $htmlRendered = "<h3>" . Yii::t('app', self::NO_PROPERTY_LABEL) . "</h3>";
         }
         else {
             $htmlRendered = "<h3>" . $this->title . "</h3>";
