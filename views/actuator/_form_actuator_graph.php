@@ -1,12 +1,13 @@
 <?php
 
 //******************************************************************************
-//                          _form_sensor_graph.php
-// SILEX-PHIS
-// Copyright © INRA 2018
-// Creation date: 8th November 2018
-// Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//                                       _form_actuator_graph.php
+// PHIS-SILEX
+// Copyright © INRA 2019
+// Creation date: 19 avr. 2019
+// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
+
 
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
@@ -16,10 +17,10 @@ use yii\helpers\Url;
 /* @var $variables array */
 ?>
 
-<div class="sensor-visualisation well">
-    <h3><?= Yii::t('app', 'Sensor Data Visualization') ?></h3>
+<div class="actuator-visualisation well">
+    <h3><?= Yii::t('app', 'Actuator Data Visualization') ?></h3>
 
-    <div class="sensor-visualisation-form">
+    <div class="actuator-visualisation-form">
         <?php $form = ActiveForm::begin(); ?>
         <div class="row">
             <div class="col-md-6">
@@ -47,22 +48,22 @@ use yii\helpers\Url;
         </div>
         
         <p class="info-box">
-            <?= Yii::t('app/messages', 'If no date are selected, visualization will render latest week of data found for sensor measured variables.'); ?>
+            <?= Yii::t('app/messages', 'If no date are selected, visualization will render latest week of data found for actuator measured variables.'); ?>
             <br/>
             <?= Yii::t('app/messages', 'Measures displayed are limited to the 80 000 first results.'); ?>
         </p>
         
         <div class="form-group">
-            <?= Html::Button(Yii::t('yii', 'Search'), ['class' => 'btn btn-primary', 'id' => 'sensor-data-search-button']) ?>
+            <?= Html::Button(Yii::t('yii', 'Search'), ['class' => 'btn btn-primary', 'id' => 'actuator-data-search-button']) ?>
         </div>
         <?php ActiveForm::end(); ?>
     </div>
     <script>
         $(document).ready(function(){
             // Define ajax url to get graph in javascript
-            var ajaxUrl = '<?php echo Url::to(['sensor/search-data']) ?>';
-            // Define sensorUri in javascript
-            var sensorUri = '<?= $model->sensorURI ?>';
+            var ajaxUrl = '<?php echo Url::to(['actuator/search-data']) ?>';
+            // Define actuatorUri in javascript
+            var actuatorUri = '<?= $model->sensorURI ?>';
             // Define variables in javascript as a map uri -> label
             var variables = {};
             <?php foreach($variables as $uri => $label): ?>
@@ -70,7 +71,7 @@ use yii\helpers\Url;
             <?php endforeach; ?>
             
             /**
-             * Function to update all sensor data graph (1 by variable)
+             * Function to update all actuator data graph (1 by variable)
              */
             var refreshGraph = function() {
 
@@ -84,11 +85,11 @@ use yii\helpers\Url;
                             {
                                 "_csrf": $("input[name=_csrf]").val(),
                                 "DeviceDataSearch": {
-                                    "sensorURI": sensorUri,
+                                    "actuatorURI": actuatorUri,
                                     "variableURI": uri,
                                     "graphName": variables[uri],
-                                    "dateStart": $("#sensordatasearch-datestart").val(),
-                                    "dateEnd": $("#sensordatasearch-dateend").val()
+                                    "dateStart": $("#actuatordatasearch-datestart").val(),
+                                    "dateEnd": $("#actuatordatasearch-dateend").val()
                                 }
                             }
                         )
@@ -108,12 +109,12 @@ use yii\helpers\Url;
                     }
                     
                     // Replace current content with new graphs
-                    $('#visualization-sensor-data').html(result);
+                    $('#visualization-actuator-data').html(result);
                 });
             };
             
             // On search click refresh the graph
-            $('#sensor-data-search-button').click(function(event) {
+            $('#actuator-data-search-button').click(function(event) {
                 event.preventDefault();
                 refreshGraph();
             });
@@ -122,5 +123,5 @@ use yii\helpers\Url;
             refreshGraph();
         });
     </script>
-    <div id="visualization-sensor-data"></div>
+    <div id="visualization-actuator-data"></div>
 </div>
