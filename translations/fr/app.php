@@ -17,6 +17,7 @@ use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\PropertyWidget;
 use app\components\widgets\ConcernedItemGridViewWidget;
 use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventAction;
@@ -171,14 +172,20 @@ return [
     'Missing method.' => 'La méthode est vide.',
     'Missing trait.' => 'Le trait est vide.',
     'Missing unit.' => 'L\'unité est vide.',
+    'Model' => 'Modèle',
     'Name' => 'Nom',
     'No' => 'Non',
+    'No item concerned' => 'Aucun élément concerné',
     'No Specific Property' => 'Aucune Propriété Spécifique',
     'Objective' => 'Objectif',
     'On selected plot(s)' => 'Sur les micro parcelles sélectionnées',
     'Ontologies References' => 'Références vers des Ontologies',
     'Organism' => 'Organisme',
     'Owner' => 'Propriétaire',
+    
+    // Property
+    PropertyWidget::NO_PROPERTY => 'Aucune propriété spécifique',
+    
     'Password' => 'Mot de passe',
     'Painting' => 'Peinture',
     'Person In Charge' => 'Responsable',
@@ -205,6 +212,7 @@ return [
     'Scientific Supervisors' => 'Superviseurs scientifiques',
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',
+    'Select type...' => 'Sélectionez le type',
     'Select unit alias...' => 'Sélectionnez l\'alias de l\'unité',
     'Sensor Position' => 'Position du Capteur',
     'Sensor Profile' => 'Profil du Capteur',

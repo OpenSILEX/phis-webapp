@@ -24,6 +24,11 @@ namespace app\models\wsModels;
  */
 abstract class WSActiveRecord extends \yii\base\Model {
     
+    /**
+     * name of the id field in the search parameters
+     */
+    const ID = "id";
+    
     //SILEX:todo
     //use trait representing wsModel instead of attribute wsModel ? 
     //\SILEX:todo
@@ -62,11 +67,6 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @var boolean 
      */
     public $isNewRecord;
-    
-    /**
-     * name of the id field in the search parameters
-     */
-    CONST ID = "id";
     
     /**
      * @param string $sessionToken the user session token
@@ -110,7 +110,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @param array $attributes the search params. It is a key => value array. The key
      *                          is the name of the field.
      * @return an array with the results,
-               "token" if the user needs to log in (invalid token).
+     *         "token" if the user needs to log in (invalid token).
      */
     public function find($sessionToken, $attributes) {  
         $requestRes = $this->wsModel->get($sessionToken, "", $attributes);

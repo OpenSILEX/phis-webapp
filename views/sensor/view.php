@@ -46,6 +46,7 @@ foreach ($model->properties as $property) {
             && $propertyLabel !== "hasBrand" 
             && $propertyLabel !== "hasLens" 
             && $propertyLabel !== "measures"
+            && $propertyLabel !== "hasModel"
     ) {
         $sensorProfilePropertiesCount++;
     }
@@ -60,6 +61,7 @@ foreach ($model->properties as $property) {
         <?php
         if (Yii::$app->session['isAdmin']) { ?>
             <?= Html::a(Yii::t('app', 'Characterize Sensor'), ['characterize', 'sensorUri' => $model->uri], ['class' => 'btn btn-success']); ?>
+            <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
             <?= Html::a(Yii::t('app', 'Add Document'), [
                 'document/create', 
                 'concernedItemUri' => $model->uri, 
@@ -91,6 +93,7 @@ foreach ($model->properties as $property) {
             'brand',
             'serialNumber',
             'inServiceDate',
+            'model',
             'dateOfPurchase',
             'dateOfLastCalibration',
             [
@@ -135,6 +138,7 @@ foreach ($model->properties as $property) {
                                 && $propertyLabel !== "hasBrand" 
                                 && $propertyLabel !== "hasLens" 
                                 && $propertyLabel !== "measures"
+                                && $propertyLabel !== "hasModel"
                         ) {
                             $toReturn .= "<li>"
                                     . "<b>" . explode("#", $property->relation)[1] . "</b>"
