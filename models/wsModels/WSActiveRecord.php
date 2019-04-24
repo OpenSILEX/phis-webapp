@@ -24,6 +24,11 @@ namespace app\models\wsModels;
  */
 abstract class WSActiveRecord extends \yii\base\Model {
     
+    /**
+     * name of the id field in the search parameters
+     */
+    const ID = "id";
+    
     //SILEX:todo
     //use trait representing wsModel instead of attribute wsModel ? 
     //\SILEX:todo
@@ -62,11 +67,6 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @var boolean 
      */
     public $isNewRecord;
-    
-    /**
-     * name of the id field in the search parameters
-     */
-    CONST ID = "id";
     
     /**
      * @param string $sessionToken the user session token
