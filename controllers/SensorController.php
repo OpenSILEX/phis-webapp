@@ -15,7 +15,7 @@ use yii\helpers\ArrayHelper;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\YiiSensorModel;
 use app\models\yiiModels\SensorSearch;
-use app\models\yiiModels\SensorDataSearch;
+use app\models\yiiModels\DeviceDataSearch;
 use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\yiiModels\YiiVariableModel;
@@ -334,7 +334,7 @@ class SensorController extends Controller {
         if ($res === WSConstants::TOKEN_INVALID) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
-            $dataSearchModel = new SensorDataSearch();
+            $dataSearchModel = new DeviceDataSearch();
             $dataSearchModel->sensorURI = $res->uri;
 
             return $this->render('view', [
@@ -531,7 +531,7 @@ class SensorController extends Controller {
      * @return string
      */
     public function actionSearchData() {
-        $searchModel = new SensorDataSearch();
+        $searchModel = new \app\models\yiiModels\DeviceDataSearch();
         
         // Load POST parameters
         if ($searchModel->load(Yii::$app->request->post())) {
