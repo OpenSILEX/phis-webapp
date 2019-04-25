@@ -142,8 +142,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                             plot.push("");
                         }
                         if (feature.get('species') !== undefined) {
-                            var species = feature.get('species').split("species/");
-                            plot.push(species[1]);
+                            var species = feature.get('species').split("/");
+                            plot.push(species[species.length - 1]);
                         } else {
                             plot.push("");
                         }
