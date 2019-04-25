@@ -337,13 +337,13 @@ class VectorController extends Controller {
             }
         
             // list of users
-            $searchUserModel = new UserSearch();
-            $users = $searchUserModel->find($sessionToken, []);
+            $usersModel = new YiiUserModel();
+            $users = $usersModel->getPersonsMailsAndName(Yii::$app->session['access_token']);
             
             return $this->render('update', [
                 'model' => $model,
                 'types' => $this->vectorsTypesToMap($vectorsTypes),
-                'users' => $this->usersToMap($users)
+                'users' => $users
             ]);
         }
     }
