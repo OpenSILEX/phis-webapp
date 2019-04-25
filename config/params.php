@@ -35,6 +35,7 @@ return [
     
     // ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts
+    'Actuator' => 'http://www.opensilex.org/vocabulary/oeso#Actuator',
     'Lens' => 'http://www.opensilex.org/vocabulary/oeso#Lens',
     'Plot' => 'http://www.opensilex.org/vocabulary/oeso#Plot',
     'Species' => 'http://www.opensilex.org/vocabulary/oeso#Species',
