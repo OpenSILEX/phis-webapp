@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
         
         <?= Html::a(Yii::t('app', 'Map Visualization'), 
-                ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.opensilex.org/vocabulary/oeso#Experiment', 'depth' => 'true', 'generateFile' => 'false'], ['class' => 'btn btn-info']) ?>
+                ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.opensilex.org/vocabulary/oeso#Experiment', 'depth' => 'true', 'generateFile' => 'false', 'objectLabel' => $model->alias], ['class' => 'btn btn-info']) ?>
         </p>
 
     <?php
