@@ -234,7 +234,7 @@ class YiiProjectModel extends WSActiveRecord {
         
         $requestRes = $this->wsModel->getProjectByURI($sessionToken, $uri, $params);
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);

@@ -13,17 +13,27 @@ return [
     'baseURI' => 'http://www.opensilex.org/demo/',
     //\SILEX:info
     
+    // Index
+    'indexPageSize' => 20,
+  
     // Forms
     'dateTimeFormatDateTimeRangePickerStandard' => 'Y-m-dTH:i:sZ',
     'dateTimeFormatDateTimePickerUserFriendly' => 'yyyy-mm-dd HH:ii:ss',
     'dateRangeSeparator' => ' - ',
     'textAreaRowsNumber' => 6,
     
+    // Annotation
+    'annotationWidgetPageSize' => 5,
+    
     // Event
     'eventIndexNumberOfConcernedItemsToDisplay' => 3,
+    'eventAnnotationWidgetPageSize' => 5,
     'eventWidgetPageSize' => 5,
     
-    //ONTOLOGY -----------------------------------------------------------------
+    // Web service
+    'webServicePageSizeMax' => 2097152,
+    
+    // ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts
     'Actuator' => 'http://www.opensilex.org/vocabulary/oeso#Actuator',
     'Lens' => 'http://www.opensilex.org/vocabulary/oeso#Lens',
@@ -54,6 +64,11 @@ return [
     'NationalInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#NationalInfrastructure',
     'EuropeanInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#EuropeanInfrastructure',
     'Installation' => 'http://www.opensilex.org/vocabulary/oeso#Installation',
+    
+    // Event
+    'event' => 'http://www.opensilex.org/vocabulary/oeev#Event',
+    'moveFrom' => 'http://www.opensilex.org/vocabulary/oeev#MoveFrom',
+    'moveTo' => 'http://www.opensilex.org/vocabulary/oeev#MoveTo',
     
     //-------- Relations
     'aperture' => 'http://www.opensilex.org/vocabulary/oeso#aperture',
@@ -103,5 +118,9 @@ return [
     'waveband' => 'http://www.opensilex.org/vocabulary/oeso#waveband',
     'wavelength' => 'http://www.opensilex.org/vocabulary/oeso#wavelength',
     'width' => 'http://www.opensilex.org/vocabulary/oeso#width',
+    
+    // Event
+    'from' => 'http://www.opensilex.org/vocabulary/oeev#from',
+    'to' => 'http://www.opensilex.org/vocabulary/oeev#to'
     
 ];

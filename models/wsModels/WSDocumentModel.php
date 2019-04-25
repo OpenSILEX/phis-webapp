@@ -83,8 +83,8 @@ class WSDocumentModel extends \openSILEX\guzzleClientPHP\WSModel {
         
         $res = json_decode($requestRes->getBody());
         
-        if (isset($res->{WSConstants::TOKEN})) {
-            return WSConstants::TOKEN;
+        if (isset($res->{WSConstants::TOKEN_INVALID})) {
+            return WSConstants::TOKEN_INVALID;
         } else {        
             return $res; 
         }

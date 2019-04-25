@@ -34,11 +34,12 @@ use app\models\wsModels\WSConstants;
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ExperimentController extends Controller {
-    CONST ANNOTATIONS_DATA = "experimentAnnotations";
-    CONST EVENTS_DATA = "experimentEvents";
+    const ANNOTATION_PROVIDER = "experimentAnnotationProvider";
+    const EVENTS_PAGE = "eventsPage";
+    const EVENT_PROVIDER = "experimentEventProvider";
     
     /**
-     * define the behaviors
+     * Defines the behaviours
      * @return array
      */
     public function behaviors() {
@@ -53,20 +54,20 @@ class ExperimentController extends Controller {
     }
     
     /**
-     * Searches an experiment by URI.
+     * Searches an experiment by its URI.
      * @param String $uri searched experiment's URI
      * @return mixed YiiExperimentModel : the searched experiment
      *               "token" if the user must log in
      */
     public function findModel($uri) {
-        $sessionToken = Yii::$app->session['access_token'];
+        $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         $experimentModel = new YiiExperimentModel(null, null);
         $requestRes = $experimentModel->findByURI($sessionToken, $uri);
         
         if ($requestRes === true) {
             return $experimentModel;
-        } else if(isset($requestRes["token"])) {
-            return "token";
+        } else if(isset($requestRes[WSConstants::TOKEN])) {
+            return WSConstants::TOKEN;
         } else {
            throw new NotFoundHttpException('The requested page does not exist');
         }
@@ -85,10 +86,10 @@ class ExperimentController extends Controller {
             $searchParams[YiiModelsConstants::PAGE]--;
         }
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
        
         if (is_string($searchResult)) {
-            if ($searchResult === WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -137,33 +138,39 @@ class ExperimentController extends Controller {
         //2. Get experiment's linked documents 
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
-        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+        $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], ["concernedItem" => $id]);
         
         //3. get experiment's agronomical objects
         $searchAgronomicalObject = new ScientificObjectSearch();
         $searchAgronomicalObject->experiment = $id;
-        $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session['access_token'], $searchParams);
+        $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
          
         //4. get annotations
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
-        $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+        $annotationProvider = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
         
         //5. get events
         $searchEventModel = new EventSearch();
         $searchEventModel->concernedItemUri = $id;
-        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $eventSearchParameters = [];
+        if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+            $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+        }
+        $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+        
+        $eventProvider = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $eventSearchParameters);
+        $eventProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE;
 
         //6. get all variables
         $variableModel = new YiiVariableModel();
-        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
+        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
         
         //7. Get all sensors
         $sensorModel = new YiiSensorModel();
-        $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session['access_token']);
+        $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
         
-        if ($res === "token") {
+        if ($res === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
             $canUpdate = $this->isUserInExperimentOwnerGroup($res);
@@ -173,8 +180,8 @@ class ExperimentController extends Controller {
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
                 'dataAgronomicalObjectsProvider' => $agronomicalObjects,
-                self::ANNOTATIONS_DATA => $experimentAnnotations,
-                self::EVENTS_DATA => $events,
+                self::ANNOTATION_PROVIDER => $annotationProvider,
+                self::EVENT_PROVIDER => $eventProvider,
                 'variables' => $variables,
                 'sensors' => $sensors
             ]);

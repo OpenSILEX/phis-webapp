@@ -153,7 +153,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
         $requestRes = $wsUriModel->getDescendants($sessionToken, $scientificObjectConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return "token";
             } else {
                 return $requestRes;
@@ -181,7 +181,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
         $requestRes = $wsUriModel->getDescendants($sessionToken, $scientificObjectConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return "token";
             } else {
                 return $requestRes;

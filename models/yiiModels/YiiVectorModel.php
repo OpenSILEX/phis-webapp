@@ -197,7 +197,7 @@ class YiiVectorModel extends WSActiveRecord {
         $requestRes = $wsUriModel->getDescendants($sessionToken, $vectorConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return "token";
             } else {
                 return $requestRes;
@@ -223,7 +223,7 @@ class YiiVectorModel extends WSActiveRecord {
         $requestRes = $this->wsModel->getVectorByUri($sessionToken, $uri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);

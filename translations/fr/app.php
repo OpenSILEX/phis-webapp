@@ -20,6 +20,7 @@ use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventPost;
 use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\PropertyWidget;
 
 return [
     '{n, plural, =1{Project} other{Projects}}' => '{n, plural, =1{Projet} other{Projets}}',
@@ -149,12 +150,15 @@ return [
     'Name' => 'Nom',
     'No' => 'Non',
     'No item concerned' => 'Aucun élément concerné',
-    'No Specific Property' => 'Aucune Propriété Spécifique',
     'Objective' => 'Objectif',
     'On selected plot(s)' => 'Sur les micro parcelles sélectionnées',
     'Ontologies References' => 'Références vers des Ontologies',
     'Organism' => 'Organisme',
     'Owner' => 'Propriétaire',
+    
+    // Property
+    PropertyWidget::NO_PROPERTY_LABEL => 'Aucune propriété spécifique',
+    
     'Password' => 'Mot de passe',
     'Painting' => 'Peinture',
     'Person In Charge' => 'Responsable',

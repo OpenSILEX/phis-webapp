@@ -175,7 +175,7 @@ class AcquisitionSessionMetadataFileController extends Controller {
             //SILEX:conception
             // Find a way to send a generic response when the user is disconnected
             //\SILEX:conception
-            if ($existingFilePath == WSConstants::TOKEN) {
+            if ($existingFilePath == WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             }
             
@@ -255,7 +255,7 @@ class AcquisitionSessionMetadataFileController extends Controller {
         $wsAcquisitionSession = new WSAcquisitionSession();
         $fileMetadataByURI = $wsAcquisitionSession->getFileMetadataByURI($sessionToken, $this->vectorType, [WSConstants::PAGE_SIZE => 100]);
         if (!is_string($fileMetadataByURI)) {
-            if (isset($fileMetadataByURI[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($fileMetadataByURI[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 $this->error = $this->render(
                                         SiteMessages::SITE_ERROR_PAGE_ROUTE,
                                         [

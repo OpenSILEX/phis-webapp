@@ -289,7 +289,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS => ${ExperimentController::EVENTS_DATA}
+                 EventGridViewWidget::EVENTS_PROVIDER => ${ExperimentController::EVENT_PROVIDER}
             ]
         ); 
     ?>
@@ -297,7 +297,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Experiment linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
-                 AnnotationGridViewWidget::ANNOTATIONS => ${ExperimentController::ANNOTATIONS_DATA}
+                 AnnotationGridViewWidget::ANNOTATIONS => ${ExperimentController::ANNOTATION_PROVIDER}
             ]
         ); 
     ?>

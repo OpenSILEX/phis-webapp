@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Sensor events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS => ${InfrastructureController::EVENTS_DATA}
+                 EventGridViewWidget::EVENTS_PROVIDER => ${InfrastructureController::EVENTS_PROVIDER}
             ]
         ); 
     ?>
@@ -78,7 +78,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?=
     AnnotationGridViewWidget::widget(
             [
-                AnnotationGridViewWidget::ANNOTATIONS => ${InfrastructureController::ANNOTATIONS_DATA}
+                AnnotationGridViewWidget::ANNOTATIONS => ${InfrastructureController::ANNOTATIONS_PROVIDER}
             ]
     );
     ?>

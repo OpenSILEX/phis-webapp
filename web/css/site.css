@@ -136,6 +136,13 @@ kartik date range filter
     min-width: 53ch;
 }
 
+/*SILEX:info
+event widget action column width
+\SILEX:info*/
+.event-widget .action-column {
+    width: 20px;
+}
+
 /*Pour les astérisques sur les champs obligatoires dans les formulaires*/
 /*SILEX:required*/
 form div.required label.control-label:after {

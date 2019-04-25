@@ -169,7 +169,7 @@ foreach ($model->properties as $property) {
     <!-- Sensor events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS => ${SensorController::EVENTS_DATA}
+                 EventGridViewWidget::EVENTS_PROVIDER => ${SensorController::EVENTS_PROVIDER}
             ]
         ); 
     ?>
@@ -177,7 +177,7 @@ foreach ($model->properties as $property) {
     <!-- Sensor linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
-                AnnotationGridViewWidget::ANNOTATIONS => ${SensorController::ANNOTATIONS_DATA}
+                AnnotationGridViewWidget::ANNOTATIONS => ${SensorController::ANNOTATIONS_PROVIDER}
             ]
     );
     ?>
