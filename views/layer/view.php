@@ -21,7 +21,7 @@ use yii\helpers\Url;
 $this->title = $objectLabel;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['experiment/index']];
-$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['experiment/view', 'id' => $this->title]];
+$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['experiment/view', 'id' => $this->uri]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
 ?>
 
