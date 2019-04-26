@@ -128,7 +128,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Radiometric target events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS_PROVIDER => ${RadiometricTargetController::EVENTS_DATA}
+                 EventGridViewWidget::DATA_PROVIDER => ${RadiometricTargetController::EVENTS_DATA}
             ]
         ); 
     ?>

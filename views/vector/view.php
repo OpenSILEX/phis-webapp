@@ -80,7 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Linked events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS_PROVIDER => ${VectorController::EVENTS_PROVIDER}
+                 EventGridViewWidget::DATA_PROVIDER => ${VectorController::EVENTS_PROVIDER}
             ]
         ); 
     ?>

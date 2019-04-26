@@ -16,7 +16,7 @@ use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\EventButtonWidget;
 use app\components\widgets\EventGridViewWidget;
-use app\components\widgets\PropertyWidget;
+use app\components\widgets\PropertyWidgetWithoutActions;
 use app\models\yiiModels\YiiDocumentModel;
 
 /** 
@@ -53,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
     <!-- Infrastructure properties detail-->
     <?=
-    PropertyWidget::widget([
+    PropertyWidgetWithoutActions::widget([
         'uri' => $model->uri,
         'isUriRequired' => true,
         'properties' => $model->properties,
@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Sensor events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS_PROVIDER => ${InfrastructureController::EVENTS_PROVIDER}
+                 EventGridViewWidget::DATA_PROVIDER => ${InfrastructureController::EVENTS_PROVIDER}
             ]
         ); 
     ?>
