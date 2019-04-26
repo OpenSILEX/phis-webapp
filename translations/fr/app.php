@@ -33,6 +33,7 @@ return [
     '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}' => '{n, plural, =1{Cible Radiométrique} other{Cibles Radiométriques}}',
     '{n, plural, =1{Scientific Object} other{Scientific Objects}}' => '{n, plural, =1{Objet Scientifique} other{Objets Scientifiques}}',
     '{n, plural, =1{Scientific frame} other{Scientific frames}}' => '{n, plural, =1{Cadre scientifique} other{Cadres scientifiques}}',
+    '{n, plural, =1{Event} other{Events}}' => '{n, plural, =1{Evénement} other{Evénements}}',
     
     'A radiometric target can be described by the value of its coefficients to the bidirectional reflectance distribution function (see the BRDF ' => 'Une cible radiométrique peut être décrite par la valeur de ses coefficients à la fonction de distribution de la réflectivité bidirectionnelle (voir la ',
     'Add Dataset' => 'Importer un jeu de données',

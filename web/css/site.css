@@ -87,6 +87,12 @@ a.desc:after {
     content: "\e156";
 }
 
+/*//SILEX:required*/
+.grid-view {
+    margin-top: 10px;
+}
+/*//\SILEX:required*/
+
 .grid-view th {
     white-space: nowrap;
 }
