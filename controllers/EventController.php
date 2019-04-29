@@ -115,8 +115,8 @@ class EventController extends GenericController {
     
     private function hasUnupdatableProperties($eventAction) : bool {
         foreach($eventAction->properties as $property) {
-            if($property !== Yii::$app->params['moveFrom']
-                    || $property !== Yii::$app->params['moveTo']) {
+            if($property->relation !== Yii::$app->params['from']
+                    && $property->relation !== Yii::$app->params['to']) {
                 return true;
             }
         }

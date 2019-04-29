@@ -6,7 +6,7 @@
 // Creation date: 23 Aug. 2018
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-namespace app\components\widgets;
+namespace app\components\widgets\concernedItem;
 
 use yii\base\Widget;
 use Yii;
@@ -29,7 +29,7 @@ abstract class ConcernedItemGridViewWidget extends Widget {
      * @var mixed
      */
     public $dataProvider;
-    CONST DATA_PROVIDER = "dataProvider";
+    const DATA_PROVIDER = "dataProvider";
 
     public function init() {
         parent::init();
@@ -45,7 +45,7 @@ abstract class ConcernedItemGridViewWidget extends Widget {
      */
     public function run() {
         if ($this->dataProvider->getCount() == 0) {
-            $htmlRendered = "<h3>" . Yii::t('app', YiiConcernedItemModel::URI) . "</h3>";
+            $htmlRendered = "<h3>" . Yii::t('app', YiiConcernedItemModel::URI_LABEL) . "</h3>";
         } else {
             $htmlRendered = "<h3>" . Yii::t('app', self::CONCERNED_ITEMS_LABEL) . "</h3>";
             $htmlRendered .= GridView::widget([

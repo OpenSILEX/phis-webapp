@@ -6,7 +6,7 @@
 // Creation date: 23 Aug, 2018
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-namespace app\components\widgets;
+namespace app\components\widgets\concernedItem;
 
 use Yii;
 use yii\helpers\Html;

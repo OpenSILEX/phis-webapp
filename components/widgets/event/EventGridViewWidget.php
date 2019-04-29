@@ -6,7 +6,7 @@
 // Creation date: 5 Mar. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-namespace app\components\widgets;
+namespace app\components\widgets\event;
 
 use yii\base\Widget;
 use yii\helpers\Html;

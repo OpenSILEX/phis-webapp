@@ -15,10 +15,10 @@
 
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
-use app\components\widgets\EventButtonWidget;
-use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\event\EventButtonWidget;
+use app\components\widgets\event\EventGridViewWidget;
 use app\components\widgets\PropertyWidget;
-use app\components\widgets\ConcernedItemGridViewWidget;
+use app\components\widgets\concernedItem\ConcernedItemGridViewWidget;
 use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventAction;
 use app\models\yiiModels\YiiConcernedItemModel;

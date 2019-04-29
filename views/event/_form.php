@@ -2,14 +2,13 @@
 //******************************************************************************
 //                                _form.php
 // SILEX-PHIS
-// Copyright © INRA 2018
+// Copyright © INRA 2019
 // Creation date: 15 Apr. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\data\ArrayDataProvider;
-use yii\grid\GridView;
 use kartik\datetime\DateTimePicker;
 use kartik\select2\Select2;
 use app\models\yiiModels\YiiEventModel;
@@ -18,11 +17,11 @@ use app\models\yiiModels\EventUpdate;
 use app\models\yiiModels\EventAction;
 use app\controllers\EventController;
 use app\components\helpers\Vocabulary;
-use app\components\widgets\ConcernedItemGridViewWidgetWithActions;
+use app\components\widgets\concernedItem\ConcernedItemHandsontableWidget;
 ?>
 <div class="event-form well">
     <?php 
-    // generate inputs name root and  inputs id root
+    // Generate inputs name root and  inputs id root
     $eventClassWithNamespace = $model->isNewRecord ? EventCreation::class : EventUpdate::class;
     $eventInputsNameRoot = substr($eventClassWithNamespace, strrpos($eventClassWithNamespace, '\\') + 1);
     $eventInputsIdRoot = strtolower($eventInputsNameRoot);
@@ -117,25 +116,24 @@ use app\components\widgets\ConcernedItemGridViewWidgetWithActions;
         'maxlength' => true
     ]);
     ?>
-    <?= ConcernedItemGridViewWidgetWithActions::widget(
-        [
-            ConcernedItemGridViewWidgetWithActions::DATA_PROVIDER => new ArrayDataProvider([
-                'allModels' => $model->concernedItems,
-                'pagination' => ['pageSize' => 10],
-            ]),
-            ConcernedItemGridViewWidgetWithActions::INPUT_MODEL_CLASS => $eventInputsNameRoot,
-            ConcernedItemGridViewWidgetWithActions::INPUT_MODEL_CONCERNED_ITEMS_URIS_ATTRIBUTE_NAME 
-                => EventAction::CONCERNED_ITEMS_URIS
-        ]
-    ); 
-    ?>
-    
     <?php 
     if ($model->isNewRecord) {
         echo $form->field(
                 $model, 
                 EventCreation::DESCRIPTION)->textarea(['rows' => Yii::$app->params['textAreaRowsNumber']]);
     }
+    ?>
+    <?= ConcernedItemHandsontableWidget::widget(
+        [
+            ConcernedItemHandsontableWidget::DATA_PROVIDER => new ArrayDataProvider([
+                'allModels' => $model->concernedItems,
+                'pagination' => ['pageSize' => 10],
+            ]),
+            ConcernedItemHandsontableWidget::INPUT_MODEL_CLASS => $eventInputsNameRoot,
+            ConcernedItemHandsontableWidget::INPUT_MODEL_CONCERNED_ITEMS_URIS_ATTRIBUTE_NAME 
+                => EventAction::CONCERNED_ITEMS_URIS
+        ]
+    ); 
     ?>
 
     <div class="form-group">
@@ -228,7 +226,7 @@ use app\components\widgets\ConcernedItemGridViewWidgetWithActions;
         }
         
         /**
-         * Sets the user's timezone oofset.
+         * Sets the user's timezone offset.
          */
         function setDateTimezoneOffsetWithUserDefaultOne() {
             // getTimezoneOffset() returns UTC - localTimeZone. 
