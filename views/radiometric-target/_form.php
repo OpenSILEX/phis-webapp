@@ -159,7 +159,28 @@ use kartik\file\FileInput;
     <?= $form->field($model, 'brdfP2')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'brdfP3')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'brdfP4')->textInput(['maxlength' => true]) ?>
+    
+    <!--
+    <div class="alert alert-info" role="alert">
+        <b><?= Yii::t('app/messages', 'File Rules')?> : </b>
+        <table class="table table-hover" id="radiometric-target-csv-columns-desc">
+            <tr>
+                <th style="color:red">Yii::t('app/message', 'Acquisition date of the data') *</th>
+                <td><p><?= Yii::t('app', 'Wavelength (nm)') ?> (format : YYYY-MM-DD) </p> </td>
+            </tr>
+             <tr class="dataset-variables">
+                <th style="color:red">Value *</th>
+                <td ><?= Yii::t('app/messages', 'Value') ?> (<?= Yii::t('app', 'Real Number') ?>)</td>
+            </tr>
+        </table>
+    </div>
 
+    
+    <p><i>
+         <?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . '/documents/DatasetFiles/datasetTemplate.csv', ['id' => 'downloadDatasetTemplate']) ?>
+    </i></p>
+    -->
+    
     <?php
     if (!$hideFiles) {
         echo $form->field($model, 'reflectanceFile')->widget(FileInput::classname(), [
