@@ -72,9 +72,15 @@ class GroupController extends Controller {
     public function actionIndex() {
         $searchModel = new GroupSearch();
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;
+        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        }
+        
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -135,13 +141,17 @@ class GroupController extends Controller {
             
             if (is_string($requestRes) && $requestRes === "token") { //user must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                return $this->redirect(['view', 'id' => $groupModel->uri]);
+            } else if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //group created
+                return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+            } else { //an error occurred
+                return $this->render('/site/error', [
+                    'name' => Yii::t('app/messages','Internal error'),
+                    'message' => $requestRes->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}]);
             }
         } else { 
             if ($sessionToken !== null) {
-                $searchUsersModel = new \app\models\yiiModels\UserSearch();
-                $users = $this->usersToMap($searchUsersModel->find($sessionToken, []));
+                $userModel = new \app\models\yiiModels\YiiUserModel();
+                $users = $userModel->getPersonsMailsAndName($sessionToken);
                 $this->view->params['listUsers'] = $users;
                 $groupModel->isNewRecord = true;
                 return $this->render('create', [
@@ -183,8 +193,9 @@ class GroupController extends Controller {
                     }
                 }
                 
-                $searchUsersModel = new \app\models\yiiModels\UserSearch();
-                $users = $this->usersToMap($searchUsersModel->find($sessionToken, []));
+                $userModel = new \app\models\yiiModels\YiiUserModel();
+                $users = $userModel->getPersonsMailsAndName($sessionToken);
+                
                 $this->view->params['listUsers'] = $users;
                 $this->view->params['listActualMembers'] = $actualMember;
                 $model->isNewRecord = false;

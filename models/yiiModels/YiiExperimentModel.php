@@ -122,14 +122,23 @@ class YiiExperimentModel extends WSActiveRecord {
     public $projects;
     const PROJECTS = "projects";
     const PROJECTS_URIS = "projectsUris";
+    
+    /**
+     * the project uri where the experiment is searched. 
+     *      (e.g http://www.phenome-fppn.fr/phenovia/RAPSODYN)
+     * @var string
+     */
+    public $projectUri;
+    const PROJECT_URI = "projectUri";
+    
     /**
      * the experiment's scientific supervisors contacts (email).
      *      (e.g john.doe[at]inra.fr) 
      * @var array<string>
      */
     public $scientificSupervisorContacts;
-    const CONTACT_SCIENTIFIC_SUPERVISOR = "http://www.phenome-fppn.fr/vocabulary/2017/#ScientificSupervisor";
-    const CONTACT_TECHNICAL_SUPERVISOR = "http://www.phenome-fppn.fr/vocabulary/2017/#TechnicalSupervisor";
+    const CONTACT_SCIENTIFIC_SUPERVISOR = "http://www.opensilex.org/vocabulary/oeso/#ScientificSupervisor";
+    const CONTACT_TECHNICAL_SUPERVISOR = "http://www.opensilex.org/vocabulary/oeso/#TechnicalSupervisor";
     /**
      * the experiment's technical supervisor contacts (email).
      *      (e.g. john.doe[at]inra.fr) 
@@ -139,9 +148,21 @@ class YiiExperimentModel extends WSActiveRecord {
     
     const CONTACTS = "contacts";
     const CONTACT_TYPE = "type";
+    /**
+     * The list of the variables measured by the experiment
+     * @var array<string>
+     */
+    public $variables;
+    const VARIABLES = "variables";
+    /**
+     * The list of sensors which participates in the experiment
+     * @var array<string>
+     */
+    public $sensors;
+    const SENSORS = "sensors";
     
     /**
-     * Initialize wsModel. In this class, wsModel is a WSAgronomicalObjectModel
+     * Initialize wsModel. In this class, wsModel is a WSExperimentModel
      * @param string $pageSize number of elements per page
      *                               (limited to 150 000)
      * @param string $page number of the current page 
@@ -187,6 +208,8 @@ class YiiExperimentModel extends WSActiveRecord {
             'cropSpecies' => Yii::t('app', 'Crop Species'),
             'scientificSupervisorContacts' => Yii::t('app', 'Scientific Supervisors'),
             'technicalSupervisorContacts' => Yii::t('app', 'Technical Supervisors'),
+            'variables' => Yii::t('app', 'Measured Variables'),
+            'sensors' => Yii::t('app', 'Sensors which participates in')
         ];
     }
    
@@ -237,6 +260,14 @@ class YiiExperimentModel extends WSActiveRecord {
                 }
             }
         }
+        
+        foreach ($array[YiiExperimentModel::VARIABLES] as $variableUri => $variableLabel) {
+            $this->variables[$variableUri] = $variableLabel;            
+        }
+        
+        foreach ($array[YiiExperimentModel::SENSORS] as $sensorUri => $sensorLabel) {
+            $this->sensors[$sensorUri] = $sensorLabel;            
+        }
     }
     
     /**
@@ -255,7 +286,7 @@ class YiiExperimentModel extends WSActiveRecord {
         $requestRes = $this->wsModel->getExperimentByURI($sessionToken, $uri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);
@@ -266,12 +297,75 @@ class YiiExperimentModel extends WSActiveRecord {
         }
     }
     
+    /**
+     * Get the list of uri of the experiments.
+     * @param string $sessionToken
+     * @return Array
+     * @example [
+     *      "http://www.opensilex.org/demo/DMO2019-1", 
+     *      "http://www.opensilex.org/demo/DMO2019-2"
+     * ]
+     */
+    public function getExperimentsURIList($sessionToken) {
+        $experiments = $this->find($sessionToken, $this->attributesToArray());
+        $experimentsToReturn = [];
+        
+        if ($experiments !== null) {
+            //1. get the URIs
+            foreach($experiments as $experiment) {
+                $experimentsToReturn[] = $experiment->uri;
+            }
+            
+            //2. if there are other pages, get the other experiments
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextExperiments = $this->getExperimentsURIList($sessionToken);
+                
+                $experimentsToReturn = array_merge($experimentsToReturn, $nextExperiments);
+            }
+            
+            return $experimentsToReturn;
+        }
+    }
+    
+    /**
+     * Get the list of uri of the experiments.
+     * @param string $sessionToken
+     * @return Array
+     * @example [
+     *      "http://www.opensilex.org/demo/DMO2019-1" => "LO1", 
+     *      "http://www.opensilex.org/demo/DMO2019-2" => "L02"
+     * ]
+     */
+    public function getExperimentsURIAndLabelList($sessionToken) {
+        $experiments = $this->find($sessionToken, $this->attributesToArray());
+        $experimentsToReturn = [];
+        
+        if ($experiments !== null) {
+            //1. get the URIs
+            foreach($experiments as $experiment) {
+                $experimentsToReturn[$experiment->uri] = $experiment->alias;
+            }
+            
+            //2. if there are other pages, get the other experiments
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextExperiments = $this->getExperimentsURIAndLabelList($sessionToken);
+                
+                $experimentsToReturn = array_merge($experimentsToReturn, $nextExperiments);
+            }
+            
+            return $experimentsToReturn;
+        }
+    }
+    
    /**
      * Create an array representing the experiment
      * Used for the web service for example
      * @return array with the attributes. 
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiExperimentModel::URI] = $this->uri;
         $elementForWebService[YiiExperimentModel::START_DATE] = $this->startDate;
         $elementForWebService[YiiExperimentModel::END_DATE] = $this->endDate;
@@ -285,6 +379,11 @@ class YiiExperimentModel extends WSActiveRecord {
         $elementForWebService[YiiExperimentModel::GROUPS] = $this->groups;
         $elementForWebService[YiiExperimentModel::PROJECTS_URIS] = $this->projects;  
         $elementForWebService[YiiExperimentModel::CROP_SPECIES] = $this->cropSpecies;
+
+        // Project Uri is only used in case of search and not in case of posting data
+        if ($this->projectUri != null) {
+            $elementForWebService[YiiExperimentModel::PROJECT_URI] = $this->projectUri;          
+        }
         
         if ($this->groups != null) {
             foreach ($this->groups as $groupUri) {
@@ -309,5 +408,43 @@ class YiiExperimentModel extends WSActiveRecord {
         }
         
         return $elementForWebService;
+    }
+    
+    /**
+     * Update variables measured by an experiment
+     * @param string $sessionToken
+     * @param string $experimentUri
+     * @param array $variablesUri
+     * @return the query result
+     */
+    public function updateVariables($sessionToken, $experimentUri, $variablesUri) {
+        $requestRes = $this->wsModel->putExperimentVariables($sessionToken, $experimentUri, $variablesUri);
+        
+        if (is_string($requestRes) && $requestRes === "token") {
+            return $requestRes;
+        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS})) {
+            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS};
+        } else {
+            return $requestRes;
+        }
+    }
+    
+    /**
+     * Update sensors which participates in an experiment
+     * @param string $sessionToken
+     * @param string $experimentUri
+     * @param array $sensorsUris
+     * @return the query result
+     */
+    public function updateSensors($sessionToken, $experimentUri, $sensorsUris) {
+        $requestRes = $this->wsModel->putExperimentSensors($sessionToken, $experimentUri, $sensorsUris);
+        
+        if (is_string($requestRes) && $requestRes === "token") {
+            return $requestRes;
+        } else if (isset($requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS})) {
+            return $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::STATUS};
+        } else {
+            return $requestRes;
+        }
     }
 }

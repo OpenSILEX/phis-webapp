@@ -13,6 +13,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ExperimentSearch */
@@ -36,10 +37,40 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             
-            'uri',
+            [
+              'attribute' => 'uri',
+              'format' => 'raw',
+               'value' => 'uri',
+              'filter' =>false,
+            ],
             'alias',
-            'startDate',
-            'endDate',
+            [
+              'attribute' => 'startDate',
+              'format' => 'raw',
+               'value' => 'startDate',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'startDate',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
+                
+            [
+              'attribute' => 'endDate',
+              'format' => 'raw',
+               'value' => 'endDate',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'endDate',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
 //            [
 //              'attribute' => 'projects',
 //              'format' => 'raw',
@@ -56,7 +87,21 @@ $this->params['breadcrumbs'][] = $this->title;
 //              }
 //            ],
             'field',
-            'campaign',
+            [
+               'attribute' => 'campaign',
+               'format' => 'raw',
+               'value' => 'campaign',
+               'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'campaign',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy',
+                        'minViewMode' => 'years',
+                        'viewMode' => 'years',
+                    ]
+                ]),
+            ],
 
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',

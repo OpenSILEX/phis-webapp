@@ -37,7 +37,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'label',
-            'uri',
+            [
+              'attribute' => 'uri',
+              'format' => 'raw',
+               'value' => 'uri',
+              'filter' =>false,
+            ],
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',
                 'buttons' => [

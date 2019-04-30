@@ -15,6 +15,8 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
+use kartik\date\DatePicker;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ProjectSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -27,9 +29,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
+    <?php if (Yii::$app->session['isAdmin']) { ?>
     <p>
         <?= Html::a(Yii::t('yii', 'Create') . ' '. Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
+    <?php } ?>
     
    <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -41,8 +45,32 @@ $this->params['breadcrumbs'][] = $this->title;
             //'name',
             'acronyme',
             'financialSupport',
-            'dateStart',
-            'dateEnd',
+            [
+              'attribute' => 'dateStart',
+              'format' => 'raw',
+               'value' => 'dateStart',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'dateStart',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
+            [
+              'attribute' => 'dateEnd',
+              'format' => 'raw',
+               'value' => 'dateEnd',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'dateEnd',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
             // 'subprojectType',
             // 'financialName',
             // 'keywords',

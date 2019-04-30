@@ -36,7 +36,7 @@ class YiiLayerModel extends WSActiveRecord {
     const OBJECT_URI = "objectUri";
     /**
      * the type of the principal object represented by the layer
-     *  (e.g.  http://www.phenome-fppn.fr/vocabulary/2017#Experiment)
+     *  (e.g.  http://www.opensilex.org/vocabulary/oeso#Experiment)
      * @var string
      */
     public $objectType;

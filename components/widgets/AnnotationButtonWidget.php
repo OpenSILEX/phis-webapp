@@ -10,6 +10,7 @@ namespace app\components\widgets;
 
 use yii\base\Widget;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use Yii;
 use app\models\yiiModels\YiiAnnotationModel;
 use kartik\icons\Icon;
@@ -58,6 +59,7 @@ class AnnotationButtonWidget extends Widget {
                     [
                         'annotation/create',
                         YiiAnnotationModel::TARGETS => $this->targets,
+                        YiiAnnotationModel::RETURN_URL => Url::current()
                     ], 
                     [
                         'class' => 'btn btn-default',

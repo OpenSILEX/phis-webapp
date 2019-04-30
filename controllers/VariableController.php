@@ -15,9 +15,6 @@
 namespace app\controllers;
 
 use app\models\yiiModels\VariableSearch;
-use app\models\yiiModels\MethodSearch;
-use app\models\yiiModels\TraitSearch;
-use app\models\yiiModels\UnitSearch;
 use app\models\yiiModels\YiiMethodModel;
 use app\models\yiiModels\YiiTraitModel;
 use app\models\yiiModels\YiiUnitModel;
@@ -77,10 +74,23 @@ class VariableController extends Controller {
      */
     public function actionIndex() {
         $searchModel = new VariableSearch();
+        $sessionToken = Yii::$app->session['access_token'];
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        //Models used to get the lists of traits, methods and unit for the search
+        $traitModel = new YiiTraitModel();
+        $methodModel = new YiiMethodModel();
+        $unitModel = new YiiUnitModel();
+        
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
+            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+        }
+
+        $searchResult = $searchModel->search($sessionToken, $searchParams);
+        
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -90,7 +100,10 @@ class VariableController extends Controller {
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+                'dataProvider' => $searchResult,
+                'listTraits' => $traitModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
+                'listMethods' => $methodModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
+                'listUnits' => $unitModel->getInstancesDefinitionsUrisAndLabel($sessionToken)
             ]);
         }
     }
@@ -109,19 +122,6 @@ class VariableController extends Controller {
             return $this->render('view', [
                 'model' => $res
             ]);
-        }
-    }
-    
-    /**
-     * 
-     * @param mixed $instanceDefinitions instances definitions list. (traits, methods or units)
-     * @return ArrayHelper of the instances definitions uri => label (traits, methods, units)
-     */
-    private function instancesDefinitionsToMap($instanceDefinitions) {
-        if ($instanceDefinitions !== null) {
-            return \yii\helpers\ArrayHelper::map($instanceDefinitions, 'uri', 'label');
-        } else {
-            return null;
         }
     }
     
@@ -217,39 +217,18 @@ class VariableController extends Controller {
             } else {
                 return $this->redirect(['view', 'uri' => $requestRes[0]]);
             }
-            
-        } else { 
-            $searchTraitModel = new TraitSearch();
-            $traits = $searchTraitModel->find($sessionToken, []);
-            
-            $searchMethodModel = new MethodSearch();
-            $methods = $searchMethodModel->find($sessionToken, []);
-            
-            $searchUnitModel = new UnitSearch();
-            $units = $searchUnitModel->find($sessionToken, []);
-            
-            if (is_string($traits) || is_string($methods) || is_string($units)) {
-                return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => "Request error while getting existing traits, methods and units"]);
-            } else if (is_array($units) && isset($units["token"])) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                $traits = $this->instancesDefinitionsToMap($traits);
-                $methods = $this->instancesDefinitionsToMap($methods);
-                $units = $this->instancesDefinitionsToMap($units);
-                $variableModel->isNewRecord = true;
-                
-                return $this->render('create', [
-                    'modelVariable' => $variableModel,
-                    'modelTrait' => $traitModel,
-                    'modelMethod' => $methodModel,
-                    'modelUnit' => $unitModel,
-                    'listTraits' => $traits,
-                    'listMethods' => $methods,
-                    'listUnits' => $units
-                ]);                
-            }
+        } else {
+            $variableModel->isNewRecord = true;
+
+            return $this->render('create', [
+                'modelVariable' => $variableModel,
+                'modelTrait' => $traitModel,
+                'modelMethod' => $methodModel,
+                'modelUnit' => $unitModel,
+                'listTraits' => $traitModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
+                'listMethods' => $methodModel->getInstancesDefinitionsUrisAndLabel($sessionToken),
+                'listUnits' => $unitModel->getInstancesDefinitionsUrisAndLabel($sessionToken)
+            ]);              
         }
     }
 }

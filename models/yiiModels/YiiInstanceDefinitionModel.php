@@ -33,7 +33,7 @@ class YiiInstanceDefinitionModel extends \app\models\wsModels\WSActiveRecord {
     const URI = "uri";
     /**
      * The rdf type of the instance definition
-     *  (e.g. http://www.phenome-fppn.fr/vocabulary/2017#Thermocouple)
+     *  (e.g. http://www.opensilex.org/vocabulary/oeso#Thermocouple)
      * @var string
      */
     public $rdfType;
@@ -124,7 +124,7 @@ class YiiInstanceDefinitionModel extends \app\models\wsModels\WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() { 
-        $toReturn = null;
+        $toReturn = parent::attributesToArray();
         $toReturn[YiiInstanceDefinitionModel::LABEL] = $this->label;
         
         if (isset($this->comment) 
@@ -168,5 +168,36 @@ class YiiInstanceDefinitionModel extends \app\models\wsModels\WSActiveRecord {
             \config::path()['rNarrower'] => 'skos:narrower',
             \config::path()['rBroader'] => 'skos:broader'
         ];
+    }
+    
+    /**
+     * Get all the instance definition uri and label
+     * @return array the list of the instance definition uri and label existing in the database
+     * @example returned array : 
+     * [
+     *      ["http://www.opensilex.fr/opensilex/traits/id/t001"] => "Trait label",
+     *      ...
+     * ]
+     */
+    public function getInstancesDefinitionsUrisAndLabel($sessionToken) {
+        $instanceDefinitions = $this->find($sessionToken, $this->attributesToArray());
+        $instanceDefinitionsToReturn = [];
+        
+        if ($instanceDefinitions !== null) {
+            //1. get the instances definitions 
+            foreach($instanceDefinitions as $instanceDefinition) {
+                $instanceDefinitionsToReturn[$instanceDefinition->uri] = $instanceDefinition->label;
+            }
+            
+            //2. if there are other pages, get the other instances definitions
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextInstanceDefinitions = $this->getInstancesDefinitionsUrisAndLabel($sessionToken);
+                
+                $instanceDefinitionsToReturn = array_merge($instanceDefinitionsToReturn, $nextInstanceDefinitions);
+            }
+            
+            return $instanceDefinitionsToReturn;
+        }
     }
 }

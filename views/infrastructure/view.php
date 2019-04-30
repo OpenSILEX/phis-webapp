@@ -8,18 +8,24 @@
 // Contact: vincent.migot@inra.fr, morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\controllers\InfrastructureController;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
-use app\components\widgets\PropertiesWidget;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\PropertyWidget;
+use app\models\yiiModels\YiiDocumentModel;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiInfrastructureModel */
-/* @var $dataDocumentsProvider yii\data\DataProviderInterface */
-/* @update [Arnaud Charleroy] 28 August, 2018 : adding annotation linked to this infrastructure model */
-/* @update [Vincent Migot] 20 Sept, 2018: implement view details from service
+/** 
+ * @update [Arnaud Charleroy] 28 August, 2018: adding annotation linked to this infrastructure model
+ * @update [Vincent Migot] 20 Sept, 2018: implement view details from service
+ * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
+ * @var $this yii\web\View
+ * @var $model app\models\YiiInfrastructureModel
+ * @var $dataDocumentsProvider yii\data\DataProviderInterface
  */
 
 $this->title = $model->label;
@@ -31,18 +37,25 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <!-- Add annotation button -->
-        <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
         <?php
         if (Yii::$app->session['isAdmin']) {
-            echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->label, 'concernRdfType' => Yii::$app->params["Installation"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
+            echo Html::a(Yii::t('app', 'Add Document'), [
+                'document/create', 
+                'concernedItemUri' => $model->uri, 
+                'concernedItemLabel' => $model->label, 
+                'concernedItemRdfType' => Yii::$app->params["Installation"],
+                YiiDocumentModel::RETURN_URL => Url::current()
+            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
+            echo EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]);
+            echo AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);
         }
         ?>
     </p>
     <!-- Infrastructure properties detail-->
     <?=
-    PropertiesWidget::widget([
+    PropertyWidget::widget([
         'uri' => $model->uri,
+        'isUriRequired' => true,
         'properties' => $model->properties,
         'aliasProperty' =>  Yii::$app->params["rdfsLabel"],
         'relationOrder' => [
@@ -52,12 +65,20 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ]);
     ?>
+    
+    <!-- Sensor events -->
+    <?= EventGridViewWidget::widget(
+            [
+                 EventGridViewWidget::EVENTS_PROVIDER => ${InfrastructureController::EVENTS_PROVIDER}
+            ]
+        ); 
+    ?>
 
     <!-- Infrastructure linked Annotation-->
     <?=
     AnnotationGridViewWidget::widget(
             [
-                AnnotationGridViewWidget::ANNOTATIONS => ${InfrastructureController::ANNOTATIONS_DATA}
+                AnnotationGridViewWidget::ANNOTATIONS => ${InfrastructureController::ANNOTATIONS_PROVIDER}
             ]
     );
     ?>

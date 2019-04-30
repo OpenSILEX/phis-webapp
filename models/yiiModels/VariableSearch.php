@@ -62,8 +62,8 @@ class VariableSearch extends YiiVariableModel {
         if (is_string($findResult)) {
             return $findResult;
         } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN) {
-            return \app\models\wsModels\WSConstants::TOKEN;
+                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
+            return \app\models\wsModels\WSConstants::TOKEN_INVALID;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
             return new \yii\data\ArrayDataProvider([
@@ -78,20 +78,5 @@ class VariableSearch extends YiiVariableModel {
                 //\SILEX:info
             ]);
         }
-    }
-    
-    /**
-     * transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = []; 
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        } 
-        return $toReturn;
     }
 }

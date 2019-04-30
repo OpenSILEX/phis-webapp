@@ -2,19 +2,21 @@
 
 //**********************************************************************************************
 //                                       _form.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
+// PHIS-SILEX
+// Copyright © INRA 2017
 // Creation date: June 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  June, 2017
 // Subject: creation or update document form
 //***********************************************************************************************
 
+/**
+ * @update [Andréas Garcia] 15 Jan., 2019: change "concern" occurences to "concernedItem"
+ */
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use kartik\file\FileInput;
+use kartik\date\DatePicker;
+use kartik\select2\Select2;
 
 require_once '../config/config.php';
 
@@ -27,6 +29,16 @@ require_once '../config/config.php';
 <div class="document-form well">
     <?php $form = ActiveForm::begin(); ?>
     
+    <script>
+        // On form submission disable creation button to prevent multiple document creation
+        $(document).ready(function() {
+           $("form#<?= $form->id ?>").submit(function() {
+               $("form#<?= $form->id ?> button[type=submit]").attr("disabled", "disabled");
+           });
+        });
+    </script>
+    <?= $form->field($model, 'returnUrl')->hiddenInput(['readonly' => 'true'])->label(false); ?>
+    
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]); ?>
     
     <?= $form->field($model, 'creator')->textInput(['maxlength' => true]); ?>
@@ -34,7 +46,7 @@ require_once '../config/config.php';
     <!-- Faire une dropdown list ?????-->
     <?= $form->field($model, 'language')->textInput(['maxlength' => true, 'placeholder' => 'fr']); ?>
     
-    <?= $form->field($model, 'creationDate')->widget(\kartik\date\DatePicker::className(), [
+    <?= $form->field($model, 'creationDate')->widget(DatePicker::className(), [
         'options' => ['placeholder' => 'Enter date creation document'],
         'pluginOptions' => [
             'autoclose' => true,
@@ -44,8 +56,8 @@ require_once '../config/config.php';
     
     <?php 
         if ($model->isNewRecord) {            
-            echo $form->field($model, 'concernedItems')->widget(\kartik\select2\Select2::classname(),[
-                'data' =>$this->params['actualConcerns'],
+            echo $form->field($model, 'concernedItems')->widget(Select2::classname(),[
+                'data' =>$this->params['currentConcernedItem'],
                 'readonly' => true,
                 'pluginOptions' => [                    
                     'multiple' => false,
@@ -54,7 +66,7 @@ require_once '../config/config.php';
         }
     ?>
     
-    <?= $form->field($model, 'documentType')->widget(\kartik\select2\Select2::classname(), [
+    <?= $form->field($model, 'documentType')->widget(Select2::classname(), [
                         'data' =>$this->params['listDocumentsTypes'],
                         'options' => ['placeholder' => 'Select document type',
                                       'multiple' => false]
@@ -71,7 +83,7 @@ require_once '../config/config.php';
             ],
             'pluginOptions' => [               
                 'maxFileCount' => 1,
-                'maxFileSize'=>2000
+                'maxFileSize'=>40000
             ]
             ]);
     } ?>

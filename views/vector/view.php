@@ -6,18 +6,24 @@
 // Creation date: 6 Apr, 2017
 // Contact: morgane.vidal@inra.fr, arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\controllers\VectorController;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use yii\helpers\Url;
+use app\models\yiiModels\YiiDocumentModel;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiVectorModel */
-/* Implements the view page for a vector */
-/* @update [Arnaud Charleroy] 22 august, 2018 (add annotation functionality) */
+/** 
+ * Implements the view page for a vector
+ * @update [Arnaud Charleroy] 22 august, 2018: add annotation functionality
+ * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
+ * @var $this yii\web\View
+ * @var $model app\models\YiiVectorModel
+ */
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 'url' => ['index']];
@@ -30,13 +36,19 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <p>
     <?php
-        if (Yii::$app->session['isAdmin']) {
-            echo Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']);
+        if (Yii::$app->session['isAdmin']) {?>
+            <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), [
+                'document/create', 
+                'concernedItemUri' => $model->uri, 
+                'concernedItemLabel' => $model->label,
+                YiiDocumentModel::RETURN_URL => Url::current()
+            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']); ?>
+            <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
+            <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
+        <?php
         }
     ?>
-    <!-- Add annotation button -->
-    <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
-    <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->label], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']); ?>
     </p>
 
 <?= DetailView::widget([
@@ -65,10 +77,18 @@ $this->params['breadcrumbs'][] = $this->title;
         ]
     ]); ?>
     
+    <!-- Linked events -->
+    <?= EventGridViewWidget::widget(
+            [
+                 EventGridViewWidget::EVENTS_PROVIDER => ${VectorController::EVENTS_PROVIDER}
+            ]
+        ); 
+    ?>
+    
     <!-- Vector linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
-                AnnotationGridViewWidget::ANNOTATIONS => ${VectorController::ANNOTATIONS_DATA}
+                AnnotationGridViewWidget::ANNOTATIONS => ${VectorController::ANNOTATIONS_PROVIDER}
             ]
         ); 
     ?>

@@ -1,13 +1,11 @@
 <?php
-
 //******************************************************************************
-//                                       PropertiesWidget.php
+//                             PropertyWidget.php
 // SILEX-PHIS
 // Copyright © INRA 2018
 // Creation date: 20 September, 2018
 // Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\components\widgets;
 
 use yii\base\Widget;
@@ -18,30 +16,46 @@ use Yii;
 
 /**
  * A widget used to generate a customizable object properties grid
- * 
  * @author Vincent Migot < vincent.migot@inra.fr>
  */
-class PropertiesWidget extends Widget {
+class PropertyWidget extends Widget {
 
-    // Uri of the main object (widget option)
+    const NO_PROPERTY_LABEL = "No Specific Property";
+
+    // widget title
+    public $title;
+    
+    // URI of the main object (widget option)
     public $uri;
+    
+    // is URI required or not
+    public $isUriRequired = false;
+    
     // Property type which match the alias value (widget option)
     public $aliasProperty;
+    
     // List of object properties (widget option)
     public $properties;
+    
     // Array of rdf type, if corresponding values found in $properties, 
     // it will display it first in the given order (widget option)
     public $relationOrder;
+    
     // Basic template rendering option (widget option)
     public $template = '<tr><th>{label}</th><td>{value}</td></tr>';
+    
     // Basic table options
     public $options = ['class' => 'table table-striped table-bordered properties-widget'];
+    
     // Alias of the main object determined from aliasProperty options
-    private $alias = "";
+    private $alias;
+    
     // Internal representation of fields array, corresponding to $relationOrder option
     private $fields = [];
+    
     // Internal representation of extrafields array, corresponding to properties not described in $relationOrder option
     private $extraFields = [];
+    
     // Mapping of formatters based on rdf type value
     protected $propertyFormatters = [
         "Infrastructure" => PropertyFormatter::INFRASTRUCTURE,
@@ -68,9 +82,8 @@ class PropertiesWidget extends Widget {
             }
         }
         $this->propertyFormatters = $formatters;
-
-        // must be not null
-        if ($this->uri === null) {
+        
+        if ($this->uri === null && $this->isUriRequired) {
             throw new \Exception("URI isn't set");
         }
 
@@ -128,7 +141,7 @@ class PropertiesWidget extends Widget {
      *       [values] => [
      *           [0] => [
      *               [relation] => http://www.w3.org/1999/02/22-rdf-syntax-ns#type
-     *               [uri] => http://www.phenome-fppn.fr/vocabulary/2017#Installation
+     *               [uri] => http://www.opensilex.org/vocabulary/oeso#Installation
      *               [label] => installation
      *               [type] => http://www.w3.org/2002/07/owl#Class
      *               [typeLabel] => 
@@ -139,17 +152,17 @@ class PropertiesWidget extends Widget {
      *       [label] => "has part"
      *       [values] => [
      *               [0] => [
-     *                       [relation] => http://www.phenome-fppn.fr/vocabulary/2017#hasPart
+     *                       [relation] => http://www.opensilex.org/vocabulary/oeso#hasPart
      *                       [uri] => http://www.phenome-fppn.fr/m3p/eo/es2/roof
      *                       [label] => PhenoArch: roof
-     *                       [type] => http://www.phenome-fppn.fr/vocabulary/2017#Greenhouse
+     *                       [type] => http://www.opensilex.org/vocabulary/oeso#Greenhouse
      *                       [typeLabel] => greenhouse
      *               ],
      *               [1] => [
-     *                       [relation] => http://www.phenome-fppn.fr/vocabulary/2017#hasPart
+     *                       [relation] => http://www.opensilex.org/vocabulary/oeso#hasPart
      *                       [uri] => http://www.phenome-fppn.fr/m3p/es2
      *                       [label] => PhenoArch: greenhouse
-     *                       [type] => http://www.phenome-fppn.fr/vocabulary/2017#Greenhouse
+     *                       [type] => http://www.opensilex.org/vocabulary/oeso#Greenhouse
      *                       [typeLabel] => greenhouse
      *               ]
      *       ]
@@ -220,22 +233,34 @@ class PropertiesWidget extends Widget {
      * Render widget
      */
     public function run() {
-        $rows = [];
-
-        $rows[] = $this->renderAttribute("uri", $this->uri);
-        $rows[] = $this->renderAttribute("alias", $this->alias);
-
-        foreach ($this->fields as $field) {
-            $rows[] = $this->renderAttribute($field["label"], $field["values"]);
+        if(count($this->properties) == 0) {
+            $htmlRendered = "<h3>" . Yii::t('app', self::NO_PROPERTY_LABEL) . "</h3>";
         }
+        else {
+            $htmlRendered = "<h3>" . $this->title . "</h3>";
+            $rows = [];
 
-        foreach ($this->extraFields as $field) {
-            $rows[] = $this->renderAttribute($field["label"], $field["values"]);
+            if ($this->uri !== null) {
+                $rows[] = $this->renderAttribute("uri", $this->uri);
+            }
+            if ($this->alias !== null) {
+                $rows[] = $this->renderAttribute("alias", $this->alias);
+            }
+
+            foreach ($this->fields as $field) {
+                $rows[] = $this->renderAttribute($field["label"], $field["values"]);
+            }
+
+            foreach ($this->extraFields as $field) {
+                $rows[] = $this->renderAttribute($field["label"], $field["values"]);
+            }
+
+            $htmlRendered .= implode("\n", $rows);
         }
-
         $options = $this->options;
         $tag = ArrayHelper::remove($options, 'tag', 'table');
-        echo Html::tag($tag, implode("\n", $rows), $options);
+
+        echo Html::tag($tag, $htmlRendered, $options);
     }
 
     /**
@@ -293,5 +318,4 @@ class PropertiesWidget extends Widget {
             return PropertyFormatter::defaultFormat($value);
         }
     }
-
 }

@@ -3,9 +3,8 @@
 //                         WSActiveRecord.php
 // SILEX-PHIS
 // Copyright © INRA 2017
-// Creation date:  Feb, 2017
-// Contact: arnaud.charleroy@inra.fr,  morgane.vidal@inra.fr, anne.tireau@inra.fr,
-//          pascal.neveu@inra.fr
+// Creation date: Feb, 2017
+// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 namespace app\models\wsModels;
 
@@ -15,11 +14,20 @@ namespace app\models\wsModels;
  * Based on the Yii Active Record of relational databases
  * See Yii2 ActiveRecord documentation for more details
  * @see http://www.yiiframework.com/doc-2.0/guide-db-active-record.html
- * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
- * @update [Arnaud Charleroy] 14 September, 2018 : Fix totalCount attribute when only 
- *                                                 one element is returned 
+ * @update [Arnaud Charleroy] 14 September, 2018: Fix totalCount attribute when only 
+ * one element is returned 
+ * @update [Morgane Vidal] 6 November, 2018: Add the management of the page number 
+ * and the page size to send to the web service.
+ * @update [Morgane Vidal] 19 March, 2019: Add generic function to transform a JSON
+ * object into an array
+ * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 abstract class WSActiveRecord extends \yii\base\Model {
+    
+    /**
+     * name of the id field in the search parameters
+     */
+    const ID = "id";
     
     //SILEX:todo
     //use trait representing wsModel instead of attribute wsModel ? 
@@ -29,26 +37,31 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @var WSModel
      */
     protected $wsModel;
+    
     /**
      * the number of results to print per page
      * @var string
      */
     public $pageSize;
+    
     /**
      * the number of the page wanted
      * @var string
      */
     public $page;
+    
     /**
      * the total number of pages (given by the web service)
      * @var string
      */
     public $totalPages;
+    
     /**
      * the total number of data (given by the web service)
      * @var string
      */
     public $totalCount;
+    
     /**
      * true if the element is a new record, else false
      * @var boolean 
@@ -56,7 +69,6 @@ abstract class WSActiveRecord extends \yii\base\Model {
     public $isNewRecord;
     
     /**
-     * 
      * @param string $sessionToken the user session token
      * @param Array $attributes list of objects to send to the web service to 
      *                          be recorded. It is a key => value array. The key
@@ -68,7 +80,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
     public function insert($sessionToken, $attributes) {
         $requestRes =  $this->wsModel->post($sessionToken, "", $attributes);
         
-        if (isset($requestRes->{WSConstants::TOKEN})) {
+        if (isset($requestRes->{WSConstants::TOKEN_INVALID})) {
             return WEB_SERVICE_TOKEN;
         } else {
             return $requestRes;
@@ -76,7 +88,6 @@ abstract class WSActiveRecord extends \yii\base\Model {
     }
     
     /**
-     * 
      * @param string $sessionToken the user session token
      * @param array $attributes list of objects to send to the web service to 
      *                          be recorded. It is a key => value array. The key
@@ -87,7 +98,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
      */
     public function update($sessionToken, $attributes) {
         $requestRes = $this->wsModel->put($sessionToken, "", $attributes);
-        if (isset($requestRes->{WSConstants::TOKEN})) {
+        if (isset($requestRes->{WSConstants::TOKEN_INVALID})) {
             return WEB_SERVICE_TOKEN;
         } else {
             return $requestRes;
@@ -95,14 +106,13 @@ abstract class WSActiveRecord extends \yii\base\Model {
     }
     
     /**
-     * 
      * @param string $sessionToken the user session token
      * @param array $attributes the search params. It is a key => value array. The key
      *                          is the name of the field.
      * @return an array with the results,
-               "token" if the user needs to log in (invalid token).
+     *         "token" if the user needs to log in (invalid token).
      */
-    public function find($sessionToken, $attributes) {
+    public function find($sessionToken, $attributes) {  
         $requestRes = $this->wsModel->get($sessionToken, "", $attributes);
 
         if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION})) {
@@ -118,7 +128,7 @@ abstract class WSActiveRecord extends \yii\base\Model {
         }
         
         if (isset($requestRes->{WSConstants::RESULT}->{WSConstants::DATA}))  {
-            return (array) $requestRes->{WSConstants::RESULT}->{WSConstants::DATA};
+            return (array)$requestRes->{WSConstants::RESULT}->{WSConstants::DATA};
             
         } else {
             return $requestRes;
@@ -126,29 +136,37 @@ abstract class WSActiveRecord extends \yii\base\Model {
     }
     
     /**
-     * Create an array representing the image metadata
+     * Creates an array representing search parameters about pagination
      * Used for the web service for example
      * @return array with the attributes. 
      */
-    abstract public function attributesToArray();
+    public function attributesToArray() {
+        $toReturn = null;
+        $toReturn[WSConstants::PAGE] = $this->page;
+        $toReturn[WSConstants::PAGE_SIZE] = $this->pageSize;
+        
+        return $toReturn;
+    }
     
     /**
-     * allows to fill the attributes with the informations in the array given 
+     * Allows to fill the attributes with the information in the array given 
      * @param array $array array key => value which contains the metadata of an image
      */
     abstract protected function arrayToAttributes($array);
     
+
     /**
-     * Return the number of the ws page
-     * @return int
+     * Transforms a JSON object into an array
+     * @param json jsonList
+     * @return array
      */
-    public function getPageForWS() {
-        if($this->page == null){
-             return $this->page = 0;
+    protected static function jsonListOfArraysToArray($jsonList) {
+        $toReturn = [];
+        if ($jsonList !== null) {
+            foreach ($jsonList as $value) {
+                $toReturn[] = $value;
+            }
         }
-        if($this->page === 0){
-             return $this->page;
-        }
-        return ($this->page - 1);
+        return $toReturn;
     }
 }

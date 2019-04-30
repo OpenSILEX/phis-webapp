@@ -26,10 +26,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
-
+    <?php if (Yii::$app->session['isAdmin']) { ?>
     <p>
         <?= Html::a(Yii::t('yii', 'Create') . ' ' . Yii::t('app', '{n, plural, =1{Variable} other{Variables}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
+    <?php } ?>
     
    <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -41,21 +42,54 @@ $this->params['breadcrumbs'][] = $this->title;
               'format' => 'raw',
               'value' => function ($model,  $key, $index) {
                     return $model->trait->{'label'} ;
-              }
+              },
+                'filter' => \kartik\select2\Select2::widget([
+                   'attribute' => 'trait',
+                   'model' => $searchModel,
+                   'data' => $listTraits,
+                   'options' => [
+                       'placeholder' => Yii::t('app', 'Select trait alias...')
+                   ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                 ]),
             ],
             [
               'attribute' => 'method',
               'format' => 'raw',
               'value' => function ($model,  $key, $index) {
                     return $model->method->{'label'} ;
-              }
+              },
+              'filter' => \kartik\select2\Select2::widget([
+                     'attribute' => 'method',
+                     'model' => $searchModel,
+                     'data' => $listMethods,
+                     'options' => [
+                         'placeholder' => Yii::t('app', 'Select method alias...')
+                     ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                 ]),
             ],
             [
               'attribute' => 'unit',
               'format' => 'raw',
               'value' => function ($model,  $key, $index) {
                     return $model->unit->{'label'} ;
-              }
+               },
+                'filter' => \kartik\select2\Select2::widget([
+                     'attribute' => 'unit',
+                     'model' => $searchModel,
+                     'data' => $listUnits,
+                     'options' => [
+                         'placeholder' => Yii::t('app', 'Select unit alias...')
+                     ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                 ]),
             ],
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',

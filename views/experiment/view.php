@@ -1,25 +1,33 @@
 <?php
 //******************************************************************************
-//                           view.php
+//                                   view.php
 // SILEX-PHIS
 // Copyright © INRA 2018
-// Creation date: Feb, 2017
+// Creation date: Feb., 2017
 // Contact: morgane.vidal@inra.fr, arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
+use yii\helpers\Url;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
 use app\controllers\ExperimentController;
+use app\components\widgets\LinkObjectsWidget;
+use app\models\yiiModels\YiiDocumentModel;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiExperimentModel */
-/* Implements the view page for an Experiment */
-/* @update [Arnaud Charleroy] 23 august, 2018 (add annotation functionality) */
+/** 
+ * Implements the view page for an Experiment
+ * @update [Arnaud Charleroy] 23 august, 2018 (add annotation functionality)
+ * @update [Andréas Garcia] 15 Jan., 2019: change "concern" occurences to "concernedItem"
+ * @update [Andréas Garcia] 06 March, 2019: add event button and widget
+ * @var $this yii\web\View
+ * @var $model app\models\YiiExperimentModel 
+ */
 
-$this->title = $model->uri;
+$this->title = $model->alias;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -29,20 +37,25 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php
-        if (Yii::$app->session['isAdmin'] || $this->params['canUpdate']) {
-            echo Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']);
+        if (Yii::$app->session['isAdmin'] || $this->params['canUpdate']) { ?>
+            <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), 
+                    [
+                        'document/create', 
+                        'concernedItemUri' => $model->uri, 
+                        'concernedItemLabel' => $model->alias, 
+                        'concernedItemRdfType' => Yii::$app->params["Experiment"],
+                        YiiDocumentModel::RETURN_URL => Url::current()
+                    ], 
+                    ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>            
+            <?= EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
+            <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
+            <?php
         }
         ?>
-         <!-- Add annotation button -->
-        <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
-        <?= Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->alias, 'concernRdfType' => Yii::$app->params["Experiment"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+        
         <?= Html::a(Yii::t('app', 'Map Visualization'), 
-                ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'false'], ['class' => 'btn btn-info']) ?>
-        <?php if (Yii::$app->session['isAdmin']) {
-            echo Html::a(Yii::t('app', 'Generate Map'), 
-                ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.phenome-fppn.fr/vocabulary/2017#Experiment', 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
-            }
-         ?>
+                ['layer/view', 'objectURI' => $model->uri, 'objectType' => 'http://www.opensilex.org/vocabulary/oeso#Experiment', 'depth' => 'true', 'generateFile' => 'false', 'objectLabel' => $model->alias], ['class' => 'btn btn-info']) ?>
         </p>
 
     <?php
@@ -118,13 +131,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'objective',
             //'groups',
             'keywords',
-            'comment:ntext',
+            [
+                'attribute' => 'comment',
+                'contentOptions' => ['class' => 'multi-line'], 
+            ],                    
             [
                 'attribute' => 'groups',
                 'format' => 'raw',
                 'value' => function ($model) {
                     $toReturn = "";
-                    if (count($model->groups) > 0) {
+                    if (is_array($model->groups) && count($model->groups) > 0) {
                         foreach ($model->groups as $group) {
                             $toReturn .= Html::a($group["name"], ['group/view', 'id' => $group["uri"]]);
                             $toReturn .= ", ";
@@ -134,6 +150,40 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $toReturn;
                 }
             ],
+            [
+                'attribute' => 'variables',
+                'format' => 'raw',
+                'value' => function ($model) use ($variables) {
+                    return LinkObjectsWidget::widget([
+                        "uri" => $model->uri,
+                        "updateLinksAjaxCallUrl" => Url::to(['experiment/update-variables']),
+                        "items" => $variables,
+                        "actualItems" => is_array($model->variables) ? array_keys($model->variables) : [],
+                        "itemViewRoute" => "variable/view",
+                        "conceptLabel" => "measured variables",
+                        "canUpdate" => true,
+                        "updateMessage" => Yii::t('app', 'Update measured variables'),
+                        "infoMessage" => Yii::t('app/messages', 'When you change measured variables in the list, click on the check button to update them.')
+                    ]);
+                }
+            ],
+            [
+                'attribute' => 'sensors',
+                'format' => 'raw',
+                'value' => function ($model) use ($sensors) {
+                    return LinkObjectsWidget::widget([
+                        "uri" => $model->uri,
+                        "updateLinksAjaxCallUrl" => Url::to(['experiment/update-sensors']),
+                        "items" => $sensors,
+                        "actualItems" => is_array($model->sensors) ? array_keys($model->sensors) : [],
+                        "itemViewRoute" => "sensor/view",
+                        "conceptLabel" => "sensors",
+                        "canUpdate" => true,
+                        "updateMessage" => Yii::t('app', 'Update sensors'),
+                        "infoMessage" => Yii::t('app/messages', 'When you change sensors in the list, click on the check button to update them.')
+                    ]);
+                }
+            ]
         ];
     } else {
         $attributes = [
@@ -194,6 +244,40 @@ $this->params['breadcrumbs'][] = $this->title;
             //'groups',
             'keywords',
             'comment:ntext',
+            [
+                'attribute' => 'variables',
+                'format' => 'raw',
+                'value' => function ($model) use ($variables) {
+                    return LinkObjectsWidget::widget([
+                        "uri" => $model->uri,
+                        "updateLinksAjaxCallUrl" => Url::to(['experiment/update-variables']),
+                        "items" => $variables,
+                        "actualItems" => is_array($model->variables) ? array_keys($model->variables) : [],
+                        "itemViewRoute" => "variable/view",
+                        "conceptLabel" => "measured variables",
+                        "canUpdate" => false,
+                        "updateMessage" => Yii::t('app', 'Update measured variables'),
+                        "infoMessage" => Yii::t('app/messages', 'When you change measured variables in the list, click on the check button to update them.')
+                    ]);
+                }
+            ],
+            [
+                'attribute' => 'sensors',
+                'format' => 'raw',
+                'value' => function ($model) use ($sensors) {
+                    return LinkObjectsWidget::widget([
+                        "uri" => $model->uri,
+                        "updateLinksAjaxCallUrl" => Url::to(['experiment/update-sensors']),
+                        "items" => $sensors,
+                        "actualItems" => is_array($model->sensors) ? array_keys($model->sensors) : [],
+                        "itemViewRoute" => "sensor/view",
+                        "conceptLabel" => "sensors",
+                        "canUpdate" => false,
+                        "updateMessage" => Yii::t('app', 'Update sensors'),
+                        "infoMessage" => Yii::t('app/messages', 'When you change sensors in the list, click on the check button to update them.')
+                    ]);
+                }
+            ]
         ];
     }
 
@@ -202,10 +286,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => $attributes
     ]);
     ?>
+    
+    <?= EventGridViewWidget::widget(
+            [
+                 EventGridViewWidget::EVENTS_PROVIDER => ${ExperimentController::EVENT_PROVIDER}
+            ]
+        ); 
+    ?>
+        
     <!-- Experiment linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
-                 AnnotationGridViewWidget::ANNOTATIONS => ${ExperimentController::ANNOTATIONS_DATA}
+                 AnnotationGridViewWidget::ANNOTATIONS => ${ExperimentController::ANNOTATION_PROVIDER}
             ]
         ); 
     ?>
@@ -236,13 +328,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php
     if ($dataAgronomicalObjectsProvider->getCount() > 0) {
-        echo "<h3>" . Yii::t('app', 'Linked Agronomical Objects') . "</h3>";
+        echo "<h3>" . Yii::t('app', 'Linked Scientific Objects') . "</h3>";
         echo GridView::widget([
             'dataProvider' => $dataAgronomicalObjectsProvider,
             'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
                 'uri',
-                'alias',
+                'label',
                 [
                     'attribute' => 'rdfType',
                     'format' => 'raw',

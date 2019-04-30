@@ -48,7 +48,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             return $toReturn;
                         }
                     ],
-                    'comment',   
+                    [
+                        'attribute' => 'comment',
+                        'contentOptions' => ['class' => 'multi-line'], 
+                    ],     
                 ],
             ]) ?>
         </div>
@@ -78,7 +81,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             return $toReturn;
                         }
                     ],
-                    'comment',   
+                    [
+                        'attribute' => 'comment',
+                        'contentOptions' => ['class' => 'multi-line'], 
+                    ],     
                 ],
             ]) ?>
         </div>
@@ -105,7 +111,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             return $toReturn;
                         }
                     ],
-                    'comment',   
+                    [
+                        'attribute' => 'comment',
+                        'contentOptions' => ['class' => 'multi-line'], 
+                    ],     
                 ],
             ]) ?>
         </div>
@@ -132,7 +141,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             return $toReturn;
                         }
                     ],
-                    'comment',   
+                    [
+                        'attribute' => 'comment',
+                        'contentOptions' => ['class' => 'multi-line'], 
+                    ],     
                 ],
             ]) ?>
         </div>

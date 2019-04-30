@@ -14,6 +14,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\SensorSearch */
@@ -31,7 +32,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php
             if (Yii::$app->session['isAdmin']) {
                 echo Html::a(Yii::t('yii', 'Create') . ' ' . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) . "\t";
-                echo Html::a(Yii::t('app', 'Characterize Sensor'), ['characterize'], ['class' => 'btn btn-success']);
             }
         ?>
     </p>
@@ -41,8 +41,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            
-            'uri',
+            [
+              'attribute' => 'uri',
+              'format' => 'raw',
+               'value' => 'uri',
+              'filter' =>false,
+            ],
             'label',
             [
               'attribute' => 'rdfType',
@@ -53,8 +57,33 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'brand',
             'serialNumber',
-            'inServiceDate',
-            'dateOfLastCalibration',
+            'model',
+            [
+              'attribute' => 'inServiceDate',
+              'format' => 'raw',
+               'value' => 'inServiceDate',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'inServiceDate',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
+            [
+              'attribute' => 'dateOfLastCalibration',
+              'format' => 'raw',
+               'value' => 'dateOfLastCalibration',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'dateOfLastCalibration',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
             [
               'attribute' => 'personInCharge',
               'format' => 'raw',

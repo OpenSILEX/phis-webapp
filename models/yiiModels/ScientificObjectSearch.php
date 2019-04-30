@@ -1,7 +1,7 @@
 <?php
 
 //**********************************************************************************************
-//                                       AgronomicalObjectSearch.php 
+//                                       ScientificObjectSearch.php 
 //
 // Author(s): Morgane VIDAL
 // PHIS-SILEX version 1.0
@@ -9,20 +9,20 @@
 // Creation date: October 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 // Last modification date:  October, 3 2017
-// Subject: AgronomicalObjectSearch represents the model behind the search form about app\models\AgronomicalObject
+// Subject: ScientificObjectSearch represents the model behind the search form about app\models\YiiScientificObjectModel
 //          Based on the Yii2 Search basic class
 //***********************************************************************************************
 
 namespace app\models\yiiModels;
 
-use app\models\yiiModels\YiiAgronomicalObjectModel;
+use app\models\yiiModels\YiiScientificObjectModel;
 
 /**
- * implements the search action for the agronomical objects
+ * implements the search action for the scientific objects
  *
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
-class AgronomicalObjectSearch extends YiiAgronomicalObjectModel {
+class ScientificObjectSearch extends YiiScientificObjectModel {
     //SILEX:refactor
     //create a trait (?) with methods search and jsonListOfArray and use it in 
     //each class ElementNameSearch
@@ -34,7 +34,7 @@ class AgronomicalObjectSearch extends YiiAgronomicalObjectModel {
     public function rules()
     {
         return [
-            [['uri', 'experiment', 'alias'], 'safe'],
+            [['uri', 'experiment', 'alias', 'type'], 'safe'],
         ];
     }
     
@@ -46,8 +46,10 @@ class AgronomicalObjectSearch extends YiiAgronomicalObjectModel {
      *               or string "token" if the user needs to log in
      */
     public function search($sessionToken, $params) {
+        
         //1. load the searched params 
         $this->load($params);
+        
         if (isset($params[YiiModelsConstants::PAGE])) {
             $this->page = $params[YiiModelsConstants::PAGE];
         }
@@ -57,14 +59,14 @@ class AgronomicalObjectSearch extends YiiAgronomicalObjectModel {
             return new \yii\data\ArrayDataProvider();
         }
         
-        //3. Request to the web service and return result
+        //3. Request to the web service and return result        
         $findResult = $this->find($sessionToken, $this->attributesToArray());
         
         if (is_string($findResult)) {
             return $findResult;
         } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN) {
-            return \app\models\wsModels\WSConstants::TOKEN;
+                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
+            return \app\models\wsModels\WSConstants::TOKEN_INVALID;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
             return new \yii\data\ArrayDataProvider([
@@ -79,20 +81,5 @@ class AgronomicalObjectSearch extends YiiAgronomicalObjectModel {
                 //\SILEX:info
             ]);
         }
-    }
-    
-    /**
-     * transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = []; 
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        } 
-        return $toReturn;
     }
 }

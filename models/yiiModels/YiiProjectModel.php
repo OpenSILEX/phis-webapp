@@ -49,7 +49,7 @@ class YiiProjectModel extends WSActiveRecord {
     const ACRONYME = "acronyme";
     /**
      * the subproject type
-     *  (e.g. http://www.phenome-fppn.fr/vocabulary/2017#CDD)
+     *  (e.g. http://www.opensilex.org/vocabulary/oeso#CDD)
      * @var string
      */
     public $subprojectType;
@@ -74,9 +74,9 @@ class YiiProjectModel extends WSActiveRecord {
     const WEBSITE = "website";
     const CONTACTS = "contacts";
     const CONTACT_TYPE = "type";
-    const CONTACT_SCIENTIFIC_CONTACT = "http://www.phenome-fppn.fr/vocabulary/2017/#ScientificContact";
-    const CONTACT_PROJECT_COORDINATOR = "http://www.phenome-fppn.fr/vocabulary/2017/#ProjectCoordinator";
-    const CONTACT_ADMINISTRATIVE_CONTACT = "http://www.phenome-fppn.fr/vocabulary/2017/#AdministrativeContact";
+    const CONTACT_SCIENTIFIC_CONTACT = "http://www.opensilex.org/vocabulary/oeso/#ScientificContact";
+    const CONTACT_PROJECT_COORDINATOR = "http://www.opensilex.org/vocabulary/oeso/#ProjectCoordinator";
+    const CONTACT_ADMINISTRATIVE_CONTACT = "http://www.opensilex.org/vocabulary/oeso/#AdministrativeContact";
     public $scientificContacts;
     public $administrativeContacts;
     public $projectCoordinatorContacts;
@@ -166,6 +166,7 @@ class YiiProjectModel extends WSActiveRecord {
      *         ou d'envoyer lui-même son propre tableau (dans le cas où il souhaite enregistrer plusieurs instances)
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiProjectModel::URI] = $this->uri;
         $elementForWebService[YiiProjectModel::NAME] = $this->name;
         $elementForWebService[YiiProjectModel::ACRONYME]= $this->acronyme;
@@ -233,7 +234,7 @@ class YiiProjectModel extends WSActiveRecord {
         
         $requestRes = $this->wsModel->getProjectByURI($sessionToken, $uri, $params);
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);

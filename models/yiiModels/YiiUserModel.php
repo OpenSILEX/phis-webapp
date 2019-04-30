@@ -151,6 +151,7 @@ class YiiUserModel extends WSActiveRecord {
      *         ou d'envoyer lui-même son propre tableau (dans le cas où il souhaite enregistrer plusieurs instances)
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiUserModel::EMAIL] = $this->email;
         $elementForWebService[YiiUserModel::PASSWORD] = $this->password;
         $elementForWebService[YiiUserModel::FIRST_NAME] = $this->firstName;
@@ -158,7 +159,9 @@ class YiiUserModel extends WSActiveRecord {
         $elementForWebService[YiiUserModel::ADDRESS] = $this->address;
         $elementForWebService[YiiUserModel::PHONE] = $this->phone;
         $elementForWebService[YiiUserModel::AFFILIATION] = $this->affiliation;
-        $elementForWebService[YiiUserModel::ORCID] = $this->orcid;
+        if ($this->orcid !== "") {
+            $elementForWebService[YiiUserModel::ORCID] = $this->orcid;
+        }
         $elementForWebService[YiiUserModel::ADMIN] = $this->isAdmin;
 //        $elementForWebService["available"] = $this->available;
         if ($this->groups != null) {
@@ -187,7 +190,7 @@ class YiiUserModel extends WSActiveRecord {
 
         $requestRes = $this->wsModel->getUserByEmail($sessionToken, $email, $params);
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);
@@ -215,7 +218,7 @@ class YiiUserModel extends WSActiveRecord {
 
         $requestRes = $this->wsModel->getUserByEmail($sessionToken, $uri, $params);
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);
@@ -227,21 +230,33 @@ class YiiUserModel extends WSActiveRecord {
     }
     
     /**
-     * 
-     * @return array the list of the users mails existing in the database
+     * Get all the persons emails
+     * @return array the list of the users mails and names existing in the database
+     * @example returned array : 
+     * [
+     *      ["email@email.fr"] => "E Mail",
+     *      ...
+     * ]
      */
-    public function getUsersMails($sessionToken) {
-        $searchUserModel = new UserSearch();
-        $users = $searchUserModel->find($sessionToken, []);
-        $usersMails = null;
-
+    public function getPersonsMailsAndName($sessionToken) {
+        $users = $this->find($sessionToken, $this->attributesToArray());
+        $usersToReturn = [];
+        
         if ($users !== null) {
-            foreach ($users as $user) {
-                $usersMails[] = $user->email;
+            //1. get the emails
+            foreach($users as $user) {
+                $usersToReturn[$user->email] = $user->firstName . " " . $user->familyName;
             }
+            
+            //2. if there are other pages, get the other users
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextUsers = $this->getPersonsMailsAndName($sessionToken);
+                
+                $usersToReturn = array_merge($usersToReturn, $nextUsers);
+            }
+            
+            return $usersToReturn;
         }
-
-        return $usersMails;
     }
-
 }

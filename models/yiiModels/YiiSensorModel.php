@@ -40,7 +40,7 @@ class YiiSensorModel extends WSActiveRecord {
     const URI = "uri";
     /**
      * the type uri (concept uri) of the sensor
-     * @example http://www.phenome-fppn.fr/vocabulary/2017#RadiationSensor
+     * @example http://www.opensilex.org/vocabulary/oeso#RadiationSensor
      * @var string
      */
     public $rdfType;
@@ -66,6 +66,13 @@ class YiiSensorModel extends WSActiveRecord {
      */
     public $serialNumber;
     const SERIAL_NUMBER = "serialNumber";
+    /**
+     * The model of the sensor.
+     * @example m001
+     * @var string
+     */
+    public $model;
+    const MODEL = "model";
     /**
      * the in service date of the sensor
      * @example 2011-05-01
@@ -144,9 +151,8 @@ class YiiSensorModel extends WSActiveRecord {
      */
     public function rules() {
        return [ 
-           [['rdfType', 'uri'], 'required'], 
-           [['serialNumber', 'dateOfPurchase', 'dateOfLastCalibration', 'documents',
-              'brand', 'label', 'inServiceDate', 'personInCharge', 'properties'], 'safe']
+           [['rdfType', 'uri', 'inServiceDate'], 'required'], 
+           [['serialNumber', 'model', 'dateOfPurchase', 'dateOfLastCalibration', 'documents','brand', 'label', 'inServiceDate', 'personInCharge', 'properties'], 'safe']
         ]; 
     }
     
@@ -162,6 +168,7 @@ class YiiSensorModel extends WSActiveRecord {
             'brand' => Yii::t('app', 'Brand'),
             'serialNumber'=> Yii::t('app', 'Serial Number'),
             'inServiceDate' => Yii::t('app', 'In Service Date'),
+            'model' => Yii::t('app', 'Model'),
             'dateOfPurchase' => Yii::t('app', 'Date Of Purchase'),
             'dateOfLastCalibration' => Yii::t('app', 'Date Of Last Calibration'),
             'personInCharge' => Yii::t('app', 'Person In Charge'),
@@ -181,6 +188,7 @@ class YiiSensorModel extends WSActiveRecord {
         $this->brand = $array[YiiSensorModel::BRAND];
         $this->serialNumber = $array[YiiSensorModel::SERIAL_NUMBER];
         $this->inServiceDate = $array[YiiSensorModel::IN_SERVICE_DATE];
+        $this->model = $array[YiiSensorModel::MODEL];
         $this->dateOfLastCalibration = $array[YiiSensorModel::DATE_OF_LAST_CALIBRATION];
         $this->dateOfPurchase = $array[YiiSensorModel::DATE_OF_PURCHASE];
         $this->personInCharge = $array[YiiSensorModel::PERSON_IN_CHARGE];
@@ -214,8 +222,7 @@ class YiiSensorModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $elementForWebService[YiiModelsConstants::PAGE] = $this->page <= 0 ? 0 : $this->page - 1;
-        $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiSensorModel::URI] = $this->uri;
         $elementForWebService[YiiSensorModel::RDF_TYPE] = $this->rdfType;
         $elementForWebService[YiiSensorModel::LABEL] = $this->label;
@@ -223,14 +230,17 @@ class YiiSensorModel extends WSActiveRecord {
         $elementForWebService[YiiSensorModel::IN_SERVICE_DATE] = $this->inServiceDate;
         $elementForWebService[YiiSensorModel::PERSON_IN_CHARGE] = $this->personInCharge;
         
-        if ($this->serialNumber !== null) {
+        if ($this->serialNumber !== null && $this->serialNumber !== "") {
             $elementForWebService[YiiSensorModel::SERIAL_NUMBER] = $this->serialNumber;
         }
-        if ($this->dateOfLastCalibration !== null) {
+        if ($this->dateOfLastCalibration !== null && $this->dateOfLastCalibration !== "") {
             $elementForWebService[YiiSensorModel::DATE_OF_LAST_CALIBRATION] = $this->dateOfLastCalibration;
         }
-        if ($this->dateOfPurchase !== null) {
+        if ($this->dateOfPurchase !== null && $this->dateOfPurchase !== "") {
            $elementForWebService[YiiSensorModel::DATE_OF_PURCHASE] = $this->dateOfPurchase; 
+        }
+        if ($this->model !== null && $this->model !== "") {
+            $elementForWebService[YiiSensorModel::MODEL] = $this->model;
         }
         
         return $elementForWebService;
@@ -242,7 +252,7 @@ class YiiSensorModel extends WSActiveRecord {
      * @return list of the sensors types
      */
     public function getSensorsTypes($sessionToken) {
-        $sensorConceptUri = "http://www.phenome-fppn.fr/vocabulary/2017#SensingDevice";
+        $sensorConceptUri = "http://www.opensilex.org/vocabulary/oeso#SensingDevice";
         $params = [];
         if ($this->pageSize !== null) {
            $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
@@ -255,7 +265,7 @@ class YiiSensorModel extends WSActiveRecord {
         $requestRes = $wsUriModel->getDescendants($sessionToken, $sensorConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return "token";
             } else {
                 return $requestRes;
@@ -280,8 +290,8 @@ class YiiSensorModel extends WSActiveRecord {
         }
         $requestRes = $this->wsModel->getSensorByUri($sessionToken, $uri, $params);
         
-        if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+        if (!is_string($requestRes) && !is_object($requestRes)) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);
@@ -309,7 +319,7 @@ class YiiSensorModel extends WSActiveRecord {
         $requestRes = $this->wsModel->getSensorProfile($sessionToken, $uri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->propertiesArrayToAttributes($requestRes);
@@ -339,6 +349,50 @@ class YiiSensorModel extends WSActiveRecord {
     }
     
     /**
+     * If the key has a "relation" correspondance in the ontology, 
+     * return the relation uri else return null
+     * @param string $key
+     * @return string e.g. http://www.opensilex.org/vocabulary/oeso#width
+     */
+    public static function getPropertyFromKey($key) {
+        if ($key === "height") {
+            return Yii::$app->params["height"];
+        } elseif ($key === "width") {
+            return Yii::$app->params["width"];
+        } elseif ($key === "pixelSize") {
+            return Yii::$app->params["pixelSize"];
+        } elseif (strstr($key, "wavelength")) {
+            return Yii::$app->params["wavelength"];
+        } elseif ($key === "scanningAngularRange") {
+            return Yii::$app->params["scanningAngularRange"];
+        } elseif ($key === "scanAngularResolution") {
+            return Yii::$app->params["scanAngularResolution"];
+        } elseif ($key === "spotWidth") {
+            return Yii::$app->params["spotWidth"];
+        } elseif ($key === "spotHeight") {
+            return Yii::$app->params["spotHeight"];
+        } elseif ($key === "halfFieldOfView") {
+            return Yii::$app->params["halfFieldOfView"];
+        } elseif ($key === "minWavelength") {
+            return Yii::$app->params["minWavelength"];
+        } elseif ($key === "maxWavelength") {
+            return Yii::$app->params["maxWavelength"];
+        } elseif ($key === "spectralSamplingInterval") {
+            return Yii::$app->params["spectralSamplingInterval"];
+        } elseif ($key === "lensUri") {
+            return Yii::$app->params["hasLens"];
+        } elseif (strstr($key, "focalLength")) {
+            return Yii::$app->params["focalLength"];
+        } elseif (strstr($key, "attenuatorFilter")) {
+            return Yii::$app->params["attenuatorFilter"];
+        } elseif (strstr($key, "waveband")) {
+            return Yii::$app->params["waveband"];
+        }
+        
+        return null;
+    }
+    
+    /*
      * Update variables measured by a sensor
      * @param string $sessionToken
      * @param string $sensorUri
@@ -355,5 +409,35 @@ class YiiSensorModel extends WSActiveRecord {
         } else {
             return $requestRes;
         }
+    }
+
+    /**
+     * Get all the sensors uri and label
+     * @return array the list of the sensors uri and label existing in the database
+     * @example returned array : 
+     * [
+     *      ["http://www.opensilex.fr/platform/s001"] => "sensor label",
+     *      ...
+     * ]
+     */
+    public function getAllSensorsUrisAndLabels($sessionToken) {
+        $foundedSensors = $this->find($sessionToken, $this->attributesToArray());
+        $sensorsToReturn = [];
+        
+        if ($foundedSensors !== null) {
+            foreach($foundedSensors as $sensor) {
+                $sensorsToReturn[$sensor->uri] = $sensor->label;
+            }
+            
+            // If there are other pages, get the other sensors
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextSensors = $this->getAllSensorsUrisAndLabels($sessionToken);
+
+                $sensorsToReturn = array_merge($sensorsToReturn, $nextSensors);
+            }
+        }
+        
+        return $sensorsToReturn;
     }
 }

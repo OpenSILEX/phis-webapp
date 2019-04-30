@@ -16,8 +16,9 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiLayerModel */
+/* @var $objectLabel String */
 
-$this->title = $model->objectURI;
+$this->title = $objectLabel;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['experiment/index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['experiment/view', 'id' => $this->title]];
@@ -29,8 +30,15 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
     
 <div class="layer-view">
 
-     <h1><?= Html::encode($this->title) ?></h1>
-     
+    <h1>
+        <?= Html::encode($this->title) ?>
+    </h1>
+        <?php if (Yii::$app->session['isAdmin']) {
+           echo Html::a(Yii::t('app', 'Generate Map'), 
+               ['layer/view', 'objectURI' => $model->objectURI, 'objectType' => Yii::$app->params["Experiment"], 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
+           }
+        ?>
+     </h1>
     <div id="map" class="map"></div>
     <p><i>Use Alt+Shift+Drag to rotate the map. Use Ctrl+Click+Drag to select multiple elements.</i></p>
     <div id="info">
@@ -120,7 +128,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
             selectedFeatures.on(['add', 'remove'], function() {
                 selectedPlots = selectedFeatures.getArray().map(function(feature) {
                     //Tableau représentant un plot 
-                    //[uri, typeElement, alias, species, variety, genotype, experimentModalities, repetition]
+                    //[uri, typeElement, alias, species, variety, genotype, experimentModalities, replication]
                     var plot = [];
                     if (feature.get('uri') !== undefined) {
                         plot.push(feature.get('uri'));
@@ -129,14 +137,14 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                         } else {
                             plot.push("");
                         }
-                        if (feature.get('alias') !== undefined) {
-                            plot.push(feature.get('alias'));
+                        if (feature.get('label') !== undefined) {
+                            plot.push(feature.get('label'));
                         } else {
                             plot.push("");
                         }
                         if (feature.get('species') !== undefined) {
-                            var species = feature.get('species').split("species/");
-                            plot.push(species[1]);
+                            var species = feature.get('species').split("/");
+                            plot.push(species[species.length - 1]);
                         } else {
                             plot.push("");
                         }
@@ -157,8 +165,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                         } else {
                             plot.push("");
                         }
-                        if (feature.get('repetition') !== undefined) {
-                            plot.push(feature.get('repetition'));
+                        if (feature.get('replication') !== undefined) {
+                            plot.push(feature.get('replication'));
                         } else {
                             plot.push("");
                         }
@@ -201,7 +209,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
             });
             
              $(document).ready(function(){
-                $('#visualization-dataset').load('<?php echo Url::to(['dataset/search-from-layer']) ?>');
+//                $('#visualization-dataset').load('<?php //echo Url::to(['dataset/search-from-layer']) ?>');
+                $('#visualization-dataset').load('<?php echo Url::to(['data/search-from-layer']) ?>');
                 $('#visualization-images').load('<?php echo Url::to(['image/search-from-layer'])?>');
              });
              
@@ -233,7 +242,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                             searchFormData.append("agronomicalObjects", plots);
 
                             $.ajax({
-                               url: '<?php echo Url::to(['dataset/search-from-layer']) ?>', 
+                               url: '<?php echo Url::to(['data/search-from-layer']) ?>', 
                                type: 'POST',
                                processData: false,
                                datatype: 'json',
@@ -260,40 +269,38 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
                 $.each(data, function(key, input) {
                     searchFormData.append(input.name, input.value); 
                 });
-                var plots = "";
+                var hasPlotSelected = false;
                 if (typeof selectedPlots !== 'undefined') {
                     for (var i = 0; i < selectedPlots.length; i++) {
-                        plots += selectedPlots[i][0];
-                        if (i < selectedPlots.length-1) {
-                            plots += ",";
-                        } 
+                        searchFormData.append("concernedItems[]", selectedPlots[i][0]);
+                        hasPlotSelected = true;
                     }
+                } 
+                
+                if (!hasPlotSelected) {
+                    alert("You must select at least one plot before searching for images");
                 } else {
-                    plots = null;
+                    $.ajax({
+                        url: '<?php echo Url::to(['image/search-from-layer']) ?>', 
+                        type: 'POST',
+                        processData: false,
+                        datatype: 'json',
+                        contentType: false,
+                        data: searchFormData 
+                    }) 
+                    .done(function (data) {
+                        //SILEX:todo
+                        //gestion messages d'erreur
+                        //\SILEX:todo
+                        $('#visualization-images').html(data);
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        //SILEX:todo
+                        //gestion messages d'erreur
+                        //\SILEX:todo
+                        alert("ERROR : " + jqXHR);
+                    });
                 }
-                
-                searchFormData.append("concernedElements", plots);
-                
-                $.ajax({
-                    url: '<?php echo Url::to(['image/search-from-layer']) ?>', 
-                    type: 'POST',
-                    processData: false,
-                    datatype: 'json',
-                    contentType: false,
-                    data: searchFormData 
-                 }) 
-                   .done(function (data) {
-                     //SILEX:todo
-                     //gestion messages d'erreur
-                     //\SILEX:todo
-                     $('#visualization-images').html(data);
-                  })
-                  .fail(function (jqXHR, textStatus) {
-                     //SILEX:todo
-                     //gestion messages d'erreur
-                     //\SILEX:todo
-                     alert("ERROR : " + jqXHR);
-                  });
             });
             
     </script>    

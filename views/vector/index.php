@@ -15,6 +15,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use kartik\date\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\VectorSearch */
@@ -29,7 +30,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
+        <?php
+            if (Yii::$app->session['isAdmin']) { ?>
         <?= Html::a(Yii::t('yii', 'Create') . ' ' . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) ?>
+        <?php
+            }
+        ?>
     </p>
     
    <?= GridView::widget([
@@ -38,7 +44,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             
-            'uri',
+            [
+              'attribute' => 'uri',
+              'format' => 'raw',
+               'value' => 'uri',
+              'filter' =>false,
+            ],
             'label',
             [
               'attribute' => 'rdfType',
@@ -49,8 +60,32 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'brand',
             'serialNumber',
-            'inServiceDate',
-            'dateOfPurchase',
+            [
+              'attribute' => 'inServiceDate',
+              'format' => 'raw',
+               'value' => 'inServiceDate',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'inServiceDate',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
+            [
+              'attribute' => 'dateOfPurchase',
+              'format' => 'raw',
+               'value' => 'dateOfPurchase',
+              'filter' => DatePicker::widget([
+                    'model' => $searchModel, 
+                    'attribute' => 'dateOfPurchase',
+                    'pluginOptions' => [
+                        'autoclose'=>true,
+                        'format' => 'yyyy-mm-dd'
+                    ]
+                ]),
+            ],
             [
               'attribute' => 'personInCharge',
               'format' => 'raw',

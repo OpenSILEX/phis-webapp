@@ -14,6 +14,7 @@
 use kartik\sortable\Sortable;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /* @var $data array */
 /* @var $model app\models\YiiImageModel */
@@ -27,11 +28,8 @@ use yii\helpers\Html;
              <?= $form->field($model, 'rdfType')->widget(\kartik\select2\Select2::classname(),[
                     'data' => $model->getRdfTypes(Yii::$app->session['access_token']),
                     'options' => [
-                        'placeholder' => 'Select an image type if wanted ...'
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
+                        'placeholder' => 'Select an image type ...'
+                    ]
                 ]); ?>
             
             <div class="form-group">
@@ -46,15 +44,16 @@ use yii\helpers\Html;
                 //Preparation of the items array for the sortable widget
                 $items = array();
                 foreach ($data->getModels() as $image) {
-                    $item['content'] = '<div class="grid-item image-definition">' . 
-                                        Html::img($image->fileInformations->serverFilePath, 
-                                                [
-                                                    'width' => 200,
-                                                    'onclick' => 'showImage("' . $image->fileInformations->serverFilePath . '")'
-                                                ]) . 
-                                        '<p>' . $image->configuration->date . '<br/>' . 
-//                                        Yii::t('app', 'Sensor Position') . ': ' . $image->configuration->position . '</p>' . 
-                                   '</div>';
+                    $url = Url::to(['image/get', 'imageUri' => urlencode($image->uri)]);
+                    $item['content'] = 
+                        '<div class="grid-item image-definition">' . 
+                            Html::img($url, 
+                                    [
+                                        'width' => 200,
+                                        'onclick' => 'showImage("' . $url . '")'
+                                    ]) . 
+                            '<p>' . $image->date . '<br/>' . 
+                       '</div>';
                     $items[] = $item;
                 }
                 

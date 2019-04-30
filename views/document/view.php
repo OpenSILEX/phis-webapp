@@ -39,15 +39,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'documentType',   
             'creationDate',
             'language',
-            'comment',
+            [
+                'attribute' => 'comment',
+                'contentOptions' => ['class' => 'multi-line'], 
+            ],     
             [
               'attribute' => 'concernedItems',
               'format' => 'raw',
               'value' => function ($model) {
                 $toReturn = "";
                 if (count($model->concernedItems) > 0) {
-                    foreach($model->concernedItems as $concern) {
-                        $toReturn .= Html::a($concern["uri"], [$concern["type"] . '/view', 'id' => $concern["uri"]]);
+                    foreach($model->concernedItems as $concernedItem) {
+                        $toReturn .= Html::a($concernedItem["uri"], [$concernedItem["type"] . '/view', 'id' => $concernedItem["uri"]]);
                         $toReturn .= ", ";
                     }
                     $toReturn = rtrim($toReturn, ", ");

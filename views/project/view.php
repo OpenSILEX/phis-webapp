@@ -12,16 +12,22 @@
 // Subject: implements the view page for a Project
 //***********************************************************************************************
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\EventButtonWidget;
+use app\components\widgets\EventGridViewWidget;
 use app\controllers\ProjectController;
+use app\models\yiiModels\YiiDocumentModel;
 
-
-/* @var $this yii\web\View */
-/* @var $model app\models\YiiProjectModel */
+/** 
+ * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
+ * @var $this yii\web\View
+ * @var $model app\models\YiiProjectModel 
+ */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 'url' => ['index']];
@@ -32,13 +38,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']) ?>
-        <!-- Add annotation button -->
-        <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
         <?php
-        if (Yii::$app->session['isAdmin']) {
-            echo Html::a(Yii::t('app', 'Add Document'), ['document/create', 'concernUri' => $model->uri, 'concernLabel' => $model->acronyme, 'concernRdfType' => Yii::$app->params["Project"]], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
-        }
+        if (Yii::$app->session['isAdmin']) { ?>
+            <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), [
+                'document/create', 
+                'concernedItemUri' => $model->uri, 
+                'concernedItemLabel' => $model->acronyme, 
+                'concernedItemRdfType' => Yii::$app->params["Project"],
+                YiiDocumentModel::RETURN_URL => Url::current()
+            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning'])?>
+            <?php echo EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
+            <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);?>
+        <?php }
         ?>
     </p>
 
@@ -93,7 +105,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($model) {
                     $toReturn = "";
-                    if (count($model->administrativeContacts) > 0) {
+                    if (is_array($model->administrativeContacts) && count($model->administrativeContacts) > 0) {
                         foreach ($model->administrativeContacts as $administrativeContact) {
                             $toReturn .= Html::a($administrativeContact["firstName"] . " " . $administrativeContact["familyName"], ['user/view', 'id' => $administrativeContact["email"]]);
                             $toReturn .= ", ";
@@ -124,14 +136,53 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => Html::a($model->website, $model->website)
             ],
             'keywords',
-            'description',
+            [
+                'attribute' => 'description',
+                'contentOptions' => ['class' => 'multi-line'], 
+            ],
         ],
     ])
     ?>
+    
+    <!-- List of experiments -->
+    <?= "<h3>" . Yii::t('app', 'Experiments') . "</h3>"; ?>
+    <?= GridView::widget([
+        'dataProvider' => ${ProjectController::EXPERIMENTS_PROVIDER},
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            
+            'uri',
+            'alias',
+            'startDate',
+            'endDate',
+            'field',
+            'campaign',
+
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{view}',
+                'buttons' => [
+                    'view' => function($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
+                                        ['experiment/view', 'id' => $model->uri]); 
+                    },
+                ]
+            ],
+        ],
+    ]); ?>
+    
+    <!-- Sensor events -->
+    <?php
+        echo EventGridViewWidget::widget(
+            [
+                 EventGridViewWidget::EVENTS_PROVIDER => ${ProjectController::EVENTS_PROVIDER}
+            ]
+        ); 
+    ?>
+    
     <!-- Project linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
-                 AnnotationGridViewWidget::ANNOTATIONS => ${ProjectController::ANNOTATIONS_DATA}
+                 AnnotationGridViewWidget::ANNOTATIONS => ${ProjectController::ANNOTATIONS_PROVIDER}
             ]
         ); 
     ?>

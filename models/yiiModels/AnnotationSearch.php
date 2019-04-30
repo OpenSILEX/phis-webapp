@@ -28,7 +28,7 @@ class AnnotationSearch extends YiiAnnotationModel {
      */
     public function rules() {
         return [
-            [[AnnotationSearch::URI, AnnotationSearch::CREATOR, AnnotationSearch::MOTIVATED_BY, AnnotationSearch::COMMENTS, AnnotationSearch::TARGETS], 'safe']
+            [[AnnotationSearch::URI, AnnotationSearch::CREATOR, AnnotationSearch::MOTIVATED_BY, AnnotationSearch::BODY_VALUES, AnnotationSearch::TARGETS], 'safe']
         ];
     }
 
@@ -57,8 +57,8 @@ class AnnotationSearch extends YiiAnnotationModel {
         if (is_string($findResult)) {
             return $findResult;
         } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN) {
-            return \app\models\wsModels\WSConstants::TOKEN;
+                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
+            return \app\models\wsModels\WSConstants::TOKEN_INVALID;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
             return new \yii\data\ArrayDataProvider([
@@ -76,21 +76,6 @@ class AnnotationSearch extends YiiAnnotationModel {
     }
 
     /**
-     * transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = [];
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        }
-        return $toReturn;
-    }
-
-    /**
      * Override inherited method in order to send the right target label parameters name 
      * to the webService
      * @return array
@@ -103,8 +88,8 @@ class AnnotationSearch extends YiiAnnotationModel {
         if (isset($this->targets) && !empty($this->targets)) {
             $elementForWebService[YiiAnnotationModel::TARGET_SEARCH_LABEL] = $this->targets[0];
         }
-        if (isset($this->comments) && !empty($this->comments)) {
-            $elementForWebService[YiiAnnotationModel::COMMENTS] = $this->comments;
+        if (isset($this->bodyValues) && !empty($this->bodyValues)) {
+            $elementForWebService[YiiAnnotationModel::BODY_VALUES] = $this->bodyValues;
         }
         return $elementForWebService;
     }

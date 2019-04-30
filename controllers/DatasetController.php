@@ -41,7 +41,7 @@ class DatasetController extends Controller {
     //\SILEX:TODO
     
     const DELIM_CSV = ";";
-    const AGRONOMICAL_OBJECT_URI = "AgronomicalObjectURI";
+    const AGRONOMICAL_OBJECT_URI = "ScientificObjectURI";
     const DATE = "Date";
     const VALUE = "Value";
     
@@ -86,7 +86,7 @@ class DatasetController extends Controller {
      * @return boolean 
      */
     private function existAgronomicalObject($agronomicalObjectURI) {
-        $agronomicalObjectModel = new \app\models\yiiModels\YiiAgronomicalObjectModel();
+        $agronomicalObjectModel = new \app\models\yiiModels\YiiScientificObjectModel();
         $agronomicalObject = $agronomicalObjectModel->find(Yii::$app->session['access_token'], ["uri" => $agronomicalObjectURI]);
          
         return (count($agronomicalObject) > 0);
@@ -146,7 +146,7 @@ class DatasetController extends Controller {
      *               [3] => "variable label"
      */
     private function getColumnsCorrespondences($csvHeader, $expectedVariables) {
-        $columnsCorrepondences = null;
+        $columnsCorrepondences = [];
         for ($i = 0; $i < count($csvHeader); $i++) {
             if ($csvHeader[$i] === DatasetController::AGRONOMICAL_OBJECT_URI) {
                 $columnsCorrepondences[$i] = DatasetController::AGRONOMICAL_OBJECT_URI;
@@ -190,7 +190,7 @@ class DatasetController extends Controller {
                             $error = [];
                             $error[DatasetController::ERRORS_LINE] = $i + 1; //+1 because header isn't in given data
                             $error[DatasetController::ERRORS_COLUMN] = $columnNumber;
-                            $error[DatasetController::ERRORS_MESSAGE] = Yii::t('app/message', 'Unknown agronomical object.');
+                            $error[DatasetController::ERRORS_MESSAGE] = Yii::t('app/message', 'Unknown scientific object.');
                             $rowsErrors[] = $error;
                         }
                         
@@ -236,6 +236,7 @@ class DatasetController extends Controller {
         if ($missingColumns !== null) {
             $errors[DatasetController::ERRORS_MISSING_COLUMN] = $missingColumns;
         }
+        
         //2. get columns to manipulate
         $columnsCorrespondences = $this->getColumnsCorrespondences($csvHeader, $expectedVariables);
         
@@ -258,7 +259,7 @@ class DatasetController extends Controller {
         $variableSearchModel->label = $variableLabel;
         $searchResult = $variableSearchModel->search(Yii::$app->session['access_token'], []);
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
                  throw new Exception("user must log in");
             } else {
                 throw new Exception("error getting variable uri");
@@ -366,11 +367,11 @@ class DatasetController extends Controller {
      *               and the value is the variable uri
      */
     private function getVariablesListUriLabelToShow() {
-        $searchVariableModel = new VariableSearch();
-        $variables = $searchVariableModel->find(Yii::$app->session['access_token'], []);
+        $variableModel = new \app\models\yiiModels\YiiVariableModel();
+        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);     
         
         if ($variables !== null) {
-            return \yii\helpers\ArrayHelper::map($variables, 'uri', 'label');
+            return $variables;
         } else {
             return null;
         }
@@ -380,12 +381,13 @@ class DatasetController extends Controller {
      * @return array contains the variables list. The key is the variable label 
      *               and the value is the variable label
      */
-    private function getVariablesListLabelToShow() {
-        $searchVariableModel = new VariableSearch();
-        $variables = $searchVariableModel->find(Yii::$app->session['access_token'], []);
-        
+    private function getVariablesListLabelToShowFromVariableList($variables) {
         if ($variables !== null) {
-            return \yii\helpers\ArrayHelper::map($variables, 'label', 'label');
+            $variablesToReturn = [];
+            foreach ($variables as $key => $value) {
+                $variablesToReturn[$value] = $value;
+            }
+            return $variablesToReturn;
         } else {
             return null;
         }
@@ -458,13 +460,15 @@ class DatasetController extends Controller {
                        var cell = hot1.getCell(row,col);
                        cell.style.color = "black";';
         
-        //2. Cells Errors        
-        foreach ($csvErrors[DatasetController::ERRORS_ROWS] as $dataError) {
-            $updateSettings .= 'if (row === ' . ($dataError[DatasetController::ERRORS_LINE] - 1) 
-                            . ' && col === ' . $dataError[DatasetController::ERRORS_COLUMN] . ') {'
-                    . 'cell.style.fontWeight = "bold";'
-                    . 'cell.style.color = "red";'
-                        . '}';
+        //2. Cells Errors    
+        if (isset($csvErrors[DatasetController::ERRORS_ROWS])) {
+            foreach ($csvErrors[DatasetController::ERRORS_ROWS] as $dataError) {
+                $updateSettings .= 'if (row === ' . ($dataError[DatasetController::ERRORS_LINE] - 1) 
+                                . ' && col === ' . $dataError[DatasetController::ERRORS_COLUMN] . ') {'
+                        . 'cell.style.fontWeight = "bold";'
+                        . 'cell.style.color = "red";'
+                            . '}';
+            }
         }
         
         //3. Ignored columns
@@ -636,7 +640,10 @@ class DatasetController extends Controller {
      */
     public function actionCreate() { 
         $datasetModel = new \app\models\yiiModels\YiiDatasetModel();
-        $this->view->params["variables"] = $this->getVariablesListLabelToShow();
+        $variablesModel = new \app\models\yiiModels\YiiVariableModel();
+        
+        $variables = $variablesModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
+        $this->view->params["variables"] = $this->getVariablesListLabelToShowFromVariableList($variables);
         
         //If the form is complete, register data
         if ($datasetModel->load(Yii::$app->request->post())) {
@@ -666,7 +673,6 @@ class DatasetController extends Controller {
                        'handsontableErrorsCellsSettings' => $this->getHandsontableCellsSettings($csvErrors, $csvHeaders, $correspondancesCSV)
                 ]);
             } else {
-                
                 $firstInsert = true;
                 foreach ($correspondancesCSV as $key => $value) {
                     if ($value !== DatasetController::AGRONOMICAL_OBJECT_URI

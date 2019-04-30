@@ -22,18 +22,7 @@ use kartik\file\FileInput;
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <?php
-    if ($model->isNewRecord) {
-        echo $form->field($model, 'uri')->textInput([
-            'maxlength' => true,
-            'readonly' => true,
-            'id' => 'experimentURI',
-            'value' => Yii::$app->params['baseURI'],
-            'style' => 'background-color:#C4DAE7;',
-            'data-toggle' => 'tooltip',
-            'title' => 'Automatically generated',
-            'data-placement' => 'left'
-        ]);
-    } else {
+    if (!$model->isNewRecord) {
         echo $form->field($model, 'uri')->textInput([
             'readonly' => true,
             'style' => 'background-color:#C4DAE7;',

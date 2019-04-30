@@ -18,7 +18,7 @@ namespace app\models\yiiModels;
 use app\models\yiiModels\YiiGroupModel;
 
 /**
- * implements the search action for the agronomical objects
+ * implements the search action for the groups
  *
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
@@ -62,8 +62,8 @@ class GroupSearch extends YiiGroupModel {
         if (is_string($findResult)) {
             return $findResult;
         } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN) {
-            return \app\models\wsModels\WSConstants::TOKEN;
+                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
+            return \app\models\wsModels\WSConstants::TOKEN_INVALID;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
             return new \yii\data\ArrayDataProvider([
@@ -78,20 +78,5 @@ class GroupSearch extends YiiGroupModel {
                 //\SILEX:info
             ]);
         }
-    }
-    
-    /**
-     * transform the json into array
-     * @param json jsonList
-     * @return array
-     */
-    private function jsonListOfArraysToArray($jsonList) {
-        $toReturn = []; 
-        if ($jsonList !== null) {
-            foreach ($jsonList as $value) {
-                $toReturn[] = $value;
-            }
-        } 
-        return $toReturn;
     }
 }

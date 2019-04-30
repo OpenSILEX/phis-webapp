@@ -13,20 +13,21 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\AgronomicalObjectSearch */
+/* @var $searchModel app\models\ScientificObjectSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', '{n, plural, =1{Agronomical Object} other{Agronomical Objects}}', ['n' => 2]);
+$this->title = Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="agronomicalobject-index">
+<div class="scientific-object-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a(Yii::t('yii', 'Create'), ['create-csv'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
     </p>
     
@@ -35,15 +36,30 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            
-            'uri',
-            'alias',
+            [
+              'attribute' => 'uri',
+              'format' => 'raw',
+               'value' => 'uri',
+              'filter' =>false,
+            ],
+            'label',
             [
                 'attribute' => 'rdfType',
                 'format' => 'raw',
                 'value' => function($model, $key, $index) {
                     return explode("#", $model->rdfType)[1];
-                }
+                },
+                'filter' => \kartik\select2\Select2::widget([
+                    'attribute' => 'type',
+                    'model' => $searchModel,
+                    'data' => $scientificObjectTypes,
+                    'options' => [
+                        'placeholder' => 'Select object type...'
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]),
             ],
             [
                 'attribute' => 'properties',

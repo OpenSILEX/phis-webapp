@@ -51,3 +51,6 @@ phpunit.phar
 
 
 # End of https://www.gitignore.io/api/yii2,netbeans,composer
+
+web/documents/*
+!web/documents/DatasetFiles

@@ -39,7 +39,7 @@ class YiiDocumentModel extends WSActiveRecord {
     const URI = "uri";
     /**
      * document's type
-     *      (e.g http://www.phenome-fppn.fr/vocabulary/2017/#DataFile)
+     *      (e.g http://www.opensilex.org/vocabulary/oeso/#DataFile)
      * @var string
      */
     public $documentType;
@@ -90,17 +90,19 @@ class YiiDocumentModel extends WSActiveRecord {
      * @var array 
      */
     public $concernedItems;
-    const CONCERNED_ITEMS_URIS = "concernedItemsUris";
+    const CONCERNED_ITEMS_URIS = "concernedItems";
     /**
-     * used to search document. Correspond to the element concerned by document
+     * used to search document. Correspond to the element concerned by the document
      * @var string
      */
-    public $concernedItem; 
-    const CONCERN = "concern";
-    const CONCERNED_ITEM = "concernedItem";
+    public $concernedItemFilter; 
+    
+    const CONCERNED_ITEMS_WS_FIELD = "concernedItems";
+    const CONCERNED_ITEM_WS_FIELD = "concernedItem";
+    
     const CONCERNED_ITEM_RDF_TYPE = "typeURI";
-    const CONCERNED_ITEM_EXPERIMENT_RDF_TYPE = "http://www.phenome-fppn.fr/vocabulary/2017#Experiment";
-    const CONCERNED_ITEM_PROJECT_RDF_TYPE = "http://www.phenome-fppn.fr/vocabulary/2017#Project";
+    const CONCERNED_ITEM_EXPERIMENT_RDF_TYPE = "http://www.opensilex.org/vocabulary/oeso#Experiment";
+    const CONCERNED_ITEM_PROJECT_RDF_TYPE = "http://www.opensilex.org/vocabulary/oeso#Project";
     /**
      * the file concerned by the metadata
      * @var file 
@@ -135,6 +137,13 @@ class YiiDocumentModel extends WSActiveRecord {
     const SORT_BY_DATE = "sortByDate";
     
     /**
+     * The return url after annotation creation
+     * @var string 
+     */
+    public $returnUrl;
+    const RETURN_URL = "returnUrl";
+    
+    /**
      * Initialize wsModel. In this class, wsModel is a WSDocumentModel
      * @param string $pageSize number of elements per page
      *                               (limited to 150 000)
@@ -153,9 +162,9 @@ class YiiDocumentModel extends WSActiveRecord {
     public function rules() {
         return [
           [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate'], 'required'],
-          [['uri', 'documentType', 'creator', 'language', 'title', 'creationDate', 
+          [['uri', self::RETURN_URL, 'documentType', 'creator', 'language', 'title', 'creationDate', 
               'format', 'concernedItems', 'status', 'file', 'comment','sortByDate'], 'safe'],
-          [['uri', 'creator', 'language', 'title', 'creationDate', 'format', 'comment','sortByDate'], 'string'],
+          [['uri', self::RETURN_URL, 'creator', 'language', 'title', 'creationDate', 'format', 'comment','sortByDate'], 'string'],
           [['file'], 'file', 'skipOnEmpty' => false]
         ];
     }
@@ -173,8 +182,8 @@ class YiiDocumentModel extends WSActiveRecord {
           'title' => Yii::t('app', 'Title'),
           'creationDate'=> Yii::t('app', 'Creation Date'),
           'format' => Yii::t('app', 'Format'),
-          'concernedItem' => Yii::t('app', 'Concern'),
-          'concernedItems' => Yii::t('app', 'Concern'),
+          'concernedItem' => Yii::t('app', 'Concerns'),
+          'concernedItems' => Yii::t('app', 'Concerns'),
           'file' => Yii::t('app', 'File'),
           'comment' => Yii::t('app', 'Comment'),
           'status' => Yii::t('app', 'Status'),
@@ -197,7 +206,7 @@ class YiiDocumentModel extends WSActiveRecord {
         $this->comment = $array[YiiDocumentModel::COMMENT];
         
         if (isset($array[YiiDocumentModel::CONCERNED_ITEMS_URIS])) {
-            $this->concernedItem = $array[YiiDocumentModel::CONCERNED_ITEMS_URIS];
+            $this->concernedItemFilter = $array[YiiDocumentModel::CONCERNED_ITEMS_URIS];
         }
     }
 
@@ -207,6 +216,7 @@ class YiiDocumentModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiDocumentModel::DOCUMENT_TYPE] = $this->documentType;
         $elementForWebService[YiiDocumentModel::URI] = $this->uri;
         $elementForWebService[YiiDocumentModel::CREATOR] = $this->creator;
@@ -218,18 +228,17 @@ class YiiDocumentModel extends WSActiveRecord {
         $elementForWebService[YiiDocumentModel::COMMENT] = $this->comment;
         $elementForWebService[YiiDocumentModel::STATUS] = $this->status;
         
-        
         if ($this->concernedItems !== null) {
-            foreach ($this->concernedItems as $concern) {
-                $item[YiiDocumentModel::URI] = $concern->uri;
-                $item[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = $concern->rdfType;
-                $elementForWebService[YiiDocumentModel::CONCERN][] = $item;
+            foreach ($this->concernedItems as $concernedItem) {
+                $concernedItemForWebService[YiiDocumentModel::URI] = $concernedItem->uri;
+                $concernedItemForWebService[YiiDocumentModel::CONCERNED_ITEM_RDF_TYPE] = $concernedItem->rdfType;
+                $elementForWebService[YiiDocumentModel::CONCERNED_ITEMS_WS_FIELD][] = $concernedItemForWebService;
             }
         }
         
         //Used for the search
-        if ($this->concernedItem !== null) {
-            $elementForWebService[YiiDocumentModel::CONCERNED_ITEM] = $this->concernedItem;
+        if ($this->concernedItemFilter !== null) {
+            $elementForWebService[YiiDocumentModel::CONCERNED_ITEM_WS_FIELD] = $this->concernedItemFilter;
         }
         
         if( $this->sortByDate != null){
@@ -247,7 +256,7 @@ class YiiDocumentModel extends WSActiveRecord {
     public function findDocumentsTypes($sessionToken)  {       
         $requestRes = $this->wsModel->getTypes($sessionToken);
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 return $requestRes;
@@ -268,8 +277,8 @@ class YiiDocumentModel extends WSActiveRecord {
     public function getDocument($sessionToken, $documentUri, $format) {
         $requestRes = $this->wsModel->getFileByURI($sessionToken, $documentUri, $format);
         
-        if (is_array($requestRes) && isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
-            return \app\models\wsModels\WSConstants::TOKEN;
+        if (is_array($requestRes) && isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
+            return \app\models\wsModels\WSConstants::TOKEN_INVALID;
         } else {
             return $requestRes;
         }        
@@ -313,10 +322,10 @@ class YiiDocumentModel extends WSActiveRecord {
         $this->format = $res[0]->format;
         $this->comment = $res[0]->comment;
         foreach ($res[0]->concernedItems as $concernedItem) {
-            $concern = null;
-            $concern->rdfType = $concernedItem->typeURI;
-            $concern->uri = $concernedItem->uri;
-            $this->concernedItems[] = $concern;
+            $concernedItem = null;
+            $concernedItem->rdfType = $concernedItem->typeURI;
+            $concernedItem->uri = $concernedItem->uri;
+            $this->concernedItems[] = $concernedItem;
         }
     }
 }

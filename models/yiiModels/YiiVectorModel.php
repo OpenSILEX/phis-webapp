@@ -38,7 +38,7 @@ class YiiVectorModel extends WSActiveRecord {
     const URI = "uri";
     /**
      * the type uri (concept uri) of the vector
-     *  (e.g. http://www.phenome-fppn.fr/vocabulary/2017#CarSupport)
+     *  (e.g. http://www.opensilex.org/vocabulary/oeso#CarSupport)
      * @var string
      */
     public $rdfType;
@@ -159,8 +159,7 @@ class YiiVectorModel extends WSActiveRecord {
      * @return array with the attributes. 
      */
     public function attributesToArray() {
-        $elementForWebService[YiiModelsConstants::PAGE] = $this->page;
-        $elementForWebService[YiiModelsConstants::PAGE_SIZE] = $this->pageSize;
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiVectorModel::URI] = $this->uri;
         $elementForWebService[YiiVectorModel::RDF_TYPE] = $this->rdfType;
         $elementForWebService[YiiVectorModel::LABEL] = $this->label;
@@ -168,11 +167,11 @@ class YiiVectorModel extends WSActiveRecord {
         $elementForWebService[YiiVectorModel::IN_SERVICE_DATE] = $this->inServiceDate;
         $elementForWebService[YiiVectorModel::PERSON_IN_CHARGE] = $this->personInCharge;
         
-        if ($this->serialNumber !== null) {
+        if ($this->serialNumber != null) {
             $elementForWebService[YiiVectorModel::SERIAL_NUMBER] = $this->serialNumber;
         }
         
-        if ($this->dateOfPurchase !== null) {
+        if ($this->dateOfPurchase != null) {
             $elementForWebService[YiiVectorModel::DATE_OF_PURCHASE] = $this->dateOfPurchase;
         }
         
@@ -185,7 +184,7 @@ class YiiVectorModel extends WSActiveRecord {
      * @return list of the sensors types
      */
     public function getVectorsTypes($sessionToken) {
-        $vectorConceptUri = "http://www.phenome-fppn.fr/vocabulary/2017#Vector";
+        $vectorConceptUri = "http://www.opensilex.org/vocabulary/oeso#Vector";
         $params = [];
         if ($this->pageSize !== null) {
            $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
@@ -198,7 +197,7 @@ class YiiVectorModel extends WSActiveRecord {
         $requestRes = $wsUriModel->getDescendants($sessionToken, $vectorConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return "token";
             } else {
                 return $requestRes;
@@ -224,7 +223,7 @@ class YiiVectorModel extends WSActiveRecord {
         $requestRes = $this->wsModel->getVectorByUri($sessionToken, $uri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->arrayToAttributes($requestRes);

@@ -2,14 +2,10 @@
 
 //**********************************************************************************************
 //                                       DocumentController.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
+// PHIS-SILEX
+// Copyright © INRA 2017
 // Creation date: June 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  June, 2017
-// Subject: implements the CRUD for the documents (ws document model)
 //***********************************************************************************************
 
 namespace app\controllers;
@@ -20,19 +16,23 @@ use yii\filters\VerbFilter;
 
 use yii\web\UploadedFile;
 
-use app\models\yiiModels\YiiDocumentModel;
+use app\models\wsModels\WSUriModel;
 use app\models\yiiModels\YiiSensorModel;
 use app\models\yiiModels\YiiVectorModel;
+use app\models\yiiModels\YiiModelsConstants;
+use app\models\yiiModels\YiiInstanceDefinitionModel;
 use app\models\yiiModels\DocumentSearch;
+use app\models\yiiModels\YiiDocumentModel;
 
 require_once '../config/config.php';
 
 /**
  * CRUD actions for YiiDocumentModel
+ * @update [Morgane Vidal] 10 August, 2018: add link documents to sensors and vectors
+ * @update [Andréas Garcia] 15 Jan., 2019: change "concern" occurences to "concernedItem"
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiDocumentModel
  * @author Morgane Vidal <morgane.vidal@inra.fr>
- * @update [Morgane Vidal] 10 August, 2018 : add link documents to sensors and vectors
  */
 class DocumentController extends Controller {
     
@@ -60,12 +60,12 @@ class DocumentController extends Controller {
     
     /**
      * Generates a map uri => label
-     * @param mixed $concerns 
+     * @param mixed $concernedItems 
      * @return ArrayHelper uri => label
      */
-    private function concernsToMap($concerns) {
-        if ($concerns !== null) {
-            return \yii\helpers\ArrayHelper::map($concerns, 'uri', 'label');
+    private function concernedItemsToMap($concernedItems) {
+        if ($concernedItems !== null) {
+            return \yii\helpers\ArrayHelper::map($concernedItems, 'uri', 'label');
         } else {
             return null;
         }
@@ -111,33 +111,33 @@ class DocumentController extends Controller {
             $documentModel->format = $res[0]->format;
             $documentModel->comment = $res[0]->comment;
             foreach ($res[0]->concernedItems as $concernedItem) {
-                $concern[YiiDocumentModel::URI] = $concernedItem->uri;
+                $concernedItems[YiiDocumentModel::URI] = $concernedItem->uri;
                 
                 //Get the type for interface urls
                 if ($concernedItem->typeURI === Yii::$app->params[DocumentController::EXPERIMENT]) {
-                    $concern["type"] = "experiment";
+                    $concernedItems["type"] = "experiment";
                 } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::PROJECT]) {
-                    $concern["type"] = "project";
+                    $concernedItems["type"] = "project";
                 } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::INSTALLATION]) {
-                    $concern["type"] = "infrastructure";
+                    $concernedItems["type"] = "infrastructure";
                 } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::RADIOMETRIC_TARGET]) {
-                    $concern["type"] = "radiometric-target";
+                    $concernedItems["type"] = "radiometric-target";
                 }else {
                     //check if a sensor or a vector 
                     $sensorModel = new YiiSensorModel();
                     $requestRes = $sensorModel->findByURI($sessionToken, $concernedItem->uri);
                     if ($requestRes && $sensorModel->uri === $concernedItem->uri) {
-                        $concern["type"] = "sensor";
+                        $concernedItems["type"] = "sensor";
                     } else {
                         $vectorModel = new YiiVectorModel();
                         $requestRes = $vectorModel->findByURI($sessionToken, $concernedItem->uri);
                         if ($requestRes && $vectorModel->uri === $concernedItem->uri) {
-                            $concern["type"] = "vector";
+                            $concernedItems["type"] = "vector";
                         }
                     }
                 }
                 
-                $documentModel->concernedItems[] = $concern;
+                $documentModel->concernedItems[] = $concernedItems;
             }
             $this->view->params['listRealConcernedItems'] = $res[0]->concernedItems;
             
@@ -153,10 +153,17 @@ class DocumentController extends Controller {
      */
     public function actionIndex() {
         $searchModel = new DocumentSearch();
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);    
+        
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $searchParams[YiiModelsConstants::PAGE]--;
+        }
+        
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);    
         
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -194,54 +201,57 @@ class DocumentController extends Controller {
     
     /**
      * Creates a document
-     * @param $concernUri The URI of the target concerned by the document.
-     * @param $concernLabel The label of the target concerned by the document. 
+     * @param $concernedItemUri The URI of the target concerned by the document.
+     * @param $concernedItemLabel The label of the target concerned by the document. 
      *                      Used for the create document interface.
-     * @param $concernRdfType The type of the target concerned by the document.
+     * @param $concernedItemRdfType The type of the target concerned by the document.
      * @return mixed the creation form, the message error or the view of the 
      *               document created
      */
-    public function actionCreate($concernUri = null, $concernLabel = null, $concernRdfType = null) {
+    public function actionCreate($concernedItemUri = null, $concernedItemLabel = null, $concernedItemRdfType = null, $returnUrl = null) {
         $sessionToken = Yii::$app->session['access_token'];
         $documentModel = new YiiDocumentModel(null, null);
+        
+        if ($returnUrl) {
+            $documentModel->returnUrl = $returnUrl;
+        }
         
         //If the form is complete, try to save the data
         if ($documentModel->load(Yii::$app->request->post())) {
             //1. Set metadata
-            //1.1 Add the rdf type of the concerns
-            $wsUriModel = new \app\models\wsModels\WSUriModel();
-            $concerns = null;
+            //1.1 Add the RDF type of the concerned items
+            $wsUriModel = new WSUriModel();
+            $concernedItems = null;
 
             //SILEX:info
-            //Code to uncomment when the functionality of adding multiple concern to a document will be done
-//            foreach ($documentModel->concernedItems as $concern) {
+            //Code to uncomment when the functionality of adding multiple concerned items to a document is done
+//            foreach ($documentModel->concernedItems as $concernedItem) {
 //                $item = new \app\models\yiiModels\YiiInstanceDefinitionModel();
-//                $item->uri = $concern;
+//                $item->uri = $concernedItem;
 //                
-//                //get concern rdfType by call to the web service
-//                $rdfType = $wsUriModel->getUriType(Yii::$app->session['access_token'], $concern, null);
+//                //get concerned item rdfType by call to the web service
+//                $rdfType = $wsUriModel->getUriType(Yii::$app->session['access_token'], $concernedItem, null);
 //                $item->rdfType = $rdfType;
-//                $concerns[] = $item;
+//                $concernedItems[] = $item;
 //            }
             //\SILEX:info
             
             //Prepare the target of the document
-            if ($concernUri !== null) {
-                $item = new \app\models\yiiModels\YiiInstanceDefinitionModel();
-                $item->uri = $concernUri;
-                
-                if ($concernRdfType === null) {
-                    //Get concern rdfType
-                    $rdfType = $wsUriModel->getUriType(Yii::$app->session['access_token'], $concernUri, null);
-                    $item->rdfType = $rdfType;
+            if ($concernedItemUri !== null) {
+                $concernedItem = new YiiInstanceDefinitionModel();
+                $concernedItem->uri = $concernedItemUri;
+                if ($concernedItemRdfType === null) {
+                    //Get concerned item rdfType
+                    $rdfType = $wsUriModel->getUriType(Yii::$app->session['access_token'], $concernedItemUri, null);
+                    $concernedItem->rdfType = $rdfType;
                 } else {
-                    $item->rdfType = $concernRdfType;
+                    $concernedItem->rdfType = $concernedItemRdfType;
                 }
                 
-                $concerns[] = $item;
+                $concernedItems[] = $concernedItem;
             }
             
-            $documentModel->concernedItems = $concerns;
+            $documentModel->concernedItems = $concernedItems;
             $documentModel->status = "linked";
             $documentModel->isNewRecord = true;
             
@@ -269,8 +279,12 @@ class DocumentController extends Controller {
                 if (is_string($requestRes) && $requestRes === "token") {
                     return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
                 } else {
-                    $documentUri = $requestRes[0];
-                    return $this->redirect(['view', 'id' => $documentUri]);
+                    if ($documentModel->returnUrl) {
+                        $this->redirect($documentModel->returnUrl);
+                    } else {
+                        $documentUri = $requestRes[0];
+                        return $this->redirect(['view', 'id' => $documentUri]);
+                    }
                 }
             } else {
                 return $this->render('/site/error', [
@@ -288,16 +302,16 @@ class DocumentController extends Controller {
             } else if (is_array($documentsTypes) && isset($documentsTypes["token"])) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
-                $concern = new \app\models\yiiModels\YiiInstanceDefinitionModel();
-                $concerns = null;
-                $concern->uri = $concernUri;
-                $concern->label = $concernLabel;
-                $concerns[] = $concern;
+                $concernedItem = new YiiInstanceDefinitionModel();
+                $concernedItems = null;
+                $concernedItem->uri = $concernedItemUri;
+                $concernedItem->label = $concernedItemLabel;
+                $concernedItems[] = $concernedItem;
                 
                 $documentsTypes = $this->documentsTypesToMap($documentsTypes);
                 $this->view->params['listDocumentsTypes'] = $documentsTypes;
-                $this->view->params['actualConcerns'] = $this->concernsToMap($concerns);
-                $documentModel->concernedItems[] = $concernUri;
+                $this->view->params['currentConcernedItem'] = $this->concernedItemsToMap($concernedItems);
+                $documentModel->concernedItems[] = $concernedItemUri;
                 
                 $documentModel->isNewRecord = true;
                                 
@@ -312,7 +326,7 @@ class DocumentController extends Controller {
      * Update a document 
      * @param string $id URI of the document to update.
      * @param json $concernedItems The list of the actual concerned items for the document.
-     * This is because we cannot update the concerns of the document yet.
+     * This is because we cannot update the concerned items of the document yet.
      * @return mixed the view, the login page, the error message or the update form
      */
     public function actionUpdate($id, $concernedItems = null) {
@@ -324,12 +338,12 @@ class DocumentController extends Controller {
             //Remove the following code and update with the list of the concerned 
             //items when the functionality will be added
             //The list of the concerned items cannot be updated yet
-            $concernedDecode = json_decode($concernedItems, JSON_UNESCAPED_SLASHES);
-            foreach ($concernedDecode as $concern) {
-                $concernToSave = new \app\models\yiiModels\YiiInstanceDefinitionModel();
-                $concernToSave->uri = $concern["uri"];
-                $concernToSave->rdfType = $concern["typeURI"];
-                $documentModel->concernedItems[] = $concernToSave;
+            $concernedItemsDecoded = json_decode($concernedItems, JSON_UNESCAPED_SLASHES);
+            foreach ($concernedItemsDecoded as $concernedItem) {
+                $concernedItemToSave = new YiiInstanceDefinitionModel();
+                $concernedItemToSave->uri = $concernedItem["uri"];
+                $concernedItemToSave->rdfType = $concernedItem["typeURI"];
+                $documentModel->concernedItems[] = $concernedItemToSave;
             }
             //\SILEX:info
             

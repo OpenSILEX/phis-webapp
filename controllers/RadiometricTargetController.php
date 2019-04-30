@@ -1,5 +1,4 @@
 <?php
-
 //******************************************************************************
 //                          RadiometricTargetController.php
 // SILEX-PHIS
@@ -7,16 +6,19 @@
 // Creation date: 27 Sept, 2018
 // Contact: vincent.migot@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-
 namespace app\controllers;
 
 use app\models\wsModels\WSConstants;
+use app\models\wsModels\WSUriModel;
+use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\RadiometricTargetSearch;
-use app\models\yiiModels\UserSearch;
+use app\models\yiiModels\YiiUserModel;
+use app\models\yiiModels\YiiInstanceDefinitionModel;
 use app\models\yiiModels\YiiDocumentModel;
 use app\models\yiiModels\YiiRadiometricTargetModel;
+use app\models\yiiModels\YiiModelsConstants;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -27,16 +29,16 @@ require_once '../config/config.php';
 
 /**
  * CRUD actions for YiiRadiometricTargetModel
- * 
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiRadiometricTargetModel
  * @author Migot Vincent <vincent.migot@inra.fr>
  */
 class RadiometricTargetController extends Controller {
     CONST ANNOTATIONS_DATA = "radiometricTargetAnnotations";
+    CONST EVENTS_DATA = "radiometricTargetEvents";
+    
     /**
-     * Define the behaviors
-     * 
+     * Defines the behaviors
      * @return array
      */
     public function behaviors() {
@@ -51,17 +53,22 @@ class RadiometricTargetController extends Controller {
     }
 
     /**
-     * List all radiometric targets
-     * 
+     * Lists all radiometric targets
      * @return mixed redirect in case of error otherwise return the "index" view
      */
     public function actionIndex() {
         $searchModel = new RadiometricTargetSearch();
+        
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $searchParams[YiiModelsConstants::PAGE]--;
+        }
 
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
 
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
@@ -77,41 +84,49 @@ class RadiometricTargetController extends Controller {
     }
 
     /**
-     * Display the detail of a radiometric target
-     * 
-     * @param $id Uri of the radiometric target to display
+     * Displays the detail of a radiometric target
+     * @param $id URI of the radiometric target to display
      * @return mixed redirect in case of error otherwise return the "view" view
      */
     public function actionView($id) {
+        //0. Get request parameters
+        $searchParams = Yii::$app->request->queryParams;
+        
         //1. Fill the radiometric target model with the information.
         $model = new YiiRadiometricTargetModel();
          $radiometricTargetDetail = $model->getDetails(Yii::$app->session['access_token'], $id);
 
         //2. Get documents.
         $searchDocumentModel = new DocumentSearch();
-        $searchDocumentModel->concernedItem = $id;
+        $searchDocumentModel->concernedItemFilter = $id;
         $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+        
+        //3. Get events
+        $searchEventModel = new EventSearch();
+        $searchEventModel->concernedItemUri = $id;
+        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
+        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
 
-        //3. get project annotations
+        //4. Get project annotations
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
         $infrastructureAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
 
-        //4. Render the view of the infrastructure.
+        //5. Render the view of the infrastructure.
         if (is_array( $radiometricTargetDetail) && isset( $radiometricTargetDetail["token"])) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
             return $this->render('view', [
-                        'model' =>  $radiometricTargetDetail,
-                        'dataDocumentsProvider' => $documents,
-                        self::ANNOTATIONS_DATA => $infrastructureAnnotations
+                'model' =>  $radiometricTargetDetail,
+                'dataDocumentsProvider' => $documents,
+                self::ANNOTATIONS_DATA => $infrastructureAnnotations,
+                self::EVENTS_DATA => $events
             ]);
         }
     }
     
     /**
-     * Display the form to create radiometric target or create it in case of form submit
-     * 
+     * Displays the form to create radiometric target or create it in case of form submit
      * @return mixed redirect in case of error or after successfully create 
      * the radiometric target otherwise return the "create" view 
      */
@@ -146,14 +161,8 @@ class RadiometricTargetController extends Controller {
             }
         } else {
             // If no post data display the create form
-            $searchUserModel = new UserSearch();
-            $contactsList = $searchUserModel->find($sessionToken, []);
-            $contacts = null;
-            if ($contactsList !== null) {
-                $contacts = \yii\helpers\ArrayHelper::map($contactsList, 'email', 'email');
-            }
-        
-            $this->view->params['listContacts'] = $contacts;
+            $userModel = new YiiUserModel();        
+            $this->view->params['listContacts'] = $userModel->getPersonsMailsAndName($sessionToken);
 
             return $this->render('create', [
                 'model' =>  $radiometricTargetModel
@@ -162,8 +171,7 @@ class RadiometricTargetController extends Controller {
     }
 
     /**
-     * Display the form to update a radiometric target or update it in case of form submit
-     * 
+     * Displays the form to update a radiometric target or update it in case of form submit
      * @return mixed redirect in case of error or after successfully create 
      * the radiometric target otherwise return the "create" view 
      */
@@ -187,14 +195,8 @@ class RadiometricTargetController extends Controller {
              $radiometricTargetDetail =  $radiometricTargetModel->getDetails($sessionToken, $id);
         
             //2. Load user list for update form
-            $searchUserModel = new UserSearch();
-            $contactsList = $searchUserModel->find($sessionToken, []);
-            $contacts = null;
-            if ($contactsList !== null) {
-                $contacts = \yii\helpers\ArrayHelper::map($contactsList, 'email', 'email');
-            }
-        
-            $this->view->params['listContacts'] = $contacts;
+            $userModel = new YiiUserModel();
+            $this->view->params['listContacts'] = $userModel->getPersonsMailsAndName($sessionToken);
 
             return $this->render('update', [
                 'model' =>  $radiometricTargetModel
@@ -203,12 +205,11 @@ class RadiometricTargetController extends Controller {
     }
     
     /**
-     * Send the attached reflectance file to the webservices
-     * 
+     * Sends the attached reflectance file to the web service
      * @param string $sessionToken current session token
      * @param app\models\yiiModels\YiiRadiometricTargetModel  $radiometricTargetModel
      * @return false if the file is not correctly uploaded
-     *          or the result of the webservice request to post document
+     *          or the result of the web service request to post document
      */
     private function sendFile($sessionToken,  $radiometricTargetModel) {
         $file = UploadedFile::getInstance( $radiometricTargetModel, 'reflectanceFile');
@@ -231,9 +232,9 @@ class RadiometricTargetController extends Controller {
             $documentModel->creationDate = date("Y-m-d");
 
             // 3. Affect the concerned item
-            $item = new \app\models\yiiModels\YiiInstanceDefinitionModel();
+            $item = new YiiInstanceDefinitionModel();
             $item->uri =  $radiometricTargetModel->uri;
-            $wsUriModel = new \app\models\wsModels\WSUriModel();
+            $wsUriModel = new WSUriModel();
             $rdfType = $wsUriModel->getUriType($sessionToken,  $radiometricTargetModel->uri, null);
             $item->rdfType = $rdfType;
             $documentModel->concernedItems = [$item];
@@ -257,5 +258,4 @@ class RadiometricTargetController extends Controller {
             return false;
         }
     }
-
 }

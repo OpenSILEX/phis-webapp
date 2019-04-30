@@ -1,17 +1,11 @@
 <?php
-
-//**********************************************************************************************
-//                                       ExperimentController.php 
-//
-// Author(s): Morgane VIDAL
-// PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
+//******************************************************************************
+//                           ExperimentController.php 
+// SILEX-PHIS
+// Copyright © INRA 2017
 // Creation date: February 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  October, 31 2017 : passage de Trial à Experiment
-// Subject: implements the CRUD actions for Ws Experiment model
-//***********************************************************************************************
-
+// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.f
+//******************************************************************************
 namespace app\controllers;
 
 use Yii;
@@ -23,22 +17,29 @@ use app\models\yiiModels\YiiExperimentModel;
 use app\models\yiiModels\ExperimentSearch;
 use app\models\yiiModels\ProjectSearch;
 use app\models\yiiModels\GroupSearch;
-use app\models\yiiModels\UserSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\AnnotationSearch;
+use app\models\yiiModels\ScientificObjectSearch;
+use app\models\yiiModels\EventSearch;
+use app\models\yiiModels\YiiVariableModel;
+use app\models\yiiModels\YiiModelsConstants;
+use app\models\yiiModels\YiiSensorModel;
 use app\models\wsModels\WSConstants;
 
 /**
  * CRUD actions for YiiExperimentModel
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiExperimentModel
+ * @update [Andréas Garcia] 11 March, 2019: Add event widget
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ExperimentController extends Controller {
-    CONST ANNOTATIONS_DATA = "experimentAnnotations";
+    const ANNOTATION_PROVIDER = "experimentAnnotationProvider";
+    const EVENTS_PAGE = "eventsPage";
+    const EVENT_PROVIDER = "experimentEventProvider";
     
     /**
-     * define the behaviors
+     * Defines the behaviours
      * @return array
      */
     public function behaviors() {
@@ -53,36 +54,42 @@ class ExperimentController extends Controller {
     }
     
     /**
-     * Search an experiment by uri.
-     * @param String $uri searched experiment's uri
+     * Searches an experiment by its URI.
+     * @param String $uri searched experiment's URI
      * @return mixed YiiExperimentModel : the searched experiment
      *               "token" if the user must log in
      */
     public function findModel($uri) {
-        $sessionToken = Yii::$app->session['access_token'];
+        $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         $experimentModel = new YiiExperimentModel(null, null);
         $requestRes = $experimentModel->findByURI($sessionToken, $uri);
         
         if ($requestRes === true) {
             return $experimentModel;
-        } else if(isset($requestRes["token"])) {
-            return "token";
+        } else if(isset($requestRes[WSConstants::TOKEN])) {
+            return WSConstants::TOKEN;
         } else {
            throw new NotFoundHttpException('The requested page does not exist');
         }
     }
     
     /**
-     * List all Experiments
+     * Lists all Experiments
      * @return mixed
      */
     public function actionIndex() {
         $searchModel = new ExperimentSearch();
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->queryParams);
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $searchParams[YiiModelsConstants::PAGE]--;
+        }
+        
+        $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
        
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -122,25 +129,48 @@ class ExperimentController extends Controller {
      * @return mixed
      */
     public function actionView($id) {  
+        //0. Get request parameters
+        $searchParams = Yii::$app->request->queryParams;
+        
         //1. Get the experiment's informations
         $res = $this->findModel($id);
         
         //2. Get experiment's linked documents 
         $searchDocumentModel = new DocumentSearch();
-        $searchDocumentModel->concernedItem = $id;
-        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+        $searchDocumentModel->concernedItemFilter = $id;
+        $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], ["concernedItem" => $id]);
         
         //3. get experiment's agronomical objects
-        $searchAgronomicalObject = new \app\models\yiiModels\AgronomicalObjectSearch();
+        $searchAgronomicalObject = new ScientificObjectSearch();
         $searchAgronomicalObject->experiment = $id;
-        $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session['access_token'], ["experiment" => $id]);
+        $agronomicalObjects = $searchAgronomicalObject->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
          
-        //4. get project annotations
+        //4. get annotations
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
-        $experimentAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
-       
-        if ($res === "token") {
+        $annotationProvider = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+        
+        //5. get events
+        $searchEventModel = new EventSearch();
+        $searchEventModel->concernedItemUri = $id;
+        $eventSearchParameters = [];
+        if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+            $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+        }
+        $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+        
+        $eventProvider = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $eventSearchParameters);
+        $eventProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE;
+
+        //6. get all variables
+        $variableModel = new YiiVariableModel();
+        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+        
+        //7. Get all sensors
+        $sensorModel = new YiiSensorModel();
+        $sensors = $sensorModel->getAllSensorsUrisAndLabels(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+        
+        if ($res === WSConstants::TOKEN) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
             $canUpdate = $this->isUserInExperimentOwnerGroup($res);
@@ -150,7 +180,10 @@ class ExperimentController extends Controller {
                 'model' => $res,
                 'dataDocumentsProvider' => $documents,
                 'dataAgronomicalObjectsProvider' => $agronomicalObjects,
-                self::ANNOTATIONS_DATA => $experimentAnnotations
+                self::ANNOTATION_PROVIDER => $annotationProvider,
+                self::EVENT_PROVIDER => $eventProvider,
+                'variables' => $variables,
+                'sensors' => $sensors
             ]);
         }
     }
@@ -182,19 +215,6 @@ class ExperimentController extends Controller {
     }
     
     /**
-     * 
-     * @param mixed $contacts persons list
-     * @return ArrayHelper list of the persons 'email' => 'email'
-     */
-    private function contactsToMap($contacts) {
-        if ($contacts !== null) {
-            return \yii\helpers\ArrayHelper::map($contacts, 'email', 'email');
-        } else {
-            return null;
-        }
-    }
-    
-    /**
      * @action Create an Experiment
      * @return mixed
      */
@@ -206,33 +226,26 @@ class ExperimentController extends Controller {
         if ($experimentModel->load(Yii::$app->request->post())) {
             $experimentModel->isNewRecord = true;
             
-            //SILEX:todo
-            //the experiment uri is generated here. It needs to be generated in
-            //the web service.
-            //\SILEX:todo
-            
-            //1. search how many experiments has the same campaign
-            $searchModel = new ExperimentSearch();
-            $searchModel->campaign = $experimentModel->campaign;
-            $experiments = $searchModel->search($sessionToken, []);
-            $numberExperiment = $experiments->getCount() + 1;
-            
-            //2. update uri
-            $experimentModel->uri = str_replace("?", $numberExperiment, $experimentModel->uri);
             $dataToSend[] = $experimentModel->attributesToArray();
             
             $requestRes = $experimentModel->insert($sessionToken, $dataToSend);
             if (is_string($requestRes) && $requestRes === "token") { //L'utilisateur doit se connecter
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
-                return $this->redirect(['view', 'id' => $experimentModel->uri]);
+                if (isset($requestRes->{'metadata'}->{'datafiles'}[0])) { //project created
+                    return $this->redirect(['view', 'id' => $requestRes->{'metadata'}->{'datafiles'}[0]]);
+                } else { //an error occurred
+                    return $this->render('/site/error', [
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $requestRes->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}]);
+                }
             }
         } else { 
             $searchProjectModel = new ProjectSearch();
             $projects = $searchProjectModel->find($sessionToken,[]);
             
-            $searchUserModel = new UserSearch();
-            $contacts = $searchUserModel->find($sessionToken, []);
+            $userModel = new \app\models\yiiModels\YiiUserModel();
+            $contacts = $userModel->getPersonsMailsAndName($sessionToken);
             
             $groups = null;
             
@@ -252,7 +265,6 @@ class ExperimentController extends Controller {
             } else {
                 $projects = $this->projectsToMap($projects);
                 $groups = $this->groupsToMap($groups);
-                $contacts = $this->contactsToMap($contacts);
                 $this->view->params['listProjects'] = $projects;
                 $this->view->params['listGroups'] = $groups;
                 $this->view->params['listContacts'] = $contacts;
@@ -325,8 +337,8 @@ class ExperimentController extends Controller {
             $searchGroupModel = new GroupSearch();
             $groups = $searchGroupModel->find($sessionToken,[]);
             
-            $searchUserModel = new UserSearch();
-            $contacts = $searchUserModel->find($sessionToken, []);
+            $userModel = new \app\models\yiiModels\YiiUserModel();
+            $contacts = $userModel->getPersonsMailsAndName($sessionToken);
 
             if (is_string($projects) || is_string($groups)) {
                 return $this->render('/site/error', [
@@ -337,7 +349,6 @@ class ExperimentController extends Controller {
             } else {
                 $projects = $this->projectsToMap($projects);
                 $groups = $this->groupsToMap($groups);
-                $contacts = $this->contactsToMap($contacts);
                 $this->view->params['listProjects'] = $projects;
                 $this->view->params['listActualProjects'] = $actualProjects; 
                 $this->view->params['listGroups'] = $groups;
@@ -352,5 +363,45 @@ class ExperimentController extends Controller {
                 ]);
             }
         }
+    }
+    
+    /**
+     * Ajax action to update the list of variables measured by an experiment
+     * @return the webservice result with sucess or error
+     */
+    public function actionUpdateVariables() {
+        $post = Yii::$app->request->post();
+        $sessionToken = Yii::$app->session['access_token'];        
+        $experimentUri = $post["uri"];
+        if (isset($post["items"])) {
+            $variablesUri = $post["items"];
+        } else {
+            $variablesUri = [];
+        }
+        $experimentModel = new YiiExperimentModel();
+        
+        $res = $experimentModel->updateVariables($sessionToken, $experimentUri, $variablesUri);
+        
+        return json_encode($res, JSON_UNESCAPED_SLASHES);
+    }
+    
+    /**
+     * Ajax action to update the list of sensors which participates in an experiment
+     * @return the webservice result with sucess or error
+     */
+    public function actionUpdateSensors() {
+        $post = Yii::$app->request->post();
+        $sessionToken = Yii::$app->session['access_token'];        
+        $experimentUri = $post["uri"];
+        if (isset($post["items"])) {
+            $sensorsUris = $post["items"];
+        } else {
+            $sensorsUris = [];
+        }
+        $experimentModel = new YiiExperimentModel();
+        
+        $res = $experimentModel->updateSensors($sessionToken, $experimentUri, $sensorsUris);
+        
+        return json_encode($res, JSON_UNESCAPED_SLASHES);
     }
 }
