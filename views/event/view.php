@@ -13,7 +13,7 @@ use app\components\helpers\Vocabulary;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\PropertyWidgetWithoutActions;
-use app\components\widgets\conernedItem\ConcernedItemGridViewWidgetWithoutActions;
+use app\components\widgets\concernedItem\ConcernedItemGridViewWidgetWithoutActions;
 use app\controllers\EventController;
 use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventAction;
