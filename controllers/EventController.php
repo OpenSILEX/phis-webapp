@@ -41,7 +41,7 @@ class EventController extends GenericController {
     const PARAM_RETURN_URL = "returnUrl";
 
     /**
-     * The return URL after annotation creation
+     * The return URL after annotation creation.
      * @var string 
      */
     public $returnUrl;
@@ -153,7 +153,7 @@ class EventController extends GenericController {
         $model = new InfrastructureSearch();
         $model->page = 0;
         $infrastructuresUrisTypesLabels = [];
-        $infrastructures = $model->search(Yii::$app->session['access_token'], null);
+        $infrastructures = $model->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], null);
         if ($infrastructures === WSConstants::TOKEN_INVALID) {
             return WSConstants::TOKEN_INVALID;
         } else {
@@ -186,7 +186,7 @@ class EventController extends GenericController {
             $this->loadFormParams();
             return $this->render('create', ['model' =>  $event]);
             
-        } else { // submit form         
+        } else { // submit form       
             $dataToSend[] = $event->attributesToArray(); 
             $requestResults =  $event->insert($sessionToken, $dataToSend);
             return $this->handlePostPutResponse($requestResults, $event->returnUrl);
