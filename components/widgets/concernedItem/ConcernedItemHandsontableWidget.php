@@ -11,6 +11,7 @@ namespace app\components\widgets\concernedItem;
 use yii\base\Widget;
 use Yii;
 use app\models\yiiModels\YiiConcernedItemModel;
+use app\assets\ConcernedItemHandsontableAsset;
 
 /**
  * Concerned item GridView widget.
@@ -28,7 +29,7 @@ class ConcernedItemHandsontableWidget extends Widget {
     const HTML_DIV_FORM_GROUP_CLASS = "form-group";
     const HTML_DIV_FIELD_CLASS_PREFIXE = "field-";
     const HTML_LABEL_CLASS = "control-label";
-    const HTML_HANDSONTABLE_ID = "handsontable";
+    const HTML_HANDSONTABLE_ID = "event-concerneditems";
     
     private $htmlDivFieldClass;
     
@@ -48,31 +49,30 @@ class ConcernedItemHandsontableWidget extends Widget {
     public function init() {
         parent::init();
         
+        // Register the JS in the view
+       // ConcernedItemHandsontableAsset::register($this->view);
+        
         $this->htmlDivFieldClass = self::HTML_DIV_FIELD_CLASS_PREFIXE . $this->inputModelClass 
                 . "-" . $this->inputModelConcernedItemsUrisAttributeName;
     }
 
     /**
-     * Renders the concerned item list
+     * Renders the concerned item list.
      * @return string the HTML string rendered
      */
     public function run() {
         return 
             "<div class=\"" . self::HTML_DIV_FORM_GROUP_CLASS . " " . $this->htmlDivFieldClass . "\">"
           .   "<label class=\"" . self::HTML_LABEL_CLASS . "\">" . Yii::t('app', self::CONCERNED_ITEMS_LABEL) . "</label>"
-          .   "<div id=\"objects-creation\">"
-          .       "<div id=\"handsontable\"></div>"
-          .   "</div>"
+          .   "<div id=\"" . self::HTML_HANDSONTABLE_ID . "\"></div>"
           .   "<div id=\"loader\" class=\"loader\" style=\"display:none\"></div>"
-          .       "<script type = \"text/javascript\" src = \"../components/widgets/concernedItem/concernedItemHandsontableCreation.js\">"
-          .       "</script>"
-          .       "<script type=\"text/javascript\">"
-          .           "CONCERNED_ITEM_HANDSONTABLE_CREATION.init(["
-          .               "\"" . self::HTML_HANDSONTABLE_ID . "\","
-          .               "\"" . Yii::t("app", self::CONCERNED_ITEMS_URI_COLUMN_HEADER) . "\","
-          .               "\"" . Yii::t("app", self::CONCERNED_ITEMS_URI_COLUMN_PLACEHOLDER) . "\","
-          .           "]);"
-          .       "</script>"
+//          .       "<script type=\"text/javascript\">"
+//          .           "CONCERNED_ITEM_HANDSONTABLE_CREATION.init(["
+//          .               "\"" . self::HTML_HANDSONTABLE_ID . "\","
+//          .               "\"" . Yii::t("app", self::CONCERNED_ITEMS_URI_COLUMN_HEADER) . "\","
+//          .               "\"" . Yii::t("app", self::CONCERNED_ITEMS_URI_COLUMN_PLACEHOLDER) . "\","
+//          .           "]);"
+//          .       "</script>"
           . "</div>";
     }
 }
