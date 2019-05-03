@@ -38,6 +38,7 @@ class HandsontableInputWidget extends Widget
      * @see https://github.com/handsontable/jquery-handsontable/wiki
      */
     public $settings = [];
+    public $inputName;
     
     public function init()
     {
@@ -45,7 +46,7 @@ class HandsontableInputWidget extends Widget
         $this->view->registerJs("
             
         var form = document.querySelector(\"form\");
-        var inputName = \"EventCreation[concernedItemsUris][]\";
+        var inputName = \"" . $this->inputName . "\";
         form.onsubmit = function() {
             var inputs  = document.querySelectorAll(\"[name=\\\"\" + inputName + \"\\\"]\");
             if(inputs.length === 0) {
@@ -68,9 +69,5 @@ class HandsontableInputWidget extends Widget
         $this->jsWidget = HandsontableWidget::begin(['settings' => $this->settings]);
         $this->jsWidget->end();
         return null;
-    }
-    
-    protected function hasModel() {
-        return $this->model === null;
     }
 }

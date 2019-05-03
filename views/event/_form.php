@@ -126,6 +126,7 @@ use app\components\widgets\HandsontableInputWidget;
     ?>
 
     <?= HandsontableInputWidget::widget([
+        'inputName' => "EventCreation[concernedItemsUris][]",
         'settings' => [
             'columns' => [
                 [
