@@ -49,7 +49,6 @@ class GenericController extends \yii\web\Controller
      * @param type $requestResult
      */
     private function didOperationSucceed($requestResult) {
-        error_log("retourdsv ".print_r($requestResult));
         return isset($requestResult->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0]);
     }
     
