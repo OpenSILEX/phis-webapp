@@ -18,6 +18,7 @@ use app\models\yiiModels\EventAction;
 use app\controllers\EventController;
 use app\components\helpers\Vocabulary;
 use app\components\widgets\concernedItem\ConcernedItemHandsontableWidget;
+use app\components\widgets\HandsontableInputWidget;
 ?>
 <div class="event-form well">
     <?php 
@@ -123,18 +124,21 @@ use app\components\widgets\concernedItem\ConcernedItemHandsontableWidget;
                 EventCreation::DESCRIPTION)->textarea(['rows' => Yii::$app->params['textAreaRowsNumber']]);
     }
     ?>
-    <?= ConcernedItemHandsontableWidget::widget(
-        [
-            ConcernedItemHandsontableWidget::DATA_PROVIDER => new ArrayDataProvider([
-                'allModels' => $model->concernedItems,
-                'pagination' => ['pageSize' => 10],
-            ]),
-            ConcernedItemHandsontableWidget::INPUT_MODEL_CLASS => $eventInputsNameRoot,
-            ConcernedItemHandsontableWidget::INPUT_MODEL_CONCERNED_ITEMS_URIS_ATTRIBUTE_NAME 
-                => EventAction::CONCERNED_ITEMS_URIS
+
+    <?= HandsontableInputWidget::widget([
+        'settings' => [
+            'columns' => [
+                [
+                    'data' => 'URI',
+                    'type' => 'text',
+                    //'placeholder' => 'http://www.opensilex.org/example/2019/o19000002'
+                ]
+            ],
+            'colHeaders' => ['URI'],
+            'data' => [[]],
+            'rowHeaders' => true,
         ]
-    ); 
-    ?>
+    ]) ?>
 
     <div class="form-group">
     <?= Html::submitButton(
