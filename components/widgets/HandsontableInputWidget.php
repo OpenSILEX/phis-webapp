@@ -30,6 +30,8 @@ use himiklab\handsontable\HandsontableWidget;
  */
 class HandsontableInputWidget extends Widget
 {
+    const INPUT_GROUP_DIV = "handsontable-input-group";
+    
     protected $model;
     protected $jsWidget;
     
@@ -48,17 +50,15 @@ class HandsontableInputWidget extends Widget
         var form = document.querySelector(\"form\");
         var inputName = \"" . $this->inputName . "\";
         form.onsubmit = function() {
-            var inputs  = document.querySelectorAll(\"[name=\\\"\" + inputName + \"\\\"]\");
-            if(inputs.length === 0) {
-                var tds = document.querySelectorAll(\".htCore td\");
-                tds.forEach(function(td) {
-                    var input = document.createElement(\"input\");  
-                    input.setAttribute(\"name\", inputName);
-                    input.setAttribute(\"value\", td.innerHTML);
-                    td.innerHTML = \"\";
-                    td.appendChild(input);
-                });
-            }
+            var inputsGroup  = document.querySelector(\"#" . self::INPUT_GROUP_DIV . "\");
+            inputsGroup.innerHTML = \"\";
+            var tds = document.querySelectorAll(\".htCore td\");
+            tds.forEach(function(td) {
+                var input = document.createElement(\"input\");  
+                input.setAttribute(\"name\", inputName);
+                input.setAttribute(\"value\", td.innerHTML);
+                inputsGroup.appendChild(input);
+            });
         };
         
         ");
@@ -68,6 +68,10 @@ class HandsontableInputWidget extends Widget
     {
         $this->jsWidget = HandsontableWidget::begin(['settings' => $this->settings]);
         $this->jsWidget->end();
-        return null;
+        return $this->renderInput();
+    }
+    
+    protected function renderInput () {
+        return "<div id=\"" . self::INPUT_GROUP_DIV . "\" style=\"display:none\"></div>";
     }
 }
