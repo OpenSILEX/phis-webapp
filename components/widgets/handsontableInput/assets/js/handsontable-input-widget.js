@@ -20,13 +20,13 @@ form.onsubmit = function() {
 
 window.onload = function() {
     var addRowButton = document.getElementById(addRowButtonId);
-    var deleteRowButton = document.getElementById(deleteRowButtonId); 
+    var removeRowButton = document.getElementById(removeRowButtonId); 
 
     Handsontable.dom.addEvent(addRowButton, 'click', function () {
         handsonTable.alter('insert_row', handsonTable.countRows());
     });
 
-    Handsontable.dom.addEvent(deleteRowButton, 'click', function () {
+    Handsontable.dom.addEvent(removeRowButton, 'click', function () {
         handsonTable.alter('remove_row', handsonTable.countRows() - 1);
     });
 };
