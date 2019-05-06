@@ -24,7 +24,7 @@ class EventGridViewWidget extends Widget {
 
     const EVENTS_LABEL = "Events";
     const NO_EVENT_LABEL = "No events";
-    const EVENTS_ARE_NOT_SET_LABEL = "Concerned items aren't set";
+    const EVENTS_ARE_NOT_SET_LABEL = "Events aren't set";
     
     const HTML_CLASS = "event-widget";
     
