@@ -8,7 +8,6 @@
 //******************************************************************************
 namespace app\components\widgets;
 use yii\helpers\Html;
-use yii\base\Widget;
 use himiklab\handsontable\HandsontableWidget;
 /**
  * Handsontable grid input widget for Yii2.
@@ -28,50 +27,65 @@ use himiklab\handsontable\HandsontableWidget;
  * ]);
  * ```
  */
-class HandsontableInputWidget extends Widget
+class HandsontableInputWidget extends HandsontableWidget
 {
-    const INPUT_GROUP_DIV = "handsontable-input-group";
+    const INPUT_GROUP_DIV_ID = "handsontable-inputs-group";
+    const ACTION_BUTTONS_GROUP_DIV = "handsontable-action-buttons-group";
+    const ADD_ROW_BUTTON_ID = "handsontable-add-row-button";
+    const DELETE_ROW_BUTTON_ID = "handsontable-delete-row-button";
     
-    protected $model;
-    protected $jsWidget;
-    
-    /**
-     * @var string $settings
-     * @see https://github.com/handsontable/jquery-handsontable/wiki
-     */
-    public $settings = [];
     public $inputName;
     
-    public function init()
-    {
-        parent::init();
+    public function run()
+    {     
+        echo $this->renderActionButtons() . " " . $this->renderInput();
+        
+        parent::run();        
+        
         $this->view->registerJs("
             
-        var form = document.querySelector(\"form\");
-        var inputName = \"" . $this->inputName . "\";
+        var form = document.querySelector('form');
+        var inputName = '{$this->inputName}';
         form.onsubmit = function() {
-            var inputsGroup  = document.querySelector(\"#" . self::INPUT_GROUP_DIV . "\");
-            inputsGroup.innerHTML = \"\";
-            var tds = document.querySelectorAll(\".htCore td\");
+            var inputsGroup  = document.querySelector('#" . self::INPUT_GROUP_DIV_ID . "');
+            inputsGroup.innerHTML = '';
+            var tds = document.querySelectorAll('.htCore td');
             tds.forEach(function(td) {
-                var input = document.createElement(\"input\");  
-                input.setAttribute(\"name\", inputName);
-                input.setAttribute(\"value\", td.innerHTML);
+                var input = document.createElement('input');  
+                input.setAttribute('name', inputName);
+                input.setAttribute('value', td.innerHTML);
                 inputsGroup.appendChild(input);
             });
         };
         
-        ");
-    }
-    
-    public function run()
-    {
-        $this->jsWidget = HandsontableWidget::begin(['settings' => $this->settings]);
-        $this->jsWidget->end();
-        return $this->renderInput();
+        var addRowButton = document.getElementById('" . self::ADD_ROW_BUTTON_ID . "');
+        var deleteRowButton = document.getElementById('" . self::DELETE_ROW_BUTTON_ID . "'); 
+
+        Handsontable.dom.addEvent(addRowButton, 'click', function () {
+            {$this->jsVarName}.alter('insert_row', 0);
+        });
+
+        Handsontable.dom.addEvent(deleteRowButton, 'click', function () {
+            var rowCount = {$this->jsVarName}.countRows();
+            {$this->jsVarName}.alter('remove_row', rowCount - 1);
+        });
+        
+        ", \yii\web\View::POS_READY);
     }
     
     protected function renderInput () {
-        return "<div id=\"" . self::INPUT_GROUP_DIV . "\" style=\"display:none\"></div>";
+        return "<div id=\"" . self::INPUT_GROUP_DIV_ID . "\" style=\"display:none\"></div>";
+    }
+    
+    protected function renderActionButtons () {
+        return  
+            "<div id=\"" . self::ACTION_BUTTONS_GROUP_DIV . "\">"
+                . Html::buttonInput("Add row", [
+                    'id' => self::ADD_ROW_BUTTON_ID
+                ])
+                . Html::buttonInput("Remove row", [
+                    'id' => self::DELETE_ROW_BUTTON_ID
+                ])
+            . "</div>";
     }
 }
