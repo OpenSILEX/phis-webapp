@@ -5,8 +5,8 @@
 // Creation date: 5 May 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************/
-.handsontable-action-buttons-group {
-    margin-bottom: 15px;
+.handsontable {
+    margin-bottom: 10px;
 }
 
 .handsontable-action-buttons-group input {

@@ -8,23 +8,19 @@
 //****************************************************************************** 
 namespace app\components\widgets\handsontableInput\views;
 
-use yii\helpers\Html;
-
+use Yii;
 ?>
 
-<div class="<?= $actionButtonsGroupDivClass ?>">
-<?= 
-    Html::buttonInput("Add row", [
-        'id' => $addRowButtonId,
-        'class' => "btn btn-primary"
-    ])
-?>  
-<?=
-    Html::buttonInput("Remove last row", [
-        'id' => $removeRowButtonId,
-        'class' => "btn btn-danger"
-    ])
-?>
+<div class="form-group">
+    <label class="control-label">Concerned items</label>
+    <div id='handsontable-<?= $id ?>'></div>
+    <div class="<?= $actionButtonsGroupDivClass ?>">
+        <button type="button" id="<?= $addRowButtonId ?>" class="btn btn-primary" title="<?= Yii::t("app", "Add row")?>">
+            <span class="glyphicon glyphicon-plus"></span>
+        </button>
+        <button id="<?= $removeRowButtonId ?>" class="btn btn-danger" title="<?= Yii::t("app", "Remove last row")?>">
+            <span class="glyphicon glyphicon-minus"></span>
+        </button>
+    </div>
+    <div id="<?= $inputGroupDivId ?>" style=\"display:none\"></div>
 </div>
-<div id='handsontable-<?= $id ?>'></div>
-<div id="<?= $inputGroupDivId ?>" style=\"display:none\"></div>
