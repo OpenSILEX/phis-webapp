@@ -127,8 +127,10 @@ use app\components\widgets\HandsontableInputWidget;
 
     <?= HandsontableInputWidget::widget([
         'inputName' => "EventCreation[concernedItemsUris][]",
-        'settings' => [
-            'columns' => [
+        'settings' => 
+        [
+            'columns' => 
+            [
                 [
                     'data' => 'URI',
                     'type' => 'text',
@@ -138,6 +140,7 @@ use app\components\widgets\HandsontableInputWidget;
             'colHeaders' => ['URI'],
             'data' => [[]],
             'rowHeaders' => true,
+            'contextMenu' => true
         ]
     ]) ?>
 
