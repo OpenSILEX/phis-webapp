@@ -44,8 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'attribute' => 'uri',
               'format' => 'raw',
-               'value' => 'uri',
-              'filter' =>false,
+              'value' => 'uri',
             ],
             'label',
             [
@@ -53,51 +52,33 @@ $this->params['breadcrumbs'][] = $this->title;
               'format' => 'raw',
               'value' => function ($model) {
                 return explode("#", $model->rdfType)[1];
-              }
+              },
+              'filter' => \kartik\select2\Select2::widget([
+                    'attribute' => 'rdfType',
+                    'model' => $searchModel,
+                    'data' => $sensorsTypes,
+                    'options' => [
+                        'placeholder' => Yii::t('app/messages', 'Select type...'),
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]),
             ],
             'brand',
             'serialNumber',
             'model',
-            [
-              'attribute' => 'inServiceDate',
-              'format' => 'raw',
-               'value' => 'inServiceDate',
-              'filter' => DatePicker::widget([
-                    'model' => $searchModel, 
-                    'attribute' => 'inServiceDate',
-                    'pluginOptions' => [
-                        'autoclose'=>true,
-                        'format' => 'yyyy-mm-dd'
-                    ]
-                ]),
-            ],
-            [
-              'attribute' => 'dateOfLastCalibration',
-              'format' => 'raw',
-               'value' => 'dateOfLastCalibration',
-              'filter' => DatePicker::widget([
-                    'model' => $searchModel, 
-                    'attribute' => 'dateOfLastCalibration',
-                    'pluginOptions' => [
-                        'autoclose'=>true,
-                        'format' => 'yyyy-mm-dd'
-                    ]
-                ]),
-            ],
-            [
-              'attribute' => 'personInCharge',
-              'format' => 'raw',
-              'value' => function ($model, $key, $index) {
-                    return Html::a($model->personInCharge, ['user/view', 'id' => $model->personInCharge]);
-                },
-            ],
 
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{view}',
+                'template' => '{view} {update}',
                 'buttons' => [
                     'view' => function($url, $model, $key) {
                         return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
                                         ['sensor/view', 'id' => $model->uri]); 
+                    },
+                    'update' => function($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', 
+                                        ['sensor/update', 'id' => $model->uri]); 
                     },
                 ]
             ],

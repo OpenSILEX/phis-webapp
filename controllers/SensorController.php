@@ -266,6 +266,8 @@ class SensorController extends Controller {
         }
 
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        //list of sensors
+        $sensorsTypes = $this->getSensorsTypesSimpleAndUri();
         
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN_INVALID) {
@@ -278,7 +280,8 @@ class SensorController extends Controller {
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+               'dataProvider' => $searchResult,
+               'sensorsTypes' => $sensorsTypes
             ]);
         }
     }
