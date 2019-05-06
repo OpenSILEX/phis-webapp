@@ -22,5 +22,5 @@ use Yii;
             <span class="glyphicon glyphicon-minus"></span>
         </button>
     </div>
-    <div id="<?= $inputGroupDivId ?>" style=\"display:none\"></div>
+    <div id="<?= $inputGroupDivId ?>" style="display:none"></div>
 </div>
