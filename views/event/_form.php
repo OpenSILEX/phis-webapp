@@ -8,7 +8,6 @@
 //******************************************************************************
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\data\ArrayDataProvider;
 use kartik\datetime\DateTimePicker;
 use kartik\select2\Select2;
 use app\models\yiiModels\YiiEventModel;
@@ -17,8 +16,7 @@ use app\models\yiiModels\EventUpdate;
 use app\models\yiiModels\EventAction;
 use app\controllers\EventController;
 use app\components\helpers\Vocabulary;
-use app\components\widgets\concernedItem\ConcernedItemHandsontableWidget;
-use app\components\widgets\HandsontableInputWidget;
+use app\components\widgets\handsontableInput\HandsontableInputWidget;
 ?>
 <div class="event-form well">
     <?php 
@@ -134,7 +132,8 @@ use app\components\widgets\HandsontableInputWidget;
                 [
                     'data' => 'URI',
                     'type' => 'text',
-                    //'placeholder' => 'http://www.opensilex.org/example/2019/o19000002'
+                    'placeholder' => 'http://www.opensilex.org/example/2019/o19000002',
+                    'width' => '380px'
                 ]
             ],
             'colHeaders' => ['URI'],
