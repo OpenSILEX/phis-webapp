@@ -33,7 +33,7 @@ return [
     '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}' => '{n, plural, =1{Cible Radiométrique} other{Cibles Radiométriques}}',
     '{n, plural, =1{Scientific Object} other{Scientific Objects}}' => '{n, plural, =1{Objet Scientifique} other{Objets Scientifiques}}',
     '{n, plural, =1{Scientific frame} other{Scientific frames}}' => '{n, plural, =1{Cadre scientifique} other{Cadres scientifiques}}',
-    
+
     'A radiometric target can be described by the value of its coefficients to the bidirectional reflectance distribution function (see the BRDF ' => 'Une cible radiométrique peut être décrite par la valeur de ses coefficients à la fonction de distribution de la réflectivité bidirectionnelle (voir la ',
     'Add Dataset' => 'Importer un jeu de données',
     'Add Document' => 'Ajouter un document',
@@ -155,10 +155,10 @@ return [
     'Ontologies References' => 'Références vers des Ontologies',
     'Organism' => 'Organisme',
     'Owner' => 'Propriétaire',
-    
+
     // Property
     PropertyWidget::NO_PROPERTY_LABEL => 'Aucune propriété spécifique',
-    
+
     'Password' => 'Mot de passe',
     'Painting' => 'Peinture',
     'Person In Charge' => 'Responsable',
@@ -172,9 +172,10 @@ return [
     'Specific properties' => 'Propriétés spécifiques',
     'Public Access' => 'Accès Public',
     'Quantitative Variable' => 'Variable Quantitative',
-    'Real Number' => 'Nombre Réel', 
+    'Real Number' => 'Nombre Réel',
     'Rectangular' => 'Rectangulaire',
     'Reference URI' => 'URI de Référence',
+    'Reflectance value' => 'Valeur de la réflectance',
     'Register an event' => 'Enregistrer un événement',
     'Related References' => 'Références Externes',
     'Relation' => 'Relation',
@@ -197,7 +198,7 @@ return [
     'Spectral hemispheric reflectance file' => 'Fichier de réflectance hémisphérique spectrale',
     'Spectralon' => 'Spectralon',
     'Status' => 'Statut',
-    'Subproject Type' => 'Type de sous projet', 
+    'Subproject Type' => 'Type de sous projet',
     'Subproject Of' => 'Sous-projet de',
     'Team' => 'Équipe',
     'Technical Supervisors' => 'Superviseurs techniques',
