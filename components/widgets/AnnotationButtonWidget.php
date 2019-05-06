@@ -27,8 +27,14 @@ class AnnotationButtonWidget extends Widget {
      * @var mixed
      */
     public $targets;
-
     const TARGETS = "targets";
+        
+    /**
+     * Define if button is displayed as a button (false) or as a link (true)
+     * @var boolean
+     */
+    public $asLink = false;
+    const AS_LINK = "asLink";
 
     public function init() {
         parent::init();
@@ -54,17 +60,25 @@ class AnnotationButtonWidget extends Widget {
         //SILEX:conception
         // Maybe create a widget bar and put buttons in it to use the same style
         //\SILEX:conception
-        return Html::a(
-                    Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', self::ADD_ANNOTATION_LABEL),
-                    [
+        $uriArray = [
                         'annotation/create',
                         YiiAnnotationModel::TARGETS => $this->targets,
                         YiiAnnotationModel::RETURN_URL => Url::current()
-                    ], 
-                    [
-                        'class' => 'btn btn-default',
-                    ] 
+                    ];
+        
+        $linkClasses = [];
+        if (!$this->asLink) {
+            $linkLabel = Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', self::ADD_ANNOTATION_LABEL);
+            $linkAttributes = ['class' => 'btn btn-default'];
+        } else {
+            $linkLabel = '<span class="fa fa-comment"></span>';
+        }
+        $linkAttributes["title"] = Yii::t('app', self::ADD_ANNOTATION_LABEL);
+        
+        return Html::a(
+                    $linkLabel,
+                    $uriArray, 
+                    $linkAttributes
                 );
     }
-
 }
