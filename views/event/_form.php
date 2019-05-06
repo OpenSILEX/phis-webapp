@@ -168,27 +168,22 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             
         var dateOffsetInput = $('input[id*="datetimezoneoffset"]');
             
-        /**
-         * Sets up the form on window's load.
-         */
-        window.onload = function () {
+        hidePropertyBlocs();
             
-            hidePropertyBlocs();
-            
-            setEventTypeSelectOnChangeBehaviour();
-            typeSelect.trigger('change');
-            
-            // Set right property type when the user select new property
-            fromSelect.on('change', function (e) {
-                setPropertyType(fromSelect.val());
-            }); 
-            toSelect.on('change', function (e) {
-                setPropertyType(toSelect.val());
-            }); 
-            if(!dateOffsetInput.val() || dateOffsetInput.val() === "") { // if event creation
-                setDateTimezoneOffsetWithUserDefaultOne();
-            }
-        };
+        setEventTypeSelectOnChangeBehaviour();
+        typeSelect.trigger('change');
+
+        // Set right property type when the user select new property
+        fromSelect.on('change', function (e) {
+            setPropertyType(fromSelect.val());
+        }); 
+        toSelect.on('change', function (e) {
+            setPropertyType(toSelect.val());
+        }); 
+        
+        if(!dateOffsetInput.val() || dateOffsetInput.val() === "") { // if event creation
+            setDateTimezoneOffsetWithUserDefaultOne();
+        }
         
         /**
          * Hides property blocs.
