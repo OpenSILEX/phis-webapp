@@ -29,7 +29,6 @@ class HandsontableInputWidget extends HandsontableWidget
     {        
         ob_start();
         parent::run();
-        $handsontableDiv = ob_get_contents();
         ob_end_clean();
 
         $htmlRendered = $this->render('_handsontable-input', [
