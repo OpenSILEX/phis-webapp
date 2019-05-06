@@ -149,7 +149,6 @@ use kartik\file\FileInput;
     <?= $form->field($model, 'brdfP3')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'brdfP4')->textInput(['maxlength' => true]) ?>
     
-    <!--
     <div class="alert alert-info" role="alert">
         <b><?= Yii::t('app/messages', 'File Rules')?> : </b>
         <table class="table table-hover" id="radiometric-target-csv-columns-desc">
@@ -164,12 +163,11 @@ use kartik\file\FileInput;
         </table>
     </div>
 
-    
+
     <p><i>
          <?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . '/documents/DatasetFiles/datasetTemplate.csv', ['id' => 'downloadDatasetTemplate']) ?>
     </i></p>
-    -->
-    
+
     <?php
     if (!$hideFiles) {
         echo $form->field($model, 'reflectanceFile')->widget(FileInput::classname(), [
@@ -190,4 +188,3 @@ use kartik\file\FileInput;
 
 <?php ActiveForm::end(); ?>
 </div>
-
