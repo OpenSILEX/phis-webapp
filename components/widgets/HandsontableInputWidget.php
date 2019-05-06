@@ -81,10 +81,12 @@ class HandsontableInputWidget extends HandsontableWidget
         return  
             "<div id=\"" . self::ACTION_BUTTONS_GROUP_DIV . "\">"
                 . Html::buttonInput("Add row", [
-                    'id' => self::ADD_ROW_BUTTON_ID
+                    'id' => self::ADD_ROW_BUTTON_ID,
+                    'class' => "btn btn-primary"
                 ])
-                . Html::buttonInput("Remove row", [
-                    'id' => self::DELETE_ROW_BUTTON_ID
+                . Html::buttonInput("Remove last row", [
+                    'id' => self::DELETE_ROW_BUTTON_ID,
+                    'class' => "btn btn-danger"
                 ])
             . "</div>";
     }
