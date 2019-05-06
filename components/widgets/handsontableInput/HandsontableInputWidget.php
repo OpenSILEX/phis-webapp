@@ -8,7 +8,6 @@
 //******************************************************************************
 namespace app\components\widgets\handsontableInput;
 
-use yii\helpers\Html;
 use himiklab\handsontable\HandsontableWidget;
 use app\components\widgets\handsontableInput\HandsontableInputWidgetAsset;
 use yii\web\View;
@@ -21,25 +20,31 @@ class HandsontableInputWidget extends HandsontableWidget
     const INPUT_GROUP_DIV_ID = "handsontable-inputs-group";
     const ACTION_BUTTONS_GROUP_DIV_CLASS = "handsontable-action-buttons-group";
     const ADD_ROW_BUTTON_ID = "handsontable-add-row-button";
-    const DELETE_ROW_BUTTON_ID = "handsontable-delete-row-button";
+    const REMOVE_ROW_BUTTON_ID = "handsontable-delete-row-button";
     
     public $inputName;
     public $title;
     
     public function run()
-    {      
-        if($title) {
-            echo "";
-        }
-        echo $this->renderActionButtons() . " " . $this->renderInput();
-        
+    {        
+        ob_start();
         parent::run();
+        $handsontableDiv = ob_get_contents();
+        ob_end_clean();
+
+        $htmlRendered = $this->render('_handsontable-input', [
+            'addRowButtonId' => self::ADD_ROW_BUTTON_ID,
+            'removeRowButtonId' => self::REMOVE_ROW_BUTTON_ID,
+            'inputGroupDivId' => self::INPUT_GROUP_DIV_ID,
+            'actionButtonsGroupDivClass' => self::ACTION_BUTTONS_GROUP_DIV_CLASS,
+            'id' => $this->getId()
+        ]);
         
         $this->getView()->registerJs(""
                 . "var inputName = '{$this->inputName}';"
                 . "var inputGroupDivId = '" . self::INPUT_GROUP_DIV_ID . "';"
                 . "var addRowButtonId = '" . self::ADD_ROW_BUTTON_ID . "';"
-                . "var deleteRowButtonId = '" . self::DELETE_ROW_BUTTON_ID . "';"
+                . "var removeRowButtonId = '" . self::REMOVE_ROW_BUTTON_ID . "';"
                 . "var handsonTable;"
                 . "", View::POS_HEAD);
         
@@ -48,6 +53,8 @@ class HandsontableInputWidget extends HandsontableWidget
                 . "", View::POS_READY);
         
         HandsontableInputWidgetAsset::register($this->getView());
+        
+        return $htmlRendered;
     }
     
     protected function renderInput () {
@@ -62,7 +69,7 @@ class HandsontableInputWidget extends HandsontableWidget
                     'class' => "btn btn-primary"
                 ])
                 . Html::buttonInput("Remove last row", [
-                    'id' => self::DELETE_ROW_BUTTON_ID,
+                    'id' => self::REMOVE_ROW_BUTTON_ID,
                     'class' => "btn btn-danger"
                 ])
             . "</div>";
