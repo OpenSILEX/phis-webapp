@@ -9,7 +9,7 @@ var form = document.querySelector('form');
 form.onsubmit = function() {
     var inputsGroup  = document.querySelector('#' + inputGroupDivId);
     inputsGroup.innerHTML = '';
-    var tds = document.querySelectorAll('.htCore td');
+    var tds = document.querySelectorAll('.htCore td:not(.htPlaceholder)');
     tds.forEach(function(td) {
         var input = document.createElement('input');  
         input.setAttribute('name', inputName);
