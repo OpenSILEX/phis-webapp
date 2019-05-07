@@ -173,7 +173,7 @@ class EventController extends GenericController {
     /**
      * Displays the form to create an event or creates it in case of form submission.
      * @return mixed redirect in case of error or after successfully create 
-     * the event otherwise return the "create" view 
+     * the event otherwise return the "create" view.
      */
     public function actionCreate() {
         $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
@@ -209,7 +209,6 @@ class EventController extends GenericController {
         if (!$event->load(Yii::$app->request->post())) {
             $event = $event->getEvent($sessionToken, $id);
             $this->loadFormParams();
-            error_log("kokoko ".print_r($event, true));
             return $this->render('update', ['model' =>  $event]);
             
         // Submit form  
