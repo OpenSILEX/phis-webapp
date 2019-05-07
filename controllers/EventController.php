@@ -180,13 +180,15 @@ class EventController extends GenericController {
         $event = new EventCreation();
         $event->isNewRecord = true;
         
-        if (!$event->load(Yii::$app->request->post())) { //display form
+        // Display form
+        if (!$event->load(Yii::$app->request->post())) { 
             $event->load(Yii::$app->request->get(), '');
             $event->creator = $this->getCreatorUri($sessionToken);
             $this->loadFormParams();
             return $this->render('create', ['model' =>  $event]);
-            
-        } else { // submit form       
+           
+        // Submit form    
+        } else {     
             $dataToSend[] = $event->attributesToArray(); 
             $requestResults =  $event->insert($sessionToken, $dataToSend);
             return $this->handlePostPutResponse($requestResults, $event->returnUrl);
@@ -203,10 +205,14 @@ class EventController extends GenericController {
         $event = new EventUpdate();
         $event->isNewRecord = false;
         
+        // Display form
         if (!$event->load(Yii::$app->request->post())) {
             $event = $event->getEvent($sessionToken, $id);
             $this->loadFormParams();
+            error_log("kokoko ".print_r($event, true));
             return $this->render('update', ['model' =>  $event]);
+            
+        // Submit form  
         } else {
             $dataToSend[] = $event->attributesToArray(); 
             $requestResults =  $event->update($sessionToken, $dataToSend);
