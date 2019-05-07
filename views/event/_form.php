@@ -123,16 +123,16 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
     }
     ?>
     <?php 
-    $settings =
+    $settings = 
         [
             'colHeaders' => ['URI'],
             'data' => $data,
             'rowHeaders' => true,
             'contextMenu' => true
         ];
-    if (sizeof($model->concernedItemsUris) > 0) {
-        foreach($model->concernedItemsUris as $concernedItemsUri) {
-            $data[0][] = $concernedItemsUri;
+    if (sizeof($model->concernedItems) > 0) {
+        foreach($model->concernedItems as $concernedItem) {
+            $data[][0] = $concernedItem->uri;
         }
     }
     else {
@@ -140,7 +140,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
     }
     $settings['data'] = $data;
     
-    if (!(sizeof($model->concernedItemsUris) > 0)) {
+    if (!(sizeof($model->concernedItems) > 0)) {
         $settings['columns'] = [
             [
                 'data' => 'URI',
