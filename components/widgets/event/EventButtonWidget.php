@@ -39,22 +39,6 @@ class EventButtonWidget extends Widget {
     public $concernedItemsUris;
     const CONCERNED_ITEMS_URIS = "concernedItemsUris";
 
-    public function init() {
-        parent::init();
-        // must be not null
-        if ($this->concernedItemsUris === null) {
-           throw new \Exception(CONCERNED_ITEM_NOT_SET_LABEL);
-        }
-         // must be an array
-        if (!is_array($this->concernedItemsUris)) {
-          throw new \Exception(CONCERNED_ITEM_LIST_NOT_A_ARRAY);
-        }
-         // must contains at least one element
-        if (empty($this->concernedItemsUris)) {
-            throw new \Exception(CONCERNED_ITEM_LIST_EMPTY);
-        }
-    }
-
     /**
      * Render the event button
      * @return string the string rendered
