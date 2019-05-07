@@ -11,6 +11,8 @@
 use kartik\icons\Icon;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\EventButtonWidget;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ScientificObjectSearch */
@@ -93,6 +95,23 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'placeholder' => 'Select experiment alias...'
                             ]
                         ]),
+            ],
+            ['class' => 'yii\grid\ActionColumn',
+                'template' => '{event}<br/>{annotation}',
+                'buttons' => [
+                    'event' => function($url, $model, $key) {
+                        return EventButtonWidget::widget([
+                            EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri],
+                            EventButtonWidget::AS_LINK => true
+                        ]); 
+                    },
+                    'annotation' => function($url, $model, $key) {
+                        return AnnotationButtonWidget::widget([
+                            AnnotationButtonWidget::TARGETS => [$model->uri],
+                            AnnotationButtonWidget::AS_LINK => true
+                        ]); 
+                    },
+                ]
             ]
         ],
     ]); ?>
