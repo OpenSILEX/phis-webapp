@@ -124,7 +124,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
     ?>
 
     <?= HandsontableInputWidget::widget([
-        'inputName' => "EventCreation[concernedItemsUris][]",
+        'inputName' => $eventInputsNameRoot . "[" . EventCreation::CONCERNED_ITEMS_URIS . "][]",
         'settings' => 
         [
             'columns' => 
