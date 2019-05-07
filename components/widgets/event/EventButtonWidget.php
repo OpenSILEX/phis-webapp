@@ -15,7 +15,7 @@ use yii\helpers\Url;
 use kartik\icons\Icon;
 
 /**
- * A widget used to generate an event button
+ * A widget used to generate an event button.
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class EventButtonWidget extends Widget {
@@ -26,21 +26,21 @@ class EventButtonWidget extends Widget {
     CONST CONCERNED_ITEM_LIST_EMPTY = 'The concerned items list is empty';
         
     /**
-     * Define if button is displayed as a button (false) or as a link (true)
+     * Defines if the button is displayed as a button (false) or as a link (true).
      * @var boolean
      */    
     public $asLink = false;
     const AS_LINK = "asLink";
            
     /**
-     * Define the items which will be annoted
+     * Defines the items which will be annotated.
      * @var array
      */
     public $concernedItemsUris;
     const CONCERNED_ITEMS_URIS = "concernedItemsUris";
 
     /**
-     * Render the event button
+     * Renders the event button.
      * @return string the string rendered
      */
     public function run() {
@@ -53,7 +53,6 @@ class EventButtonWidget extends Widget {
                 'returnUrl' => Url::current()
             ];
         
-        $linkClasses = [];
         if (!$this->asLink) {
             $linkLabel = Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', self::ADD_EVENT_LABEL);
             $linkAttributes = ['class' => 'btn btn-default'];
