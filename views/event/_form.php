@@ -122,25 +122,38 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
                 EventCreation::DESCRIPTION)->textarea(['rows' => Yii::$app->params['textAreaRowsNumber']]);
     }
     ?>
-
-    <?= HandsontableInputWidget::widget([
-        'inputName' => $eventInputsNameRoot . "[" . EventCreation::CONCERNED_ITEMS_URIS . "][]",
-        'settings' => 
+    <?php 
+    $settings =
         [
-            'columns' => 
-            [
-                [
-                    'data' => 'URI',
-                    'type' => 'text',
-                    'placeholder' => 'http://www.opensilex.org/example/2019/o19000002',
-                    'width' => '380px'
-                ]
-            ],
             'colHeaders' => ['URI'],
-            'data' => [[]],
+            'data' => $data,
             'rowHeaders' => true,
             'contextMenu' => true
-        ]
+        ];
+    if (sizeof($model->concernedItemsUris) > 0) {
+        foreach($model->concernedItemsUris as $concernedItemsUri) {
+            $data[0][] = $concernedItemsUri;
+        }
+    }
+    else {
+        $data = [[]];
+    }
+    $settings['data'] = $data;
+    
+    if (!(sizeof($model->concernedItemsUris) > 0)) {
+        $settings['columns'] = [
+            [
+                'data' => 'URI',
+                'type' => 'text',
+                'placeholder' => 'http://www.opensilex.org/example/2019/o19000002',
+                'width' => '380px'
+            ]
+        ];
+    }
+    ?>
+    <?= HandsontableInputWidget::widget([
+        'inputName' => $eventInputsNameRoot . "[" . EventCreation::CONCERNED_ITEMS_URIS . "][]",
+        'settings' => $settings
     ]) ?>
 
     <div class="form-group">
