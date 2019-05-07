@@ -8,12 +8,12 @@
 //******************************************************************************
 namespace app\components\widgets;
 
+use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
-use Yii;
-use kartik\icons\Icon;
-use app\models\yiiModels\EventPost;
 use yii\helpers\Url;
+use kartik\icons\Icon;
+use app\controllers\EventController;
 
 /**
  * A widget used to generate an event button
@@ -25,7 +25,18 @@ class EventButtonWidget extends Widget {
     CONST CONCERNED_ITEMS_NOT_SET_LABEL = 'The concerned items are not set';
     CONST CONCERNED_ITEM_LIST_NOT_A_ARRAY = 'The concerned items list is not an array';
     CONST CONCERNED_ITEM_LIST_EMPTY = 'The concerned items list is empty';
-    
+        
+    /**
+     * Define if button is displayed as a button (false) or as a link (true)
+     * @var boolean
+     */    
+    public $asLink = false;
+    const AS_LINK = "asLink";
+           
+    /**
+     * Define the items which will be annoted
+     * @var array
+     */
     public $concernedItemsUris;
     const CONCERNED_ITEMS_URIS = "concernedItemsUris";
 
@@ -53,17 +64,26 @@ class EventButtonWidget extends Widget {
         //SILEX:conception
         // Maybe create a widget bar and put buttons in it to use the same style
         //\SILEX:conception
-        return Html::a(
-            Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', self::ADD_EVENT_LABEL),
-            [
+        $uriArray = [
                 'event/create',
-                EventPost::CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
-                EventPost::RETURN_URL => Url::current()
-            ], 
-            [
-                'class' => 'btn btn-default',
-            ] 
-        );
+                'concernedItemsUris' => $this->concernedItemsUris,
+                'returnUrl' => Url::current()
+            ];
+        
+        $linkClasses = [];
+        if (!$this->asLink) {
+            $linkLabel = Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', self::ADD_EVENT_LABEL);
+            $linkAttributes = ['class' => 'btn btn-default'];
+        } else {
+            $linkLabel = '<span class="fa fa-flag"></span>';
+        }
+        $linkAttributes["title"] = Yii::t('app', self::ADD_EVENT_LABEL);
+                
+        return Html::a(
+                    $linkLabel,
+                    $uriArray, 
+                    $linkAttributes
+                );
     }
 
 }
