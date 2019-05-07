@@ -14,7 +14,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
-use kartik\date\DatePicker;
+use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\EventButtonWidget;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\SensorSearch */
@@ -70,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'model',
 
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{view} {update}',
+                'template' => '{view} {update} {event} {annotation}',
                 'buttons' => [
                     'view' => function($url, $model, $key) {
                         return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', 
@@ -79,6 +80,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     'update' => function($url, $model, $key) {
                         return Html::a('<span class="glyphicon glyphicon-pencil"></span>', 
                                         ['sensor/update', 'id' => $model->uri]); 
+                    },
+                    'event' => function($url, $model, $key) {
+                        return EventButtonWidget::widget([
+                            EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri],
+                            EventButtonWidget::AS_LINK => true
+                        ]); 
+                    },
+                    'annotation' => function($url, $model, $key) {
+                        return AnnotationButtonWidget::widget([
+                            AnnotationButtonWidget::TARGETS => [$model->uri],
+                            AnnotationButtonWidget::AS_LINK => true
+                        ]); 
                     },
                 ]
             ],
