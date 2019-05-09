@@ -618,44 +618,29 @@ require_once '../config/config.php';
         // Set page size to 200 for better performances
         $searchModel->pageSize = 200;
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        //get all the data (if multiple pages) and write them in a file
+        $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
 
-        if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                return $this->render('/site/error', [
-                        'name' => Yii::t('app/messages','Internal error'),
-                        'message' => $searchResult]);
-            }
-        } else {
-            //get all the data (if multiple pages) and write them in a file
-            $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
-            
-            $headerFile = "ScientificObjectURI" . ScientificObjectController::DELIM_CSV .
-                          "Alias" . ScientificObjectController::DELIM_CSV .
-                          "RdfType" . ScientificObjectController::DELIM_CSV .
-                          "ExperimentURI" . ScientificObjectController::DELIM_CSV . 
-                          "Geometry" . ScientificObjectController::DELIM_CSV . 
-                          "\n";
-            
-            file_put_contents($serverFilePath, $headerFile);
-            
-            for ($i = 0; $i <= intval($searchModel->totalPages); $i++) {
-                //1. call service for each page
-                $searchParams["page"] = $i;
-                
-                //SILEX:TODO
-                //Find why the $this->load does not work in this case in the search
-                $searchModel->experiment = isset($_GET['model']["uri"]) ? $_GET['model']["uri"] : null;
-                $searchModel->experiment = isset($_GET["model"]["alias"]) ? $_GET["model"]["alias"] : null;
-                $searchModel->experiment = isset($_GET['model']['experiment']) ? $_GET['model']['experiment'] : null;
-                //\SILEX:TODO
-                $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
-                                
-                //2. write in file
-                $models = $searchResult->getmodels();
-                
+        $headerFile = "ScientificObjectURI" . ScientificObjectController::DELIM_CSV .
+                      "Alias" . ScientificObjectController::DELIM_CSV .
+                      "RdfType" . ScientificObjectController::DELIM_CSV .
+                      "ExperimentURI" . ScientificObjectController::DELIM_CSV . 
+                      "Geometry" . ScientificObjectController::DELIM_CSV . 
+                      "\n";
+
+        file_put_contents($serverFilePath, $headerFile);
+
+        $totalPage = 1;
+        for ($i = 0; $i < $totalPage; $i++) {
+            //1. call service for each page
+            $searchParams["page"] = $i;
+
+            $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+
+            //2. write in file
+            $models = $searchResult->getmodels();
+
+            foreach ($models as $model) {
                 // Parse geoJson geometry to WKT if exists
                 $geoJson = $model->geometry;
                 if ($geoJson != null) {
@@ -664,20 +649,20 @@ require_once '../config/config.php';
                 } else {
                     $wktGeometry = "";
                 }
-                
-                foreach ($models as $model) {
-                    $stringToWrite = $model->uri . ScientificObjectController::DELIM_CSV . 
-                                     $model->label . ScientificObjectController::DELIM_CSV .
-                                     $model->rdfType . ScientificObjectController::DELIM_CSV .
-                                     $model->experiment . ScientificObjectController::DELIM_CSV . 
-                                     '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
-                                     "\n";
-                    
-                    file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
-                }
+            
+                $stringToWrite = $model->uri . ScientificObjectController::DELIM_CSV . 
+                                 $model->label . ScientificObjectController::DELIM_CSV .
+                                 $model->rdfType . ScientificObjectController::DELIM_CSV .
+                                 $model->experiment . ScientificObjectController::DELIM_CSV . 
+                                 '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
+                                 "\n";
+
+                file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
             }
-            Yii::$app->response->sendFile($serverFilePath); 
+            
+            $totalPage = intval($searchModel->totalPages);
         }
+        Yii::$app->response->sendFile($serverFilePath); 
     }
     
     /**
