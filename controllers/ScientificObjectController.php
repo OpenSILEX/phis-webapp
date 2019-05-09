@@ -613,12 +613,13 @@ require_once '../config/config.php';
             $searchModel->label = isset($searchParams["alias"]) ? $searchParams["alias"] : null;
             $searchModel->type = isset($searchParams["type"]) ? $searchParams["type"] : null;
             $searchModel->experiment = isset($searchParams["experiment"]) ? $searchParams["experiment"] : null;
-        } else {
-            $searchParams = [];
         }
+        $searchParams = [];
+        // Set page size to 200 for better performances
+        $searchModel->pageSize = 200;
         
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
-        
+
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -635,6 +636,7 @@ require_once '../config/config.php';
                           "Alias" . ScientificObjectController::DELIM_CSV .
                           "RdfType" . ScientificObjectController::DELIM_CSV .
                           "ExperimentURI" . ScientificObjectController::DELIM_CSV . 
+                          "Geometry" . ScientificObjectController::DELIM_CSV . 
                           "\n";
             
             file_put_contents($serverFilePath, $headerFile);
@@ -654,11 +656,21 @@ require_once '../config/config.php';
                 //2. write in file
                 $models = $searchResult->getmodels();
                 
+                // Parse geoJson geometry to WKT if exists
+                $geoJson = $model->geometry;
+                if ($geoJson != null) {
+                    $geom = \geoPHP::load($model->geometry, 'json');
+                    $wktGeometry = (new \WKT())->write($geom);
+                } else {
+                    $wktGeometry = "";
+                }
+                
                 foreach ($models as $model) {
                     $stringToWrite = $model->uri . ScientificObjectController::DELIM_CSV . 
                                      $model->label . ScientificObjectController::DELIM_CSV .
                                      $model->rdfType . ScientificObjectController::DELIM_CSV .
                                      $model->experiment . ScientificObjectController::DELIM_CSV . 
+                                     '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
                                      "\n";
                     
                     file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
