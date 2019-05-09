@@ -46,7 +46,10 @@ use miloschuman\highcharts\Highcharts;
                                     'format' => '{value:.2f}'
                                ]
                            ],
-                            'series' => $series,
+                           'series' => $series,
+                           'tooltip' => [
+                               'xDateFormat'=> '%Y-%m-%dT%H:%M:%S',
+                           ] 
 
                         ]
                      ]);
