@@ -5,18 +5,14 @@
 // Creation date: 5 May 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
-var form = document.querySelector('form');
-form.onsubmit = function() {
-    var inputsGroup  = document.querySelector('#' + inputGroupDivId);
-    inputsGroup.innerHTML = '';
-    var tds = document.querySelectorAll('.htCore td:not(.htPlaceholder)');
-    tds.forEach(function(td) {
-        var input = document.createElement('input');  
-        input.setAttribute('name', inputName);
-        input.setAttribute('value', td.innerHTML);
-        inputsGroup.appendChild(input);
-    });
-};
+$("form").submit(function(e) {
+    var inputsGroup  = $('#' + inputGroupDivId);
+    inputsGroup.empty();
+    for (var i = 0; i < handsonTable.countRows(); i++) {
+        inputsGroup.append($("<input type=\"text\" name=\"" + inputName + "\" value=\"" + handsonTable.getDataAtCell(i, 0) + "\"></input>"));
+    }
+    return true;
+});
 
 window.onload = function() {
     var addRowButton = document.getElementById(addRowButtonId);
