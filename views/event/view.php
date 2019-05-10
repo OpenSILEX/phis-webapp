@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= 
     AnnotationGridViewWidget::widget(
         [
-             AnnotationGridViewWidget::ANNOTATIONS => ${EventController::PARAM_ANNOTATIONS_DATA_PROVIDER}
+            AnnotationGridViewWidget::ANNOTATIONS => ${EventController::PARAM_ANNOTATIONS_DATA_PROVIDER}
         ]
     ); 
     ?>
