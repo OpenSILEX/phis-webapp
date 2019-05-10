@@ -123,7 +123,7 @@ class ActuatorController extends Controller {
         $totalPages = 1;
         for ($i = 0; $i < $totalPages; $i++) {
             $model->page = $i;
-            $actuatorsConcepts = $model->getActuatorTypes(Yii::$app->session['access_token']);
+            $actuatorsConcepts = $model->getActuatorsTypes(Yii::$app->session['access_token']);
             if ($actuatorsConcepts === "token") {
                 return "token";
             } else {
@@ -251,6 +251,9 @@ class ActuatorController extends Controller {
 
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         
+        //list of actuators types
+        $actuatorsTypes = $this->getActuatorsTypesSimpleAndUri();
+        
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -262,7 +265,8 @@ class ActuatorController extends Controller {
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+               'dataProvider' => $searchResult,
+               'actuatorsTypes' => $actuatorsTypes
             ]);
         }
     }
