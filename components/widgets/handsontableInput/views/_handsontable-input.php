@@ -18,7 +18,7 @@ use Yii;
         <button type="button" id="<?= $addRowButtonId ?>" class="btn btn-primary" title="<?= Yii::t("app", "Add row")?>">
             <span class="glyphicon glyphicon-plus"></span>
         </button>
-        <button id="<?= $removeRowButtonId ?>" class="btn btn-danger" title="<?= Yii::t("app", "Remove last row")?>">
+        <button type="button" id="<?= $removeRowButtonId ?>" class="btn btn-danger" title="<?= Yii::t("app", "Remove last row")?>">
             <span class="glyphicon glyphicon-minus"></span>
         </button>
     </div>
