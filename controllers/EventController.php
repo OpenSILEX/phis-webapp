@@ -27,6 +27,7 @@ use app\components\helpers\SiteMessages;
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class EventController extends GenericController {    
+    
     const PARAM_ANNOTATIONS_DATA_PROVIDER = "paramAnnotations";
     const PARAM_UPDATABLE = "paramUpdatable";
     
@@ -86,7 +87,7 @@ class EventController extends GenericController {
         // Get request parameters
         $searchParams = Yii::$app->request->queryParams;
         
-        // Fill the event model with the information
+        // Get event
         $event = (new YiiEventModel())->getEvent(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);
 
         // Get documents
