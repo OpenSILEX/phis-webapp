@@ -12,12 +12,13 @@ use yii\base\Widget;
 use Yii;
 use yii\grid\GridView;
 use app\models\yiiModels\YiiConcernedItemModel;
+use app\components\helpers\Vocabulary;
 
 /**
  * Concerned item GridView widget.
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
-abstract class ConcernedItemGridViewWidget extends Widget {
+class ConcernedItemGridViewWidget extends Widget {
 
     const NO_CONCERNED_ITEMS_LABEL = "No items concerned";
     const CONCERNED_ITEMS_LABEL = "Concerned Items";
@@ -40,7 +41,7 @@ abstract class ConcernedItemGridViewWidget extends Widget {
     }
 
     /**
-     * Render the concerned item list
+     * Renders the concerned item list.
      * @return string the HTML string rendered
      */
     public function run() {
@@ -49,17 +50,35 @@ abstract class ConcernedItemGridViewWidget extends Widget {
         } else {
             $htmlRendered = "<h3>" . Yii::t('app', self::CONCERNED_ITEMS_LABEL) . "</h3>";
             $htmlRendered .= GridView::widget([
-                        'dataProvider' => $this->dataProvider,
-                        'columns' => $this->getColumns(),
-                        'options' => ['class' => self::HTML_CLASS]     
+                'dataProvider' => $this->dataProvider,
+                'columns' => [
+                    [
+                        'label' => Yii::t('app', YiiConcernedItemModel::URI_LABEL),
+                        'attribute' => YiiConcernedItemModel::URI,
+                        'value' => function ($model) {
+                            return Vocabulary::prettyUri($model->uri);
+                        }
+                    ],
+                    YiiConcernedItemModel::RDF_TYPE =>
+                    [
+                        'label' => Yii::t('app', YiiConcernedItemModel::RDF_TYPE_LABEL),
+                        'attribute' => YiiConcernedItemModel::RDF_TYPE,
+                        'value' => function($model) {
+                            return Vocabulary::prettyUri($model->rdfType);
+                        },
+                    ],
+                    YiiConcernedItemModel::LABELS => 
+                    [
+                        'label' => Yii::t('app', YiiConcernedItemModel::LABELS_LABEL),
+                        'attribute' => YiiConcernedItemModel::LABELS,
+                        'value' => function($model) {
+                            return implode((', '), $model->labels);
+                        }
+                    ]
+                ],
+                'options' => ['class' => self::HTML_CLASS]     
             ]);
         }
         return $htmlRendered;
     }
-    
-    /**
-     * Returns the columns of the GridView.
-     * @return array
-     */
-    protected abstract function getColumns(): array;
 }

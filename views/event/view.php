@@ -13,7 +13,7 @@ use app\components\helpers\Vocabulary;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\PropertyWidgetWithoutActions;
-use app\components\widgets\concernedItem\ConcernedItemGridViewWidgetWithoutActions;
+use app\components\widgets\concernedItem\ConcernedItemGridViewWidget;
 use app\controllers\EventController;
 use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventAction;
@@ -65,14 +65,15 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
     
     <!-- Concerned items-->
-    <?= ConcernedItemGridViewWidgetWithoutActions::widget(
+    <?= ConcernedItemGridViewWidget::widget(
         [
-            ConcernedItemGridViewWidgetWithoutActions::DATA_PROVIDER => new ArrayDataProvider([
+            ConcernedItemGridViewWidget::DATA_PROVIDER => new ArrayDataProvider([
                 'models' => $model->concernedItems,
                 //SILEX:info
                 //totalCount must be there too to get the pagination in GridView
-                'totalCount' => count($model->concernedItems)
+                'totalCount' => count($model->concernedItems),
                 //\SILEX:info
+                'pagination' => false
             ])
         ]); 
     ?>
