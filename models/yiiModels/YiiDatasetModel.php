@@ -25,6 +25,12 @@ use app\models\wsModels\WSDatasetModel;
 class YiiDatasetModel extends WSActiveRecord {
 
     /**
+     * Uri de la provenance
+     * @var type 
+     */
+    public $provenanceUri;
+    
+    /**
      * provenance alias
      * @var string 
      */
@@ -90,7 +96,7 @@ class YiiDatasetModel extends WSActiveRecord {
         return [
             [['variables', 'provenanceAlias', 'file'], 'required'],
             [['provenanceComment'], 'string'],
-            [['provenanceComment', 'documentsURIs', 'data', 'file'], 'safe'],
+            [['provenanceUri', 'provenanceComment', 'documentsURIs', 'data', 'file'], 'safe'],
             [['file'], 'file', 'extensions' => 'csv']
         ];
     }
@@ -101,10 +107,11 @@ class YiiDatasetModel extends WSActiveRecord {
      */
     public function attributeLabels() {
         return [
+            'provenanceUri' => Yii::t('app', 'Provenance URI'),
             'provenanceAlias' => Yii::t('app', 'Provenance alias'),
             'provenanceComment' => Yii::t('app', 'Provenance comment'),
-            'variables' => Yii::t('app', 'Quantitative Variable'),
-            'file' => Yii::t('app', 'Data') . " " . Yii::t('app', 'File'),
+            'variables' => Yii::t('app', 'Variable(s)'),
+            'file' => Yii::t('app', 'Data file'),
             'documentsUris' => Yii::t('app', 'Documents')
         ];
     }

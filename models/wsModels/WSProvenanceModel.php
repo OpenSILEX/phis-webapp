@@ -32,18 +32,52 @@ class WSProvenanceModel extends WSModel {
     public function createProvenance($sessionToken, $label, $comment, $metadata) {
         $subService = "/";
         $provenance = $this->post($sessionToken, $subService, [[
-            "label" => $label,
-            "comment" => $comment,
-            "metadata" => $metadata,
+        "label" => $label,
+        "comment" => $comment,
+        "metadata" => $metadata,
         ]]);
-        
+
         if (
-            isset($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES})
-            && count($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) == 1
+                isset($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) && count($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) == 1
         ) {
             return $provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0];
         } else {
             return $provenance;
+        }
+    }
+
+    /**
+     * Return an array of all existing provenances
+     * 
+     * @param type $sessionToken
+     * @return type
+     */
+    public function getAllProvenances($sessionToken) {
+        $pageSize = 200;
+        $subService = "/";
+        $provenanceResult = $this->get($sessionToken, $subService, [
+            WSConstants::PAGE => 0,
+            WSConstants::PAGE_SIZE => $pageSize
+        ]);
+
+        if (isset($provenanceResult->{WSConstants::METADATA}->{WSConstants::PAGINATION}) && isset($provenanceResult->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_COUNT}) && $provenanceResult->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_COUNT} > 0) {
+
+            $result = $provenanceResult->{WSConstants::RESULT}->{WSConstants::DATA};
+
+            $totalPages = $provenanceResult->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_PAGES};
+
+            for ($currentPage = 1; $currentPage < $totalPages; $currentPage++) {
+                $provenanceResult = $this->get($sessionToken, $subService, [
+                    WSConstants::PAGE => $currentPage,
+                    WSConstants::PAGE_SIZE => $pageSize
+                ]);
+                
+                $result = array_merge($result, $provenanceResult->{WSConstants::RESULT}->{WSConstants::DATA});
+            }
+            
+            return $result;
+        } else {
+            return [];
         }
     }
 

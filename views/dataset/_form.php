@@ -59,29 +59,29 @@ use yii\helpers\Url;
     <?php
         endif;
     ?>
-    <div id="errors">
     <?php
-        if (isset($handsontable) && $handsontable !== null) {
+        if (isset($handsontable) && $handsontable !== null):
     ?>
-        <h3 class="alert alert-danger" style="margin:3%;">Errors found in dataset </h3>
+        <div id="errors">
 
-            <div id="<?= $handsontable->getContainerName() ?>">
-            </div>
-            <script>
-                <?= $handsontable->generateJavascriptCode(); ?>
-                <?= $handsontableErrorsCellsSettings; ?>
-            </script>
+            <h3 class="alert alert-danger" style="margin:3%;">Errors found in dataset </h3>
 
-    </div>
+                <div id="<?= $handsontable->getContainerName() ?>">
+                </div>
+                <script>
+                    <?= $handsontable->generateJavascriptCode(); ?>
+                    <?= $handsontableErrorsCellsSettings; ?>
+                </script>
+
+        </div>
+
+        <h3 class="alert alert-info" style="margin:3%;">Add dataset form</h3>
+    <?php endif; ?>
     
-    <h3 class="alert alert-info" style="margin:3%;">Add dataset form</h3>
-    
-
-        <?php } ?>
     <?= $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(),[
                 'data' => $this->params['variables'],
                 'options' => [
-                    'placeholder' => 'Select or add a variable ...',
+                    'placeholder' => Yii::t('app/messages', 'Select one or many variables') . ' ...',
                     'id' => 'uriVariable-selector',
                     'multiple' => true
                 ],
@@ -92,15 +92,72 @@ use yii\helpers\Url;
             ]); ?>
 
     <hr style="border-color : gray;">
-    <h3>Provenance</h3>
+    <h3><?= Yii::t('app', 'Provenance')?></h3>
 
+    <script>
+        $(document).ready(function() {
+            <?php
+                foreach ($this->params['provenances'] as $uri => $provenance) {
+                    $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
+                }
+                echo 'var documentsLoadUri = "' . Url::to(['document/get-documents-widget']) . '";';
+                echo 'var provenances = ' . json_encode($this->params['provenances']) . ';';
+            ?>
+                
+                
+            var updateProvenanceFields = function(uri) {
+                if (provenances.hasOwnProperty(uri)) {
+                    var label = provenances[uri]["label"];
+                    var comment = provenances[uri]["comment"];
+                    
+                    $("#yiidatasetmodel-provenancealias").val(label).attr("disabled", "disabled");
+                    $(".field-yiidatasetmodel-provenancealias, .field-yiidatasetmodel-provenancealias *")
+                        .removeClass("has-error")
+                        .removeClass("has-success");
+                    $(".field-yiidatasetmodel-provenancealias .help-block").empty();
+                    
+                    $("#yiidatasetmodel-provenancecomment").val(comment).attr("disabled", "disabled");
+                    $(".field-yiidatasetmodel-provenancecomment, .field-yiidatasetmodel-provenancecomment *")
+                        .removeClass("has-error")
+                        .removeClass("has-success");
+                    $(".field-yiidatasetmodel-provenancecomment .help-block").empty();
+
+                    $("#already-linked-documents").load(documentsLoadUri, {
+                        "uri": uri
+                    })
+                } else {
+                    $("#yiidatasetmodel-provenancealias").val("").removeAttr("disabled");
+                    $("#yiidatasetmodel-provenancecomment").val("").removeAttr("disabled");
+                    $("#already-linked-documents").empty();
+                }    
+            }
+            
+            $("#provenance-selector").change(function() {
+                updateProvenanceFields($(this).val());
+            });
+            
+            updateProvenanceFields($("#provenance-selector").val());
+        });
+    </script>
+    <?= $form->field($model, 'provenanceUri')->widget(\kartik\select2\Select2::classname(),[
+                'data' => $provenancesArray,
+                'options' => [
+                    'placeholder' => Yii::t('app/messages', 'Select existing provenance or fill the following form to create a new one') . ' ...',
+                    'id' => 'provenance-selector',
+                    'multiple' => false
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true,
+                    'tags' => true
+                ],
+            ]); ?>
+    
     <?= $form->field($model, 'provenanceAlias')->textInput(); ?>
 
     <?= $form->field($model, 'provenanceComment')->textarea(['rows' => 6]) ?>
 
-    <hr style="border-color : gray;">
     <h3><?= Yii::t('app', 'Linked Document(s)') ?></h3>
-
+    <div id="already-linked-documents"></div>
    <?=  $form->field($model, 'documentsURIs')->widget(MultipleInput::className(), [
         'max'               => 6,
         'allowEmptyList'    => true,
@@ -108,7 +165,6 @@ use yii\helpers\Url;
         'columns' => [
             [
                 'name' => 'documentURI',
-                'title' => Yii::t('app', 'Linked Document(s)'),
                 'options' => [
                   'readonly' => true,
                   'style' => 'background-color:#C4DAE7;',
@@ -171,7 +227,7 @@ use yii\helpers\Url;
                                     + $(sel).text() + ' *'
                                 + '</th>'
                                 + '<td>'
-                                    + '<?php echo Yii::t("app/messages", "Value"); ?> (<?php echo Yii::t('app', 'Real Number'); ?>)'
+                                    + '<?php echo Yii::t("app/messages", "Value"); ?> (<?php echo Yii::t('app', 'Real number, String or Date'); ?>)'
                                 + '</td>'
                             + '</tr>');
                   });
@@ -283,6 +339,12 @@ use yii\helpers\Url;
 
       <div class="alert alert-info" role="alert">
         <b><?= Yii::t('app/messages', 'File Rules')?> : </b>
+        <ul>
+            <li><?= Yii::t('app/messages', 'CSV separator must be')?> "<b><?= \app\controllers\DatasetController::DELIM_CSV ?></b>"</li>
+            <li><?= Yii::t('app/messages', 'Decimal separator for numeric values must be')?> "<b>.</b>"</li>
+        </ul>
+        <br/>
+        <b><?= Yii::t('app', 'Columns')?> : </b>
         <table class="table table-hover" id="dataset-csv-columns-desc">
             <tr>
                 <th style="color:red">ScientificObjectURI *</th>
@@ -290,11 +352,11 @@ use yii\helpers\Url;
             </tr>
             <tr>
                 <th style="color:red">Date *</th>
-                <td><p><?= Yii::t('app/message', 'Acquisition date of the data') ?> (format : YYYY-MM-DD) </p> </td>
+                <td><p><?= Yii::t('app/messages', 'Acquisition date of the data') ?> (format ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ) </p> </td>
             </tr>
              <tr class="dataset-variables">
                 <th style="color:red">Value *</th>
-                <td ><?= Yii::t('app/messages', 'Value') ?> (<?= Yii::t('app', 'Real Number') ?>)</td>
+                <td ><?= Yii::t('app', 'Value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)</td>
             </tr>
         </table>
     </div>

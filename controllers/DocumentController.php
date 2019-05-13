@@ -23,6 +23,8 @@ use app\models\yiiModels\YiiModelsConstants;
 use app\models\yiiModels\YiiInstanceDefinitionModel;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\YiiDocumentModel;
+use yii\grid\GridView;
+use yii\helpers\Html;
 
 require_once '../config/config.php';
 
@@ -468,5 +470,38 @@ class DocumentController extends Controller {
                             'model' => $documentModel,
                 ]);
         }
+    }
+    
+    /**
+     * Ajax action to get the document widget of a given URI
+     * @return type
+     */
+    public function actionGetDocumentsWidget() {
+        $searchDocumentModel = new DocumentSearch();
+        $post = Yii::$app->request->post();
+        $searchDocumentModel->concernedItemFilter = $post['uri'];
+        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $uri]);
+        
+        return GridView::widget([
+            'dataProvider' => $documents,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                'title',
+                'creator',
+                'creationDate',
+                'language',
+                ['class' => 'yii\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function($url, $model, $key) {
+                            return Html::a(
+                                '<span class="glyphicon glyphicon-eye-open"></span>', 
+                                ['document/view', 'id' => $model->uri],
+                                ["target" => "_blank"]);
+                        },
+                    ]
+                ],
+            ]
+        ]);;
     }
 }
