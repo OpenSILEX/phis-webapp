@@ -138,6 +138,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     protected function arrayToAttributes($array) {
         $this->uri = $array[self::URI];
         $this->creator = $array[self::CREATOR];
+        $this->creationDate = (new \DateTime($array[self::CREATION_DATE]))->format(\DateTime::ATOM);
         $this->bodyValues = $array[self::BODY_VALUES];
         $this->motivatedBy = $array[self::MOTIVATED_BY];
         $this->targets = $array[self::TARGETS];
