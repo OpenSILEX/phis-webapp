@@ -14,6 +14,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\icons\Icon;
 use app\controllers\EventController;
+use app\models\yiiModels\EventPost;
 
 /**
  * A widget used to generate an event button
