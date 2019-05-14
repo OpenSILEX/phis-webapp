@@ -352,9 +352,10 @@ use yii\helpers\Url;
         </table>
     </div>
 
-    <p><i>
-        <?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . '/documents/DatasetFiles/datasetTemplate.csv', ['id' => 'downloadDatasetTemplate']) ?>
-    </i></p>
+    <p>
+        <i><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . 'documents/DatasetFiles/datasetTemplate.csv', ['id' => 'downloadDatasetTemplate']) ?></i>
+        <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/datasetExemple.csv') ?></i>
+    </p>
     <?= $form->field($model, 'file')->widget(FileInput::classname(), [
         'options' => [
             'maxFileSize' => 2000,

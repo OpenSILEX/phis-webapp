@@ -90,6 +90,7 @@ return [
     'Download' => 'Télécharger',
     'Download Search Result' => 'Télécharger le Résultat de la Recherche',
     'Download Template' => 'Télécharger le Gabarit',
+    'Download Example' => 'Télécharger un fichier d\'example',
     'Email' => 'Adresse email',
     'Entity' => 'Entité',
     'Enter date of last calibration' => 'Saisir la date de dernier étalonnage',
