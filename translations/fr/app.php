@@ -57,6 +57,7 @@ return [
     AnnotationButtonWidget::ADD_ANNOTATION_LABEL => 'Ajouter annotation',
     AnnotationGridViewWidget::LINKED_ANNOTATIONS => "Annotations liées",
     AnnotationGridViewWidget::NO_LINKED_ANNOTATIONS => "Aucune annotation liée",
+    'Annotations' => 'Annotations',
     
     'Acquisition session template' => 'Gabarit de session d\'aquisition',
     'Attenuator Filter' => 'Filtre Atténuateur',

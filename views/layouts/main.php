@@ -98,13 +98,10 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'), 
                                 'url' => ['/event/index']
                             ],
-                            //SILEX:info
-                            //Uncomment this code if you want to allow access to annotation index
-//                            [
-//                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
-//                                'url' => ['/annotation/index']
-//                            ]
-                            //\SILEX:info
+                            [
+                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'), 
+                                'url' => ['/annotation/index']
+                            ],                            
                         ]];
 //        $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
@@ -212,13 +209,10 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'), 
                                 'url' => ['/event/index']
                             ],
-                            //SILEX:info
-                            //Uncomment this code if you want to allow access to annotation index
-//                            [
-//                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
-//                                'url' => ['/annotation/index']
-//                            ]
-                            //\SILEX:info
+                            [
+                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'), 
+                                'url' => ['/annotation/index']
+                            ],  
                         ]];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
