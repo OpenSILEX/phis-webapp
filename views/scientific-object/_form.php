@@ -223,7 +223,6 @@
                     th.style.color = "red";
                 }
             }
-
          });
 
         /**

@@ -161,7 +161,6 @@ return [
 
     // Property
     PropertyWidget::NO_PROPERTY_LABEL => 'Aucune propriété spécifique',
-
     'Password' => 'Mot de passe',
     'Painting' => 'Peinture',
     'Person In Charge' => 'Responsable',
