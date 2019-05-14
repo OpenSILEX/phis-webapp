@@ -54,5 +54,4 @@ phpunit.phar
 
 web/documents/*
 !web/documents/DatasetFiles
-web/documents/*
 !web/documents/SpectralHemisphericalReflectanceFiles
