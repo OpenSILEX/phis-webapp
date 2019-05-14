@@ -265,7 +265,7 @@ class YiiUserModel extends WSActiveRecord {
      * @return array the list of the users mails and names existing in the database
      * @example returned array : 
      * [
-     *      ["email@email.fr"] => "E Mail",
+     *      ["http://www.phenome-fppn.fr/diaphen/id/agent/jean_dupond"] => "Jean Dupond",
      *      ...
      * ]
      */
