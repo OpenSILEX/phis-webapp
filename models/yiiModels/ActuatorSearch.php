@@ -23,7 +23,7 @@ class ActuatorSearch extends YiiActuatorModel {
     public function rules()
     {
         return [
-            [['brand', 'label', 'inServiceDate', 'dateOfPurchase', 'dateOfLastCalibration'], 'safe'],
+            [['uri', 'rdfType', 'brand', 'label', 'serialNumber', 'model', 'inServiceDate', 'dateOfPurchase', 'dateOfLastCalibration'], 'safe'],
         ];
     }
     

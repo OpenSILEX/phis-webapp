@@ -35,6 +35,7 @@ return [
     'Required column missing (ScientificObjectURI, Date or Value)' => "Une des colonnes requises est manquante (ScientificObjectURI, Date ou Value)",
     'Required column missing (Geometry or ExperimentURI)' => 'Une des colonnes requises manque (Geometry ou ExperimentURI)',
     'See the folowing list to get all species URI' => 'Regarder dans la liste suivante pour avoir toutes les URI d\'espèces',
+    'Select type...' => 'Sélectionnez le type...',
     'Some required fields are missings' => 'Des champs requis sont manquants.',
     'The selected sensor cannot be characterized. Please select another sensor among cameras (all camera types: RGB, multispectral, etc.), spectrometers and LiDAR.' => 'Le capteur sélectionné ne peut pas être caractérisé. Veuillez sélectionner une caméra (RGB, TIR, multispectrale, etc.), un spectromètre ou un LiDAR. ',
     'The alias of the plot (e.g. MAU17-PG_38_WW_1_19_5)' => 'L\'alias du plot (ex. MAU17-PG_38_WW_1_19_5)',

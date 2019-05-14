@@ -26,7 +26,7 @@ class VectorSearch extends YiiVectorModel {
     public function rules()
     {
         return [
-            [['brand', 'label', 'inServiceDate', 'dateOfPurchase'], 'safe'],
+            [['uri', 'brand', 'rdfType', 'serialNumber', 'label', 'inServiceDate', 'dateOfPurchase'], 'safe'],
         ];
     }
     
