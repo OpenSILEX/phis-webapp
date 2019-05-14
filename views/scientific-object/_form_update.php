@@ -36,14 +36,14 @@
         </div>
     </div>
     <div id="loader" class="loader" style="display:none"></div>
-    
+
     <script>
         var objectsTypes = JSON.parse('<?php echo $objectsTypes; ?>');
         var experiments = JSON.parse('<?php echo $experiments; ?>');
         var species = JSON.parse('<?php echo $species; ?>');
-        
+
         $('#objects-updated').hide();
-        
+
         // Empty validator
         var emptyValidator = function(value, callback) {
           if (isEmpty(value)) {
@@ -52,9 +52,9 @@
             callback(true);
           }
         };
-        
+
         /**
-         * 
+         *
          * @param {type} value
          * @returns {Boolean} true if value is empty
          */
@@ -65,13 +65,13 @@
             return false;
           }
         }
-        
+
         /**
-         * validate an object type value. callback will be true if the value is 
+         * validate an object type value. callback will be true if the value is
          * not empty and is a object type
          * @param {type} value
          * @param {type} callback
-         * @returns {undefined} 
+         * @returns {undefined}
          */
         var objectTypeValidator = function(value, callback) {
             if (isEmpty(value)) {
@@ -82,13 +82,13 @@
                 callback(false);
             }
         };
-        
+
         /**
-         * validate an experiment cell value. callback will be true if the value is 
+         * validate an experiment cell value. callback will be true if the value is
          * not empty and is an experiment from the experiments list
          * @param {type} value
          * @param {type} callback
-         * @returns {undefined} 
+         * @returns {undefined}
          */
         var experimentValidator = function(value, callback) {
             if (isEmpty(value)) {
@@ -99,7 +99,7 @@
                 callback(false);
             }
         };
-        
+
         var speciesValidator = function(value, callback) {
           if (isEmpty(value)) {
                 callback(true);
@@ -107,26 +107,26 @@
                 callback(true);
             } else {
                 callback(false);
-            }  
+            }
         };
-        
+
         //creates renderer to color in red required column names
         function firstRowRequiedRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
             td.style.color = 'red';
             td.style.fontWeight = 'bold';
-        }   
-        
+        }
+
         //creates renderer for the read only columns
         function readOnlyColumnRenderer(instance, td, row, col, prop, value, cellProperties) {
             Handsontable.renderers.TextRenderer.apply(this, arguments);
             td.style.fontWeight = 'bold';
             td.style.background = '#EEE';
         }
-           
-           
+
+
         //generate handsontable
-         var hotElement = document.querySelector('#object-multiple-update-table');        
+         var hotElement = document.querySelector('#object-multiple-update-table');
          var handsontable = new Handsontable(hotElement, {
             startRows: 1,
             columns: [
@@ -203,10 +203,10 @@
                 "<b><?= Yii::t('app', 'URI') ?></b>",
                 "<b><?= Yii::t('app', 'Alias') ?></b>",
                 "<b><?= Yii::t('app', 'Type') ?></b>",
-                "<b><?= Yii::t('app', 'Experiment') ?></b>",
+                "<b><?= Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 1]) ?></b>",
                 "<b><?= Yii::t('app', 'Geometry') ?></b>",
                 "<b><?= Yii::t('app', 'Parent') ?></b>",
-                "<b><?= Yii::t('app', 'Species') ?></b>",
+                "<b><?= Yii::t('app', '{n, plural, =1{Species} other{Species}}', ['n' => 1]) ?></b>",
                 "<b><?= Yii::t('app', 'Variety') ?></b>",
                 "<b><?= Yii::t('app', 'Experiment Modalities') ?></b>",
                 "<b><?= Yii::t('app', 'Replication') ?></b>",
@@ -219,11 +219,11 @@
             dropdownMenu: true,
             cells: function(row, col, prop) {
                 var cellProperties = {};
-                
+
                 if (col === 10) {
                     cellProperties.renderer = readOnlyColumnRenderer;
                 }
-                
+
                 return cellProperties;
             },
             afterGetColHeader: function (col, th) {
@@ -231,19 +231,19 @@
                     th.style.color = "red";
                 }
             }
-            
+
          });
-         
+
         /**
          * if the data is valid, calls the update action
          * @param {boolean} callback
-         * @returns 
+         * @returns
          */
         function update(callback) {
             if (callback) {
                 document.getElementById("loader").style.display = "block";
                 document.getElementById("objects-to-update").style.display = "none";
-                
+
                 var objectsArray = handsontable.getData();
                 var objectsString = JSON.stringify(objectsArray);
                 $.ajax({
@@ -258,8 +258,8 @@
                         if (data["objectUris"][i] !== null) {
                             handsontable.setDataAtCell(i, 0, data["objectUris"][i]);
                         }
-                        handsontable.setDataAtCell(i, 10, data["messages"][i]);                        
-                    }                   
+                        handsontable.setDataAtCell(i, 10, data["messages"][i]);
+                    }
                     $('#objects-save').hide();
                     if (data["error"]) {
                         toastr["error"]("<?= Yii::t('app/messages', 'The object update has failed. See insertion status column for more details.') ?>");
@@ -275,9 +275,9 @@
                     document.getElementById("objects-to-update").style.display = "block";
                     document.getElementById("loader").style.display = "none";
                 });
-            } 
+            }
         }
-         
+
          //save objects
          $(document).on('click', '#objects-update', function() {
              handsontable.validateCells(update);
