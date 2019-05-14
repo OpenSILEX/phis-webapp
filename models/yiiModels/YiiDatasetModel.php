@@ -94,7 +94,7 @@ class YiiDatasetModel extends WSActiveRecord {
      */
     public function rules() {
         return [
-            [['variables', 'provenanceAlias', 'file'], 'required'],
+            [['variables', 'provenanceAlias', 'file', 'provenanceUri'], 'required'],
             [['provenanceComment'], 'string'],
             [['provenanceUri', 'provenanceComment', 'documentsURIs', 'data', 'file'], 'safe'],
             [['file'], 'file', 'extensions' => 'csv']
@@ -107,8 +107,7 @@ class YiiDatasetModel extends WSActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'provenanceUri' => Yii::t('app', 'Provenance URI'),
-            'provenanceAlias' => Yii::t('app', 'Provenance alias'),
+            'provenanceUri' => Yii::t('app', 'Provenance (URI)'),
             'provenanceComment' => Yii::t('app', 'Provenance comment'),
             'variables' => Yii::t('app', 'Variable(s)'),
             'file' => Yii::t('app', 'Data file'),

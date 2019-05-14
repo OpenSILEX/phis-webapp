@@ -325,85 +325,99 @@ class DatasetController extends Controller {
 
             //Read CSV file content
             $fileContent = str_getcsv(file_get_contents($serverFilePath), "\n");
+            $csvHeaders = str_getcsv(array_shift($fileContent), DatasetController::DELIM_CSV);
             unlink($serverFilePath);
 
             //Loaded given variables
             $givenVariables = $datasetModel->variables;
 
-            // Get selected or create Provenance URI
-            if (!$datasetModel->provenanceUri) {
-                $provenanceUri = $this->createProvenance(
-                        $datasetModel->provenanceAlias,
-                        $datasetModel->provenanceComment
-                );
-            } else {
-                $provenanceUri = $datasetModel->provenanceUri;
-            }
-
-            if ($provenanceUri) {
-                // Link uoploaded documents to provenance URI if neeeded
-                $linkDocuments = true;
-                if (is_array($datasetModel->documentsURIs) && is_array($datasetModel->documentsURIs["documentURI"])) {
-                    $linkDocuments = $this->linkDocumentsToProvenance(
-                            $provenanceUri,
-                            $datasetModel->documentsURIs["documentURI"]
+            // Check CSV header with variables
+            if (array_slice($csvHeaders, 2) === $givenVariables) {
+                
+                // Get selected or create Provenance URI
+                if (!array_key_exists($datasetModel->provenanceUri, $provenances)) {
+                    $provenanceUri = $this->createProvenance(
+                            $datasetModel->provenanceUri,
+                            $datasetModel->provenanceComment
                     );
+                    $datasetModel->provenanceUri = $provenanceUri;
+                    $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
+                    $this->view->params["provenances"] = $provenances;
+                } else {
+                    $provenanceUri = $datasetModel->provenanceUri;
                 }
 
-                $datasetModel->documentsURIs = null;
-
-                if ($linkDocuments === true) {
-                    // Save CSV data linked to provenance URI
-                    $csvHeaders = str_getcsv(array_shift($fileContent), DatasetController::DELIM_CSV);
-                    $values = [];
-                    foreach ($fileContent as $rowStr) {
-                        $row = str_getcsv($rowStr, DatasetController::DELIM_CSV);
-                        $scientifObjectUri = $row[0];
-                        $date = $row[1];
-                        for ($i = 2; $i < count($row); $i++) {
-                            $values[] = [
-                                "provenanceUri" => $provenanceUri,
-                                "objectUri" => $scientifObjectUri,
-                                "variableUri" => array_search($givenVariables[$i - 2], $variables),
-                                "date" => $date,
-                                "value" => $row[$i]
-                            ];
-                        }
+                if ($provenanceUri) {
+                    // Link uoploaded documents to provenance URI if neeeded
+                    $linkDocuments = true;
+                    if (is_array($datasetModel->documentsURIs) && is_array($datasetModel->documentsURIs["documentURI"])) {
+                        $linkDocuments = $this->linkDocumentsToProvenance(
+                                $provenanceUri,
+                                $datasetModel->documentsURIs["documentURI"]
+                        );
                     }
 
-                    $dataService = new WSDataModel();
-                    $result = $dataService->postData($token, $values);
+                    $datasetModel->documentsURIs = null;
 
-                    if (is_array($result->metadata->datafiles) && count($result->metadata->datafiles) > 0) {
-                        $arrayData = $this->csvToArray($fileContent);
-                        return $this->render('_form_dataset_created', [
+                    if ($linkDocuments === true) {
+                        // Save CSV data linked to provenance URI
+                        $values = [];
+                        foreach ($fileContent as $rowStr) {
+                            $row = str_getcsv($rowStr, DatasetController::DELIM_CSV);
+                            $scientifObjectUri = $row[0];
+                            $date = $row[1];
+                            for ($i = 2; $i < count($row); $i++) {
+                                $values[] = [
+                                    "provenanceUri" => $provenanceUri,
+                                    "objectUri" => $scientifObjectUri,
+                                    "variableUri" => array_search($givenVariables[$i - 2], $variables),
+                                    "date" => $date,
+                                    "value" => $row[$i]
+                                ];
+                            }
+                        }
+
+                        $dataService = new WSDataModel();
+                        $result = $dataService->postData($token, $values);
+
+                        if (is_array($result->metadata->datafiles) && count($result->metadata->datafiles) > 0) {
+                            $arrayData = $this->csvToArray($fileContent);
+                            return $this->render('_form_dataset_created', [
+                                        'model' => $datasetModel,
+                                        'handsontable' => $this->generateHandsontableDataset($csvHeaders, $arrayData),
+                                        'insertedDataNumber' => count($arrayData)
+                            ]);
+                        } else {
+
+                            return $this->render('create', [
                                     'model' => $datasetModel,
-                                    'handsontable' => $this->generateHandsontableDataset($csvHeaders, $arrayData),
-                                    'insertedDataNumber' => count($arrayData)
-                        ]);
+                                    'errors' => $result->metadata->status
+                            ]);
+                        }
                     } else {
-
                         return $this->render('create', [
-                                'model' => $datasetModel,
-                                'errors' => $result->metadata->status
+                            'model' => $datasetModel,
+                            'errors' => [
+                                Yii::t("app/messages", "Error while creating linked documents")
+                            ]
                         ]);
                     }
                 } else {
                     return $this->render('create', [
                         'model' => $datasetModel,
                         'errors' => [
-                            Yii::t("app/messages", "Error while creating linked documents")
+                            Yii::t("app/messages", "Error while creating provenance")
                         ]
                     ]);
                 }
             } else {
-                return $this->render('create', [
-                    'model' => $datasetModel,
-                    'errors' => [
-                        Yii::t("app/messages", "Error while creating provenance")
-                    ]
-                ]);
-            }
+                    return $this->render('create', [
+                        'model' => $datasetModel,
+                        'errors' => [
+                            Yii::t("app/messages", "CSV file headers does not match selected variables")
+                        ]
+                    ]);
+                }
         } else {
             return $this->render('create', [
                         'model' => $datasetModel,

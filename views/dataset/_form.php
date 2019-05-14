@@ -110,12 +110,6 @@ use yii\helpers\Url;
                     var label = provenances[uri]["label"];
                     var comment = provenances[uri]["comment"];
                     
-                    $("#yiidatasetmodel-provenancealias").val(label).attr("disabled", "disabled");
-                    $(".field-yiidatasetmodel-provenancealias, .field-yiidatasetmodel-provenancealias *")
-                        .removeClass("has-error")
-                        .removeClass("has-success");
-                    $(".field-yiidatasetmodel-provenancealias .help-block").empty();
-                    
                     $("#yiidatasetmodel-provenancecomment").val(comment).attr("disabled", "disabled");
                     $(".field-yiidatasetmodel-provenancecomment, .field-yiidatasetmodel-provenancecomment *")
                         .removeClass("has-error")
@@ -126,7 +120,6 @@ use yii\helpers\Url;
                         "uri": uri
                     })
                 } else {
-                    $("#yiidatasetmodel-provenancealias").val("").removeAttr("disabled");
                     $("#yiidatasetmodel-provenancecomment").val("").removeAttr("disabled");
                     $("#already-linked-documents").empty();
                 }    
@@ -142,7 +135,7 @@ use yii\helpers\Url;
     <?= $form->field($model, 'provenanceUri')->widget(\kartik\select2\Select2::classname(),[
                 'data' => $provenancesArray,
                 'options' => [
-                    'placeholder' => Yii::t('app/messages', 'Select existing provenance or fill the following form to create a new one') . ' ...',
+                    'placeholder' => Yii::t('app/messages', 'Select existing provenance or create a new one') . ' ...',
                     'id' => 'provenance-selector',
                     'multiple' => false
                 ],
@@ -152,8 +145,6 @@ use yii\helpers\Url;
                 ],
             ]); ?>
     
-    <?= $form->field($model, 'provenanceAlias')->textInput(); ?>
-
     <?= $form->field($model, 'provenanceComment')->textarea(['rows' => 6]) ?>
 
     <h3><?= Yii::t('app', 'Linked Document(s)') ?></h3>
