@@ -18,6 +18,8 @@ use app\models\yiiModels\YiiAnnotationModel;
  */
 class AnnotationSearch extends YiiAnnotationModel {
 
+    const DESCRIPTION = "description";
+    
     public function __construct($pageSize = null, $page = null) {
         parent::__construct($pageSize,$page);
          $this->creationDate = null;
@@ -89,7 +91,7 @@ class AnnotationSearch extends YiiAnnotationModel {
             $elementForWebService[YiiAnnotationModel::TARGET_SEARCH_LABEL] = $this->targets[0];
         }
         if (isset($this->bodyValues) && !empty($this->bodyValues)) {
-            $elementForWebService[YiiAnnotationModel::BODY_VALUES] = $this->bodyValues;
+            $elementForWebService[AnnotationSearch::DESCRIPTION] = $this->bodyValues;
         }
         return $elementForWebService;
     }

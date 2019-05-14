@@ -46,6 +46,10 @@ return [
     'Administrative Contacts' => 'Contacts administratifs',
     'Affiliation' => 'Affiliation',
     'All Descendants' => 'Tous les Descendants',
+
+    // Annotations
+    'Annotations' => 'Annotations',
+
     'Acquisition session template' => 'Gabarit de session d\'aquisition',
     'Attenuator Filter' => 'Filtre Atténuateur',
     'Available' => 'Disponible',

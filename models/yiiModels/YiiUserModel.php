@@ -259,4 +259,37 @@ class YiiUserModel extends WSActiveRecord {
             return $usersToReturn;
         }
     }
+    
+    /**
+     * Get all the persons uris
+     * @return array the list of the users mails and names existing in the database
+     * @example returned array : 
+     * [
+     *      ["email@email.fr"] => "E Mail",
+     *      ...
+     * ]
+     */
+    public function getPersonsURIAndName($sessionToken) {
+        $users = $this->find($sessionToken, $this->attributesToArray());
+        $usersToReturn = [];
+        
+        if ($users !== null) {
+            //1. get the emails
+            foreach($users as $user) {
+                if ($user->uri != null) {
+                    $usersToReturn[$user->uri] = $user->firstName . " " . $user->familyName;
+                }
+            }
+            
+            //2. if there are other pages, get the other users
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextUsers = $this->getPersonsURIAndName($sessionToken);
+                
+                $usersToReturn = array_merge($usersToReturn, $nextUsers);
+            }
+            
+            return $usersToReturn;
+        }
+    }
 }
