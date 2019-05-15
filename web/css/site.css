@@ -332,6 +332,8 @@ table.properties-widget > tbody > tr > th:first-letter {
     word-break: break-all;
 }
 
+.sensor-index table tr td:last-child,
+.actuator-index table tr td:last-child,
 .vector-index table tr td:last-child {
     min-width: 50px;
 }
