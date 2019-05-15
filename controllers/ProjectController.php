@@ -189,7 +189,7 @@ class ProjectController extends Controller {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0])) { //project created
-                    return $this->redirect(['view', 'id' => $requestRes->{WSConstants::ACCESS_TOKEN}->{WSConstants::DATA_FILES}[0]]);
+                    return $this->redirect(['view', 'id' => $requestRes->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0]]);
                 } else { //an error occurred
                     return $this->render('/site/error', [
                         'name' => Yii::t('app/messages','Internal error'),
