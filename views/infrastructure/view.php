@@ -38,16 +38,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php
-        if (Yii::$app->session['isAdmin']) {
-            echo Html::a(Yii::t('app', 'Add Document'), [
+        if (Yii::$app->session['isAdmin']) { ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), [
                 'document/create', 
                 'concernedItemUri' => $model->uri, 
                 'concernedItemLabel' => $model->label, 
                 'concernedItemRdfType' => Yii::$app->params["Installation"],
                 YiiDocumentModel::RETURN_URL => Url::current()
-            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
-            echo EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]);
-            echo AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);
+            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+            <?=  EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
+            <?=  AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
+        <?php
         }
         ?>
     </p>
