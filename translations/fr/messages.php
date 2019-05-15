@@ -1,7 +1,7 @@
 <?php
 
 //**********************************************************************************************
-//                                       messages.php 
+//                                       messages.php
 //
 // Author(s): Morgane VIDAL
 // PHIS-SILEX version 1.0
@@ -13,7 +13,7 @@
 //***********************************************************************************************
 
 return [
-    'About' => "SILEX-PHIS est un système d'information de phénotypage haut-débit. Il est dit 'hybride' car il est basé sur   
+    'About' => "SILEX-PHIS est un système d'information de phénotypage haut-débit. Il est dit 'hybride' car il est basé sur
             différentes technologies de stockage de données : les bases relationnelles, les systèmes NoSQL et les outils
             du Web sémantique. SILEX-PHIS est développé pour gérer trois types de données : les mesures dites en ligne, les mesures
             hors ligne et les mesures complexes.",
@@ -46,16 +46,19 @@ return [
     'The URI of the experiment (e.g. http://www.phenome-fppn.fr/pheno3c/P3C2017-6)' => 'L\'URI de l\'experimentation (ex. http://www.phenome-fppn.fr/pheno3c/P3C2017-6)',
     'The URI of the species (e.g. http://www.phenome-fppn.fr/id/species/zeamays)' => 'L\'URI de l\'espèce (ex. http://www.phenome-fppn.fr/id/species/zeamays)',
     'The error above occurred while the Web server was processing your request.' => 'L\'erreur ci-dessus est survenue lors du traitement de votre requête par le serveur web.',
+    'The spectral hemispherical reflectance file uses tabluations (\t) as field separators and dots (.) as decimal separators.' => 'le fichier de réflectance hémisphérique spectrale utilise des tabulations (\t) comme séparateurs de champ et des points (.) comme séparateur décimal',
     'The value' => 'La valeur',
     'The variety used in the plot (e.g. apache)' => 'La variété du plot (ex. apache)',
     'Be carefull to write all the new and the former properties of the updated object.' => 'Attention, veillez à écrire toutes les nouvelles et les anciennes propriétés de l\'objet mis à jour.',
     'It is not possible to change the experiment.' => 'Il n\'est pas possible de changer l\'expérimentation d\'un objet scientifique',
-    'To assign scientific objects to two experiments: (1) create the scientific objects on one of the experiments and (2) update them with the uri of the second experiment.' => 'Pour affecter des objets scientifiques à deux expériences: (1) créez les objets scientifiques sur l\'une des expériences et (2) mettez-les à jour avec l\'uri de la deuxième expérience.',   
+    'To assign scientific objects to two experiments: (1) create the scientific objects on one of the experiments and (2) update them with the uri of the second experiment.' => 'Pour affecter des objets scientifiques à deux expériences: (1) créez les objets scientifiques sur l\'une des expériences et (2) mettez-les à jour avec l\'uri de la deuxième expérience.',
     'Objects successfully updated' => 'Les objets ont bien été mis à jour',
     'Unknown scientific object.' => 'Objet scientifique inconnu.',
     'Unknown experiment' => 'Expérimentation inconnue',
-    'Unknown species' => 'Espèce inconnue',    
-    'Unknown error' => 'Erreur inconnue', 
+    'Unknown species' => 'Espèce inconnue',
+    'Unknown error' => 'Erreur inconnue',
+    'Values in nanometers (450 nm, 560 nm, ...) of the wavelengths at which the radiometric target reflectance has been measured (real numbers)' => 'Valeurs en nanomètres (450 nm, 560 nm, ...) des longueurs d\'onde auxquelles la réflectance de la cible radiométrique a été mesurée (nombres réels)',
+    'Values of the spectral hemispherical reflectances in wavelength of the radiometric target for each of the wavelength listed in the table\'s first row (real numbers included in a range of [0 - 1])' => 'Valeurs des réflectances hémisphériques spectrales de la cible radiométrique pour les longueurs d\'onde de la première ligne du tableau (nombres réels compris entre 0 et 1)',
     'You <b>cannot modify already existing</b> traits, methods and units.' => 'Vous ne pouvez pas modifier de traits, méthodes et unités déjà existantes.',
     'Please contact us if you think this is a server error. Thank you.' => 'Contactez l\'administrateur si vous pensez que c\'est une erreur.',
     'The above warning occurred while the Web server was processing your request.' => 'Un incident est survenu au moment du traitement de votre requête par le serveur.',
