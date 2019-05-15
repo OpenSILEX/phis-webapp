@@ -59,7 +59,14 @@ $this->params['breadcrumbs'][] = $this->title;
                             break;
                         }
                         else{
-                            $concernedItemLabels .= implode(", ", $concernedItem->labels);
+                            $removeEmptyLabels = array_filter($concernedItem->labels, function($value) {
+                                return $value != "";
+                            });
+                            if (count($removeEmptyLabels) == 0) {
+                                $concernedItemLabels .= basename($concernedItem->uri);
+                            } else {
+                                $concernedItemLabels .= implode(", ", $removeEmptyLabels);
+                            }
                         }
                         $currentConcernedItemNumber++;
                     }
