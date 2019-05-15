@@ -12,7 +12,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\date\DatePicker;
 use app\components\widgets\AnnotationButtonWidget;
-use app\components\widgets\EventButtonWidget;
+use app\components\widgets\event\EventButtonWidget;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ActuatorSearch */
