@@ -95,7 +95,7 @@ use yii\helpers\Url;
                 ],
             ]); ?>
 
-    <hr style="border-color : gray;">
+    <hr style="border-color : gray;"/>
     <h3><?= Yii::t('app', 'Provenance')?></h3>
 
     <script>
@@ -175,7 +175,49 @@ use yii\helpers\Url;
 
 
 
-    <hr style="border-color : gray;">
+    <hr style="border-color : gray;"/>
+
+      <div class="alert alert-info" role="alert">
+        <b><?= Yii::t('app/messages', 'File Rules')?> : </b>
+        <ul>
+            <li><?= Yii::t('app/messages', 'CSV separator must be')?> "<b><?= \app\controllers\DatasetController::DELIM_CSV ?></b>"</li>
+            <li><?= Yii::t('app/messages', 'Decimal separator for numeric values must be')?> "<b>.</b>"</li>
+        </ul>
+        <br/>
+        <b><?= Yii::t('app', 'Columns')?> : </b>
+        <table class="table table-hover" id="dataset-csv-columns-desc">
+            <tr>
+                <th style="color:red">ScientificObjectURI *</th>
+                <td><?= Yii::t('app/messages', 'The URI of the scientific object (e.g http://www.phenome-fppn.fr/phenovia/2017/o1028649)')?></td>
+            </tr>
+            <tr>
+                <th style="color:red">Date *</th>
+                <td><p><?= Yii::t('app/messages', 'Acquisition date of the data') ?> (format ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ) </p> </td>
+            </tr>
+             <tr class="dataset-variables">
+                <th style="color:red">Value *</th>
+                <td ><?= Yii::t('app', 'Value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)</td>
+            </tr>
+        </table>
+    </div>
+
+    <p>
+        <i><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . 'documents/DatasetFiles/datasetTemplate.csv', ['id' => 'downloadDatasetTemplate']) ?></i>
+        <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/datasetExemple.csv') ?></i>
+    </p>
+    <?= $form->field($model, 'file')->widget(FileInput::classname(), [
+        'options' => [
+            'maxFileSize' => 2000,
+            'pluginOptions'=>['allowedFileExtensions'=>['csv'],'showUpload' => false],
+        ]
+    ]);
+    ?>
+
+    <div class="form-group">
+        <?= Html::submitButton(Yii::t('yii' , 'Create') , ['class' => 'btn btn-success']) ?>
+    </div>
+
+    <?php ActiveForm::end(); ?>
 
     <div class="modal fade" id="document-modal" tabindex="-1" role="dialog" aria-labelledby="document-modal-title">
         <div class="modal-dialog">
@@ -234,7 +276,6 @@ use yii\helpers\Url;
         var nbDocuments = -1;
         //\SILEX:todo
         $(document).on('click', '#document-save', function () {
-            if (typeInsertedDocument === 'document') {
                 var formData = new FormData();
                 var file_data = $('#document-content #yiidocumentmodel-file').prop('files')[0];
                 formData.append('file', file_data);
@@ -252,52 +293,22 @@ use yii\helpers\Url;
                     data: formData
 
                 })
-                        .done(function (data) {
-                            //SILEX:todo
-                            //handle error message
-                            //\SILEX:todo
-                            $('#yiidatasetmodel-documentsuris-documenturi-' + nbDocuments).val(data);
-                            documentUploaded = true;
-                            $('#document-modal').modal('toggle');
-
-                        })
-                        .fail(function (jqXHR, textStatus) {
-                            $('#document-save-msg').parent().removeClass('alert-info');
-                            $('#document-save-msg').parent().addClass('alert-danger');
-                            $('#document-save-msg').html('Request failed: ' + textStatus);
-                        });
-
-            } else { // the document is a script
-                var formData = new FormData();
-                var file_data = $('#document-content #yiidocumentmodel-file').prop('files')[0];
-                formData.append('file', file_data);
-                var other_data = $('form').serializeArray();
-                $.each(other_data, function(key, input) {
-                    formData.append(input.name, input.value);
-                });
-
-                $.ajax({
-                    url: 'index.php?r=document%2Fcreate-from-dataset',
-                    type: 'POST',
-                    processData: false,
-                    datatype: 'json',
-                    contentType: false,
-                    data: formData
+                .done(function (data) {
+                    //SILEX:todo
+                    //handle error message
+                    //\SILEX:todo
+                    $('#yiidatasetmodel-documentsuris-documenturi-' + nbDocuments).val(data);
+                    documentUploaded = true;
+                    $('#document-modal').modal('toggle');
 
                 })
-                        .done(function (data) {
-                            //SILEX:todo
-                            //handle error message
-                            //\SILEX:todo
-                            $('#wasGeneratedBy').val(data);
-                            $('#document-modal').modal('toggle');
-                        })
-                        .fail(function (jqXHR, textStatus) {
-                            $('#document-save-msg').parent().removeClass('alert-info');
-                            $('#document-save-msg').parent().addClass('alert-danger');
-                            $('#document-save-msg').html('Request failed: ' + textStatus);
-                        });
-            }
+                .fail(function (jqXHR, textStatus) {
+                    $('#document-save-msg').parent().removeClass('alert-info');
+                    $('#document-save-msg').parent().addClass('alert-danger');
+                    $('#document-save-msg').html('Request failed: ' + textStatus);
+                });
+                
+                return false;
         });
 
             var typeInsertedDocument = "";
@@ -331,47 +342,4 @@ use yii\helpers\Url;
 
     });
     </script>
-
-      <div class="alert alert-info" role="alert">
-        <b><?= Yii::t('app/messages', 'File Rules')?> : </b>
-        <ul>
-            <li><?= Yii::t('app/messages', 'CSV separator must be')?> "<b><?= \app\controllers\DatasetController::DELIM_CSV ?></b>"</li>
-            <li><?= Yii::t('app/messages', 'Decimal separator for numeric values must be')?> "<b>.</b>"</li>
-        </ul>
-        <br/>
-        <b><?= Yii::t('app', 'Columns')?> : </b>
-        <table class="table table-hover" id="dataset-csv-columns-desc">
-            <tr>
-                <th style="color:red">ScientificObjectURI *</th>
-                <td><?= Yii::t('app/messages', 'The URI of the scientific object (e.g http://www.phenome-fppn.fr/phenovia/2017/o1028649)')?></td>
-            </tr>
-            <tr>
-                <th style="color:red">Date *</th>
-                <td><p><?= Yii::t('app/messages', 'Acquisition date of the data') ?> (format ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ) </p> </td>
-            </tr>
-             <tr class="dataset-variables">
-                <th style="color:red">Value *</th>
-                <td ><?= Yii::t('app', 'Value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)</td>
-            </tr>
-        </table>
-    </div>
-
-    <p>
-        <i><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . 'documents/DatasetFiles/datasetTemplate.csv', ['id' => 'downloadDatasetTemplate']) ?></i>
-        <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/datasetExemple.csv') ?></i>
-    </p>
-    <?= $form->field($model, 'file')->widget(FileInput::classname(), [
-        'options' => [
-            'maxFileSize' => 2000,
-            'pluginOptions'=>['allowedFileExtensions'=>['csv'],'showUpload' => false],
-        ]
-    ]);
-    ?>
-
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('yii' , 'Create') , ['class' => 'btn btn-success']) ?>
-    </div>
-
-    <?php ActiveForm::end(); ?>
-
 </div>
