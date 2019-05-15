@@ -378,7 +378,7 @@ class DatasetController extends Controller {
                         }
 
                         $dataService = new WSDataModel();
-                        $result = $dataService->postData($token, $values);
+                        $result = $dataService->post($token, "/", $values);
 
                         if (is_array($result->metadata->datafiles) && count($result->metadata->datafiles) > 0) {
                             $arrayData = $this->csvToArray($fileContent);

@@ -1,7 +1,7 @@
 <?php
 
 //******************************************************************************
-//                               WSEventModel.php
+//                               WSProvenanceModel.php
 // PHIS-SILEX
 // Copyright © INRA 2018
 // Creation date: 14 April 2019
@@ -29,6 +29,14 @@ class WSProvenanceModel extends WSModel {
         parent::__construct(WS_PHIS_PATH, "provenances");
     }
 
+    /**
+     * Create provenance with label, comment and metadata
+     * @param type $sessionToken
+     * @param type $label
+     * @param type $comment
+     * @param type $metadata
+     * @return type
+     */
     public function createProvenance($sessionToken, $label, $comment, $metadata) {
         $subService = "/";
         $provenance = $this->post($sessionToken, $subService, [[

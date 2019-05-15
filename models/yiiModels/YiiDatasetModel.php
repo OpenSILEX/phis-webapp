@@ -121,18 +121,6 @@ class YiiDatasetModel extends WSActiveRecord {
      * @param array $array array key => value which contains the metadata of a dataset
      */
     protected function arrayToAttributes($array) {
-        /* received $array
-          {
-          agronomicalObject: "http://.....",
-          experiment: "http://....",
-          data: [
-          {
-          date: "....",
-          value: "...",
-          variable: "http://...."
-          }
-          ]
-          } */
         throw new Exception('Not implemented');
     }
 
