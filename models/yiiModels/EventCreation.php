@@ -1,6 +1,6 @@
 <?php
 //******************************************************************************
-//                                  EventPost.php
+//                                  EventCreation.php
 // PHIS-SILEX
 // Copyright © INRA 2018
 // Creation date: 06 March 2019
