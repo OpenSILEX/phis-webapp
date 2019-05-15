@@ -152,7 +152,7 @@ class ExperimentController extends Controller {
         
         //5. get events
         $searchEventModel = new EventSearch();
-        $searchEventModel->concernedItemUri = $id;
+        $searchEventModel->searchConcernedItemUri = $id;
         $eventSearchParameters = [];
         if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
             $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;

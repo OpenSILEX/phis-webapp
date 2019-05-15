@@ -12,8 +12,8 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\EventButtonWidget;
-use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\event\EventButtonWidget;
+use app\components\widgets\event\EventGridViewWidget;
 use app\components\widgets\LinkObjectsWidget;
 use yii\grid\GridView;
 use yii\helpers\Url;
@@ -109,7 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- actuator events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS_PROVIDER => ${app\controllers\ActuatorController::EVENTS_DATA}
+                 EventGridViewWidget::DATA_PROVIDER => ${app\controllers\ActuatorController::EVENTS_PROVIDER}
             ]
         ); 
     ?>

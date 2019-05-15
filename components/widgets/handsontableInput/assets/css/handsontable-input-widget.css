@@ -1,0 +1,14 @@
+/* *****************************************************************************
+//                       handsontable-input-widget.css
+// SILEX-PHIS
+// Copyright © INRA 2019
+// Creation date: 5 May 2019
+// Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+//******************************************************************************/
+.handsontable {
+    margin-bottom: 10px;
+}
+
+.handsontable-action-buttons-group input {
+    margin-right: 10px;
+}

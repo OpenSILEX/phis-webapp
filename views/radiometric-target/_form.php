@@ -153,11 +153,11 @@ use kartik\file\FileInput;
         <b><?= Yii::t('app/messages', 'File Rules')?> : </b>
         <table class="table table-hover" id="radiometric-target-csv-columns-desc">
             <tr>
-                <th style="color:red"><?= Yii::t('app', 'Wavelength (nm)') * ?></th>
+                <th style="color:red"><?= Yii::t('app', 'Wavelength (nm)') ?> * </th>
                 <td><p><?= Yii::t('app/messages', 'Values in nanometers (450 nm, 560 nm, ...) of the wavelengths at which the radiometric target reflectance has been measured (real numbers)') ?> </p> </td>
             </tr>
              <tr class="dataset-variables">
-                <th style="color:red"><?=Yii::t('app', 'Reflectance value') * ?></th>
+                <th style="color:red"><?=Yii::t('app', 'Reflectance value') ?> * </th>
                 <td ><?= Yii::t('app/messages', 'Values of the spectral hemispherical reflectance in wavelength of the radiometric target for each of the wavelength listed in the first row (real numbers included in a range of [0 - 1])') ?></td>
             </tr>
             <tr>

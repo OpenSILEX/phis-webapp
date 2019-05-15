@@ -1,7 +1,6 @@
 <?php
 //**********************************************************************************************
 //                                       index.php 
-//
 // SILEX-PHIS
 // Copyright © INRA 2017
 // Creation date: October 2017
@@ -12,7 +11,7 @@ use kartik\icons\Icon;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use app\components\widgets\AnnotationButtonWidget;
-use app\components\widgets\EventButtonWidget;
+use app\components\widgets\event\EventButtonWidget;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ScientificObjectSearch */
@@ -25,7 +24,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="scientific-object-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
         <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
