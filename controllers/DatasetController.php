@@ -309,9 +309,11 @@ class DatasetController extends Controller {
         
         $token = Yii::$app->session['access_token'];
 
+        // Load existing variables
         $variables = $variablesModel->getInstancesDefinitionsUrisAndLabel($token);
         $this->view->params["variables"] = $this->getVariablesListLabelToShowFromVariableList($variables);
         
+        // Load existing provenances
         $provenanceService = new WSProvenanceModel();
         $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
         $this->view->params["provenances"] = $provenances;
@@ -347,8 +349,9 @@ class DatasetController extends Controller {
                     $provenanceUri = $datasetModel->provenanceUri;
                 }
 
+                // If provenance sucessfully created
                 if ($provenanceUri) {
-                    // Link uoploaded documents to provenance URI if neeeded
+                    // Link uploaded documents to provenance URI
                     $linkDocuments = true;
                     if (is_array($datasetModel->documentsURIs) && is_array($datasetModel->documentsURIs["documentURI"])) {
                         $linkDocuments = $this->linkDocumentsToProvenance(
@@ -380,6 +383,7 @@ class DatasetController extends Controller {
                         $dataService = new WSDataModel();
                         $result = $dataService->post($token, "/", $values);
 
+                        // If data successfully saved
                         if (is_array($result->metadata->datafiles) && count($result->metadata->datafiles) > 0) {
                             $arrayData = $this->csvToArray($fileContent);
                             return $this->render('_form_dataset_created', [
@@ -460,7 +464,7 @@ class DatasetController extends Controller {
     private function linkDocumentsToProvenance($provenanceUri, $documents) {
         $documentModel = new YiiDocumentModel(null, null);
 
-        //2. associated documents update
+        // associated documents update
         foreach ($documents as $documentURI) {
             $documentModel = new YiiDocumentModel(null, null);
             $documentModel->findByURI(Yii::$app->session['access_token'], $documentURI);

@@ -43,6 +43,7 @@ use yii\helpers\Url;
         <h3 style="margin:3%;">Errors found in dataset :</h3>
         <ul>
         <?php 
+            // Display error messages
             $errorMessages = [];
             foreach($errors as $error) {
                 if (is_string($error)) {
@@ -101,38 +102,48 @@ use yii\helpers\Url;
     <script>
         $(document).ready(function() {
             <?php
+                // Create Provenance select values array
                 foreach ($this->params['provenances'] as $uri => $provenance) {
                     $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
                 }
+                // Inject URI to get document widget linked to an URI
                 echo 'var documentsLoadUri = "' . Url::to(['document/get-documents-widget']) . '";';
+                // Inject provenances list indexed by URI
                 echo 'var provenances = ' . json_encode($this->params['provenances']) . ';';
             ?>
                 
-                
+            // Function to update provenance comment field depending of selected URI
             var updateProvenanceFields = function(uri) {
                 if (provenances.hasOwnProperty(uri)) {
-                    var label = provenances[uri]["label"];
+                    // If selected provenance is known get its comment
                     var comment = provenances[uri]["comment"];
                     
+                    // Set provenance comment, disable input and remove validation messages 
                     $("#yiidatasetmodel-provenancecomment").val(comment).attr("disabled", "disabled");
                     $(".field-yiidatasetmodel-provenancecomment, .field-yiidatasetmodel-provenancecomment *")
                         .removeClass("has-error")
                         .removeClass("has-success");
                     $(".field-yiidatasetmodel-provenancecomment .help-block").empty();
 
+                    // Load linked documents
                     $("#already-linked-documents").load(documentsLoadUri, {
                         "uri": uri
                     })
                 } else {
+                    // Otherwise clear provenance comment and enable input
                     $("#yiidatasetmodel-provenancecomment").val("").removeAttr("disabled");
+                    
+                    // Clear linked documents list
                     $("#already-linked-documents").empty();
                 }    
             }
             
+            // On provenance change update provenance fields
             $("#provenance-selector").change(function() {
                 updateProvenanceFields($(this).val());
             });
             
+            // Update provenance fields depending of startup value
             updateProvenanceFields($("#provenance-selector").val());
         });
     </script>
@@ -239,9 +250,11 @@ use yii\helpers\Url;
 
     <script>
     $(document).ready(function(){
+        // Load document add form popin
         $('#document-content').load('<?php echo Url::to(['document/create-from-dataset']) ?>');
         
         var documentUploaded = false;
+        // Clear last uploaded document line if document add form is canceled
         $('#document-modal').on('hidden.bs.modal', function () {
             if (!documentUploaded) {
                 $(".js-input-remove:last").click();
@@ -270,12 +283,10 @@ use yii\helpers\Url;
                   });
         });
 
-        //SILEX:todo
-        //The nbdocuments calcul must be changed by getting it with the number
-        //of fields that we can see on the user interface
+        // Initial document count
         var nbDocuments = -1;
-        //\SILEX:todo
         $(document).on('click', '#document-save', function () {
+                // On save get document form values
                 var formData = new FormData();
                 var file_data = $('#document-content #yiidocumentmodel-file').prop('files')[0];
                 formData.append('file', file_data);
@@ -284,6 +295,7 @@ use yii\helpers\Url;
                     formData.append(input.name, input.value);
                 });
 
+                // Send documents form
                 $.ajax({
                     url: 'index.php?r=document%2Fcreate-from-dataset',
                     type: 'POST',
@@ -294,15 +306,14 @@ use yii\helpers\Url;
 
                 })
                 .done(function (data) {
-                    //SILEX:todo
-                    //handle error message
-                    //\SILEX:todo
+                    // Add document URI and close document add form
                     $('#yiidatasetmodel-documentsuris-documenturi-' + nbDocuments).val(data);
                     documentUploaded = true;
                     $('#document-modal').modal('toggle');
 
                 })
                 .fail(function (jqXHR, textStatus) {
+                    // Disaply errors
                     $('#document-save-msg').parent().removeClass('alert-info');
                     $('#document-save-msg').parent().addClass('alert-danger');
                     $('#document-save-msg').html('Request failed: ' + textStatus);
@@ -311,34 +322,33 @@ use yii\helpers\Url;
                 return false;
         });
 
-            var typeInsertedDocument = "";
+        // Open document add form on click
+        $('.buttonDocuments').click(function() {
+            nbDocuments++;
+            typeInsertedDocument = "document";
+            $('#document-modal').modal('toggle');
+        });
 
-            //Documents associés à la provenance
-            $('.buttonDocuments').click(function() {
-                nbDocuments++;
-                typeInsertedDocument = "document";
-                $('#document-modal').modal('toggle');
-            });
-
-            $(document).on('change', '#uriVariable-selector', function () {
-                var variablesLabels = [];
-                $("#uriVariable-selector :selected").each(function (i,sel) {
-                    variablesLabels.push($(sel).text());
-                  });
-                $.ajax({
-                    url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-creation-file',
-                    type: 'POST',
-                    datatype: 'json',
-                    data: {variables: variablesLabels}
-                })
-                        .done(function (data) {
-                        })
-                        .fail(function (jqXHR, textStatus) {
-                            $('#document-save-msg').parent().removeClass('alert-info');
-                            $('#document-save-msg').parent().addClass('alert-danger');
-                            $('#document-save-msg').html('Request failed: ' + textStatus);
-                        });
-            });
+        // Download adjusted to variables CSV template file on click
+        $(document).on('change', '#uriVariable-selector', function () {
+            var variablesLabels = [];
+            $("#uriVariable-selector :selected").each(function (i,sel) {
+                variablesLabels.push($(sel).text());
+              });
+            $.ajax({
+                url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-creation-file',
+                type: 'POST',
+                datatype: 'json',
+                data: {variables: variablesLabels}
+            })
+                    .done(function (data) {
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        $('#document-save-msg').parent().removeClass('alert-info');
+                        $('#document-save-msg').parent().addClass('alert-danger');
+                        $('#document-save-msg').html('Request failed: ' + textStatus);
+                    });
+        });
 
     });
     </script>
