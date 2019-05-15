@@ -411,13 +411,13 @@ class DatasetController extends Controller {
                     ]);
                 }
             } else {
-                    return $this->render('create', [
-                        'model' => $datasetModel,
-                        'errors' => [
-                            Yii::t("app/messages", "CSV file headers does not match selected variables")
-                        ]
-                    ]);
-                }
+                return $this->render('create', [
+                    'model' => $datasetModel,
+                    'errors' => [
+                        Yii::t("app/messages", "CSV file headers does not match selected variables")
+                    ]
+                ]);
+            }
         } else {
             return $this->render('create', [
                         'model' => $datasetModel,

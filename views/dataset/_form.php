@@ -45,7 +45,11 @@ use yii\helpers\Url;
         <?php 
             $errorMessages = [];
             foreach($errors as $error) {
-                $errorMessages[] =  $error->exception->details;
+                if (is_string($error)) {
+                    $errorMessages[] =  $error;
+                } else {
+                    $errorMessages[] =  $error->exception->details;
+                }
             }
             
             $errorMessages = array_unique($errorMessages);
