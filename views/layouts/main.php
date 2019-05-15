@@ -103,7 +103,7 @@ ToastrAsset::register($this);
                                 'url' => ['/annotation/index']
                             ],                            
                         ]];
-//        $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
+        $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
                             [
@@ -283,8 +283,8 @@ ToastrAsset::register($this);
                 $urlFlag = \config::path()['basePath'] . '/images/icons/flags/';
                 $urlLangage = \config::path()['baseIndexPath'] . '?r=site%2Flanguage&flag=';
             ?> 
-            <?= Html::a('<img title="english" alt="EN", src="' . $urlFlag . 'drapeau-rond-en.png">', ['site/language', 'language' => 'en'], []) ?>
-            <?= Html::a('<img title="french" alt="FR", src="' . $urlFlag . 'drapeau-rond-fr.png">', ['site/language', 'language' => 'fr'], []) ?>    
+            <?= Html::a('<img title="english" alt="EN" src="' . $urlFlag . 'drapeau-rond-en.png">', ['site/language', 'language' => 'en'], []) ?>
+            <?= Html::a('<img title="french" alt="FR" src="' . $urlFlag . 'drapeau-rond-fr.png">', ['site/language', 'language' => 'fr'], []) ?>    
         </div>
         <div class="clearfix"></div>
         

@@ -13,6 +13,7 @@ use yii\base\Widget;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use kartik\icons\Icon;
+use app\controllers\EventController;
 
 /**
  * A widget used to generate an event button.
@@ -49,8 +50,8 @@ class EventButtonWidget extends Widget {
         //\SILEX:conception
         $uriArray = [
                 'event/create',
-                'concernedItemsUris' => $this->concernedItemsUris,
-                'returnUrl' => Url::current()
+                EventController::PARAM_CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
+                EventController::PARAM_RETURN_URL => Url::current()
             ];
         
         if (!$this->asLink) {

@@ -70,6 +70,8 @@ return [
     'moveFrom' => 'http://www.opensilex.org/vocabulary/oeev#MoveFrom',
     'moveTo' => 'http://www.opensilex.org/vocabulary/oeev#MoveTo',
     
+    'Provenance' => 'http://www.opensilex.org/vocabulary/oeso#Provenance',
+    
     //-------- Relations
     'aperture' => 'http://www.opensilex.org/vocabulary/oeso#aperture',
     'brdfP1' => 'http://www.opensilex.org/vocabulary/oeso#brdfP1',
