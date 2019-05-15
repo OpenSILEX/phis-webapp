@@ -98,13 +98,10 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'), 
                                 'url' => ['/event/index']
                             ],
-                            //SILEX:info
-                            //Uncomment this code if you want to allow access to annotation index
-//                            [
-//                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
-//                                'url' => ['/annotation/index']
-//                            ]
-                            //\SILEX:info
+                            [
+                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'), 
+                                'url' => ['/annotation/index']
+                            ],                            
                         ]];
         $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
@@ -212,13 +209,10 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'), 
                                 'url' => ['/event/index']
                             ],
-                            //SILEX:info
-                            //Uncomment this code if you want to allow access to annotation index
-//                            [
-//                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
-//                                'url' => ['/annotation/index']
-//                            ]
-                            //\SILEX:info
+                            [
+                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'), 
+                                'url' => ['/annotation/index']
+                            ],  
                         ]];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
@@ -303,7 +297,7 @@ ToastrAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.3 - 31 January 2019 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
+        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.3.2 - May 15, 2019 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
     </div> 
 </footer> 
 

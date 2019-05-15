@@ -90,11 +90,11 @@ class AnnotationController extends Controller {
             $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
         }
         $searchResult = $searchModel->search(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], $searchParams);
-        
+
         // Load user instances list
         $userModel = new YiiUserModel();
-        $users = $userModel->getPersonsMailsAndName(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN]);
-       
+        $users = $userModel->getPersonsURIAndName(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN]);
+
         // Load once motivation instances list
         $motivationInstances = $this->getMotivationInstances();
         if (is_string($searchResult)) {

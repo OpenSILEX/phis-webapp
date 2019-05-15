@@ -103,7 +103,7 @@ class RadiometricTargetController extends Controller {
         
         //3. Get events
         $searchEventModel = new EventSearch();
-        $searchEventModel->concernedItemUri = $id;
+        $searchEventModel->searchConcernedItemUri = $id;
         $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
         $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
 
