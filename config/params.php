@@ -2,7 +2,7 @@
 
 return [
     // Global
-    'platform' => 'Demo',
+    'platform' => 'Test',
     'isDemo' => false,
     'demoLogin' => 'guest@opensilex.org',
     'demoPassword' => 'guest',
