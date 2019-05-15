@@ -81,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'update' => function($url, $model, $key) {
                         return Html::a('<span class="glyphicon glyphicon-pencil"></span>', 
-                                        ['actuator/update', 'id' => $model->uri]); 
+                                        ['vector/update', 'id' => $model->uri]); 
                     },
                     'event' => function($url, $model, $key) {
                         return EventButtonWidget::widget([
