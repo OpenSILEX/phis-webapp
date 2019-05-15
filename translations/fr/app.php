@@ -36,7 +36,7 @@ return [
     '{n, plural, =1{Scientific Object} other{Scientific Objects}}' => '{n, plural, =1{Objet Scientifique} other{Objets Scientifiques}}',
     '{n, plural, =1{Scientific frame} other{Scientific frames}}' => '{n, plural, =1{Cadre scientifique} other{Cadres scientifiques}}',
     '{n, plural, =1{Event} other{Events}}' => '{n, plural, =1{Evénement} other{Evénements}}',
-    
+    '{n, plural, =1{Species} other{Species}}' => '{n, plural, =1{Espèce} other{Espèces}}',
     'A radiometric target can be described by the value of its coefficients to the bidirectional reflectance distribution function (see the BRDF ' => 'Une cible radiométrique peut être décrite par la valeur de ses coefficients à la fonction de distribution de la réflectivité bidirectionnelle (voir la ',
     'Add Dataset' => 'Importer un jeu de données',
     'Add Document' => 'Ajouter un document',
@@ -148,6 +148,7 @@ return [
     'Height' => 'Hauteur',
     'Generate Layer' => 'Générer la Couche',
     'Generate Map' => 'Générer la Carte',
+    'Generated URI' => 'URI générée',
     'Geographic Location' => 'Localisation géographique',
     'Geometry' => 'Géométrie',
     'Groups' => 'Groupes',
@@ -155,6 +156,7 @@ return [
     'Hemisphericals' => 'Hémisphériques',
     'Images Visualization' => 'Visualisation d\'Images',
     'In Service Date' => 'Date de Mise en Service',
+    'Insertion status' => 'Statut d\'insertion',
     'Internal Label' => 'Label Interne',
     'Keywords' => 'Mots clés',
     'Labels' => 'Labels',
@@ -185,10 +187,9 @@ return [
     'Ontologies References' => 'Références vers des Ontologies',
     'Organism' => 'Organisme',
     'Owner' => 'Propriétaire',
-    
+
     // Property
     PropertyWidget::NO_PROPERTY_LABEL => 'Aucune propriété spécifique',
-    
     'Password' => 'Mot de passe',
     'Painting' => 'Peinture',
     'Person In Charge' => 'Responsable',
@@ -202,9 +203,10 @@ return [
     'Specific properties' => 'Propriétés spécifiques',
     'Public Access' => 'Accès Public',
     'Quantitative Variable' => 'Variable Quantitative',
-    'Real Number' => 'Nombre Réel', 
+    'Real Number' => 'Nombre Réel',
     'Rectangular' => 'Rectangulaire',
     'Reference URI' => 'URI de Référence',
+    'Reflectance value' => 'Valeur de la réflectance',
     'Register an event' => 'Enregistrer un événement',
     'Related References' => 'Références Externes',
     'Relation' => 'Relation',
@@ -228,7 +230,7 @@ return [
     'Spectral hemispheric reflectance file' => 'Fichier de réflectance hémisphérique spectrale',
     'Spectralon' => 'Spectralon',
     'Status' => 'Statut',
-    'Subproject Type' => 'Type de sous projet', 
+    'Subproject Type' => 'Type de sous projet',
     'Subproject Of' => 'Sous-projet de',
     'Team' => 'Équipe',
     'Technical Supervisors' => 'Superviseurs techniques',
