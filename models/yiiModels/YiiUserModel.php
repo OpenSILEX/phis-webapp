@@ -93,7 +93,8 @@ class YiiUserModel extends WSActiveRecord {
             [['address', 'password', 'phone', 'orcid', 'affiliation', 'uri'], 'string', 'max' => 255],
             ['email', 'email'],
             [['firstName', 'familyName'], 'string', 'max' => 50],
-            [['isAdmin', 'available'], 'boolean']
+            [['isAdmin', 'available'], 'boolean'],
+            [['groups'], 'safe']
         ];
     }
 

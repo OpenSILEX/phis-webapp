@@ -136,6 +136,7 @@ return [
     EventGridViewWidget::NO_EVENT_LABEL => "Pas d'événement",
     
     'Error' => 'Erreur',
+    'Errors while creating user' => 'Erreurs lors de la création de l\'utilisateur',
     'Experimental Organization' => 'Organisation expérimentale',
     'Experiment Modalities' => 'Modalités Expérimentales',
     'File Extension' => 'Extension du Fichier',
