@@ -137,11 +137,11 @@ class UserController extends Controller {
 
             $dataToSend[] = $userModel->attributesToArray();
             
-            $requestRes = $userModel->insert($sessionToken, $dataToSend);    
+            $requestRes = $userModel->insert($sessionToken, $dataToSend);  
             
             if (is_string($requestRes) && $requestRes === "token") { //user must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else if (count($requestRes->datafiles) > 0) {
+            } else if (count($requestRes->metadata->status) == 0) {
                 return $this->redirect(['view', 'id' => $userModel->email]);
             } else {
                 $errors = [];
