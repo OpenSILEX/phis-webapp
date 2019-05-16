@@ -141,30 +141,54 @@ class UserController extends Controller {
             
             if (is_string($requestRes) && $requestRes === "token") { //user must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
+            } else if (count($requestRes->datafiles) > 0) {
                 return $this->redirect(['view', 'id' => $userModel->email]);
+            } else {
+                $errors = [];
+                foreach ($requestRes->metadata->status as $error) {
+                    $matches = [];
+                    if (preg_match('/\[.*\](.*)/', $error->exception->details, $matches)) {
+                        $errors[] = $matches[1];
+                    } else {
+                        $errors[] = $error->message;
+                    }
+                }
+                
+                return $this->displayUserCreationForm($userModel, $errors);
             }
         } else {
-            $searchGroupModel = new GroupSearch();
-            $groups = $searchGroupModel->find($sessionToken,[]);
-            
-            if (is_string($groups)) {
-                return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => $groups]);
-            } else if (is_array ($groups) && isset($groups["token"])) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                $groups = $this->groupsToMap($groups);
-                $this->view->params['listGroups'] = $groups;
-                $userModel->isNewRecord = true;
-
-                return $this->render('create', [
-                    'model' => $userModel,
-                ]);
-            }
+            return $this->displayUserCreationForm($userModel);
         }
     }
+    
+    /**
+     * Return user creation form view for given model with errors (optional)
+     * @param type $userModel
+     * @param type $errors
+     * @return type
+     */
+    private function displayUserCreationForm($userModel, $errors = []) {
+        $sessionToken = Yii::$app->session['access_token'];
+        $searchGroupModel = new GroupSearch();
+        $groups = $searchGroupModel->find($sessionToken,[]);
+        
+        if (is_string($groups)) {
+            return $this->render('/site/error', [
+                'name' => Yii::t('app/messages','Internal error'),
+                'message' => $groups]);
+        } else if (is_array ($groups) && isset($groups["token"])) {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        } else {
+            $groups = $this->groupsToMap($groups);
+            $this->view->params['listGroups'] = $groups;
+            $userModel->isNewRecord = true;
+
+            return $this->render('create', [
+                'model' => $userModel,
+                'errors' => $errors
+            ]);
+        }
+}
     
     /**
      * update a user
