@@ -147,6 +147,8 @@ class UserController extends Controller {
                 $errors = [];
                 foreach ($requestRes->metadata->status as $error) {
                     $matches = [];
+                    // Message format returned by the webservice is like "[cryptic error parameter message]real error message part"
+                    // This preg_match regex is used to only get the "real error message part"
                     if (preg_match('/\[.*\](.*)/', $error->exception->details, $matches)) {
                         $errors[] = $matches[1];
                     } else {
