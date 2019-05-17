@@ -87,8 +87,8 @@ use yii\helpers\Url;
                                     "sensorURI": sensorUri,
                                     "variableURI": uri,
                                     "graphName": variables[uri],
-                                    "dateStart": $("#sensordatasearch-datestart").val(),
-                                    "dateEnd": $("#sensordatasearch-dateend").val()
+                                    "dateStart": $("#devicedatasearch-datestart").val(),
+                                    "dateEnd": $("#devicedatasearch-dateend").val()
                                 }
                             }
                         )

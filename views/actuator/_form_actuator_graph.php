@@ -88,8 +88,8 @@ use yii\helpers\Url;
                                     "actuatorURI": actuatorUri,
                                     "variableURI": uri,
                                     "graphName": variables[uri],
-                                    "dateStart": $("#actuatordatasearch-datestart").val(),
-                                    "dateEnd": $("#actuatordatasearch-dateend").val()
+                                    "dateStart": $("#devicedatasearch-datestart").val(),
+                                    "dateEnd": $("#devicedatasearch-dateend").val()
                                 }
                             }
                         )
