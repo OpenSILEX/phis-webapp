@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
     </h1>
         <?php if (Yii::$app->session['isAdmin']) {
            echo Html::a(Yii::t('app', 'Generate Map'), 
-               ['layer/view', 'objectURI' => $model->objectURI, 'objectType' => Yii::$app->params["Experiment"], 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
+               ['layer/view', 'objectURI' => $model->objectURI, 'objectType' => Yii::$app->params["Experiment"], 'depth' => 'true', 'generateFile' => 'true', 'objectLabel' => $objectLabel], ['class' => 'btn btn-success']);
            }
         ?>
      </h1>
