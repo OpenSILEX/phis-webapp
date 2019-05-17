@@ -125,19 +125,23 @@ class DocumentController extends Controller {
                     $concernedItems["type"] = "infrastructure";
                 } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::RADIOMETRIC_TARGET]) {
                     $concernedItems["type"] = "radiometric-target";
-                } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::ACTUATOR]) {
-                   $concernedItems["type"] = "actuator"; 
                 } else {
                     //check if a sensor or a vector 
                     $sensorModel = new YiiSensorModel();
                     $requestRes = $sensorModel->findByURI($sessionToken, $concernedItem->uri);
                     if ($requestRes && $sensorModel->uri === $concernedItem->uri) {
                         $concernedItems["type"] = "sensor";
-                    } else {
+                    } else {                      
                         $vectorModel = new YiiVectorModel();
                         $requestRes = $vectorModel->findByURI($sessionToken, $concernedItem->uri);
                         if ($requestRes && $vectorModel->uri === $concernedItem->uri) {
                             $concernedItems["type"] = "vector";
+                        } else {
+                            $actuatorModel = new \app\models\yiiModels\YiiActuatorModel();
+                            $requestRes = $actuatorModel->findByURI($sessionToken, $concernedItem->uri);
+                            if ($requestRes && $actuatorModel->uri === $concernedItem->uri) {
+                                $concernedItems["type"] = "actuator"; 
+                            }
                         }
                     }
                 }
