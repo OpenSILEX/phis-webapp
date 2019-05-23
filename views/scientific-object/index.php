@@ -39,8 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'attribute' => 'uri',
               'format' => 'raw',
-               'value' => 'uri',
-              'filter' =>false,
+              'value' => 'uri'
             ],
             'label',
             [
