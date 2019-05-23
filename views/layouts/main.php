@@ -103,7 +103,19 @@ ToastrAsset::register($this);
                                 'url' => ['/annotation/index']
                             ],                            
                         ]];
-        $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
+        $menuItems[] = [
+                            'label' => Yii::t('app', 'Data'), 
+                            'items' => [
+                                [
+                                    'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Add'), 
+                                    'url' => ['/dataset/create']
+                                ],
+                                [
+                                    'label' => Icon::show('search', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'View'), 
+                                    'url' => ['/data/index']
+                                ]
+                            ]
+                        ];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
                             [
@@ -214,6 +226,15 @@ ToastrAsset::register($this);
                                 'url' => ['/annotation/index']
                             ],  
                         ]];
+        $menuItems[] = [
+                            'label' => Yii::t('app', 'Data'), 
+                            'items' => [
+                                [
+                                    'label' => Icon::show('search', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'View'), 
+                                    'url' => ['/data/index']
+                                ]
+                            ]
+                        ];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
                             [
