@@ -11,8 +11,8 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\EventButtonWidget;
-use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\event\EventButtonWidget;
+use app\components\widgets\event\EventGridViewWidget;
 use app\components\widgets\LinkObjectsWidget;
 use app\controllers\SensorController;
 use yii\grid\GridView;
@@ -59,8 +59,12 @@ foreach ($model->properties as $property) {
 
     <p>
         <?php
+            if (Yii::$app->session['isAdmin'] && $sensorProfilePropertiesCount == 0) {
+                echo Html::a(Yii::t('app', 'Characterize Sensor'), ['characterize', 'sensorUri' => $model->uri], ['class' => 'btn btn-success']);
+            }
+        ?>
+        <?php
         if (Yii::$app->session['isAdmin']) { ?>
-            <?= Html::a(Yii::t('app', 'Characterize Sensor'), ['characterize', 'sensorUri' => $model->uri], ['class' => 'btn btn-success']); ?>
             <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
             <?= Html::a(Yii::t('app', 'Add Document'), [
                 'document/create', 
@@ -169,7 +173,7 @@ foreach ($model->properties as $property) {
     <!-- Sensor events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS_PROVIDER => ${SensorController::EVENTS_PROVIDER}
+                 EventGridViewWidget::DATA_PROVIDER => ${SensorController::EVENTS_PROVIDER}
             ]
         ); 
     ?>

@@ -10,8 +10,6 @@
 
 namespace app\models\yiiModels;
 
-use app\models\yiiModels\YiiSensorModel;
-
 /**
  * implements the search action for the actuators
  * @author Morgane Vidal <morgane.vidal@inra.fr>
@@ -23,7 +21,7 @@ class ActuatorSearch extends YiiActuatorModel {
     public function rules()
     {
         return [
-            [['brand', 'label', 'inServiceDate', 'dateOfPurchase', 'dateOfLastCalibration'], 'safe'],
+            [['uri', 'rdfType', 'brand', 'label', 'serialNumber', 'model', 'inServiceDate', 'dateOfPurchase', 'dateOfLastCalibration'], 'safe'],
         ];
     }
     

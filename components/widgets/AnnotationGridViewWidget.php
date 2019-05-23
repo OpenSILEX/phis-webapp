@@ -3,7 +3,7 @@
 //                         AnnotationGridViewWidget.php
 // SILEX-PHIS
 // Copyright © INRA 2018
-// Creation date: 23 Aug, 2018
+// Creation date: 23 Aug. 2018
 // Contact: arnaud.charleroy@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 namespace app\components\widgets;
@@ -17,7 +17,7 @@ use app\components\helpers\Vocabulary;
 use kartik\icons\Icon;
 
 /**
- * A widget used to generate a customizable annotation gridview interface
+ * Annotation grid view widget.
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class AnnotationGridViewWidget extends Widget {
@@ -56,8 +56,9 @@ class AnnotationGridViewWidget extends Widget {
                         'label' => Yii::t('app',YiiAnnotationModel::BODY_VALUES_LABEL),
                         'attribute' => YiiAnnotationModel::BODY_VALUES,
                         'value' => function ($model) {
-                            return implode(('<br>,'), $model->bodyValues);
-                        }
+                            return implode(("<br />"), $model->bodyValues);
+                        },
+                        'format' => 'raw',
                     ],
                     YiiAnnotationModel::CREATOR =>
                     [

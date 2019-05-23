@@ -54,7 +54,7 @@ class DeviceDataSearch extends \yii\base\Model {
     {
         return [
             [['dateStart', 'dateEnd'], 'safe'],
-            [['deviceURI', 'variableURI', 'graphName'], 'string']
+            [['sensorURI', 'variableURI', 'graphName'], 'string']
         ];
     }
     
@@ -135,7 +135,7 @@ class DeviceDataSearch extends \yii\base\Model {
         
         // Get all data
         $data = $ws->getAllSensorData($sessionToken, $this->sensorURI, $this->variableURI, $dateTimeStart, $dateTimeEnd);
-        
+                
         // Construct result
         $result = [
             "graphName" => $this->graphName,

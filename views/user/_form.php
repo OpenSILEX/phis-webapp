@@ -11,7 +11,7 @@
 // Last modification date:  April, 2017
 // Subject: creation or update user's form
 //***********************************************************************************************
-
+use Yii;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use borales\extensions\phoneInput\PhoneInput;
@@ -23,6 +23,21 @@ use borales\extensions\phoneInput\PhoneInput;
 ?>
 
 <div class="user-form well">
+    
+    <?php if (count($errors) > 0): ?>
+    <div class="alert alert-danger" >
+        <h3 style="margin:3%;"><?= Yii::t('app/messages', 'Errors while creating user')?> :</h3>
+        <ul>
+        <?php 
+            $errorMessages = array_unique($errors);
+            foreach ($errorMessages as $errorMessage) {
+                 echo '<li>' . str_replace("|", ",", $errorMessage) . '</li>';
+            }
+        ?>
+        </ul>
+    </div>
+    <?php endif; ?>
+    
     <?php $form = ActiveForm::begin(); ?>
     
     <?php 

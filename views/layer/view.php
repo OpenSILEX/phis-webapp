@@ -21,7 +21,7 @@ use yii\helpers\Url;
 $this->title = $objectLabel;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]), 'url' => ['experiment/index']];
-$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['experiment/view', 'id' => $this->title]];
+$this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['experiment/view', 'id' => $model->objectURI]];
 $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
 ?>
 
@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
     </h1>
         <?php if (Yii::$app->session['isAdmin']) {
            echo Html::a(Yii::t('app', 'Generate Map'), 
-               ['layer/view', 'objectURI' => $model->objectURI, 'objectType' => Yii::$app->params["Experiment"], 'depth' => 'true', 'generateFile' => 'true'], ['class' => 'btn btn-success']);
+               ['layer/view', 'objectURI' => $model->objectURI, 'objectType' => Yii::$app->params["Experiment"], 'depth' => 'true', 'generateFile' => 'true', 'objectLabel' => $objectLabel], ['class' => 'btn btn-success']);
            }
         ?>
      </h1>
@@ -209,7 +209,6 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Map Visualization');
             });
             
              $(document).ready(function(){
-//                $('#visualization-dataset').load('<?php //echo Url::to(['dataset/search-from-layer']) ?>');
                 $('#visualization-dataset').load('<?php echo Url::to(['data/search-from-layer']) ?>');
                 $('#visualization-images').load('<?php echo Url::to(['image/search-from-layer'])?>');
              });

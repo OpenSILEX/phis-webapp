@@ -266,6 +266,8 @@ class SensorController extends Controller {
         }
 
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        //list of sensors
+        $sensorsTypes = $this->getSensorsTypesSimpleAndUri();
         
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN_INVALID) {
@@ -278,7 +280,8 @@ class SensorController extends Controller {
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+               'dataProvider' => $searchResult,
+               'sensorsTypes' => $sensorsTypes
             ]);
         }
     }
@@ -318,7 +321,7 @@ class SensorController extends Controller {
         
         //4. get events
         $searchEventModel = new EventSearch();
-        $searchEventModel->concernedItemUri = $id;
+        $searchEventModel->searchConcernedItemUri = $id;
         $eventSearchParameters = [];
         if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
             $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;

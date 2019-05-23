@@ -44,8 +44,12 @@ $this->params['breadcrumbs'][] = $this->title;
             YiiAnnotationModel::CREATOR =>
                 [
                 'attribute' => YiiAnnotationModel::CREATOR,
-                'value' => function($model) {
-                    return Vocabulary::prettyUri($model->creator);
+                'value' => function($model) use ($userInstances) {
+                    if (array_key_exists($model->creator, $userInstances)) {
+                        return $userInstances[$model->creator];
+                    } else {
+                        return Vocabulary::prettyUri($model->creator);
+                    }
                 },
                 'filter' => Select2::widget([
                     'attribute' => YiiAnnotationModel::CREATOR,

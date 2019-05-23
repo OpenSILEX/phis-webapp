@@ -53,10 +53,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => YiiAnnotationModel::BODY_VALUES,
                 'value' => function ($model) {
                      if($model->bodyValues != null){
-                         return implode((', '), $model->bodyValues);
+                         return implode(('<br />'), $model->bodyValues);
                      }
                      return "";
-                }
+                },
+                'format' => 'raw',
             ],
             YiiAnnotationModel::TARGETS => [
                 'attribute' => YiiAnnotationModel::TARGETS,

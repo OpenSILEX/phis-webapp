@@ -98,15 +98,24 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'),
                                 'url' => ['/event/index']
                             ],
-                            //SILEX:info
-                            //Uncomment this code if you want to allow access to annotation index
-//                            [
-//                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
-//                                'url' => ['/annotation/index']
-//                            ]
-                            //\SILEX:info
+                            [
+                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
+                                'url' => ['/annotation/index']
+                            ],
                         ]];
-//        $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
+        $menuItems[] = [
+                            'label' => Yii::t('app', 'Data'),
+                            'items' => [
+                                [
+                                    'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Add'),
+                                    'url' => ['/dataset/create']
+                                ],
+                                [
+                                    'label' => Icon::show('search', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'View'),
+                                    'url' => ['/data/index']
+                                ]
+                            ]
+                        ];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
                             [
@@ -216,14 +225,20 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'),
                                 'url' => ['/event/index']
                             ],
-                            //SILEX:info
-                            //Uncomment this code if you want to allow access to annotation index
-//                            [
-//                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
-//                                'url' => ['/annotation/index']
-//                            ]
-                            //\SILEX:info
+                            [
+                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
+                                'url' => ['/annotation/index']
+                            ],
                         ]];
+        $menuItems[] = [
+                            'label' => Yii::t('app', 'Data'),
+                            'items' => [
+                                [
+                                    'label' => Icon::show('search', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'View'),
+                                    'url' => ['/data/index']
+                                ]
+                            ]
+                        ];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
                             [
@@ -297,8 +312,8 @@ ToastrAsset::register($this);
                 $urlFlag = \config::path()['basePath'] . '/images/icons/flags/';
                 $urlLangage = \config::path()['baseIndexPath'] . '?r=site%2Flanguage&flag=';
             ?>
-            <?= Html::a('<img title="english" alt="EN", src="' . $urlFlag . 'drapeau-rond-en.png">', ['site/language', 'language' => 'en'], []) ?>
-            <?= Html::a('<img title="french" alt="FR", src="' . $urlFlag . 'drapeau-rond-fr.png">', ['site/language', 'language' => 'fr'], []) ?>
+            <?= Html::a('<img title="english" alt="EN" src="' . $urlFlag . 'drapeau-rond-en.png">', ['site/language', 'language' => 'en'], []) ?>
+            <?= Html::a('<img title="french" alt="FR" src="' . $urlFlag . 'drapeau-rond-fr.png">', ['site/language', 'language' => 'fr'], []) ?>
         </div>
         <div class="clearfix"></div>
 
@@ -311,7 +326,7 @@ ToastrAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.3 - 31 January 2019 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
+        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.3.2 - May 15, 2019 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
     </div>
 </footer>
 

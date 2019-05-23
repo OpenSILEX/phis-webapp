@@ -2,8 +2,8 @@
 //******************************************************************************
 //                               EventSearch.php
 // PHIS-SILEX
-// Copyright © INRA 2018
-// Creation date: 02 jan. 2019
+// Copyright © INRA 2019
+// Creation date: 2 jan. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 namespace app\models\yiiModels;
@@ -22,44 +22,57 @@ use app\models\yiiModels\YiiEventModel;
 class EventSearch extends YiiEventModel {
     
     /**
-     * Concerned item's label filter
+     * Type filter.
+     * @example MoveFrom
+     * @var string
+     */
+    public $searchType;
+    const SEARCH_TYPE = 'searchType';
+    const SEARCH_TYPE_WS_FIELD = 'rdfType';
+    
+    /**
+     * Concerned item's label filter.
      * @example Plot 445
      * @var string
      */
-    public $concernedItemLabel;
-    const CONCERNED_ITEM_LABEL = 'concernedItemLabel';
+    public $searchConcernedItemLabel;
+    const SEARCH_CONCERNED_ITEM_LABEL = 'searchConcernedItemLabel';
+    const SEARCH_CONCERNED_ITEM_LABEL_WS_FIELD = 'concernedItemLabel';
     
     /**
-     * Concerned item's URI filter
+     * Concerned item's URI filter.
      * @example Plot 445
      * @var string
      */
-    public $concernedItemUri;
-    const CONCERNED_ITEM_URI = 'concernedItemUri';
+    public $searchConcernedItemUri;
+    const SEARCH_CONCERNED_ITEM_URI = 'searchItemUri';
+    const SEARCH_CONCERNED_ITEM_URI_WS_FIELD = 'concernedItemUri';
     
     /**
-     * Date range filter
+     * Date range filter.
      * @example 2019-01-02T00:00:00+01:00 - 2019-01-03T23:00:00+01:00
      * @var string
      */
-    public $dateRange;
-    const DATE_RANGE = 'dateRange';
+    public $searchDateRange;
+    const SEARCH_DATE_RANGE = 'searchDateRange';
     
     /**
-     * Date range start filter
+     * Date range start filter.
      * @example 2019-01-02T00:00:00+01:00
      * @var string
      */
-    public $dateRangeStart;
-    const DATE_RANGE_START = 'startDate';
+    public $searchDateRangeStart;
+    const SEARCH_DATE_RANGE_START = 'searchStartDate';
+    const SEARCH_DATE_RANGE_START_WS_FIELD = 'startDate';
     
     /**
-     * Date range end filter
+     * Date range end filter.
      * @example 2019-01-02T00:00:00+01:00
      * @var string
      */
-    public $dateRangeEnd;
-    const DATE_RANGE_END = 'endDate';
+    public $searchDateRangeEnd;
+    const SEARCH_DATE_RANGE_END = 'searchEndDate';
+    const SEARCH_DATE_RANGE_END_WS_FIELD = 'endDate';
     
     /**
      * @inheritdoc
@@ -67,12 +80,12 @@ class EventSearch extends YiiEventModel {
     public function rules() {
         return [[
             [
-                self::TYPE,
-                self::CONCERNED_ITEM_LABEL,
-                self::CONCERNED_ITEM_URI,
-                self::DATE_RANGE,
-                self::DATE_RANGE_START,
-                self::DATE_RANGE_END
+                self::SEARCH_TYPE,
+                self::SEARCH_CONCERNED_ITEM_LABEL,
+                self::SEARCH_CONCERNED_ITEM_URI,
+                self::SEARCH_DATE_RANGE,
+                self::SEARCH_DATE_RANGE_START,
+                self::SEARCH_DATE_RANGE_END
             ],  'safe']]; 
     }
     
@@ -83,9 +96,9 @@ class EventSearch extends YiiEventModel {
         return array_merge(
             parent::attributeLabels(),
             [
-                self::CONCERNED_ITEM_LABEL => Yii::t('app', 'Concerned Items'),
-                self::CONCERNED_ITEM_URI => Yii::t('app', 'Concerned Items'),
-                self::DATE_RANGE => Yii::t('app', 'Date')
+                self::SEARCH_TYPE => Yii::t('app', self::TYPE_LABEL),
+                self::SEARCH_CONCERNED_ITEM_LABEL => Yii::t('app', self::CONCERNED_ITEMS_LABEL),
+                self::SEARCH_DATE_RANGE => Yii::t('app', self::DATE_LABEL)
             ]
         );
     }
@@ -101,18 +114,17 @@ class EventSearch extends YiiEventModel {
         
         if (!$this->validate()) {
             return new ArrayDataProvider();
-        }
-                
+        }      
         return $this->getEventProvider($sessionToken, $searchParams);
     }
     
     /**
-     * Requests to WS and return result
+     * Requests to WS and returns result.
      * @param $sessionToken
      * @return request result
      */
     private function getEventProvider($sessionToken, $searchParams) {
-        $results = $this->find($sessionToken, array_merge ($this->attributesToArray(), $searchParams));
+        $results = $this->find($sessionToken, array_merge($this->attributesToArray(), $searchParams));
         
         if (is_string($results)) {
             return $results;
@@ -142,8 +154,8 @@ class EventSearch extends YiiEventModel {
         parent::setAttributes($values, $safeOnly);
             
         if (is_array($values)) {
-            if (isset($values[self::DATE_RANGE])) {
-                $dateRange = $values[self::DATE_RANGE];
+            if (isset($values[self::SEARCH_DATE_RANGE])) {
+                $dateRange = $values[self::SEARCH_DATE_RANGE];
                 
                 //SILEX:info
                 // We shouldn't control the date range format because the WS 
@@ -175,13 +187,13 @@ class EventSearch extends YiiEventModel {
         if (!empty($submittedStartDateString)) {
             $isSubmittedStartDateFormatValid = $this->validateSubmittedDateFormat($submittedStartDateString);
             if ($isSubmittedStartDateFormatValid) {
-                $this->dateRangeStart = $submittedStartDateString;
+                $this->searchDateRangeStart = $submittedStartDateString;
                 // validate end date
                 if (isset($dateRangeArray[1])) {   
                     $submittedEndDateString = $dateRangeArray[1];
                     $isSubmittedEndDateFormatValid = $this->validateSubmittedDateFormat($submittedEndDateString);
                     if ($isSubmittedEndDateFormatValid) {
-                        $this->dateRangeEnd = $submittedEndDateString;
+                        $this->searchDateRangeEnd = $submittedEndDateString;
                     }
                 } 
             }
@@ -241,9 +253,9 @@ class EventSearch extends YiiEventModel {
      * Resets the date range filter values
      */
     private function resetDateRangeFilterValues(){
-        $this->dateRangeStart = null;
-        $this->dateRangeEnd = null;
-        $this->dateRange = null;
+        $this->searchDateRangeStart = null;
+        $this->searchDateRangeEnd = null;
+        $this->searchDateRange = null;
     }
     
     /**
@@ -253,11 +265,11 @@ class EventSearch extends YiiEventModel {
         return [
             YiiModelsConstants::PAGE => $this->page,
             YiiModelsConstants::PAGE_SIZE => $this->pageSize,
-            self::TYPE => $this->rdfType,
-            self::CONCERNED_ITEM_LABEL => $this->concernedItemLabel,
-            self::CONCERNED_ITEM_URI => $this->concernedItemUri,
-            self::DATE_RANGE_START => $this->dateRangeStart,
-            self::DATE_RANGE_END => $this->dateRangeEnd
+            self::SEARCH_TYPE_WS_FIELD => $this->rdfType,
+            self::SEARCH_CONCERNED_ITEM_LABEL_WS_FIELD => $this->searchConcernedItemLabel,
+            self::SEARCH_CONCERNED_ITEM_URI_WS_FIELD => $this->searchConcernedItemUri,
+            self::SEARCH_DATE_RANGE_START_WS_FIELD => $this->searchDateRangeStart,
+            self::SEARCH_DATE_RANGE_END_WS_FIELD => $this->searchDateRangeEnd
         ];
     }
 }

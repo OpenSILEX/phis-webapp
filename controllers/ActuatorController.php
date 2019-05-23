@@ -33,7 +33,7 @@ use app\models\wsModels\WSConstants;
 class ActuatorController extends Controller {
     
     CONST ANNOTATIONS_DATA = "actuatorAnnotations";
-    CONST EVENTS_DATA = "actuatorEvents";
+    CONST EVENTS_PROVIDER = "actuatorEvents";
     /**
      * Defines the behaviors
      * @return array
@@ -123,7 +123,7 @@ class ActuatorController extends Controller {
         $totalPages = 1;
         for ($i = 0; $i < $totalPages; $i++) {
             $model->page = $i;
-            $actuatorsConcepts = $model->getActuatorTypes(Yii::$app->session['access_token']);
+            $actuatorsConcepts = $model->getActuatorsTypes(Yii::$app->session['access_token']);
             if ($actuatorsConcepts === "token") {
                 return "token";
             } else {
@@ -251,6 +251,9 @@ class ActuatorController extends Controller {
 
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         
+        //list of actuators types
+        $actuatorsTypes = $this->getActuatorsTypesSimpleAndUri();
+        
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -262,7 +265,8 @@ class ActuatorController extends Controller {
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+               'dataProvider' => $searchResult,
+               'actuatorsTypes' => $actuatorsTypes
             ]);
         }
     }
@@ -288,9 +292,14 @@ class ActuatorController extends Controller {
         
         //4. get events
         $searchEventModel = new EventSearch();
-        $searchEventModel->concernedItemUri = $id;
-        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $searchEventModel->searchConcernedItemUri = $id;
+        $eventSearchParameters = [];
+        if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+            $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+        }
+        $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+        $eventsProvider = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $eventSearchParameters);
+        $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE;
      
         //5. get actuator variables
         $variableModel = new YiiVariableModel();
@@ -308,7 +317,7 @@ class ActuatorController extends Controller {
                 'variables' => $variables,
                 'dataSearchModel' => $dataSearchModel,
                 self::ANNOTATIONS_DATA => $annotations,
-                self::EVENTS_DATA => $events
+                self::EVENTS_PROVIDER => $eventsProvider
             ]);
         }
     }

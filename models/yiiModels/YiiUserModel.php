@@ -93,7 +93,8 @@ class YiiUserModel extends WSActiveRecord {
             [['address', 'password', 'phone', 'orcid', 'affiliation', 'uri'], 'string', 'max' => 255],
             ['email', 'email'],
             [['firstName', 'familyName'], 'string', 'max' => 50],
-            [['isAdmin', 'available'], 'boolean']
+            [['isAdmin', 'available'], 'boolean'],
+            [['groups'], 'safe']
         ];
     }
 
@@ -252,6 +253,39 @@ class YiiUserModel extends WSActiveRecord {
             if ($this->totalPages > $this->page) {
                 $this->page++; //next page
                 $nextUsers = $this->getPersonsMailsAndName($sessionToken);
+                
+                $usersToReturn = array_merge($usersToReturn, $nextUsers);
+            }
+            
+            return $usersToReturn;
+        }
+    }
+    
+    /**
+     * Get all the persons uris
+     * @return array the list of the users mails and names existing in the database
+     * @example returned array : 
+     * [
+     *      ["http://www.phenome-fppn.fr/diaphen/id/agent/jean_dupond"] => "Jean Dupond",
+     *      ...
+     * ]
+     */
+    public function getPersonsURIAndName($sessionToken) {
+        $users = $this->find($sessionToken, $this->attributesToArray());
+        $usersToReturn = [];
+        
+        if ($users !== null) {
+            //1. get the emails
+            foreach($users as $user) {
+                if ($user->uri != null) {
+                    $usersToReturn[$user->uri] = $user->firstName . " " . $user->familyName;
+                }
+            }
+            
+            //2. if there are other pages, get the other users
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextUsers = $this->getPersonsURIAndName($sessionToken);
                 
                 $usersToReturn = array_merge($usersToReturn, $nextUsers);
             }

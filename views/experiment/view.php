@@ -12,8 +12,8 @@ use yii\grid\GridView;
 use yii\helpers\Url;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\EventButtonWidget;
-use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\event\EventButtonWidget;
+use app\components\widgets\event\EventGridViewWidget;
 use app\controllers\ExperimentController;
 use app\components\widgets\LinkObjectsWidget;
 use app\models\yiiModels\YiiDocumentModel;
@@ -177,6 +177,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         "items" => $sensors,
                         "actualItems" => is_array($model->sensors) ? array_keys($model->sensors) : [],
                         "itemViewRoute" => "sensor/view",
+                        "linkUriId" => "id",
                         "conceptLabel" => "sensors",
                         "canUpdate" => true,
                         "updateMessage" => Yii::t('app', 'Update sensors'),
@@ -271,6 +272,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         "items" => $sensors,
                         "actualItems" => is_array($model->sensors) ? array_keys($model->sensors) : [],
                         "itemViewRoute" => "sensor/view",
+                        "linkUriId" => "id",
                         "conceptLabel" => "sensors",
                         "canUpdate" => false,
                         "updateMessage" => Yii::t('app', 'Update sensors'),
@@ -289,7 +291,7 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS_PROVIDER => ${ExperimentController::EVENT_PROVIDER}
+                 EventGridViewWidget::DATA_PROVIDER => ${ExperimentController::EVENT_PROVIDER}
             ]
         ); 
     ?>

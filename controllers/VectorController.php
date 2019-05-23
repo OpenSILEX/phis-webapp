@@ -15,7 +15,6 @@ use yii\filters\VerbFilter;
 use app\models\yiiModels\YiiVectorModel;
 use app\models\yiiModels\VectorSearch;
 use app\models\yiiModels\YiiUserModel;
-use app\models\yiiModels\UserSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\AnnotationSearch;
@@ -208,6 +207,35 @@ class VectorController extends Controller {
     }
     
     /**
+     * @return array the list of the vectors types with the vectors type label and URI. 
+     * @example 
+     * [
+     *   "http://vector/type/uri" => "Vector",
+     *   ...
+     * ]
+     */
+    public function getVectorsTypesSimpleAndUri() {
+        $model = new YiiVectorModel();
+        
+        $vectorsTypes = [];
+        $totalPages = 1;
+        for ($i = 0; $i < $totalPages; $i++) {
+            $model->page = $i;
+            $vectorsConcepts = $model->getVectorsTypes(Yii::$app->session['access_token']);
+            if ($vectorsConcepts === "token") {
+                return "token";
+            } else {
+                $totalPages = $vectorsConcepts[WSConstants::PAGINATION][WSConstants::TOTAL_PAGES];
+
+                foreach ($vectorsConcepts[WSConstants::DATA] as $vectorType) {
+                    $vectorsTypes[$vectorType->uri] = explode("#", $vectorType->uri)[1];
+                }
+            }
+        }
+        return $vectorsTypes;
+    }
+    
+    /**
      * Lists all vectors
      * @return mixed
      */
@@ -221,6 +249,9 @@ class VectorController extends Controller {
         }
         $searchResult = $searchModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
         
+        //list of vectors types
+        $vectorsTypes = $this->getVectorsTypesSimpleAndUri();
+        
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -232,7 +263,8 @@ class VectorController extends Controller {
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+               'dataProvider' => $searchResult,
+               'vectorsTypes' => $vectorsTypes
             ]);
         }
     }
@@ -254,7 +286,7 @@ class VectorController extends Controller {
         
         //2. get events
         $searchEventModel = new EventSearch();
-        $searchEventModel->concernedItemUri = $id;
+        $searchEventModel->searchConcernedItemUri = $id;
         $eventSearchParameters = [];
         if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
             $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;

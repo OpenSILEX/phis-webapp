@@ -18,8 +18,8 @@ use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\EventButtonWidget;
-use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\event\EventButtonWidget;
+use app\components\widgets\event\EventGridViewWidget;
 use app\controllers\ProjectController;
 use app\models\yiiModels\YiiDocumentModel;
 
@@ -174,7 +174,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
         echo EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS_PROVIDER => ${ProjectController::EVENTS_PROVIDER}
+                 EventGridViewWidget::DATA_PROVIDER => ${ProjectController::EVENTS_PROVIDER}
             ]
         ); 
     ?>
