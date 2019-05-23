@@ -171,10 +171,13 @@ class DataController extends Controller {
         //get all the data (if multiple pages) and write them in a file
         $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
         
-        $headerFile = "variable" . ScientificObjectController::DELIM_CSV .
+        $headerFile = "variable URI" . ScientificObjectController::DELIM_CSV .
+                      "variable" . ScientificObjectController::DELIM_CSV .
                       "date" . ScientificObjectController::DELIM_CSV .
                       "value" . ScientificObjectController::DELIM_CSV .
+                      "object URI" . ScientificObjectController::DELIM_CSV . 
                       "object" . ScientificObjectController::DELIM_CSV . 
+                      "provenance URI" . ScientificObjectController::DELIM_CSV . 
                       "provenance" . ScientificObjectController::DELIM_CSV . 
                       "\n";
         file_put_contents($serverFilePath, $headerFile);
@@ -189,9 +192,11 @@ class DataController extends Controller {
             //2. write in file
             $models = $searchResult->getmodels();
             foreach ($models as $model) {
-                $stringToWrite = $model->variable->label . ScientificObjectController::DELIM_CSV . 
+                $stringToWrite = $model->variable->uri . ScientificObjectController::DELIM_CSV . 
+                                 $model->variable->label . ScientificObjectController::DELIM_CSV . 
                                  $model->date . ScientificObjectController::DELIM_CSV .
-                                 $model->value . ScientificObjectController::DELIM_CSV;
+                                 $model->value . ScientificObjectController::DELIM_CSV .
+                                 $model->object->uri . ScientificObjectController::DELIM_CSV ;
                 $objectLabels = "";
                 if (isset($model->object)) {
                     foreach ($model->object->labels as $label) {
@@ -199,10 +204,9 @@ class DataController extends Controller {
                     }
                 }
                 
-                $provenance = isset($model->provenance->label) ? $model->provenance->label : $model->provenance->uri;
-                
                 $stringToWrite .= $objectLabels . ScientificObjectController::DELIM_CSV .
-                                  $provenance . ScientificObjectController::DELIM_CSV . 
+                                  $model->provenance->uri . ScientificObjectController::DELIM_CSV .
+                                  $model->provenance->label . ScientificObjectController::DELIM_CSV . 
                                  "\n";
                 file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
             }
