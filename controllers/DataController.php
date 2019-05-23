@@ -150,4 +150,65 @@ class DataController extends Controller {
             ]);
         }
     }
+    
+    /**
+     * Download a csv corresponding to the search params of the index view of the data search.
+     * @return the csv file.
+     */
+    public function actionDownloadCsv() {
+        $searchModel = new \app\models\yiiModels\DataSearch();
+        if (isset($_GET['model'])) {
+            $searchParams = $_GET['model'];
+            $searchModel->variable = $searchParams["variable"];
+            $searchModel->date = isset($searchParams["date"]) ? $searchParams["date"] : null;
+            $searchModel->object = isset($searchParams["object"]) ? $searchParams["object"] : null;
+            $searchModel->provenance = isset($searchParams["provenance"]) ? $searchParams["provenance"] : null;
+        }
+        
+        // Set page size to 200 for better performances
+        $searchModel->pageSize = 200;
+        
+        //get all the data (if multiple pages) and write them in a file
+        $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
+        
+        $headerFile = "variable" . ScientificObjectController::DELIM_CSV .
+                      "date" . ScientificObjectController::DELIM_CSV .
+                      "value" . ScientificObjectController::DELIM_CSV .
+                      "object" . ScientificObjectController::DELIM_CSV . 
+                      "provenance" . ScientificObjectController::DELIM_CSV . 
+                      "\n";
+        file_put_contents($serverFilePath, $headerFile);
+        
+        $totalPage = 1;
+        for ($i = 0; $i < $totalPage; $i++) {
+            //1. call service for each page
+            $searchParams["page"] = $i;
+
+            $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+
+            //2. write in file
+            $models = $searchResult->getmodels();
+            foreach ($models as $model) {
+                $stringToWrite = $model->variable->label . ScientificObjectController::DELIM_CSV . 
+                                 $model->date . ScientificObjectController::DELIM_CSV .
+                                 $model->value . ScientificObjectController::DELIM_CSV;
+                $objectLabels = "";
+                if (isset($model->object)) {
+                    foreach ($model->object->labels as $label) {
+                        $objectLabels .= $label . " ";
+                    }
+                }
+                
+                $provenance = isset($model->provenance->label) ? $model->provenance->label : $model->provenance->uri;
+                
+                $stringToWrite .= $objectLabels . ScientificObjectController::DELIM_CSV .
+                                  $provenance . ScientificObjectController::DELIM_CSV . 
+                                 "\n";
+                file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
+            }
+            
+            $totalPage = intval($searchModel->totalPages);
+        }
+        Yii::$app->response->sendFile($serverFilePath); 
+    }
 }

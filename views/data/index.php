@@ -7,9 +7,11 @@
 // Creation date: 22 mai 2019
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
+
 use yii\helpers\Html;
 use yii\grid\GridView;
 use kartik\daterange\DateRangePicker;
+use kartik\icons\Icon;
 
 
 /* @var $this yii\web\View */
@@ -24,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="data-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php //echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
     
    <?php 
     echo GridView::widget([
@@ -52,14 +54,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => DateRangePicker::widget([
                     'model'=> $searchModel,
                     'attribute' => 'date',
-                    'convertFormat'=>true,
+                    'convertFormat'=> true,
                     'options' => array('class' => 'form-control date-range-input'),
-                    'pluginOptions'=>[
-                        'autoclose'=>true,
-                        'timePicker'=>true,
-                        'timePickerIncrement'=>15,
-                        'locale'=>[
+                    'pluginOptions' => [
+                        'autoclose' => true,
+                        'timePicker' => true,
+                        'timePickerIncrement' => 15,
+                        'locale'=> [
+                            //SILEX:info
+                            //Warning, we need to create a parameter global for 
+                            //the webapp when the date formats will be the same everywhere
                             'format' => 'Y-m-dTH:i:sZZ'
+                            //SILEX:info
                         ]
                     ]                            
                 ])
