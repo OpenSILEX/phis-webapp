@@ -14,7 +14,21 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="site-contact">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php if (Yii::$app->session->hasFlash('contactFormSubmitted')): ?>
+    <p>
+      You wish to report a bug or to get help ?
+      OpenSILEX development team can be contacted through the mailing list [opensilex-help@groupes.renater.fr](mailto:opensilex-help@groupes.renater.fr).
+    </p>
+
+    <p>
+      You wish to get notified when new development are available ?
+      You can follow us on <a href="https://twitter.com/OpenSilex"> twitter</a> or subscribe to one of the following mailing list :
+      <ul>
+        <li><a href="https://groupes.renater.fr/sympa/info/opensilex"> OpenSILEX</a>, for generic information about the latest news (training sessions, new releases, ...)</li>
+        <li><a href="https://groupes.renater.fr/sympa/info/opensilex-èdev"> OpenSILEX-dev</a>, for technical information directed to OpenSILEX contributors</li>
+    </p>
+
+
+    <!-- <?php if (Yii::$app->session->hasFlash('contactFormSubmitted')): ?>
 
         <div class="alert alert-success">
             Thank you for contacting us. We will respond to you as soon as possible.
@@ -64,5 +78,5 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
-    <?php endif; ?>
+    <?php endif; ?> -->
 </div>
