@@ -1,4 +1,5 @@
 <?php
+use kartik\icons\Icon;
 /* @var $this yii\web\View */
 $this->title = Yii::$app->params['opensilex-webapp-type'];
 ?>
@@ -16,8 +17,8 @@ $this->title = Yii::$app->params['opensilex-webapp-type'];
             <h3>You are on OpenSILEX, the Hybrid Information System about Life Science !</h3>
             <br />
             <div class="btns">
-              <a href="https://twitter.com/OpenSilex"><i class="fab fa-twitter fab-3x"></i> Twitter</a>
-              <a href="https://github.com/OpenSILEX"><i class="fab fa-github fab-3x"></i> Github</a>
+              <a href="https://twitter.com/OpenSilex"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
+              <a href="https://github.com/OpenSILEX"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?>Github</a>
             </div>
             <?php
         }
