@@ -181,10 +181,6 @@ ToastrAsset::register($this);
                                 [
                                     'label' => Icon::show('paperclip', [], Icon::BSG) . " " . Yii::t('app', 'Vocabulary'),
                                     'url' => ['/site/ontology']
-                                ],
-                                [
-                                    'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact'),
-                                    'url' => ['/site/contact']
                                 ]
                             ]
                         ];
@@ -282,10 +278,6 @@ ToastrAsset::register($this);
                                 [
                                     'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'),
                                     'url' => "https://opensilex.github.io/phis-docs-community/"
-                                ],
-                                [
-                                    'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact'),
-                                    'url' => ['/site/contact']
                                 ]
                             ]
                         ];
@@ -295,6 +287,19 @@ ToastrAsset::register($this);
                             'url' => ['/site/disconnect']
                         ];
     }
+
+    $menuItems[] = ['label' => Yii::t('app', '...'),
+                    'items' => [
+                          #  [
+                          #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                          #      'url' => ['/site/about']
+                          #  ],
+                            [
+                                'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                                'url' => ['/site/contact']
+                            ]
+                        ]
+                    ];
 
     echo NavX::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
