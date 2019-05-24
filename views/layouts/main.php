@@ -374,22 +374,23 @@ ToastrAsset::register($this);
           if (Yii::$app->params['opensilex-webapp-type'] === 'phis') {
               ?>
               <span class="btns">
-                &nbsp;
-                <a href="https://twitter.com/PHISphenomics"><?=  Icon::show(['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
-                &nbsp;
-                <a href="https://github.com/OpenSILEX"><?=  Icon::show(['class' => 'fa-large'], Icon::FA) ?>Github</a>
-                &nbsp;
-                <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-fw fa-envelope']) , ['site/contact']) ?>
+                &nbsp;&nbsp;
+                <a href="https://twitter.com/PHISphenomics"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?></a>
+                &nbsp;&nbsp;
+                <a href="https://github.com/OpenSILEX"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?></a>
+                &nbsp;&nbsp;
+                <?= Html::a(Yii::t('app', 'Contact / Help') . " " . Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) , ['site/contact']) ?>
               </span>
               <?php
           } else {
               ?>
               <span class="btns">
-                <a href="https://twitter.com/OpenSilex"><?=  Icon::show('', ['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
-                &nbsp;
-                <a href="https://github.com/OpenSILEX"><?=  Icon::show('', ['class' => 'fa-large'], Icon::FA) ?>Github</a>
-                &nbsp;
-                <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-fw fa-envelope']) , ['site/contact']) ?>
+                &nbsp;&nbsp;
+                <a href="https://twitter.com/OpenSilex"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?></a>
+                &nbsp;&nbsp;
+                <a href="https://github.com/OpenSILEX" target="_blank"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?></a>
+                &nbsp;&nbsp;
+                <?= Html::a(Yii::t('app', 'Contact / Help') . " " . Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) , ['site/contact']) ?>
               </span>
               <?php
           }
