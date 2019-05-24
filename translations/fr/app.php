@@ -246,6 +246,7 @@ return [
     'Title' => 'Titre',
     'Tools' => 'Outils',
     'Trait' => 'Trait',
+    'twitter' => 'twitter',
     'Type' => 'Type',
     'Type Labels' => 'Type Labels',
     'Unavailable' => 'Indisponible',
