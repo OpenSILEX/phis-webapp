@@ -390,6 +390,10 @@ ToastrAsset::register($this);
               </span
               <?php
           }
+          $this->params['breadcrumbs'][] = [
+                  'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                  'url' => ['/site/contact']
+            ];
           ?>
         </p>
     </div>
