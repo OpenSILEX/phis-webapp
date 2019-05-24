@@ -49,8 +49,8 @@ return [
     'Administrative Contacts' => 'Contacts administratifs',
     'Affiliation' => 'Affiliation',
     'All Descendants' => 'Tous les Descendants',
-    
-    // Annotations 
+
+    // Annotations
     YiiAnnotationModel::CREATION_DATE_LABEL => 'Date de l\'annotation',
     YiiAnnotationModel::MOTIVATED_BY_LABEL  => 'Motivée par',
     YiiAnnotationModel::TARGETS_LABEL  => 'Entités ciblées',
@@ -58,7 +58,7 @@ return [
     AnnotationGridViewWidget::LINKED_ANNOTATIONS => "Annotations liées",
     AnnotationGridViewWidget::NO_LINKED_ANNOTATIONS => "Aucune annotation liée",
     'Annotations' => 'Annotations',
-    
+
     'Acquisition session template' => 'Gabarit de session d\'aquisition',
     'Attenuator Filter' => 'Filtre Atténuateur',
     'Available' => 'Disponible',
@@ -73,10 +73,11 @@ return [
     'Characterize Sensor' => 'Caractériser un Capteur',
     'Characterize' => 'Caractériser',
     'Circular' => 'Circulaire',
+    'Contact / Help' => 'Contact / Aide',
     'Column' => 'Colonne',
-    'Columns' => 'Colonnes',    
+    'Columns' => 'Colonnes',
     'Comment' => 'Commentaire',
-    
+
     // Concerned items
     'Concerns' => 'Concerne',
     'Concerned item' => 'Élément concerné',
@@ -88,7 +89,7 @@ return [
     YiiConcernedItemModel::LABELS => 'Alias',
     ConcernedItemGridViewWidget::CONCERNED_ITEMS_LABEL => 'Eléments concernés',
     ConcernedItemGridViewWidget::NO_CONCERNED_ITEMS_LABEL => 'Aucun élément concerné',
-    
+
     'Concerned Experimentations' => 'Expérimentations Concernées',
     'Concerned Projects' => 'Projets concernés',
     'Creation Date' => 'Date de Création',
@@ -116,7 +117,7 @@ return [
     'Enter date of last calibration' => 'Saisir la date de dernier étalonnage',
     'Enter date of purchase' => 'Saisir la date d\'achat',
     'Enter in service date' => 'Saisir la date de mise en service',
-    
+
     // Event
     YiiEventModel::EVENT_LABEL => "Evénement",
     YiiEventModel::EVENTS_LABEL => "Evénements",
@@ -124,7 +125,7 @@ return [
     YiiEventModel::TYPE_LABEL => "Type",
     YiiEventModel::DATE_LABEL => "Date",
     YiiEventModel::CONCERNED_ITEMS_LABEL => "Eléments concernés",
-    EventAction::EVENT_UNUPDATABLE_DUE_TO_UNUPDATABLE_PROPRTY_LABEL => 
+    EventAction::EVENT_UNUPDATABLE_DUE_TO_UNUPDATABLE_PROPRTY_LABEL =>
         "L'événement ne peut être mis à jour que via le web service car une de "
         . "ses propriétés spécifiques n'est actuellement pas compatible avec la webapp.",
     EventAction::PROPERTY_HAS_PEST_LABEL => "Ravageur",
@@ -134,7 +135,7 @@ return [
     EventButtonWidget::ADD_EVENT_LABEL => 'Ajouter événement',
     EventGridViewWidget::EVENTS_LABEL => "Événements",
     EventGridViewWidget::NO_EVENT_LABEL => "Pas d'événement",
-    
+
     'Error' => 'Erreur',
     'Errors while creating user' => 'Erreurs lors de la création de l\'utilisateur',
     'Experimental Organization' => 'Organisation expérimentale',
@@ -210,7 +211,7 @@ return [
     'Provenance (URI)' => 'Provenance (URI)',
     'Public Access' => 'Accès Public',
     'Quantitative Variable' => 'Variable Quantitative',
-    'Real number, String or Date' => 'Nombre réel, Chaine de caractère ou Date', 
+    'Real number, String or Date' => 'Nombre réel, Chaine de caractère ou Date',
     'Rectangular' => 'Rectangulaire',
     'Reference URI' => 'URI de Référence',
     'Reflectance value' => 'Valeur de la réflectance',
