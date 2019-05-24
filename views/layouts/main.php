@@ -326,8 +326,8 @@ ToastrAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.3.2 - May 15, 2019 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
-    </div>
+        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.3.2.2.1 - May 24, 2019 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
+    </div> 
 </footer>
 
  <!-- Script for handling user token expiration form -->
