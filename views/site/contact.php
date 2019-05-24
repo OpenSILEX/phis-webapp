@@ -23,9 +23,9 @@ $this->params['breadcrumbs'][] = $this->title;
       <a href="https://twitter.com/OpenSilex"> <?= Yii::t('app', 'twitter') ?></a>
       <?= Yii::t('app/messages', 'or subscribe to one of the following mailing list:') ?>
       <ul>
-        <li><a href="https://groupes.renater.fr/sympa/info/opensilex"> OpenSILEX</a>,
+        <li><a href="https://groupes.renater.fr/sympa/subscribe/opensilex"> OpenSILEX</a>,
           <?= Yii::t('app/messages', 'for generic information about the latest news (training sessions, new releases, ...)') ?></li>
-        <li><a href="https://groupes.renater.fr/sympa/info/opensilex-dev"> OpenSILEX-dev</a>,
+        <li><a href="https://groupes.renater.fr/sympa/subscribe/opensilex-dev"> OpenSILEX-dev</a>,
           <?= Yii::t('app/messages', 'for technical information directed to OpenSILEX contributors') ?></li>
     </p>
 
