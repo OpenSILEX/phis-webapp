@@ -34,7 +34,7 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
     public function rules()
     {
         return [
-            [['uri', 'experiment', 'alias', 'type'], 'safe'],
+            [['uri', 'label', 'experiment', 'alias', 'type'], 'safe'],
         ];
     }
     

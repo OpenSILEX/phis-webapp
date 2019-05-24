@@ -75,6 +75,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
      */
     public $label;
     const LABEL = "label";
+    const ALIAS = "alias";
     
     public $species;
     const SPECIES = "species";
@@ -122,7 +123,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
         $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiScientificObjectModel::URI] = $this->uri;
         $elementForWebService[YiiScientificObjectModel::EXPERIMENT] = $this->experiment;
-        $elementForWebService[YiiScientificObjectModel::LABEL] = $this->label;
+        $elementForWebService[YiiScientificObjectModel::ALIAS] = $this->label;
         $elementForWebService[YiiScientificObjectModel::RDF_TYPE] = $this->type;
         $elementForWebService[YiiScientificObjectModel::GEOMETRY] = $this->geometry;
         $elementForWebService[YiiScientificObjectModel::SPECIES] = $this->species;

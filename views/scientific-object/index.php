@@ -39,8 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
               'attribute' => 'uri',
               'format' => 'raw',
-               'value' => 'uri',
-              'filter' =>false,
+              'value' => 'uri'
             ],
             'label',
             [
@@ -83,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'experiment',
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) {
-                    return Html::a($model->experiment, ['experiment/view', 'id' => $model->experiment]);
+                    return Html::a($this->params['listExperiments'][$model->experiment], ['experiment/view', 'id' => $model->experiment]);
                 },
                 'filter' => \kartik\select2\Select2::widget([
                             'attribute' => 'experiment',
