@@ -64,28 +64,28 @@ ToastrAsset::register($this);
         if (Yii::$app->params['isDemo'] == true) {
           $menuItems[] = ['label' => Yii::t('app', '...'),
                           'items' => [
-                                              #  [
-                                              #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
-                                              #      'url' => ['/site/about']
-                                              #  ],
-                                [
-                                    'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
-                                    'url' => ['/site/contact']
-                                ]
+                              #  [
+                              #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                              #      'url' => ['/site/about']
+                              #  ],
+                              #  [
+                              #      'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                              #      'url' => ['/site/contact']
+                              #  ]
                             ]
                         ];
             $menuItems = [['label' => Yii::t('app', 'Login'), 'options' => ['onclick' => "openDemoLogin(event)"]]];
         } else {
           $menuItems[] = ['label' => Yii::t('app', '...'),
                           'items' => [
-                                              #  [
-                                              #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
-                                              #      'url' => ['/site/about']
-                                              #  ],
-                                [
-                                    'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
-                                    'url' => ['/site/contact']
-                                ]
+                              #  [
+                              #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                              #      'url' => ['/site/about']
+                              #  ],
+                              #  [
+                              #      'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                              #      'url' => ['/site/contact']
+                              #  ]
                             ]
                         ];
             $menuItems = [['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']]];
@@ -211,14 +211,14 @@ ToastrAsset::register($this);
 
         $menuItems[] = ['label' => Yii::t('app', '...'),
                         'items' => [
-                                            #  [
-                                            #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
-                                            #      'url' => ['/site/about']
-                                            #  ],
-                              [
-                                  'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
-                                  'url' => ['/site/contact']
-                              ]
+                            #  [
+                            #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                            #      'url' => ['/site/about']
+                            #  ],
+                            #  [
+                            #      'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                            #      'url' => ['/site/contact']
+                            #  ]
                           ]
                       ];
 
@@ -321,14 +321,14 @@ ToastrAsset::register($this);
 
           $menuItems[] = ['label' => Yii::t('app', '...'),
                           'items' => [
-                                              #  [
-                                              #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
-                                              #      'url' => ['/site/about']
-                                              #  ],
-                                [
-                                    'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
-                                    'url' => ['/site/contact']
-                                ]
+                              #  [
+                              #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                              #      'url' => ['/site/about']
+                              #  ],
+                              #  [
+                              #      'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                              #      'url' => ['/site/contact']
+                              #  ]
                             ]
                         ];
 
@@ -368,7 +368,30 @@ ToastrAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.3.2 - May 15, 2019 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
+        <p class="pull-left">
+          &copy; <?= $footerCopyrightWebappName; ?> v.3.2 - May 15, 2019 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0
+          <?php
+          if (Yii::$app->params['opensilex-webapp-type'] === 'phis') {
+              ?>
+              <span class="btns">
+                <a href="https://twitter.com/PHISphenomics"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
+                &nbsp;
+                <a href="https://github.com/OpenSILEX"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?>Github</a>
+                &nbsp;
+              </span>
+              <?php
+          } else {
+              ?>
+              <span class="btns">
+                <a href="https://twitter.com/OpenSilex"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
+                &nbsp;
+                <a href="https://github.com/OpenSILEX"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?>Github</a>
+                &nbsp;
+              </span
+              <?php
+          }
+          ?>
+        </p>
     </div>
 </footer>
 
