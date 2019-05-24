@@ -375,9 +375,9 @@ ToastrAsset::register($this);
               ?>
               <span class="btns">
                 &nbsp;&nbsp;&nbsp;
-                <?= Html::a(Icon::show('twitter',['class' => 'fa-large'],Icon::FA), "https://twitter.com/PHISphenomics") ?>
+                <?= Html::a(Icon::show('twitter',['class' => 'fa-large'],Icon::FA), "https://twitter.com/PHISphenomics"), ['target'=>'_blank']?>
                 &nbsp;&nbsp;&nbsp;
-                <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX") ?>
+                <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX"), ['target'=>'_blank']?>
                 &nbsp;&nbsp;&nbsp;
                 <?= Html::a(Yii::t('app', 'Contact / Help') . "  " . Icon::show('envelope', ['class' => 'fa-large'], Icon::FA), ['site/contact']) ?>
               </span>
@@ -386,9 +386,9 @@ ToastrAsset::register($this);
               ?>
               <span class="btns">
                 &nbsp;&nbsp;&nbsp;
-                <?= Html::a(Icon::show('twitter',['class' => 'fa-large'],Icon::FA), "https://twitter.com/OpenSilex") ?>
+                <?= Html::a(Icon::show('twitter',['class' => 'fa-large'],Icon::FA), "https://twitter.com/OpenSilex"), ['target'=>'_blank']?>
                 &nbsp;&nbsp;&nbsp;
-                <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX") ?>
+                <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX"), ['target'=>'_blank']?>
                 &nbsp;&nbsp;&nbsp;
                 <?= Html::a(Yii::t('app', 'Contact / Help') . "  " . Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) , ['site/contact']) ?>
               </span>
