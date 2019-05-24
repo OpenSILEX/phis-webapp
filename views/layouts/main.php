@@ -374,18 +374,19 @@ ToastrAsset::register($this);
           if (Yii::$app->params['opensilex-webapp-type'] === 'phis') {
               ?>
               <span class="btns">
-                <a href="https://twitter.com/PHISphenomics"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
                 &nbsp;
-                <a href="https://github.com/OpenSILEX"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?>Github</a>
+                <a href="https://twitter.com/PHISphenomics"><?=  Icon::show(['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
+                &nbsp;
+                <a href="https://github.com/OpenSILEX"><?=  Icon::show(['class' => 'fa-large'], Icon::FA) ?>Github</a>
                 &nbsp;
               </span>
               <?php
           } else {
               ?>
               <span class="btns">
-                <a href="https://twitter.com/OpenSilex"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
+                <a href="https://twitter.com/OpenSilex"><?=  Icon::show(['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
                 &nbsp;
-                <a href="https://github.com/OpenSILEX"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?>Github</a>
+                <a href="https://github.com/OpenSILEX"><?=  Icon::show(['class' => 'fa-large'], Icon::FA) ?>Github</a>
                 &nbsp;
               </span
               <?php
