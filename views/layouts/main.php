@@ -379,6 +379,7 @@ ToastrAsset::register($this);
                 &nbsp;
                 <a href="https://github.com/OpenSILEX"><?=  Icon::show(['class' => 'fa-large'], Icon::FA) ?>Github</a>
                 &nbsp;
+                <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-fw fa-envelope']) , ['site/contact']) ?>
               </span>
               <?php
           } else {
@@ -388,13 +389,14 @@ ToastrAsset::register($this);
                 &nbsp;
                 <a href="https://github.com/OpenSILEX"><?=  Icon::show(['class' => 'fa-large'], Icon::FA) ?>Github</a>
                 &nbsp;
-              </span
+                <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-fw fa-envelope']) , ['site/contact']) ?>
+              </span>
               <?php
           }
-          $this->params['breadcrumbs'][] = [
-                  'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
-                  'url' => ['/site/contact']
-            ];
+        #  $this->params['breadcrumbs'][] = [
+        #          'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+        #          'url' => ['/site/contact']
+        #    ];
           ?>
         </p>
     </div>
