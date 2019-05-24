@@ -385,9 +385,9 @@ ToastrAsset::register($this);
           } else {
               ?>
               <span class="btns">
-                <a href="https://twitter.com/OpenSilex"><?=  Icon::show(['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
+                <a href="https://twitter.com/OpenSilex"><?=  Icon::show('', ['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
                 &nbsp;
-                <a href="https://github.com/OpenSILEX"><?=  Icon::show(['class' => 'fa-large'], Icon::FA) ?>Github</a>
+                <a href="https://github.com/OpenSILEX"><?=  Icon::show('', ['class' => 'fa-large'], Icon::FA) ?>Github</a>
                 &nbsp;
                 <?= Html::a(Html::tag('i', '', ['class' => 'fa fa-fw fa-envelope']) , ['site/contact']) ?>
               </span>
