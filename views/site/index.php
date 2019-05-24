@@ -18,6 +18,7 @@ $this->title = Yii::$app->params['opensilex-webapp-type'];
             <br />
             <div class="btns">
               <a href="https://twitter.com/OpenSilex"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
+              &nbsp;
               <a href="https://github.com/OpenSILEX"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?>Github</a>
             </div>
             <?php
