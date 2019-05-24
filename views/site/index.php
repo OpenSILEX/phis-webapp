@@ -17,7 +17,7 @@ $this->title = Yii::$app->params['opensilex-webapp-type'];
             ?>
             <img src="images/logos/opensilex_logo_showcase-site.png" alt="logos_opensilex"/>
             <h3>
-              <?= Yii::t('app/messages', 'You are on PHIS, the Hybrid Information System about Phenotyping!') ?>
+              <?= Yii::t('app/messages', 'You are on OpenSILEX, the Hybrid Information System about Life Science!') ?>
             </h3>
             <br />
             <div class="btns">
