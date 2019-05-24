@@ -12,12 +12,6 @@ $this->title = Yii::$app->params['opensilex-webapp-type'];
             <h3>
               <?= Yii::t('app/messages', 'You are on PHIS, the Hybrid Information System about Phenotyping!') ?>
             </h3>
-            <br />
-            <div class="btns">
-              <a href="https://twitter.com/PHISphenomics"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
-              &nbsp;
-              <a href="https://github.com/OpenSILEX"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?>Github</a>
-            </div>
             <?php
         } else {
             ?>
@@ -25,12 +19,6 @@ $this->title = Yii::$app->params['opensilex-webapp-type'];
             <h3>
               <?= Yii::t('app/messages', 'You are on OpenSILEX, the Hybrid Information System about Life Science!') ?>
             </h3>
-            <br />
-            <div class="btns">
-              <a href="https://twitter.com/OpenSilex"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?> Twitter</a>
-              &nbsp;
-              <a href="https://github.com/OpenSILEX"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?>Github</a>
-            </div>
             <?php
         }
         ?>
