@@ -374,23 +374,23 @@ ToastrAsset::register($this);
           if (Yii::$app->params['opensilex-webapp-type'] === 'phis') {
               ?>
               <span class="btns">
-                &nbsp;&nbsp;
-                <a href="https://twitter.com/PHISphenomics"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?></a>
-                &nbsp;&nbsp;
-                <a href="https://github.com/OpenSILEX"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?></a>
-                &nbsp;&nbsp;
-                <?= Html::a(Yii::t('app', 'Contact / Help') . " " . Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) , ['site/contact']) ?>
+                &nbsp;&nbsp;&nbsp;
+                <?= Html::a(Icon::show('twitter',['class' => 'fa-large'],Icon::FA), "https://twitter.com/PHISphenomics") ?>
+                &nbsp;&nbsp;&nbsp;
+                <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX") ?>
+                &nbsp;&nbsp;&nbsp;
+                <?= Html::a(Yii::t('app', 'Contact / Help') . "  " . Icon::show('envelope', ['class' => 'fa-large'], Icon::FA), ['site/contact']) ?>
               </span>
               <?php
           } else {
               ?>
               <span class="btns">
-                &nbsp;&nbsp;
-                <a href="https://twitter.com/OpenSilex"><?=  Icon::show('twitter', ['class' => 'fa-large'], Icon::FA) ?></a>
-                &nbsp;&nbsp;
-                <a href="https://github.com/OpenSILEX" target="_blank"><?=  Icon::show('github', ['class' => 'fa-large'], Icon::FA) ?></a>
-                &nbsp;&nbsp;
-                <?= Html::a(Yii::t('app', 'Contact / Help') . " " . Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) , ['site/contact']) ?>
+                &nbsp;&nbsp;&nbsp;
+                <?= Html::a(Icon::show('twitter',['class' => 'fa-large'],Icon::FA), "https://twitter.com/OpenSilex") ?>
+                &nbsp;&nbsp;&nbsp;
+                <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX") ?>
+                &nbsp;&nbsp;&nbsp;
+                <?= Html::a(Yii::t('app', 'Contact / Help') . "  " . Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) , ['site/contact']) ?>
               </span>
               <?php
           }
