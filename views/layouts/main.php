@@ -355,7 +355,7 @@ ToastrAsset::register($this);
                 &nbsp;&nbsp;&nbsp;
                 <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX", ['target'=>'_blank'])?>
                 &nbsp;&nbsp;&nbsp;
-                <?= Html::a(Yii::t('app', 'Contact') . "  " . Icon::show('envelope',['class' => 'fa-large'],Icon::FA), "http://www.opensilex.org/#contact", ['target'=>'_blank'])?>
+                <?= Html::a(Yii::t('app', 'Contact') . "  " . Icon::show('envelope',['class' => 'fa-large'],Icon::FA), "http://www.phis.inra.fr/#contact", ['target'=>'_blank'])?>
               </span>
               <?php
           } else {
