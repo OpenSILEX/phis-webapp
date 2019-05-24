@@ -73,6 +73,7 @@ return [
     'Characterize Sensor' => 'Caractériser un Capteur',
     'Characterize' => 'Caractériser',
     'Circular' => 'Circulaire',
+    'Contact' => 'Contact',
     'Contact / Help' => 'Contact / Aide',
     'Column' => 'Colonne',
     'Columns' => 'Colonnes',
