@@ -14,14 +14,14 @@
 // - Yii2 configuration file
 //***********************************************************************************************
 class config {
-    
+
     public static function path() {
 
-        $appli = 'test';
-        $hostname = '138.102.159.37';
-        
+        $appli = 'phis-webapp';
+        $hostname = 'localhost';
+
         $basePath = $appli.'/web';
-        
+
         return [
             'appli' => $appli,
             'baseIndexURL' => 'http://'.$hostname.'/'.$basePath.'/index.php',

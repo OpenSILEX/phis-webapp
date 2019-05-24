@@ -178,19 +178,19 @@ ToastrAsset::register($this);
                                     'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'),
                                     'url' => "https://opensilex.github.io/phis-docs-community/"
                                 ],
-                                [
-                                    'label' => Icon::show('paperclip', [], Icon::BSG) . " " . Yii::t('app', 'Vocabulary'),
-                                    'url' => ['/site/ontology']
-                                ]
+                                // [
+                                //     'label' => Icon::show('paperclip', [], Icon::BSG) . " " . Yii::t('app', 'Vocabulary'),
+                                //     'url' => ['/site/ontology']
+                                // ]
                             ]
                         ];
 
         $menuItems[] = ['label' => Yii::t('app', '...'),
                         'items' => [
-                            #  [
-                            #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
-                            #      'url' => ['/site/about']
-                            #  ],
+                              // [
+                              //     'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                              //     'url' => ['/site/about']
+                              // ],
                               [
                                   'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
                                   'url' => ['/site/contact']
@@ -297,10 +297,10 @@ ToastrAsset::register($this);
 
           $menuItems[] = ['label' => Yii::t('app', '...'),
                           'items' => [
-                              #  [
-                              #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
-                              #      'url' => ['/site/about']
-                              #  ],
+                                // [
+                                //     'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                                //     'url' => ['/site/about']
+                                // ],
                                 [
                                     'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
                                     'url' => ['/site/contact']
@@ -350,23 +350,23 @@ ToastrAsset::register($this);
           if (Yii::$app->params['opensilex-webapp-type'] === 'phis') {
               ?>
               <span class="btns">
-                &nbsp;&nbsp;&nbsp;
+                &nbsp;
                 <?= Html::a(Icon::show('twitter',['class' => 'fa-large'],Icon::FA), "https://twitter.com/PHISphenomics", ['target'=>'_blank'])?>
-                &nbsp;&nbsp;&nbsp;
+                &nbsp;
                 <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX", ['target'=>'_blank'])?>
-                &nbsp;&nbsp;&nbsp;
-                <?= Html::a(Yii::t('app', 'Contact') . "  " . Icon::show('envelope',['class' => 'fa-large'],Icon::FA), "http://www.phis.inra.fr/#contact", ['target'=>'_blank'])?>
+                &nbsp;
+                <?= Html::a(Icon::show('envelope',['class' => 'fa-large'],Icon::FA), "http://www.phis.inra.fr/#contact", ['target'=>'_blank'])?>
               </span>
               <?php
           } else {
               ?>
               <span class="btns">
-                &nbsp;&nbsp;&nbsp;
+                &nbsp;
                 <?= Html::a(Icon::show('twitter',['class' => 'fa-large'],Icon::FA), "https://twitter.com/OpenSilex", ['target'=>'_blank'])?>
-                &nbsp;&nbsp;&nbsp;
+                &nbsp;
                 <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX", ['target'=>'_blank'])?>
                 &nbsp;&nbsp;&nbsp;
-                <?= Html::a(Yii::t('app', 'Contact') . "    " . Icon::show('envelope',['class' => 'fa-large'],Icon::FA), "http://www.opensilex.org/#contact", ['target'=>'_blank'])?>
+                <?= Html::a(Icon::show('envelope',['class' => 'fa-large'],Icon::FA), "http://www.opensilex.org/#contact", ['target'=>'_blank'])?>
               </span>
               <?php
           }
