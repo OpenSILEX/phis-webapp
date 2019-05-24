@@ -62,8 +62,32 @@ ToastrAsset::register($this);
     //unconnect user
     if (Yii::$app->session['isGuest'] || Yii::$app->session['isGuest'] === null) {
         if (Yii::$app->params['isDemo'] == true) {
+          $menuItems[] = ['label' => Yii::t('app', '...'),
+                          'items' => [
+                                              #  [
+                                              #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                                              #      'url' => ['/site/about']
+                                              #  ],
+                                [
+                                    'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                                    'url' => ['/site/contact']
+                                ]
+                            ]
+                        ];
             $menuItems = [['label' => Yii::t('app', 'Login'), 'options' => ['onclick' => "openDemoLogin(event)"]]];
         } else {
+          $menuItems[] = ['label' => Yii::t('app', '...'),
+                          'items' => [
+                                              #  [
+                                              #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                                              #      'url' => ['/site/about']
+                                              #  ],
+                                [
+                                    'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                                    'url' => ['/site/contact']
+                                ]
+                            ]
+                        ];
             $menuItems = [['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']]];
         }
     // admin user
@@ -185,6 +209,19 @@ ToastrAsset::register($this);
                             ]
                         ];
 
+        $menuItems[] = ['label' => Yii::t('app', '...'),
+                        'items' => [
+                                            #  [
+                                            #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                                            #      'url' => ['/site/about']
+                                            #  ],
+                              [
+                                  'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                                  'url' => ['/site/contact']
+                              ]
+                          ]
+                      ];
+
         $menuItems[] = [
                             'label' => Icon::show('log-out', [], Icon::BSG) . " " . Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')',
                             'url' => ['/site/disconnect']
@@ -282,24 +319,24 @@ ToastrAsset::register($this);
                             ]
                         ];
 
+          $menuItems[] = ['label' => Yii::t('app', '...'),
+                          'items' => [
+                                              #  [
+                                              #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                                              #      'url' => ['/site/about']
+                                              #  ],
+                                [
+                                    'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                                    'url' => ['/site/contact']
+                                ]
+                            ]
+                        ];
+
         $menuItems[] = [
                             'label' => Icon::show('log-out', [], Icon::BSG) . " " . Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')',
                             'url' => ['/site/disconnect']
                         ];
     }
-
-    $menuItems[] = ['label' => Yii::t('app', '...'),
-                    'items' => [
-                          #  [
-                          #      'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
-                          #      'url' => ['/site/about']
-                          #  ],
-                            [
-                                'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
-                                'url' => ['/site/contact']
-                            ]
-                        ]
-                    ];
 
     echo NavX::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
