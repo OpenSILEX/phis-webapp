@@ -47,6 +47,7 @@ return [
     'Select type...' => 'Sélectionnez le type...',
     'Select one or many variables' => 'Sélectionnez une ou plusieurs variables',
     'Select existing provenance or create a new one' => 'Selectionnez une provenance existante où créez en une nouvelle',
+    'Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0' => 'Le logiciel est sous licence AGPL-3.0 et les données sous CC BY-NC-SA 4.0',
     'Some required fields are missings' => 'Des champs requis sont manquants.',
     'The selected sensor cannot be characterized. Please select another sensor among cameras (all camera types: RGB, multispectral, etc.), spectrometers and LiDAR.' => 'Le capteur sélectionné ne peut pas être caractérisé. Veuillez sélectionner une caméra (RGB, TIR, multispectrale, etc.), un spectromètre ou un LiDAR. ',
     'The alias of the plot (e.g. MAU17-PG_38_WW_1_19_5)' => 'L\'alias du plot (ex. MAU17-PG_38_WW_1_19_5)',
