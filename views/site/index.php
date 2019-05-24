@@ -10,14 +10,14 @@ $this->title = Yii::$app->params['opensilex-webapp-type'];
             ?>
             <img src="images/logos/phis_logo10.png" alt="logos_phis"/>
             <h3>
-              <?= Yii::t('messages', 'You are on PHIS, the Hybrid Information System about Phenotyping!') ?>
+              <?= Yii::t('app/messages', 'You are on PHIS, the Hybrid Information System about Phenotyping!') ?>
             </h3>
             <?php
         } else {
             ?>
             <img src="images/logos/opensilex_logo_showcase-site.png" alt="logos_opensilex"/>
             <h3>
-              <?= Yii::t('messages', 'You are on PHIS, the Hybrid Information System about Phenotyping!') ?>
+              <?= Yii::t('app/messages', 'You are on PHIS, the Hybrid Information System about Phenotyping!') ?>
             </h3>
             <br />
             <div class="btns">
