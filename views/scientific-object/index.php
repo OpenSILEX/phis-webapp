@@ -94,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]),
             ],
             ['class' => 'yii\grid\ActionColumn',
-                'template' => '{event}<br/>{annotation}',
+                'template' => '{event}<br/>{annotation}<br/>{dataVisualization}',
                 'buttons' => [
                     'event' => function($url, $model, $key) {
                         return EventButtonWidget::widget([
@@ -107,6 +107,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             AnnotationButtonWidget::TARGETS => [$model->uri],
                             AnnotationButtonWidget::AS_LINK => true
                         ]); 
+                    },
+                    'dataVisualization' => function($url, $model, $key) {
+                        return Html::a(Icon::show('line-chart', ['class' => 'fa-large'], Icon::FA), 
+                                        ['data-visualization', 'uri' => $model->uri, 'label' => $model->label, 'experimentUri' => $model->experiment]);
                     },
                 ]
             ]
