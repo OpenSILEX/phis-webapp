@@ -416,7 +416,6 @@ require_once '../config/config.php';
                 $forWebService = $this->getArrayForWebServiceCreate($scientificObject);
                 $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
                 
-                
                 if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
                     $return["objectUris"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
                     $return["messages"][] = "object saved";
@@ -503,9 +502,9 @@ require_once '../config/config.php';
      */
     private function getArrayForWebServiceCreate($scientificObject) {
         
-        if ($scientificObject["label"] != null) {
+        if ($scientificObject[YiiScientificObjectModel::ALIAS] != null) {
             $alias["relation"] = Yii::$app->params['rdfsLabel'];
-            $alias["value"] = $scientificObject["label"];
+            $alias["value"] = $scientificObject[YiiScientificObjectModel::ALIAS];
             $p["properties"][] = $alias;
         }
         
