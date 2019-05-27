@@ -114,7 +114,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'series' => $series,
                         'tooltip' => [
-                               'xDateFormat'=> '%Y-%m-%dT%H:%M:%S',
+                               'xDateFormat'=> '%Y-%m-%d %H:%M',
                            ] 
                     ]
                  ]);
