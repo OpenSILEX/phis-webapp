@@ -30,9 +30,17 @@ $this->params['breadcrumbs'][] = $this->title;
         if (empty($variables)) {
             echo "<p>" . Yii::t('app/messages', 'No variables linked to the experiment of the scientific object.') . "</p>";
         } else {
+            ?>
+            <div class="row">
+            <?php
+            $selectedVariable = null;
+            if (isset($data)) {
+                $selectedVariable = $data["variable"];
+            }
             echo \kartik\select2\Select2::widget([
                 'name' => 'variable',
                 'data' => $variables,
+                'value' => $selectedVariable,
                 'options' => [
                     'placeholder' => Yii::t('app/messages','Select a variable ...'),
                     'multiple' => false
@@ -42,8 +50,39 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ]);
             ?>
+            </div>
+        <br/>
+        
+            <div class="row">
+                <div class="col-md-6">
+                    <?=
+                    \kartik\date\DatePicker::widget([
+                        'name' => 'dateStart',
+                        'options' => ['placeholder' => 'Enter date start'],
+                        'value' => isset($dateStart) ? $dateStart : null,
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'format' => 'yyyy-mm-dd'
+                        ]
+                    ])
+                    ?>
+                </div>
+                <div class="col-md-6">
+                    <?=
+                    \kartik\date\DatePicker::widget([
+                        'name' => 'dateEnd',
+                        'value' => isset($dateEnd) ? $dateEnd : null,
+                        'options' => ['placeholder' => 'Enter date end'],
+                        'pluginOptions' => [
+                            'autoclose' => true,
+                            'format' => 'yyyy-mm-dd'
+                        ]
+                    ])
+                    ?>
+                </div>
+            </div>
             <br/>
-            <div class="form-group">
+            <div class="form-group row">
                 <?= Html::submitButton(Yii::t('app', 'Show data'), ['class' => 'btn btn-primary']) ?>
             </div>
 <?php   }
@@ -59,10 +98,13 @@ $this->params['breadcrumbs'][] = $this->title;
             echo Highcharts::widget([
                 'id' => 'test',
                     'options' => [
-                        'title' => ['text' => $data["variable"]],
+                        'title' => ['text' => $variables[$data["variable"]]],
                         'xAxis' => [
                            'type' => 'datetime',
                            'title' => 'Date',
+                        ],
+                        'chart' => [
+                            'zoomType' => 'x'
                         ],
                         'yAxis' => [
                            'title' => null,

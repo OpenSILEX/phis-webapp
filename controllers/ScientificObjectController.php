@@ -740,8 +740,6 @@ require_once '../config/config.php';
         return json_encode($return, JSON_UNESCAPED_SLASHES);
     }
     
-    
-    
     /**
      * Generates the page to visualize data about a scientific object.
      * SILEX:info
@@ -776,8 +774,11 @@ require_once '../config/config.php';
             $toReturn = [];
             
             $searchModel = new \app\models\yiiModels\DataSearchLayers();
+            $searchModel->pageSize = 80000;
             $searchModel->object = $scientificObject->uri;
             $searchModel->variable = $_POST['variable'];
+            $searchModel->startDate = $_POST['dateStart'];
+            $searchModel->endDate = $_POST['dateEnd'];
             
             $searchResult = $searchModel->search(Yii::$app->session['access_token'], null);
             
@@ -796,14 +797,16 @@ require_once '../config/config.php';
             $data = [];
             $scientificObjectData["label"] = $label;
             foreach ($searchResult->getModels() as $model) {
-                $dataToSave = null;
-                $dataToSave[] = (strtotime($model->date))*1000;
-                $dataToSave[] = doubleval($model->value);
-                $data[]= $dataToSave;
+                if (!empty($model->value)) {
+                    $dataToSave = null;
+                    $dataToSave[] = (strtotime($model->date))*1000;
+                    $dataToSave[] = doubleval($model->value);
+                    $data[]= $dataToSave;
+                }
             }
             
             if (!empty($data)) {
-                $toReturn["variable"] = $variables[$searchModel->variable];
+                $toReturn["variable"] = $searchModel->variable;
                 $scientificObjectData["data"] = $data;
                 $toReturn["scientificObjectData"][] = $scientificObjectData;
             }
@@ -811,7 +814,9 @@ require_once '../config/config.php';
             return $this->render('data_visualization', [
                'model' => $scientificObject,
                'variables' => $variables,
-               'data' => $toReturn
+               'data' => $toReturn,
+               'dateStart' => $searchModel->startDate,
+               'dateEnd' => $searchModel->endDate
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [
