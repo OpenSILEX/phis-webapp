@@ -744,7 +744,7 @@ require_once '../config/config.php';
      * Generates the page to visualize data about a scientific object.
      * SILEX:info
      * the label and experiment parameter will have to be removed 
-     * when the /scientificObject/{uri} GET will be don in the web service.
+     * when the /scientificObject/{uri} GET will be done in the web service.
      * \SILEX:info
      * @param type $uri
      * @param type $label
