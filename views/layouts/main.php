@@ -345,7 +345,7 @@ ToastrAsset::register($this);
 <footer class="footer">
     <div class="container">
         <p class="pull-left">
-          &copy; <?= $footerCopyrightWebappName; ?> v.3.2.2.1 - May 24, 2019 ; <?= Yii::t('app/messages', 'Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0') ?>
+          &copy; <?= $footerCopyrightWebappName; ?> v.3.2.2.2 - May 29, 2019 ; <?= Yii::t('app/messages', 'Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0') ?>
           <?php
           if (Yii::$app->params['opensilex-webapp-type'] === 'phis') {
               ?>
