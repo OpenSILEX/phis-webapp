@@ -58,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?=
                     \kartik\date\DatePicker::widget([
                         'name' => 'dateStart',
-                        'options' => ['placeholder' => 'Enter date start'],
+                        'options' => ['placeholder' => Yii::t('app','Enter date start')],
                         'value' => isset($dateStart) ? $dateStart : null,
                         'pluginOptions' => [
                             'autoclose' => true,
@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     \kartik\date\DatePicker::widget([
                         'name' => 'dateEnd',
                         'value' => isset($dateEnd) ? $dateEnd : null,
-                        'options' => ['placeholder' => 'Enter date end'],
+                        'options' => ['placeholder' => Yii::t('app','Enter date end')],
                         'pluginOptions' => [
                             'autoclose' => true,
                             'format' => 'yyyy-mm-dd'
