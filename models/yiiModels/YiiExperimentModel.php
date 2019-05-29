@@ -447,4 +447,25 @@ class YiiExperimentModel extends WSActiveRecord {
             return $requestRes;
         }
     }
+    
+    /**
+     * Get the variables measured by the given experiment
+     * @param string $sessionToken
+     * @param string $experimentUri the URI of the experiment
+     * @return array List of the variables measured by the experiment. 
+     * @example [
+     *      "http://www.opensilex.org/demo/variables/id/v001" => "labelv1",
+     *      "http://www.opensilex.org/demo/variables/id/v002" => "labelv2",
+     * ]
+     */
+    public function getMeasuredVariables($sessionToken, $experimentUri) {
+        $variables = [];
+        if (!empty($experimentUri)) {
+            if ($this->findByURI($sessionToken, $experimentUri)) {
+                return $this->variables;
+            }
+        }
+        
+        return $variables;
+    }
 }

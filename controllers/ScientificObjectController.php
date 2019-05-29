@@ -738,4 +738,90 @@ require_once '../config/config.php';
         }        
         return json_encode($return, JSON_UNESCAPED_SLASHES);
     }
+    
+    /**
+     * Generates the page to visualize data about a scientific object.
+     * SILEX:info
+     * the label and experiment parameter will have to be removed 
+     * when the /scientificObject/{uri} GET will be done in the web service.
+     * \SILEX:info
+     * @param type $uri
+     * @param type $label
+     * @param type $experimentUri
+     * @return mixed the visualization page
+     */
+    public function actionDataVisualization($uri, $label, $experimentUri = null) {
+        $scientificObject = new YiiScientificObjectModel();
+        $scientificObject->uri = $uri;
+        $scientificObject->label = $label;
+        $scientificObject->experiment = $experimentUri;
+        
+        //Get the list of the variables
+        $variables = [];
+        //If the experiment URI is empty, we get all the variables. 
+        if (empty($experimentUri)) {
+            $variableModel = new \app\models\yiiModels\YiiVariableModel();
+            $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
+        } else { //There is an experiment. Get the variables linked to the experiment.
+            $experimentModel = new YiiExperimentModel();
+            $variables = $experimentModel->getMeasuredVariables(Yii::$app->session['access_token'], $scientificObject->experiment);
+        }
+        
+        
+        //Search data for the scientific object and the given variable.
+        if (isset($_POST['variable'])) {
+            $toReturn = [];
+            
+            $searchModel = new \app\models\yiiModels\DataSearchLayers();
+            $searchModel->pageSize = 80000;
+            $searchModel->object = $scientificObject->uri;
+            $searchModel->variable = $_POST['variable'];
+            $searchModel->startDate = $_POST['dateStart'];
+            $searchModel->endDate = $_POST['dateEnd'];
+            
+            $searchResult = $searchModel->search(Yii::$app->session['access_token'], null);
+            
+            /* Build array for highChart
+             * e.g : 
+             * {
+             *   "variable": "http:\/\/www.opensilex.org\/demo\/id\/variable\/v0000001",
+             *   "scientificObjectData": [
+             *          "label": "Scientific object label",
+             *          "data": [["1,874809","2015-02-10"],
+             *                   ["2,313261","2015-03-15"]
+             *    ]
+             *  }]
+             * }
+             */
+            $data = [];
+            $scientificObjectData["label"] = $label;
+            foreach ($searchResult->getModels() as $model) {
+                if (!empty($model->value)) {
+                    $dataToSave = null;
+                    $dataToSave[] = (strtotime($model->date))*1000;
+                    $dataToSave[] = doubleval($model->value);
+                    $data[]= $dataToSave;
+                }
+            }
+            
+            if (!empty($data)) {
+                $toReturn["variable"] = $searchModel->variable;
+                $scientificObjectData["data"] = $data;
+                $toReturn["scientificObjectData"][] = $scientificObjectData;
+            }
+            
+            return $this->render('data_visualization', [
+               'model' => $scientificObject,
+               'variables' => $variables,
+               'data' => $toReturn,
+               'dateStart' => $searchModel->startDate,
+               'dateEnd' => $searchModel->endDate
+            ]);
+        } else { //If there is no variable given, just redirect to the visualization page.
+            return $this->render('data_visualization', [
+               'model' => $scientificObject,
+               'variables' => $variables
+            ]);
+        }
+    }
  }

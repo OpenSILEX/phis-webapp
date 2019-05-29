@@ -33,7 +33,7 @@ use miloschuman\highcharts\Highcharts;
                 echo "<h4 style='text-align:center'>" . Yii::t('app', 'No result found') . "</h4>";
             } else {
                 echo Highcharts::widget([
-                    'id' => 'test',
+                        'id' => 'data-visualization',
                         'options' => [
                            'title' => ['text' => $this->params['variables'][$data["variable"]]],
                            'xAxis' => [
