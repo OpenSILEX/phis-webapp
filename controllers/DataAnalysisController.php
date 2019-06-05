@@ -85,7 +85,7 @@ class DataAnalysisController extends \yii\web\Controller {
         } else {
             return $this->render('/site/error', [
                         'name' => Yii::t('app/warning', 'Informations'),
-                        'message' => Yii::t('app/messages', 'Demonstration application not avaiblable')
+                        'message' => Yii::t('app/messages', 'Demonstration application not available')
                         ]
             );
         }

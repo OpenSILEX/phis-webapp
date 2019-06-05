@@ -90,7 +90,7 @@ return [
     'You wish to report a bug or to get help ? OpenSILEX development team can be contacted through the email address' => 'Vous souhaitez nous signaler une erreur ou bien nous demander de l\'aide ? L\'équipe de développement d\'OpenSILEX peut être contactée via l\'adresse',
     'You wish to get notified when new developments are available ? You can follow us on' => 'Vous souhaitez vous tenir informé des derniers développements disponibles ? Vous pouvez nous suivre sur',
     'No application available' => 'Aucune application disponible', // controllers/DataAnalysisController.php
-    'Demonstration application not avaiblable' => 'Application de démonstration non disponible',  // controllers/DataAnalysisController.php
+    'Demonstration application not available' => 'Application de démonstration non disponible',  // controllers/DataAnalysisController.php
     'Application not available' => 'Application non disponible',  // views/data-analysis/index.php
     'No description available' => 'Aucune description disponible', // models/yiiModels/DataAnalysisAppSearch.php
     'Experimental version' => 'Version expérimentale' // views/data-analysis/iframe-view.php
