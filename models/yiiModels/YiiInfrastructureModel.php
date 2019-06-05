@@ -110,7 +110,7 @@ class YiiInfrastructureModel extends WSActiveRecord {
         $requestRes = $this->wsModel->getInfrastructureDetails($sessionToken, $uri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[WSConstants::TOKEN])) {
+            if (isset($requestRes[WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 $this->uri = $uri;

@@ -31,8 +31,8 @@ use app\components\helpers\SiteMessages;
  */
 class InfrastructureController extends Controller {
 
-    CONST ANNOTATIONS_DATA = "infrastructureAnnotations";
-    CONST EVENTS_DATA = "infrastructureEvents";
+    CONST ANNOTATIONS_PROVIDER = "annotationsProvider";
+    CONST EVENTS_PROVIDER = "eventsProvider";
 
     /**
      * Defines the behaviors
@@ -59,13 +59,13 @@ class InfrastructureController extends Controller {
         //Get the search params and update pagination
         $searchParams = Yii::$app->request->queryParams;
         if (isset($searchParams[YiiModelsConstants::PAGE])) {
-            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
+            $searchParams[YiiModelsConstants::PAGE]--;
         }
         
         $searchResult = $infrastructuresModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
 
         if (is_string($searchResult)) {
-            if ($searchResult === WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
@@ -91,33 +91,38 @@ class InfrastructureController extends Controller {
         
         //1. Fill the infrastructure model with the information.
         $model = new YiiInfrastructureModel();
-        $infrastructureDetail = $model->getDetails(Yii::$app->session['access_token'], $id, Yii::$app->language);
+        $infrastructureDetail = $model->getDetails(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id, Yii::$app->language);
 
         //2. Get documents.
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
-        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+        $documentsProvider = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], ["concernedItem" => $id]);
         
-        //3. Get events
+        //2. get events
         $searchEventModel = new EventSearch();
-        $searchEventModel->concernedItemUri = $id;
-        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $searchEventModel->searchConcernedItemUri = $id;
+        $eventSearchParameters = [];
+        if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+            $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+        }
+        $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+        $eventsProvider = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $eventSearchParameters);
+        $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE;
 
         //4. Get annotations
         $searchAnnotationModel = new AnnotationSearch();
         $searchAnnotationModel->targets[0] = $id;
-        $infrastructureAnnotations = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
+        $annotationsProvider = $searchAnnotationModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], [AnnotationSearch::TARGET_SEARCH_LABEL => $id]);
 
         //5. Render the view of the infrastructure.
-        if (is_array($infrastructureDetail) && isset($infrastructureDetail["token"])) {
+        if (is_array($infrastructureDetail) && isset($infrastructureDetail[WSConstants::TOKEN])) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
             return $this->render('view', [
                         'model' => $infrastructureDetail,
-                        'dataDocumentsProvider' => $documents,
-                        self::EVENTS_DATA => $events,
-                        self::ANNOTATIONS_DATA => $infrastructureAnnotations
+                        'dataDocumentsProvider' => $documentsProvider,
+                        self::EVENTS_PROVIDER => $eventsProvider,
+                        self::ANNOTATIONS_PROVIDER => $annotationsProvider
             ]);
         }
     }

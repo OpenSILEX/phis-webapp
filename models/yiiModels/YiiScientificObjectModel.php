@@ -14,6 +14,7 @@
 
 namespace app\models\yiiModels;
 
+use Yii;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSUriModel;
 use app\models\wsModels\WSScientificObjectModel;
@@ -72,7 +73,8 @@ class YiiScientificObjectModel extends WSActiveRecord {
      *                      (e.g 2/DZ_PG_30/ZM4361/WW/1/DIA2017-05-19)
      * @var string
      */
-    public $alias;
+    public $label;
+    const LABEL = "label";
     const ALIAS = "alias";
     
     public $species;
@@ -121,7 +123,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
         $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiScientificObjectModel::URI] = $this->uri;
         $elementForWebService[YiiScientificObjectModel::EXPERIMENT] = $this->experiment;
-        $elementForWebService[YiiScientificObjectModel::ALIAS] = $this->alias;
+        $elementForWebService[YiiScientificObjectModel::ALIAS] = $this->label;
         $elementForWebService[YiiScientificObjectModel::RDF_TYPE] = $this->type;
         $elementForWebService[YiiScientificObjectModel::GEOMETRY] = $this->geometry;
         $elementForWebService[YiiScientificObjectModel::SPECIES] = $this->species;
@@ -152,7 +154,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
         $requestRes = $wsUriModel->getDescendants($sessionToken, $scientificObjectConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return "token";
             } else {
                 return $requestRes;
@@ -180,7 +182,7 @@ class YiiScientificObjectModel extends WSActiveRecord {
         $requestRes = $wsUriModel->getDescendants($sessionToken, $scientificObjectConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return "token";
             } else {
                 return $requestRes;
@@ -190,7 +192,50 @@ class YiiScientificObjectModel extends WSActiveRecord {
         }
     }
     
-    
+    /**
+     * Create an array representing the scientific object
+     * Used for the web service for example
+     * @return array with the attributes. 
+     */
+    public function attributesToArrayForPut() {
+        $elementForWebService = parent::attributesToArray();
+        $elementForWebService[YiiScientificObjectModel::LABEL] = $this->label;
+        $elementForWebService[YiiScientificObjectModel::RDF_TYPE] = $this->type;
+        $elementForWebService[YiiScientificObjectModel::GEOMETRY] = $this->geometry;
+        $elementForWebService[YiiScientificObjectModel::ISPARTOF] = $this->parent;
+        
+        $properties = [];
+        
+        if (!empty($this->species)) {
+            $species["rdfType"] = Yii::$app->params['Species'];
+            $species["relation"] = Yii::$app->params['hasSpecies'];
+            $species["value"] = $this->species;
+            $properties[] = $species;
+        }
+        
+        if (!empty($this->variety)) {
+            $variety["rdfType"] = Yii::$app->params['Variety'];
+            $variety["relation"] = Yii::$app->params['hasVariety'];
+            $variety["value"] = str_replace(" ", "_", $this->variety);
+            $properties[] = $variety;
+        }
+        
+        if (!empty($this->modality)) {
+            $modality["relation"] = Yii::$app->params['hasExperimentModalities'];
+            $modality["value"] = $this->modality;
+            $properties[] = $modality;
+        }
+        
+        if (!empty($this->replication)) {
+            $replication["relation"] = Yii::$app->params['hasReplication'];
+            $replication["value"] = $this->replication;
+            $properties[] = $replication;
+        }
+        
+        $elementForWebService["properties"] = $properties;
+        
+        return $elementForWebService;
+    }
     
     /**
      * while the species service is not implemented, get a fixed species uris 
@@ -220,5 +265,19 @@ class YiiScientificObjectModel extends WSActiveRecord {
             "http://www.phenome-fppn.fr/id/species/zeamays",
             "http://www.phenome-fppn.fr/id/species/maize"
         ];
+    }
+    
+    /**
+     * Update the metadata of a given scientific object in the context of a given experiment.
+     * @see \app\models\wsModels\WSScientificObjectModel::putByExperiment($sessionToken, $uri, $experiment, $params)
+     * @param string $sessionToken
+     * @param string $uri
+     * @param string $experiment
+     * @return mixed the update result.
+     */
+    public function updateByExperiment($sessionToken, $uri, $experiment) {
+        $params = $this->attributesToArrayForPut();
+        $requestRes = $this->wsModel->putByExperiment($sessionToken, $uri, $experiment, $params);
+        return $requestRes;
     }
 }

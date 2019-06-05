@@ -1,7 +1,7 @@
 <?php
 
 //******************************************************************************
-//                        SensorDataSearch.php
+//                        DeviceDataSearch.php
 // SILEX-PHIS
 // Copyright © INRA 2018
 // Creation date: 8th November 2018
@@ -15,8 +15,9 @@ use \app\models\wsModels\WSEnvironmentModel;
 /**
  * implements the search action for the sensor data
  * @author Vincent Migot <vincent.migot@inra.fr>
+ * @update [Morgane Vidal] 19 April, 2019 : rename to device to deal with others devices with data.
  */
-class SensorDataSearch extends \yii\base\Model {
+class DeviceDataSearch extends \yii\base\Model {
     
     /**
      * start date of the searched data
@@ -29,7 +30,7 @@ class SensorDataSearch extends \yii\base\Model {
      */
     public $dateEnd;
     /**
-     * sensor uri of the searched data
+     * device uri of the searched data
      * @var string
      */
     public $sensorURI;
@@ -57,7 +58,7 @@ class SensorDataSearch extends \yii\base\Model {
         ];
     }
     
-        /**
+    /**
      * 
      * @return array the labels of the attributes
      */
@@ -134,7 +135,7 @@ class SensorDataSearch extends \yii\base\Model {
         
         // Get all data
         $data = $ws->getAllSensorData($sessionToken, $this->sensorURI, $this->variableURI, $dateTimeStart, $dateTimeEnd);
-        
+                
         // Construct result
         $result = [
             "graphName" => $this->graphName,

@@ -256,7 +256,7 @@ class YiiDocumentModel extends WSActiveRecord {
     public function findDocumentsTypes($sessionToken)  {       
         $requestRes = $this->wsModel->getTypes($sessionToken);
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
             } else {
                 return $requestRes;
@@ -277,8 +277,8 @@ class YiiDocumentModel extends WSActiveRecord {
     public function getDocument($sessionToken, $documentUri, $format) {
         $requestRes = $this->wsModel->getFileByURI($sessionToken, $documentUri, $format);
         
-        if (is_array($requestRes) && isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
-            return \app\models\wsModels\WSConstants::TOKEN;
+        if (is_array($requestRes) && isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
+            return \app\models\wsModels\WSConstants::TOKEN_INVALID;
         } else {
             return $requestRes;
         }        

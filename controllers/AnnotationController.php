@@ -56,7 +56,7 @@ class AnnotationController extends Controller {
             $dataToSend[] = $annotationModel->attributesToArray();
             // Send data
             $requestRes = $annotationModel->insert($sessionToken, $dataToSend);
-            if (is_string($requestRes) && $requestRes === \app\models\wsModels\WSConstants::TOKEN) { // User must be connected
+            if (is_string($requestRes) && $requestRes === \app\models\wsModels\WSConstants::TOKEN_INVALID) { // User must be connected
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 $annotationModel->uri = $requestRes->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
@@ -90,15 +90,15 @@ class AnnotationController extends Controller {
             $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
         }
         $searchResult = $searchModel->search(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], $searchParams);
-        
+
         // Load user instances list
         $userModel = new YiiUserModel();
-        $users = $userModel->getPersonsMailsAndName(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN]);
-       
+        $users = $userModel->getPersonsURIAndName(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN]);
+
         // Load once motivation instances list
         $motivationInstances = $this->getMotivationInstances();
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', 
@@ -136,8 +136,8 @@ class AnnotationController extends Controller {
         $requestRes = $wsUriModel->getInstances(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN], Yii::$app->params['Motivation'], ["pageSize" => 100]);
 
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
-                return \app\models\wsModels\WSConstants::TOKEN;
+            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
+                return \app\models\wsModels\WSConstants::TOKEN_INVALID;
             } else {
                 foreach ($requestRes as $motivation) {
                     $motivationInstances[$motivation->uri] = Vocabulary::prettyUri($motivation->uri);
@@ -146,7 +146,7 @@ class AnnotationController extends Controller {
                 return $motivationInstances;
             }
         } else {
-            if ($requestRes === \app\models\wsModels\WSConstants::TOKEN) { //L'utilisateur doit se connecter
+            if ($requestRes === \app\models\wsModels\WSConstants::TOKEN_INVALID) { //L'utilisateur doit se connecter
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             }
             return $requestRes;
@@ -160,7 +160,7 @@ class AnnotationController extends Controller {
     public function actionView($id) {
         $res = $this->findModel($id);
 
-        if ($res === \app\models\wsModels\WSConstants::TOKEN) {
+        if ($res === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {
             return $this->render('view', 
@@ -184,8 +184,8 @@ class AnnotationController extends Controller {
 
         if ($requestRes === true) {
             return $annotationModel;
-        } else if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN])) {
-            return \app\models\wsModels\WSConstants::TOKEN;
+        } else if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
+            return \app\models\wsModels\WSConstants::TOKEN_INVALID;
         } else {
             throw new NotFoundHttpException('The requested page does not exist');
         }

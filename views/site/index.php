@@ -1,26 +1,31 @@
 <?php
+use kartik\icons\Icon;
 /* @var $this yii\web\View */
 $this->title = Yii::$app->params['opensilex-webapp-type'];
 ?>
 <div class="site-index">
     <div class="jumbotron">
-        <?php 
+        <?php
         if (Yii::$app->params['opensilex-webapp-type'] === 'phis') {
             ?>
             <img src="images/logos/phis_logo10.png" alt="logos_phis"/>
-            <h3>You are on PHIS, the Hybrid Information System about Phenotyping !</h3>
+            <h3>
+              <?= Yii::t('app/messages', 'You are on PHIS, the Hybrid Information System about Phenotyping!') ?>
+            </h3>
             <?php
         } else {
             ?>
             <img src="images/logos/opensilex_logo_showcase-site.png" alt="logos_opensilex"/>
-            <h3>You are on OpenSILEX, the Hybrid Information System about Life Science !</h3>
+            <h3>
+              <?= Yii::t('app/messages', 'You are on OpenSILEX, the Hybrid Information System about Life Science!') ?>
+            </h3>
             <?php
         }
         ?>
     </div>
-    <?php    
+    <?php
 //    SILEX:info
-//    If you want to activate animated multiple background images 
+//    If you want to activate animated multiple background images
 //    feature uncomment these lines below and add
 //    'use app\components\widgets\FullScreenImageSliderWidget;'
 //    at the beginning of the file. You can also see full-slider.css

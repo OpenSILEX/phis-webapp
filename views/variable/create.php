@@ -1,5 +1,4 @@
 <?php
-
 //**********************************************************************************************
 //                                       create.php 
 //
@@ -24,7 +23,7 @@ $this->title = Yii::t('yii', 'Create') . ' ' . Yii::t('app', '{n, plural, =1{Var
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Variable} other{Variables}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="experiment-create">
+<div class="variable-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

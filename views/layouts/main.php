@@ -1,6 +1,6 @@
 <?php
 //**********************************************************************************************
-//                                       main.php 
+//                                       main.php
 //
 // SILEX-PHIS
 // Copyright © INRA 2017
@@ -21,7 +21,7 @@ use kartik\nav\NavX;
 use \app\models\wsModels\WSConstants;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
-        
+
 require_once(__DIR__ . '/../../config/config.php');
 require_once(__DIR__ . '/../../config/web_services.php');
 
@@ -46,10 +46,10 @@ ToastrAsset::register($this);
     //To use the fontawesome glyphicons on the page
     Icon::map($this, Icon::ICF); //@see https://icofont.com/icons
     Icon::map($this, Icon::FA);
-    
+
     $webappName = Yii::$app->params['opensilex-webapp-type'] === "phis" ? "PHIS" : "OpenSILEX";
     $footerCopyrightWebappName = Yii::$app->params['opensilex-webapp-type'] === "phis" ? "OpenSILEX - PHIS" : "OpenSILEX";
-    
+
     NavBar::begin([
         'brandLabel' => $webappName . ' <i> ' . Yii::$app->params['platform'] . '</i>',
         'brandUrl' => Yii::$app->homeUrl,
@@ -58,20 +58,20 @@ ToastrAsset::register($this);
         ],
     ]);
     $menuItems;
-    
+
     //unconnect user
     if (Yii::$app->session['isGuest'] || Yii::$app->session['isGuest'] === null) {
         if (Yii::$app->params['isDemo'] == true) {
             $menuItems = [['label' => Yii::t('app', 'Login'), 'options' => ['onclick' => "openDemoLogin(event)"]]];
         } else {
-            $menuItems = [['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']]];            
+            $menuItems = [['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']]];
         }
     // admin user
-    } else if (Yii::$app->session['isAdmin']) { 
+    } else if (Yii::$app->session['isAdmin']) {
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
-                                'label' => Icon::show('home', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]), 
+                                'label' => Icon::show('home', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]),
                                 'url' => ['/infrastructure'],
                             ],
                             [
@@ -87,56 +87,69 @@ ToastrAsset::register($this);
                                 'url' => ['/scientific-object/index']
                             ],
                             [
-                                'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'), 
+                                'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'),
                                 'url' => ['/variable/index']
                             ],
                             [
-                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
+                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'),
                                 'url' => ['/species/index']
                             ],
                             [
-                                'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'), 
+                                'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'),
                                 'url' => ['/event/index']
                             ],
-                            //SILEX:info
-                            //Uncomment this code if you want to allow access to annotation index
-//                            [
-//                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
-//                                'url' => ['/annotation/index']
-//                            ]
-                            //\SILEX:info
+                            [
+                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
+                                'url' => ['/annotation/index']
+                            ],
                         ]];
-//        $menuItems[] = ['label' => Yii::t('app', 'Dataset'), 'url' => ['/dataset/create']];
+        $menuItems[] = [
+                            'label' => Yii::t('app', 'Data'),
+                            'items' => [
+                                [
+                                    'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Add'),
+                                    'url' => ['/dataset/create']
+                                ],
+                                [
+                                    'label' => Icon::show('search', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'View'),
+                                    'url' => ['/data/index']
+                                ]
+                            ]
+                        ];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
                             [
-                                'label' => Icon::show('camera', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 
+                                'label' => Icon::show('camera', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]),
                                 'url' => ['/sensor/index']
                             ],
                             [
-                                'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
+                                'label' => Icon::show('bullhorn', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Actuator} other{Actuators}}', ['n' => 2]),
+                                'url' => ['/actuator/index']
+                            ],
+                            [
+                                'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]),
                                 'url' => ['/vector/index']
                             ],
                             //SILEX:info
                             //uncomment for the field instances
 //                            [
-//                                'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 
+//                                'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]),
 //                                'url' => ['/radiometric-target/index']
 //                            ],
 //                            //\SILEX:info
                             //SILEX:info
-                            //we have stop maintaining this functionnality for now. 
+                            //we have stop maintaining this functionnality for now.
                             //Uncomment the following block to allow user to download the 4P acquisition session file
 //                            Html::tag('li','',['class' => 'divider']),
 //                            [
 //                                'label' => Yii::t('app', 'Acquisition session template'),
 //                                'items' => [
 //                                    [
-//                                        'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "UAV"), 
+//                                        'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "UAV"),
 //                                        'url' => ['/acquisition-session-metadata-file/generate-uav-metadata-file']
 //                                    ],
 //                                    [
-//                                        'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "Phenomobile"), 
+//                                        'label' => Icon::show('file-excel-o', [], Icon::FA). " " . Yii::t('app', "Phenomobile"),
 //                                        'url' => ['/acquisition-session-metadata-file/generate-field-robot-metadata-file']
 //                                    ],
 //                                ]
@@ -160,46 +173,59 @@ ToastrAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
                                 [
-                                    'label' => Icon::show('th', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Group} other{Groups}}', ['n' => 2]), 
+                                    'label' => Icon::show('th', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Group} other{Groups}}', ['n' => 2]),
                                     'url' => ['/group/index']
                                 ],
                                 [
-                                    'label' => Icon::show('user', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Person} other{Persons}}', ['n' => 2]), 
+                                    'label' => Icon::show('user', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Person} other{Persons}}', ['n' => 2]),
                                     'url' => ['/user/index']
                                 ],
                                 [
-                                    'label' => Icon::show('book', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 2]), 
+                                    'label' => Icon::show('book', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 2]),
                                     'url' => ['/document/index']
                                 ],
                                 [
-                                    'label' => Icon::show('fire', [], Icon::BSG) . " " . Yii::t('app', 'Web API'), 
+                                    'label' => Icon::show('fire', [], Icon::BSG) . " " . Yii::t('app', 'Web API'),
                                     'url' => WS_PHIS_PATH_DOC
                                 ],
                                 [
-                                    'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'), 
+                                    'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'),
                                     'url' => "https://opensilex.github.io/phis-docs-community/"
                                 ],
-                                [
-                                    'label' => Icon::show('paperclip', [], Icon::BSG) . " " . Yii::t('app', 'Vocabulary'), 
-                                    'url' => ['/site/ontology']
-                                ],
+                                // [
+                                //     'label' => Icon::show('paperclip', [], Icon::BSG) . " " . Yii::t('app', 'Vocabulary'),
+                                //     'url' => ['/site/ontology']
+                                // ]
                             ]
                         ];
-        
+
+        $menuItems[] = ['label' => Yii::t('app', '...'),
+                        'items' => [
+                              // [
+                              //     'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                              //     'url' => ['/site/about']
+                              // ],
+                              [
+                                  'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                                  'url' => ['/site/contact']
+                              ]
+                          ]
+                      ];
+
         $menuItems[] = [
-                            'label' => Icon::show('log-out', [], Icon::BSG) . " " . Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')', 
+                            'label' => Icon::show('log-out', [], Icon::BSG) . " " . Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')',
                             'url' => ['/site/disconnect']
                         ];
         //connected user
-    } else { 
+    } else {
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
                             [
-                                'label' => Icon::show('home', ['class' => 'fas'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]), 
+                                'label' => Icon::show('home', ['class' => 'fas'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]),
                                 'url' => ['/infrastructure'],
                             ],
                             [
-                                'label' => Icon::show('folder-open', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]), 
+                                'label' => Icon::show('folder-open', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]),
                                 'url' => ['/project/index'],
                             ],
                             [
@@ -211,39 +237,49 @@ ToastrAsset::register($this);
                                 'url' => ['/scientific-object/index']
                             ],
                             [
-                                'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'), 
+                                'label' => Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('app', 'Variables'),
                                 'url' => ['/variable/index']
                             ],
                             [
-                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'), 
+                                'label' => Icon::show('wheat', ['class' => 'icofont-lg'], Icon::ICF) . " " . Yii::t('app', 'Species'),
                                 'url' => ['/species/index']
                             ],
                             [
-                                'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'), 
+                                'label' => Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', 'Events'),
                                 'url' => ['/event/index']
                             ],
-                            //SILEX:info
-                            //Uncomment this code if you want to allow access to annotation index
-//                            [
-//                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
-//                                'url' => ['/annotation/index']
-//                            ]
-                            //\SILEX:info
+                            [
+                                'label' => Icon::show('comment', [], Icon::FA) . " " . Yii::t('app', 'Annotations'),
+                                'url' => ['/annotation/index']
+                            ],
                         ]];
+        $menuItems[] = [
+                            'label' => Yii::t('app', 'Data'),
+                            'items' => [
+                                [
+                                    'label' => Icon::show('search', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'View'),
+                                    'url' => ['/data/index']
+                                ]
+                            ]
+                        ];
         $menuItems[] = ['label' => Yii::t('app', 'Device'),
                         'items' => [
                             [
-                                'label' => Icon::show('camera', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]), 
+                                'label' => Icon::show('camera', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Sensor} other{Sensors}}', ['n' => 2]),
                                 'url' => ['/sensor/index']
                             ],
                             [
-                                'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]), 
+                                'label' => Icon::show('bullhorn', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Actuator} other{Actuators}}', ['n' => 2]),
+                                'url' => ['/actuator/index']
+                            ],
+                            [
+                                'label' => Icon::show('blackboard', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Vector} other{Vectors}}', ['n' => 2]),
                                 'url' => ['/vector/index']
                             ],
                             //SILEX:info
                             //uncomment for the field instances
 //                            [
-//                                'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]), 
+//                                'label' => Icon::show('screenshot', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Radiometric Target} other{Radiometric Targets}}', ['n' => 2]),
 //                                'url' => ['/radiometric-target/index']
 //                            ],
                             //\SILEX:info
@@ -265,34 +301,47 @@ ToastrAsset::register($this);
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
                                 [
-                                    'label' => Icon::show('th', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Group} other{Groups}}', ['n' => 2]), 
+                                    'label' => Icon::show('th', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Group} other{Groups}}', ['n' => 2]),
                                     'url' => ['/group/index']
                                 ],
                                 [
-                                    'label' => Icon::show('user', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Person} other{Persons}}', ['n' => 2]), 
+                                    'label' => Icon::show('user', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Person} other{Persons}}', ['n' => 2]),
                                     'url' => ['/user/index']
                                 ],
                                 [
-                                    'label' => Icon::show('book', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 2]), 
+                                    'label' => Icon::show('book', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 2]),
                                     'url' => ['/document/index']
                                 ],
                                 [
-                                    'label' => Icon::show('fire', [], Icon::BSG) . " " . Yii::t('app', 'Web API'), 
+                                    'label' => Icon::show('fire', [], Icon::BSG) . " " . Yii::t('app', 'Web API'),
                                     'url' => WS_PHIS_PATH_DOC
                                 ],
                                 [
-                                    'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'), 
+                                    'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'),
                                     'url' => "https://opensilex.github.io/phis-docs-community/"
-                                ],
-                            ]   
+                                ]
+                            ]
                         ];
-        
+
+          $menuItems[] = ['label' => Yii::t('app', '...'),
+                          'items' => [
+                                // [
+                                //     'label' => Icon::show('info-circle', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'About'),
+                                //     'url' => ['/site/about']
+                                // ],
+                                [
+                                    'label' => Icon::show('envelope', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Contact / Help'),
+                                    'url' => ['/site/contact']
+                                ]
+                            ]
+                        ];
+
         $menuItems[] = [
-                            'label' => Icon::show('log-out', [], Icon::BSG) . " " . Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')', 
+                            'label' => Icon::show('log-out', [], Icon::BSG) . " " . Yii::t('app', 'Logout'). ' ('. Yii::$app->session['email']. ')',
                             'url' => ['/site/disconnect']
                         ];
     }
-    
+
     echo NavX::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'encodeLabels' => false,
@@ -303,17 +352,17 @@ ToastrAsset::register($this);
     ?>
 
     <div class="container">
-        
+
         <div class="pull-right">
             <?php
                 $urlFlag = \config::path()['basePath'] . '/images/icons/flags/';
                 $urlLangage = \config::path()['baseIndexPath'] . '?r=site%2Flanguage&flag=';
-            ?> 
-            <?= Html::a('<img title="english" alt="EN", src="' . $urlFlag . 'drapeau-rond-en.png">', ['site/language', 'language' => 'en'], []) ?>
-            <?= Html::a('<img title="french" alt="FR", src="' . $urlFlag . 'drapeau-rond-fr.png">', ['site/language', 'language' => 'fr'], []) ?>    
+            ?>
+            <?= Html::a('<img title="english" alt="EN" src="' . $urlFlag . 'drapeau-rond-en.png">', ['site/language', 'language' => 'en'], []) ?>
+            <?= Html::a('<img title="french" alt="FR" src="' . $urlFlag . 'drapeau-rond-fr.png">', ['site/language', 'language' => 'fr'], []) ?>
         </div>
         <div class="clearfix"></div>
-        
+
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
@@ -323,9 +372,36 @@ ToastrAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; <?= $footerCopyrightWebappName; ?> v.3 - 31 January 2019 ; Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0</p>
-    </div> 
-</footer> 
+        <p class="pull-left">
+          &copy; <?= $footerCopyrightWebappName; ?> v.3.2.3 - May 29, 2019 ; <?= Yii::t('app/messages', 'Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0') ?>
+          <?php
+          if (Yii::$app->params['opensilex-webapp-type'] === 'phis') {
+              ?>
+              <span class="btns">
+                &nbsp;
+                <?= Html::a(Icon::show('twitter',['class' => 'fa-large'],Icon::FA), "https://twitter.com/PHISphenomics", ['target'=>'_blank'])?>
+                &nbsp;
+                <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX", ['target'=>'_blank'])?>
+                &nbsp;
+                <?= Html::a(Icon::show('envelope',['class' => 'fa-large'],Icon::FA), "http://www.phis.inra.fr/#contact", ['target'=>'_blank'])?>
+              </span>
+              <?php
+          } else {
+              ?>
+              <span class="btns">
+                &nbsp;
+                <?= Html::a(Icon::show('twitter',['class' => 'fa-large'],Icon::FA), "https://twitter.com/OpenSilex", ['target'=>'_blank'])?>
+                &nbsp;
+                <?= Html::a(Icon::show('github',['class' => 'fa-large'],Icon::FA), "https://github.com/OpenSILEX", ['target'=>'_blank'])?>
+                &nbsp;&nbsp;&nbsp;
+                <?= Html::a(Icon::show('envelope',['class' => 'fa-large'],Icon::FA), "http://www.opensilex.org/#contact", ['target'=>'_blank'])?>
+              </span>
+              <?php
+          }
+          ?>
+        </p>
+    </div>
+</footer>
 
  <!-- Script for handling user token expiration form -->
 <script>
@@ -354,7 +430,7 @@ ToastrAsset::register($this);
                 var action = '<?= $this->context->module->controller->action->id ?>';
                 var onIndex = (controller == 'site' && action == 'index');
                 var onLogin = (controller == 'site' && action == 'login');
-                
+
                 if (!onLogin && !onIndex ) {
                     window.location.href = loginUrl;
                 }
@@ -397,25 +473,25 @@ ToastrAsset::register($this);
             })
         });
     });
-</script> 
+</script>
 
 <?php if (Yii::$app->params['isDemo']): ?>
     <!-- Script for displaying demo login form -->
     <script>
         function openDemoLogin(event) {
             event.preventDefault();
-            
+
             $("#login-overlay").css({
                 opacity: 1,
                 visibility: "visible"
             });
-            
+
             return false;
         }
     </script>
     <!-- Demo Login form -->
     <div id="login-overlay" class="login-demo">
-        <?php 
+        <?php
             $form = ActiveForm::begin([
                 'id' => 'login-form-ajax',
                 'layout' => 'horizontal',
@@ -430,7 +506,7 @@ ToastrAsset::register($this);
             <h2><?= Yii::t('app/messages','Do you have an account or do you want to try OpenSILEX ?') ?></h2>
 
             <p class="expiration-message"><?= Yii::t('app/messages','Your session has expired') ?></p>
-            
+
             <p style="color:red;"><b class="json-error"></b></p>
             <div class="fields">
                 <?= $form->field($model, 'email')->hiddenInput(['value' => Yii::$app->params['demoLogin']])->label(false) ?>
@@ -449,11 +525,11 @@ ToastrAsset::register($this);
             </div>
 
         <?php ActiveForm::end(); ?>
-    </div>    
+    </div>
 <?php else: ?>
     <!-- Login form to allow user to reconnect without loosing work when token expires -->
     <div id="login-overlay">
-        <?php 
+        <?php
             $form = ActiveForm::begin([
                 'id' => 'login-form-ajax',
                 'layout' => 'horizontal',

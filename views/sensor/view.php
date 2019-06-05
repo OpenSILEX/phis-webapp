@@ -11,8 +11,8 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\EventButtonWidget;
-use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\event\EventButtonWidget;
+use app\components\widgets\event\EventGridViewWidget;
 use app\components\widgets\LinkObjectsWidget;
 use app\controllers\SensorController;
 use yii\grid\GridView;
@@ -25,7 +25,7 @@ use app\models\yiiModels\YiiDocumentModel;
  * @update [Andréas Garcia] 06 March, 2019: add event button and widget 
  * @var $this yii\web\View
  * @var $model app\models\YiiSensorModel
- * @var $dataSearchModel app\models\yiiModels\SensorDataSearch
+ * @var $dataSearchModel app\models\yiiModels\DeviceDataSearch
  * @var $variables array
  */
 $this->title = $model->label;
@@ -46,6 +46,7 @@ foreach ($model->properties as $property) {
             && $propertyLabel !== "hasBrand" 
             && $propertyLabel !== "hasLens" 
             && $propertyLabel !== "measures"
+            && $propertyLabel !== "hasModel"
     ) {
         $sensorProfilePropertiesCount++;
     }
@@ -58,8 +59,13 @@ foreach ($model->properties as $property) {
 
     <p>
         <?php
+            if (Yii::$app->session['isAdmin'] && $sensorProfilePropertiesCount == 0) {
+                echo Html::a(Yii::t('app', 'Characterize Sensor'), ['characterize', 'sensorUri' => $model->uri], ['class' => 'btn btn-success']);
+            }
+        ?>
+        <?php
         if (Yii::$app->session['isAdmin']) { ?>
-            <?= Html::a(Yii::t('app', 'Characterize Sensor'), ['characterize', 'sensorUri' => $model->uri], ['class' => 'btn btn-success']); ?>
+            <?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->uri], ['class' => 'btn btn-primary']); ?>
             <?= Html::a(Yii::t('app', 'Add Document'), [
                 'document/create', 
                 'concernedItemUri' => $model->uri, 
@@ -91,6 +97,7 @@ foreach ($model->properties as $property) {
             'brand',
             'serialNumber',
             'inServiceDate',
+            'model',
             'dateOfPurchase',
             'dateOfLastCalibration',
             [
@@ -135,6 +142,7 @@ foreach ($model->properties as $property) {
                                 && $propertyLabel !== "hasBrand" 
                                 && $propertyLabel !== "hasLens" 
                                 && $propertyLabel !== "measures"
+                                && $propertyLabel !== "hasModel"
                         ) {
                             $toReturn .= "<li>"
                                     . "<b>" . explode("#", $property->relation)[1] . "</b>"
@@ -165,7 +173,7 @@ foreach ($model->properties as $property) {
     <!-- Sensor events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS => ${SensorController::EVENTS_DATA}
+                 EventGridViewWidget::DATA_PROVIDER => ${SensorController::EVENTS_PROVIDER}
             ]
         ); 
     ?>
@@ -173,7 +181,7 @@ foreach ($model->properties as $property) {
     <!-- Sensor linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
-                AnnotationGridViewWidget::ANNOTATIONS => ${SensorController::ANNOTATIONS_DATA}
+                AnnotationGridViewWidget::ANNOTATIONS => ${SensorController::ANNOTATIONS_PROVIDER}
             ]
     );
     ?>

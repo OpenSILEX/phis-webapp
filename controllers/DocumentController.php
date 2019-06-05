@@ -23,6 +23,8 @@ use app\models\yiiModels\YiiModelsConstants;
 use app\models\yiiModels\YiiInstanceDefinitionModel;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\YiiDocumentModel;
+use yii\grid\GridView;
+use yii\helpers\Html;
 
 require_once '../config/config.php';
 
@@ -42,6 +44,7 @@ class DocumentController extends Controller {
     const EXPERIMENT = "Experiment";
     const INSTALLATION = "Installation";
     const RADIOMETRIC_TARGET = "RadiometricTarget";
+    const ACTUATOR = "Actuator";
     
     /**
      * define the behaviors
@@ -122,17 +125,23 @@ class DocumentController extends Controller {
                     $concernedItems["type"] = "infrastructure";
                 } else if ($concernedItem->typeURI === Yii::$app->params[DocumentController::RADIOMETRIC_TARGET]) {
                     $concernedItems["type"] = "radiometric-target";
-                }else {
+                } else {
                     //check if a sensor or a vector 
                     $sensorModel = new YiiSensorModel();
                     $requestRes = $sensorModel->findByURI($sessionToken, $concernedItem->uri);
                     if ($requestRes && $sensorModel->uri === $concernedItem->uri) {
                         $concernedItems["type"] = "sensor";
-                    } else {
+                    } else {                      
                         $vectorModel = new YiiVectorModel();
                         $requestRes = $vectorModel->findByURI($sessionToken, $concernedItem->uri);
                         if ($requestRes && $vectorModel->uri === $concernedItem->uri) {
                             $concernedItems["type"] = "vector";
+                        } else {
+                            $actuatorModel = new \app\models\yiiModels\YiiActuatorModel();
+                            $requestRes = $actuatorModel->findByURI($sessionToken, $concernedItem->uri);
+                            if ($requestRes && $actuatorModel->uri === $concernedItem->uri) {
+                                $concernedItems["type"] = "actuator"; 
+                            }
                         }
                     }
                 }
@@ -468,5 +477,38 @@ class DocumentController extends Controller {
                             'model' => $documentModel,
                 ]);
         }
+    }
+    
+    /**
+     * Ajax action to get the document widget of a given URI
+     * @return type
+     */
+    public function actionGetDocumentsWidget() {
+        $searchDocumentModel = new DocumentSearch();
+        $post = Yii::$app->request->post();
+        $searchDocumentModel->concernedItemFilter = $post['uri'];
+        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $uri]);
+        
+        return GridView::widget([
+            'dataProvider' => $documents,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
+                'title',
+                'creator',
+                'creationDate',
+                'language',
+                ['class' => 'yii\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function($url, $model, $key) {
+                            return Html::a(
+                                '<span class="glyphicon glyphicon-eye-open"></span>', 
+                                ['document/view', 'id' => $model->uri],
+                                ["target" => "_blank"]);
+                        },
+                    ]
+                ],
+            ]
+        ]);;
     }
 }
