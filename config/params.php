@@ -15,7 +15,6 @@ return [
     
     // DataAnalysis and visualisation module activation
     'dataAnalysisModule' => true,
-    
 
     // Index
     'indexPageSize' => 20,
