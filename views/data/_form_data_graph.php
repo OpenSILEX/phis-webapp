@@ -33,7 +33,7 @@ use miloschuman\highcharts\Highcharts;
                 echo "<h4 style='text-align:center'>" . Yii::t('app', 'No result found') . "</h4>";
             } else {
                 echo Highcharts::widget([
-                    'id' => 'test',
+                        'id' => 'data-visualization',
                         'options' => [
                            'title' => ['text' => $this->params['variables'][$data["variable"]]],
                            'xAxis' => [
@@ -46,7 +46,10 @@ use miloschuman\highcharts\Highcharts;
                                     'format' => '{value:.2f}'
                                ]
                            ],
-                            'series' => $series,
+                           'series' => $series,
+                           'tooltip' => [
+                               'xDateFormat'=> '%Y-%m-%dT%H:%M:%S',
+                           ] 
 
                         ]
                      ]);

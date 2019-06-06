@@ -1,7 +1,7 @@
 <?php
 
 //**********************************************************************************************
-//                                       web_services.php 
+//                                       web_services.php
 // SILEX-PHIS
 // Copyright © INRA 2017
 // Creation date: February 2017
@@ -9,4 +9,4 @@
 //***********************************************************************************************
 
 define('WS_PHIS_PATH', 'http://localhost:8080/opensilex/rest/');
-define('WS_PHIS_PATH_DOC', 'http://localhost:8080/opensilex');
+define('WS_PHIS_PATH_DOC', 'http://localhost:8080/opensilex/');

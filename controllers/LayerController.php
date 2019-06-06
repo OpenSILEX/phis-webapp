@@ -79,7 +79,7 @@ class LayerController extends Controller {
      *                     false if we only wanna get the direct children
      * @return mixed
      */
-    public function actionView($objectURI, $objectType, $depth, $generateFile) {
+    public function actionView($objectURI, $objectType, $depth, $generateFile, $objectLabel) {
         //SILEX:todo
         //needs to calls the web service to get the geojson link and return it 
         //to the PHP view.
@@ -95,7 +95,8 @@ class LayerController extends Controller {
                         'message' => $layerModel]);
         } else {
             return $this->render('view', [
-                        'model' => $layerModel
+                        'model' => $layerModel,
+                        'objectLabel' => $objectLabel
                     ]);
         }
     }

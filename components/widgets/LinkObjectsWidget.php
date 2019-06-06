@@ -82,6 +82,8 @@ class LinkObjectsWidget extends \yii\base\Widget {
      */
     public $updateMessage;
     
+    public $linkUriId = "uri";
+    
     const ITEM_SELECTOR_CLASS = "items-selector";
     const UPDATE_ITEMS_CLASS = "update-items";
     
@@ -131,7 +133,7 @@ class LinkObjectsWidget extends \yii\base\Widget {
         foreach ($this->items as $uri => $label) {
             $templateSelectionFunction[] = "'" . $uri . "':'" . Html::a(
                 "", 
-                [$this->itemViewRoute, 'uri' => $uri],
+                [$this->itemViewRoute, $this->linkUriId => $uri],
                 [
                     "class" => "fa fa-eye item-select-link",
                     "alt" => str_replace("\n", "", $label)

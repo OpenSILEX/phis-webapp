@@ -2,14 +2,15 @@
 //******************************************************************************
 //                             YiiEventModel.php
 // SILEX-PHIS
-// Copyright © INRA 2018
-// Creation date: 02 Jan. 2019
+// Copyright © INRA 2019
+// Creation date: 2 Jan. 2019
 // Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 namespace app\models\yiiModels;
 
 use Yii;
 
+use yii\data\ArrayDataProvider;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSUriModel;
 use app\models\wsModels\WSEventModel;
@@ -17,11 +18,15 @@ use app\models\wsModels\WSConstants;
 
 /**
  * The Yii model for an event 
- * @update [Andréas Garcia] 15 Feb., 2019: add properties handling
  * @see app\models\wsModels\WSEventModel
+ * @update [Andréas Garcia] 15 Feb., 2019: add properties handling
+ * @update [Andréas Garcia] 16 Feb., 2019: use events/{uri}/annotations service
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class YiiEventModel extends WSActiveRecord {
+    
+    const EVENTS_LABEL = "Events";
+    const EVENT_LABEL = "Event";
     
     /**
      * @example http://www.phenome-fppn.fr/id/event/96e72788-6bdc-4f8e-abd1-ce9329371e8e
@@ -29,6 +34,7 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $uri;
     const URI = "uri";
+    const URI_LABEL = "URI";
     
     /**
      * @example http://www.opensilex.org/vocabulary/oeev#MoveFrom
@@ -36,6 +42,7 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $rdfType;
     const TYPE = "rdfType";
+    const TYPE_LABEL = "Type";
     
     /**
      * @example 2019-01-02T00:00:00+01:00
@@ -43,6 +50,7 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $date;
     const DATE = "date";
+    const DATE_LABEL = "Date";
     
     /**
      * Concerned items of the event
@@ -50,6 +58,7 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $concernedItems; 
     const CONCERNED_ITEMS = "concernedItems";
+    const CONCERNED_ITEMS_LABEL = "Concerned items";
     
     /**
      * Properties of the event
@@ -57,13 +66,6 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $properties;
     const PROPERTIES = "properties";
-    
-    /**
-     * Annotations of the event
-     * @var array
-     */
-    public $annotations; 
-    const ANNOTATIONS = "annotations";
     
     public function __construct($pageSize = null, $page = null) {
         $this->wsModel = new WSEventModel();
@@ -77,18 +79,15 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function rules() {
        return [ 
-           [
-                [
-                    self::URI, 
-                    self::DATE,
-                    self::TYPE, 
-                    self::CONCERNED_ITEMS
-                ], 'required'],
-           [
-               [
-                    self::PROPERTIES, 
-                    self::ANNOTATIONS
-                ] , 'safe']
+            [[
+                self::URI, 
+                self::DATE,
+                self::TYPE, 
+                self::CONCERNED_ITEMS
+            ], 'required'],
+            [[
+                self::PROPERTIES
+            ] , 'safe']
         ]; 
     }
     
@@ -97,9 +96,10 @@ class YiiEventModel extends WSActiveRecord {
      */
     public function attributeLabels() {
         return [
-            self::URI => 'URI', 
-            self::TYPE => Yii::t('app', 'Type'), 
-            self::DATE => Yii::t('app', 'Date')
+            self::URI => Yii::t('app', self::URI_LABEL), 
+            self::TYPE => Yii::t('app', self::TYPE_LABEL), 
+            self::DATE => Yii::t('app', self::DATE_LABEL), 
+            self::CONCERNED_ITEMS => Yii::t('app', self::CONCERNED_ITEMS_LABEL)
         ];
     }
     
@@ -127,39 +127,64 @@ class YiiEventModel extends WSActiveRecord {
                 $property->arrayToAttributes($propertyInArray);
                 $this->properties[] = $property;
             } 
-        } 
-        $this->annotations = $array[self::ANNOTATIONS];
+        }
         $this->date = $array[self::DATE];
     }
 
     /**
-     * Get the detailed event corresponding to the given URI
+     * Gets the event corresponding to the given URI
      * @param type $sessionToken
      * @param type $uri
      * @return $this
      */
-    public function getEventDetailed($sessionToken, $uri) {
-        $eventDetailed = $this->wsModel->getEventDetailed($sessionToken, $uri);
-        if (!is_string($eventDetailed)) {
-            if (isset($eventDetailed[WSConstants::TOKEN])) {
-                return $eventDetailed;
+    public function getEvent($sessionToken, $uri) {
+        $event = $this->wsModel->getEvent($sessionToken, $uri);
+        if (!is_string($event)) {
+            if (isset($event[WSConstants::TOKEN_INVALID])) {
+                return $event;
             } else {
+                $this->arrayToAttributes($event);
                 $this->uri = $uri;
-                $this->arrayToAttributes($eventDetailed);
                 return $this;
             }
         } else {
-            return $eventDetailed;
+            return $event;
         }
     }
 
     /**
-     * Call web service and return the list of events types
+     * Get the event's annotations
+     * @param type $sessionToken
+     * @param type $searchParams
+     * @return the event's annotations provider
+     */
+    public function getEventAnnotations($sessionToken, $searchParams) {
+        $searchParams[YiiEventModel::URI] = $searchParams[WSActiveRecord::ID];
+        $response = $this->wsModel->getEventAnnotations($sessionToken, $searchParams);
+        if (!is_string($response)) {
+            if (isset($response[WSConstants::TOKEN_INVALID])) {
+                return $response;
+            } else {              
+                $annotationWidgetPageSize = Yii::$app->params['annotationWidgetPageSize'];  
+                return new ArrayDataProvider([
+                    'allModels' => $response,
+                    'pagination' => [
+                        'pageSize' => $annotationWidgetPageSize,
+                    ]
+                ]);;
+            }
+        } else {
+            return $response;
+        }
+    }
+
+    /**
+     * Calls the web service and returns the list of events types
      * @param sessionToken
      * @return list of the events types
      */
     public function getEventsTypes($sessionToken) {
-        $eventConceptUri = "http://www.opensilex.org/vocabulary/oeev#Event";
+        $eventConceptUri = Yii::$app->params['event'];
         $params = [];
         if ($this->pageSize !== null) {
            $params[WSConstants::PAGE_SIZE] = $this->pageSize; 
@@ -172,8 +197,8 @@ class YiiEventModel extends WSActiveRecord {
         $requestRes = $wsUriModel->getDescendants($sessionToken, $eventConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[WSConstants::TOKEN])) {
-                return "token";
+            if (isset($requestRes[WSConstants::TOKEN_INVALID])) {
+                return WSConstants::TOKEN_INVALID;
             } else {
                 return $requestRes;
             }

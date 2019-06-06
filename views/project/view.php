@@ -18,8 +18,8 @@ use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\EventButtonWidget;
-use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\event\EventButtonWidget;
+use app\components\widgets\event\EventGridViewWidget;
 use app\controllers\ProjectController;
 use app\models\yiiModels\YiiDocumentModel;
 
@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'concernedItemRdfType' => Yii::$app->params["Project"],
                 YiiDocumentModel::RETURN_URL => Url::current()
             ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning'])?>
-            <?php //echo EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
+            <?php echo EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
             <?= AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);?>
         <?php }
         ?>
@@ -147,7 +147,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- List of experiments -->
     <?= "<h3>" . Yii::t('app', 'Experiments') . "</h3>"; ?>
     <?= GridView::widget([
-        'dataProvider' => ${ProjectController::EXPERIMENTS},
+        'dataProvider' => ${ProjectController::EXPERIMENTS_PROVIDER},
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             
@@ -172,17 +172,17 @@ $this->params['breadcrumbs'][] = $this->title;
     
     <!-- Sensor events -->
     <?php
-//        echo EventGridViewWidget::widget(
-//            [
-//                 EventGridViewWidget::EVENTS => ${ProjectController::EVENTS}
-//            ]
-//        ); 
+        echo EventGridViewWidget::widget(
+            [
+                 EventGridViewWidget::DATA_PROVIDER => ${ProjectController::EVENTS_PROVIDER}
+            ]
+        ); 
     ?>
     
     <!-- Project linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
-                 AnnotationGridViewWidget::ANNOTATIONS => ${ProjectController::ANNOTATIONS_DATA}
+                 AnnotationGridViewWidget::ANNOTATIONS => ${ProjectController::ANNOTATIONS_PROVIDER}
             ]
         ); 
     ?>

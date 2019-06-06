@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
-/* @var $model app\models\yiiModels\SensorDataSearch */
+/* @var $model app\models\yiiModels\DeviceDataSearch */
 /* @var $variables array */
 ?>
 
@@ -83,12 +83,12 @@ use yii\helpers\Url;
                             ajaxUrl,
                             {
                                 "_csrf": $("input[name=_csrf]").val(),
-                                "SensorDataSearch": {
+                                "DeviceDataSearch": {
                                     "sensorURI": sensorUri,
                                     "variableURI": uri,
                                     "graphName": variables[uri],
-                                    "dateStart": $("#sensordatasearch-datestart").val(),
-                                    "dateEnd": $("#sensordatasearch-dateend").val()
+                                    "dateStart": $("#devicedatasearch-datestart").val(),
+                                    "dateEnd": $("#devicedatasearch-dateend").val()
                                 }
                             }
                         )

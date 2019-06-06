@@ -10,8 +10,8 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\grid\GridView;
 use app\controllers\VectorController;
-use app\components\widgets\EventButtonWidget;
-use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\event\EventButtonWidget;
+use app\components\widgets\event\EventGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
 use yii\helpers\Url;
@@ -80,7 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Linked events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS => ${VectorController::EVENTS_DATA}
+                 EventGridViewWidget::DATA_PROVIDER => ${VectorController::EVENTS_PROVIDER}
             ]
         ); 
     ?>
@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Vector linked Annotation-->
     <?= AnnotationGridViewWidget::widget(
             [
-                AnnotationGridViewWidget::ANNOTATIONS => ${VectorController::ANNOTATIONS_DATA}
+                AnnotationGridViewWidget::ANNOTATIONS => ${VectorController::ANNOTATIONS_PROVIDER}
             ]
         ); 
     ?>

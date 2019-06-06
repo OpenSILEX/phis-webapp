@@ -130,7 +130,7 @@ require_once '../config/config.php';
      */
     public function getExperimentsURI() {
         $model = new YiiExperimentModel();
-        return $model->getExperimentsList(Yii::$app->session['access_token']);
+        return $model->getExperimentsURIList(Yii::$app->session['access_token']);
     }
     
     /**
@@ -356,21 +356,6 @@ require_once '../config/config.php';
         
         return $errorMessage;
     }
-    
-    /**
-     * check if a string value is empty or not
-     * @param string $value
-     * @return boolean true if not empty
-     */
-    private function valueIsNotEmpty($value) {
-        return $value !== ""
-            && $value !== " "
-            && $value !== "\t"
-            && !empty($value);
-    }
-    
-
-    
 
     /**
      * generated the scientific object creation page
@@ -417,7 +402,7 @@ require_once '../config/config.php';
             foreach ($objects as $object) {
                 $scientificObjectModel = new YiiScientificObjectModel();
                 
-                $scientificObjectModel->alias = $object[1];
+                $scientificObjectModel->label = $object[1];
                 $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
                 $scientificObjectModel->experiment = $object[3];
                 $scientificObjectModel->geometry = $object[4];
@@ -431,7 +416,6 @@ require_once '../config/config.php';
                 $forWebService = $this->getArrayForWebServiceCreate($scientificObject);
                 $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
                 
-                
                 if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
                     $return["objectUris"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
                     $return["messages"][] = "object saved";
@@ -442,7 +426,8 @@ require_once '../config/config.php';
                 }
             }      
           
-        }        
+        }
+        
         return json_encode($return, JSON_UNESCAPED_SLASHES);
     }
     
@@ -517,9 +502,9 @@ require_once '../config/config.php';
      */
     private function getArrayForWebServiceCreate($scientificObject) {
         
-        if ($scientificObject["alias"] != null) {
+        if ($scientificObject[YiiScientificObjectModel::ALIAS] != null) {
             $alias["relation"] = Yii::$app->params['rdfsLabel'];
-            $alias["value"] = $scientificObject["alias"];
+            $alias["value"] = $scientificObject[YiiScientificObjectModel::ALIAS];
             $p["properties"][] = $alias;
         }
         
@@ -583,7 +568,7 @@ require_once '../config/config.php';
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
         
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -591,14 +576,9 @@ require_once '../config/config.php';
                         'message' => $searchResult]);
             }
         } else {
-            //Récupération de la liste des expérimentations
-            //SILEX:TODO
-            // ATTENTION : Il faudra ajouter la gestion de la pagination pour la récupération de la liste des expérimentations
-            //\SILEX:TODO
-            $searchExperimentModel = new \app\models\yiiModels\ExperimentSearch();
-            $experiments = $searchExperimentModel->find(Yii::$app->session['access_token'], []);
-            $experiments = $this->experimentsToMap($experiments);
-            $this->view->params['listExperiments'] = $experiments;
+            //Get the experiments list
+            $experimentModel = new YiiExperimentModel();
+            $this->view->params['listExperiments'] = $experimentModel->getExperimentsURIAndLabelList(Yii::$app->session['access_token']);
             
             //Get all the types of scientific objects
             $objectsTypes = $this->getObjectsTypesUris();
@@ -629,61 +609,219 @@ require_once '../config/config.php';
         $searchModel = new ScientificObjectSearch();
         if (isset($_GET['model'])) {
             $searchParams = $_GET['model'];
-            $searchModel->alias = isset($searchParams["alias"]) ? $searchParams["alias"] : null;
+            $searchModel->label = isset($searchParams["alias"]) ? $searchParams["alias"] : null;
             $searchModel->type = isset($searchParams["type"]) ? $searchParams["type"] : null;
             $searchModel->experiment = isset($searchParams["experiment"]) ? $searchParams["experiment"] : null;
-        } else {
-            $searchParams = [];
         }
+        $searchParams = [];
+        // Set page size to 200 for better performances
+        $searchModel->pageSize = 200;
         
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
-        
-        if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                return $this->render('/site/error', [
-                        'name' => Yii::t('app/messages','Internal error'),
-                        'message' => $searchResult]);
+        //get all the data (if multiple pages) and write them in a file
+        $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
+
+        $headerFile = "ScientificObjectURI" . ScientificObjectController::DELIM_CSV .
+                      "Alias" . ScientificObjectController::DELIM_CSV .
+                      "RdfType" . ScientificObjectController::DELIM_CSV .
+                      "ExperimentURI" . ScientificObjectController::DELIM_CSV . 
+                      "Geometry" . ScientificObjectController::DELIM_CSV . 
+                      "\n";
+
+        file_put_contents($serverFilePath, $headerFile);
+
+        $totalPage = 1;
+        for ($i = 0; $i < $totalPage; $i++) {
+            //1. call service for each page
+            $searchParams["page"] = $i;
+
+            $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+
+            //2. write in file
+            $models = $searchResult->getmodels();
+
+            foreach ($models as $model) {
+                // Parse geoJson geometry to WKT if exists
+                $geoJson = $model->geometry;
+                if ($geoJson != null) {
+                    $geom = \geoPHP::load($model->geometry, 'json');
+                    $wktGeometry = (new \WKT())->write($geom);
+                } else {
+                    $wktGeometry = "";
+                }
+            
+                $stringToWrite = $model->uri . ScientificObjectController::DELIM_CSV . 
+                                 $model->label . ScientificObjectController::DELIM_CSV .
+                                 $model->rdfType . ScientificObjectController::DELIM_CSV .
+                                 $model->experiment . ScientificObjectController::DELIM_CSV . 
+                                 '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
+                                 "\n";
+
+                file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
             }
-        } else {
-            //get all the data (if multiple pages) and write them in a file
-            $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
             
-            $headerFile = "ScientificObjectURI" . ScientificObjectController::DELIM_CSV .
-                          "Alias" . ScientificObjectController::DELIM_CSV .
-                          "RdfType" . ScientificObjectController::DELIM_CSV .
-                          "ExperimentURI" . ScientificObjectController::DELIM_CSV . 
-                          "\n";
-            
-            file_put_contents($serverFilePath, $headerFile);
-            
-            for ($i = 0; $i <= intval($searchModel->totalPages); $i++) {
-                //1. call service for each page
-                $searchParams["page"] = $i;
+            $totalPage = intval($searchModel->totalPages);
+        }
+        Yii::$app->response->sendFile($serverFilePath); 
+    }
+    
+    /**
+     * Generated the scientific object update page.
+     * @return mixed
+     */
+    public function actionUpdate() {
+        $sessionToken = Yii::$app->session['access_token'];
+        $model = new YiiScientificObjectModel();
+        
+        $objectsTypes = $this->getObjectTypes();
+        if ($objectsTypes === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        }
+        $experiments = $this->getExperimentsURI();
+        if ($experiments === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        }        
+        
+        $species = $this->getSpecies();
+        
+        return $this->render('update', [
+            'model' => $model,
+            'objectsTypes' => json_encode($objectsTypes, JSON_UNESCAPED_SLASHES),
+            'experiments' => json_encode($experiments, JSON_UNESCAPED_SLASHES),
+            'species' => json_encode($species,JSON_UNESCAPED_SLASHES)
+        ]);
+    }
+    
+    /**
+     * Update the given objects
+     * @return string the json of the creation return
+     */
+    public function actionUpdateMultipleScientificObjects() {
+        $objects = json_decode(Yii::$app->request->post()["objects"]);
+        $sessionToken = Yii::$app->session['access_token'];
+        
+        $return = [
+            "error" => false,
+            "objectUris" => [],
+            "messages" => []
+        ];        
+
+        if (count($objects) > 0) {
+
+            foreach ($objects as $object) {
+                $scientificObjectModel = new YiiScientificObjectModel();
+                $uri = $object[0];
+                $scientificObjectModel->label = $object[1];
+                $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
+                $experiment = $object[3];
+                $scientificObjectModel->geometry = $object[4];
+                $scientificObjectModel->parent = $object[5];
+                $scientificObjectModel->species = $object[6];
+                $scientificObjectModel->variety = $object[7];  
+                $scientificObjectModel->modality = $object[8];
+                $scientificObjectModel->replication = $object[9];
                 
-                //SILEX:TODO
-                //Find why the $this->load does not work in this case in the search
-                $searchModel->experiment = isset($_GET['model']["uri"]) ? $_GET['model']["uri"] : null;
-                $searchModel->experiment = isset($_GET["model"]["alias"]) ? $_GET["model"]["alias"] : null;
-                $searchModel->experiment = isset($_GET['model']['experiment']) ? $_GET['model']['experiment'] : null;
-                //\SILEX:TODO
-                $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
-                                
-                //2. write in file
-                $models = $searchResult->getmodels();
+                $insertionResult = $scientificObjectModel->updateByExperiment($sessionToken, $uri, $experiment);
                 
-                foreach ($models as $model) {
-                    $stringToWrite = $model->uri . ScientificObjectController::DELIM_CSV . 
-                                     $model->alias . ScientificObjectController::DELIM_CSV .
-                                     $model->rdfType . ScientificObjectController::DELIM_CSV .
-                                     $model->experiment . ScientificObjectController::DELIM_CSV . 
-                                     "\n";
-                    
-                    file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
+                 if ($insertionResult === \app\models\wsModels\WSConstants::TOKEN) {
+                    return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+                } else if (isset($insertionResult->metadata->status[0]->exception->type)
+                            && $insertionResult->metadata->status[0]->exception->type !== "Error") {
+                    $return["objectUris"][] = $insertionResult->metadata->datafiles[0];
+                    $return["messages"][] = "object updated";
+                }
+                else {
+                    $return["error"] = true;
+                    $return["objectUris"][] = null;
+                    $return["messages"][] = $insertionResult->metadata->status[0]->exception->details;
                 }
             }
-            Yii::$app->response->sendFile($serverFilePath); 
+        }        
+        return json_encode($return, JSON_UNESCAPED_SLASHES);
+    }
+    
+    /**
+     * Generates the page to visualize data about a scientific object.
+     * SILEX:info
+     * the label and experiment parameter will have to be removed 
+     * when the /scientificObject/{uri} GET will be done in the web service.
+     * \SILEX:info
+     * @param type $uri
+     * @param type $label
+     * @param type $experimentUri
+     * @return mixed the visualization page
+     */
+    public function actionDataVisualization($uri, $label, $experimentUri = null) {
+        $scientificObject = new YiiScientificObjectModel();
+        $scientificObject->uri = $uri;
+        $scientificObject->label = $label;
+        $scientificObject->experiment = $experimentUri;
+        
+        //Get the list of the variables
+        $variables = [];
+        //If the experiment URI is empty, we get all the variables. 
+        if (empty($experimentUri)) {
+            $variableModel = new \app\models\yiiModels\YiiVariableModel();
+            $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
+        } else { //There is an experiment. Get the variables linked to the experiment.
+            $experimentModel = new YiiExperimentModel();
+            $variables = $experimentModel->getMeasuredVariables(Yii::$app->session['access_token'], $scientificObject->experiment);
+        }
+        
+        
+        //Search data for the scientific object and the given variable.
+        if (isset($_POST['variable'])) {
+            $toReturn = [];
+            
+            $searchModel = new \app\models\yiiModels\DataSearchLayers();
+            $searchModel->pageSize = 80000;
+            $searchModel->object = $scientificObject->uri;
+            $searchModel->variable = $_POST['variable'];
+            $searchModel->startDate = $_POST['dateStart'];
+            $searchModel->endDate = $_POST['dateEnd'];
+            
+            $searchResult = $searchModel->search(Yii::$app->session['access_token'], null);
+            
+            /* Build array for highChart
+             * e.g : 
+             * {
+             *   "variable": "http:\/\/www.opensilex.org\/demo\/id\/variable\/v0000001",
+             *   "scientificObjectData": [
+             *          "label": "Scientific object label",
+             *          "data": [["1,874809","2015-02-10"],
+             *                   ["2,313261","2015-03-15"]
+             *    ]
+             *  }]
+             * }
+             */
+            $data = [];
+            $scientificObjectData["label"] = $label;
+            foreach ($searchResult->getModels() as $model) {
+                if (!empty($model->value)) {
+                    $dataToSave = null;
+                    $dataToSave[] = (strtotime($model->date))*1000;
+                    $dataToSave[] = doubleval($model->value);
+                    $data[]= $dataToSave;
+                }
+            }
+            
+            if (!empty($data)) {
+                $toReturn["variable"] = $searchModel->variable;
+                $scientificObjectData["data"] = $data;
+                $toReturn["scientificObjectData"][] = $scientificObjectData;
+            }
+            
+            return $this->render('data_visualization', [
+               'model' => $scientificObject,
+               'variables' => $variables,
+               'data' => $toReturn,
+               'dateStart' => $searchModel->startDate,
+               'dateEnd' => $searchModel->endDate
+            ]);
+        } else { //If there is no variable given, just redirect to the visualization page.
+            return $this->render('data_visualization', [
+               'model' => $scientificObject,
+               'variables' => $variables
+            ]);
         }
     }
  }

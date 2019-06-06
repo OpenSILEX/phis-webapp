@@ -8,8 +8,8 @@
 //******************************************************************************
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\EventButtonWidget;
-use app\components\widgets\EventGridViewWidget;
+use app\components\widgets\event\EventButtonWidget;
+use app\components\widgets\event\EventGridViewWidget;
 use app\controllers\RadiometricTargetController;
 use yii\grid\GridView;
 use yii\widgets\DetailView;
@@ -128,7 +128,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Radiometric target events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS => ${RadiometricTargetController::EVENTS_DATA}
+                 EventGridViewWidget::DATA_PROVIDER => ${RadiometricTargetController::EVENTS_DATA}
             ]
         ); 
     ?>

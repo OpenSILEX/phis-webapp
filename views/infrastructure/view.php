@@ -14,9 +14,9 @@ use yii\grid\GridView;
 use app\controllers\InfrastructureController;
 use app\components\widgets\AnnotationGridViewWidget;
 use app\components\widgets\AnnotationButtonWidget;
-use app\components\widgets\EventButtonWidget;
-use app\components\widgets\EventGridViewWidget;
-use app\components\widgets\PropertyWidget;
+use app\components\widgets\event\EventButtonWidget;
+use app\components\widgets\event\EventGridViewWidget;
+use app\components\widgets\PropertyWidgetWithoutActions;
 use app\models\yiiModels\YiiDocumentModel;
 
 /** 
@@ -38,22 +38,23 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php
-        if (Yii::$app->session['isAdmin']) {
-            echo Html::a(Yii::t('app', 'Add Document'), [
+        if (Yii::$app->session['isAdmin']) { ?>
+            <?= Html::a(Yii::t('app', 'Add Document'), [
                 'document/create', 
                 'concernedItemUri' => $model->uri, 
                 'concernedItemLabel' => $model->label, 
                 'concernedItemRdfType' => Yii::$app->params["Installation"],
                 YiiDocumentModel::RETURN_URL => Url::current()
-            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']);
-            echo EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]);
-            echo AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]);
+            ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning']) ?>
+            <?=  EventButtonWidget::widget([EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri]]); ?>
+            <?=  AnnotationButtonWidget::widget([AnnotationButtonWidget::TARGETS => [$model->uri]]); ?>
+        <?php
         }
         ?>
     </p>
     <!-- Infrastructure properties detail-->
     <?=
-    PropertyWidget::widget([
+    PropertyWidgetWithoutActions::widget([
         'uri' => $model->uri,
         'isUriRequired' => true,
         'properties' => $model->properties,
@@ -69,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <!-- Sensor events -->
     <?= EventGridViewWidget::widget(
             [
-                 EventGridViewWidget::EVENTS => ${InfrastructureController::EVENTS_DATA}
+                 EventGridViewWidget::DATA_PROVIDER => ${InfrastructureController::EVENTS_PROVIDER}
             ]
         ); 
     ?>
@@ -78,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?=
     AnnotationGridViewWidget::widget(
             [
-                AnnotationGridViewWidget::ANNOTATIONS => ${InfrastructureController::ANNOTATIONS_DATA}
+                AnnotationGridViewWidget::ANNOTATIONS => ${InfrastructureController::ANNOTATIONS_PROVIDER}
             ]
     );
     ?>

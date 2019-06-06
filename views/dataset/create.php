@@ -19,7 +19,7 @@ use yii\helpers\Html;
 /* @var $handsontable openSILEX\handsontablePHP\adapter\HandsontableSimple */
 /* @var $handsontableErrorsCellsSettings string */
 
-$this->title = Yii::t('yii', 'Add Dataset');
+$this->title = Yii::t('app', 'Add Dataset');
 //$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Dataset', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -28,6 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
     <?= $this->render('_form', [
         'model' => $model,
+        'errors' => $errors,
         'handsontable' => isset($handsontable) ? $handsontable : null,
         'handsontableErrorsCellsSettings' =>  isset($handsontableErrorsCellsSettings) ? $handsontableErrorsCellsSettings : null
     ]) ?>

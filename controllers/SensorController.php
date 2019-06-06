@@ -15,7 +15,7 @@ use yii\helpers\ArrayHelper;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\YiiSensorModel;
 use app\models\yiiModels\SensorSearch;
-use app\models\yiiModels\SensorDataSearch;
+use app\models\yiiModels\DeviceDataSearch;
 use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\yiiModels\YiiVariableModel;
@@ -47,8 +47,8 @@ class SensorController extends Controller {
     const RDF_TYPE = "rdfType";
     const URI = "uri";
     
-    CONST ANNOTATIONS_DATA = "sensorAnnotations";
-    CONST EVENTS_DATA = "sensorEvents";
+    CONST ANNOTATIONS_PROVIDER = "annotationsProvider";
+    CONST EVENTS_PROVIDER = "eventsProvider";
     /**
      * Defines the behaviors
      * @return array
@@ -226,17 +226,20 @@ class SensorController extends Controller {
               $sensorModel->rdfType = $this->getSensorTypeCompleteUri($sensor[2]);
               $sensorModel->label = $sensor[1];
               $sensorModel->brand = $sensor[3];
-              $sensorModel->inServiceDate = $sensor[6];
-              $sensorModel->personInCharge = $sensor[8];
+              $sensorModel->inServiceDate = $sensor[7];
+              $sensorModel->personInCharge = $sensor[9];
               
               if ($sensor[4] !== "") {
                   $sensorModel->serialNumber = $sensor[4];
               }
               if ($sensor[5] !== "") {
-                  $sensorModel->dateOfPurchase = $sensor[5];
+                  $sensorModel->model = $sensor[5];
               }
-              if ($sensor[7] !== "") {
-                  $sensorModel->dateOfLastCalibration = $sensor[7];
+              if ($sensor[6] !== "") {
+                  $sensorModel->dateOfPurchase = $sensor[6];
+              }
+              if ($sensor[8] !== "") {
+                  $sensorModel->dateOfLastCalibration = $sensor[8];
               }
               
               $forWebService[] = $sensorModel->attributesToArray();
@@ -263,9 +266,11 @@ class SensorController extends Controller {
         }
 
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        //list of sensors
+        $sensorsTypes = $this->getSensorsTypesSimpleAndUri();
         
         if (is_string($searchResult)) {
-            if ($searchResult === WSConstants::TOKEN) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -275,7 +280,8 @@ class SensorController extends Controller {
         } else {
             return $this->render('index', [
                'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
+               'dataProvider' => $searchResult,
+               'sensorsTypes' => $sensorsTypes
             ]);
         }
     }
@@ -315,18 +321,23 @@ class SensorController extends Controller {
         
         //4. get events
         $searchEventModel = new EventSearch();
-        $searchEventModel->concernedItemUri = $id;
-        $searchEventModel->pageSize = Yii::$app->params['eventWidgetPageSize'];
-        $events = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+        $searchEventModel->searchConcernedItemUri = $id;
+        $eventSearchParameters = [];
+        if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+            $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+        }
+        $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+        $eventsProvider = $searchEventModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], $eventSearchParameters);
+        $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE;
      
         //5. get sensor variables
         $variableModel = new YiiVariableModel();
-        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
+        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
 
-        if ($res === WSConstants::TOKEN) {
+        if ($res === WSConstants::TOKEN_INVALID) {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         } else {            
-            $dataSearchModel = new SensorDataSearch();
+            $dataSearchModel = new DeviceDataSearch();
             $dataSearchModel->sensorURI = $res->uri;
 
             return $this->render('view', [
@@ -334,8 +345,8 @@ class SensorController extends Controller {
                 'dataDocumentsProvider' => $documents,
                 'variables' => $variables,
                 'dataSearchModel' => $dataSearchModel,
-                self::ANNOTATIONS_DATA => $sensorAnnotations,
-                self::EVENTS_DATA => $events
+                self::ANNOTATIONS_PROVIDER => $sensorAnnotations,
+                self::EVENTS_PROVIDER => $eventsProvider
             ]);
         }
     }
@@ -346,7 +357,7 @@ class SensorController extends Controller {
      */
     public function actionUpdateVariables() {
         $post = Yii::$app->request->post();
-        $sessionToken = Yii::$app->session['access_token'];        
+        $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];        
         $sensorUri = $post["uri"];
         if (isset($post["items"])) {
             $variablesUri = $post["items"];
@@ -376,7 +387,7 @@ class SensorController extends Controller {
         
         $forWebService[] = $lensModel->attributesToArray();
         
-        $requestRes = $lensModel->insert(Yii::$app->session['access_token'], $forWebService);
+        $requestRes = $lensModel->insert(Yii::$app->session[WSConstants::ACCESS_TOKEN], $forWebService);
                 
         $lensUri = $requestRes->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0];
         
@@ -396,7 +407,7 @@ class SensorController extends Controller {
         $lensProfile[SensorController::PROPERTIES] = $lensProfileProperties;
         $lensProfiles[] = $lensProfile;
         
-        $lensModel->insertProfile(Yii::$app->session['access_token'], $lensProfiles);
+        $lensModel->insertProfile(Yii::$app->session[WSConstants::ACCESS_TOKEN], $lensProfiles);
                 
         return $lensUri;
     }
@@ -455,7 +466,7 @@ class SensorController extends Controller {
      */
     private function usersToMap($users) {
         if ($users !== null) {
-            return ArrayHelper::map($users, 'email', 'email');            
+            return ArrayHelper::map($users, 'email', 'email');
         } else {
             return null;
         }
@@ -483,7 +494,7 @@ class SensorController extends Controller {
             }
             
             $sensorProfileToAdd[] = $this->getSensorProfileArrayFromPost($post);
-            $requestRes = $sensorModel->insertProfile(Yii::$app->session['access_token'], $sensorProfileToAdd);
+            $requestRes = $sensorModel->insertProfile(Yii::$app->session[WSConstants::ACCESS_TOKEN], $sensorProfileToAdd);
             
             if (is_string($requestRes) && $requestRes === "token") { //user must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
@@ -500,9 +511,9 @@ class SensorController extends Controller {
             
             //get all users emails (for the person in charge if a lens needs to be created)
            $searchUsersModel = new UserSearch();
-           $users = $this->usersToMap($searchUsersModel->find(Yii::$app->session['access_token'], []));
+           $users = $this->usersToMap($searchUsersModel->find(Yii::$app->session[WSConstants::ACCESS_TOKEN], []));
 
-            if (is_string($sensor) && $sensor === "token") { //user must log in
+            if (is_string($sensor) && $sensor === WSConstants::TOKEN) { //user must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else if (is_string($sensor)) { //server error
                 return $this->render('/site/error', [
@@ -523,18 +534,76 @@ class SensorController extends Controller {
      * @return string
      */
     public function actionSearchData() {
-        $searchModel = new \app\models\yiiModels\SensorDataSearch();
+        $searchModel = new \app\models\yiiModels\DeviceDataSearch();
         
         // Load POST parameters
         if ($searchModel->load(Yii::$app->request->post())) {
             
             // Get data
-            $sessionToken = Yii::$app->session['access_token'];
+            $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
             $sensorGraphData = $searchModel->getEnvironmentData($sessionToken);
             
             // Render data
             return $this->renderAjax('_view_sensor_graph', [
                 'sensorGraphData' => $sensorGraphData
+            ]);
+        }
+    }
+    
+    /**
+     * @param array $sensorsTypes
+     * @return arra list of the sensors types in the right format
+     * [
+     *      "http://www.opensilex.org/vocabulary/oeso#Thermocouple" => "Thermocouple",
+     *      ...
+     * ]
+     */
+    private function sensorsTypesToMap($sensorsTypes) {
+        $toReturn;
+        foreach($sensorsTypes as $type) {
+            $toReturn["http://www.opensilex.org/vocabulary/oeso#" . $type] = $type;
+        }
+        
+        return $toReturn;
+    }
+    
+    /**
+     * Updates a sensor
+     * @param string $id URI of the sensor to update
+     * @return mixed the page to show
+     */
+    public function actionUpdate($id) {
+        $sessionToken = Yii::$app->session['access_token'];
+        $model = new YiiSensorModel();
+        $model->uri = $id;
+        
+        // if the form is complete, try to update sensor
+        if ($model->load(Yii::$app->request->post())) {
+            
+            $forWebService[] = $model->attributesToArray();
+            $requestRes = $model->update($sessionToken, $forWebService);
+            
+            if (is_string($requestRes) && $requestRes === "token") { //user must log in
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->redirect(['view', 'id' => $model->uri]);
+            }
+        } else {
+            $model = $this->findModel($id);
+            
+            // list of sensor's types
+            $sensorsTypes = $this->getSensorsTypes();
+            if ($sensorsTypes === "token") {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            }
+        
+            $usersModel = new YiiUserModel();
+            $users = $usersModel->getPersonsMailsAndName(Yii::$app->session['access_token']);
+
+            return $this->render('update', [
+                'model' => $model,
+                'types' => $this->sensorsTypesToMap($sensorsTypes),
+                'users' => $users
             ]);
         }
     }

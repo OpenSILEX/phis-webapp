@@ -18,9 +18,9 @@ use Yii;
  * A widget used to generate a customizable object properties grid
  * @author Vincent Migot < vincent.migot@inra.fr>
  */
-class PropertyWidget extends Widget {
+abstract class PropertyWidget extends Widget {
 
-    CONST NO_PROPERTY = "No Specific Property";
+    const NO_PROPERTY_LABEL = "No Specific Property";
 
     // widget title
     public $title;
@@ -234,7 +234,7 @@ class PropertyWidget extends Widget {
      */
     public function run() {
         if(count($this->properties) == 0) {
-            $htmlRendered = "<h3>" . Yii::t('app', self::NO_PROPERTY) . "</h3>";
+            $htmlRendered = "<h3>" . Yii::t('app', self::NO_PROPERTY_LABEL) . "</h3>";
         }
         else {
             $htmlRendered = "<h3>" . $this->title . "</h3>";
@@ -264,7 +264,7 @@ class PropertyWidget extends Widget {
     }
 
     /**
-     * Return the rendering string corresponding to a row
+     * Returns the rendered string corresponding to a row.
      * @param string $key
      * @param array $values
      * @return string
@@ -274,7 +274,7 @@ class PropertyWidget extends Widget {
             if (count($values) > 1) {
                 $valuesString = "<ul>";
 
-                $valuesString .= $this->renderAttributes($values);
+                $valuesString .= $this->renderValues($values);
 
                 $valuesString .= "</ul>";
             } else {
@@ -291,31 +291,16 @@ class PropertyWidget extends Widget {
     }
 
     /**
-     * Return the rendering string corresponding to a list of values
+     * Returns the rendered string corresponding to a list of values.
      * @param array $values
      * @return string
      */
-    protected function renderAttributes($values) {
-        $valuesString = "";
-        foreach ($values as $value) {
-            $valuesString .= "<li>" . $this->renderValue($value) . "</li>";
-        }
-
-        return $valuesString;
-    }
+    protected abstract function renderValues($values);
 
     /**
      * Return the rendering string corresponding to a value, looking for its formatter
      * @param array $value
      * @return string
      */
-    protected function renderValue($value) {
-        if ($value['relation'] && array_key_exists($value['relation'], $this->propertyFormatters)) {
-            return call_user_func(array("app\components\helpers\PropertyFormatter", $this->propertyFormatters[$value['relation']]), $value);
-        } elseif ($value['type'] && array_key_exists($value['type'], $this->propertyFormatters)) {
-            return call_user_func(array("app\components\helpers\PropertyFormatter", $this->propertyFormatters[$value['type']]), $value);
-        } else {
-            return PropertyFormatter::defaultFormat($value);
-        }
-    }
+    protected abstract function renderValue($value);
 }

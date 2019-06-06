@@ -15,6 +15,7 @@ require_once '../config/config.php';
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
+use app\models\yiiModels\YiiModelsConstants;
 
 /**
  * CRUD actions for YiiDataModel
@@ -46,7 +47,7 @@ class DataController extends Controller {
      * @return mixed
      */
     public function actionSearchFromLayer() {
-        $searchModel = new \app\models\yiiModels\DataSearch();
+        $searchModel = new \app\models\yiiModels\DataSearchLayers();
         
         //1. get Variable uri list
         $variableModel = new \app\models\yiiModels\YiiVariableModel($pageSize = 500);
@@ -96,5 +97,122 @@ class DataController extends Controller {
                         'model' => $searchModel
                    ]);
         }
+    }
+    
+    /**
+     * Prepare and show the index page of the data. Use the DataSearch class.
+     * @see \app\models\yiiModels\DataSearch
+     * @return mixed
+     */
+    public function actionIndex() {
+        $searchModel = new \app\models\yiiModels\DataSearch();
+        
+        //list of variables
+        $variableModel = new \app\models\yiiModels\YiiVariableModel();
+        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
+        
+        //Get the search params and update pagination
+        $searchParams = Yii::$app->request->queryParams;        
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $searchParams[YiiModelsConstants::PAGE]--;
+        }
+        
+        if (empty($searchParams["variable"])) {
+            $key = $value = NULL;
+            
+            //The variable search parameter is required. 
+            //If there is no variable, get the first variable uri.
+            //SILEX:info
+            //It is possible to use array_key_first instead of the following foreach, 
+            //with PHP 7 >= 7.3.0
+            //\SILEX:info
+            foreach ($variables as $key => $value) {
+                $searchModel->variable = $key;
+                break;
+            }
+        }
+        
+        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+        
+        if (is_string($searchResult)) {
+            if ($searchResult === WSConstants::TOKEN) {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->render('/site/error', [
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $searchResult]);
+            }
+        } else {
+            return $this->render('index', [
+               'searchModel' => $searchModel,
+               'dataProvider' => $searchResult,
+               'variables' => $variables
+            ]);
+        }
+    }
+    
+    /**
+     * Download a csv corresponding to the search params of the index view of the data search.
+     * @return the csv file.
+     */
+    public function actionDownloadCsv() {
+        $searchModel = new \app\models\yiiModels\DataSearch();
+        if (isset($_GET['model'])) {
+            $searchParams = $_GET['model'];
+            $searchModel->variable = $searchParams["variable"];
+            $searchModel->date = isset($searchParams["date"]) ? $searchParams["date"] : null;
+            $searchModel->object = isset($searchParams["object"]) ? $searchParams["object"] : null;
+            $searchModel->provenance = isset($searchParams["provenance"]) ? $searchParams["provenance"] : null;
+        }
+        
+        // Set page size to 200 for better performances
+        $searchModel->pageSize = 200;
+        
+        //get all the data (if multiple pages) and write them in a file
+        $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
+        
+        $headerFile = "variable URI" . ScientificObjectController::DELIM_CSV .
+                      "variable" . ScientificObjectController::DELIM_CSV .
+                      "date" . ScientificObjectController::DELIM_CSV .
+                      "value" . ScientificObjectController::DELIM_CSV .
+                      "object URI" . ScientificObjectController::DELIM_CSV . 
+                      "object" . ScientificObjectController::DELIM_CSV . 
+                      "provenance URI" . ScientificObjectController::DELIM_CSV . 
+                      "provenance" . ScientificObjectController::DELIM_CSV . 
+                      "\n";
+        file_put_contents($serverFilePath, $headerFile);
+        
+        $totalPage = 1;
+        for ($i = 0; $i < $totalPage; $i++) {
+            //1. call service for each page
+            $searchParams["page"] = $i;
+
+            $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
+
+            //2. write in file
+            $models = $searchResult->getmodels();
+            foreach ($models as $model) {
+                $stringToWrite = $model->variable->uri . ScientificObjectController::DELIM_CSV . 
+                                 $model->variable->label . ScientificObjectController::DELIM_CSV . 
+                                 $model->date . ScientificObjectController::DELIM_CSV .
+                                 $model->value . ScientificObjectController::DELIM_CSV .
+                                 $model->object->uri . ScientificObjectController::DELIM_CSV ;
+                $objectLabels = "";
+                if (isset($model->object)) {
+                    foreach ($model->object->labels as $label) {
+                        $objectLabels .= $label . " ";
+                    }
+                }
+                
+                $stringToWrite .= $objectLabels . ScientificObjectController::DELIM_CSV .
+                                  $model->provenance->uri . ScientificObjectController::DELIM_CSV .
+                                  $model->provenance->label . ScientificObjectController::DELIM_CSV . 
+                                 "\n";
+                file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
+            }
+            
+            $totalPage = intval($searchModel->totalPages);
+        }
+        Yii::$app->response->sendFile($serverFilePath); 
     }
 }

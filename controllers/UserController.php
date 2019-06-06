@@ -79,7 +79,7 @@ class UserController extends Controller {
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
        
         if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN) {
+            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
@@ -137,34 +137,60 @@ class UserController extends Controller {
 
             $dataToSend[] = $userModel->attributesToArray();
             
-            $requestRes = $userModel->insert($sessionToken, $dataToSend);    
+            $requestRes = $userModel->insert($sessionToken, $dataToSend);  
             
             if (is_string($requestRes) && $requestRes === "token") { //user must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
+            } else if (count($requestRes->metadata->status) == 0) {
                 return $this->redirect(['view', 'id' => $userModel->email]);
+            } else {
+                $errors = [];
+                foreach ($requestRes->metadata->status as $error) {
+                    $matches = [];
+                    // Message format returned by the webservice is like "[cryptic error parameter message]real error message part"
+                    // This preg_match regex is used to only get the "real error message part"
+                    if (preg_match('/\[.*\](.*)/', $error->exception->details, $matches)) {
+                        $errors[] = $matches[1];
+                    } else {
+                        $errors[] = $error->message;
+                    }
+                }
+                
+                return $this->displayUserCreationForm($userModel, $errors);
             }
         } else {
-            $searchGroupModel = new GroupSearch();
-            $groups = $searchGroupModel->find($sessionToken,[]);
-            
-            if (is_string($groups)) {
-                return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => $groups]);
-            } else if (is_array ($groups) && isset($groups["token"])) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                $groups = $this->groupsToMap($groups);
-                $this->view->params['listGroups'] = $groups;
-                $userModel->isNewRecord = true;
-
-                return $this->render('create', [
-                    'model' => $userModel,
-                ]);
-            }
+            return $this->displayUserCreationForm($userModel);
         }
     }
+    
+    /**
+     * Return user creation form view for given model with errors (optional)
+     * @param type $userModel
+     * @param type $errors
+     * @return type
+     */
+    private function displayUserCreationForm($userModel, $errors = []) {
+        $sessionToken = Yii::$app->session['access_token'];
+        $searchGroupModel = new GroupSearch();
+        $groups = $searchGroupModel->find($sessionToken,[]);
+        
+        if (is_string($groups)) {
+            return $this->render('/site/error', [
+                'name' => Yii::t('app/messages','Internal error'),
+                'message' => $groups]);
+        } else if (is_array ($groups) && isset($groups["token"])) {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        } else {
+            $groups = $this->groupsToMap($groups);
+            $this->view->params['listGroups'] = $groups;
+            $userModel->isNewRecord = true;
+
+            return $this->render('create', [
+                'model' => $userModel,
+                'errors' => $errors
+            ]);
+        }
+}
     
     /**
      * update a user
