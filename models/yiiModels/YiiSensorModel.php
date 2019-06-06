@@ -421,6 +421,7 @@ class YiiSensorModel extends WSActiveRecord {
      * ]
      */
     public function getAllSensorsUrisAndLabels($sessionToken) {
+        $this->pageSize = 500;
         $foundedSensors = $this->find($sessionToken, $this->attributesToArray());
         $sensorsToReturn = [];
         
