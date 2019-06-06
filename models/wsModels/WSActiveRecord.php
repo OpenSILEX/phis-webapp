@@ -112,8 +112,8 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @return an array with the results,
      *         "token" if the user needs to log in (invalid token).
      */
-    public function find($sessionToken, $attributes) {  
-        $requestRes = $this->wsModel->get($sessionToken, "", $attributes);
+    public function find($sessionToken, $attributes, $subservice = "") {  
+        $requestRes = $this->wsModel->get($sessionToken, $subservice, $attributes);
 
         if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION})) {
             $this->totalPages = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_PAGES};
