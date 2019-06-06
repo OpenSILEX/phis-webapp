@@ -38,6 +38,7 @@
         "lavrentiev/yii2-toastr": "2.0.2",
         "webtoucher/yii2-js-cookie": "1.0.0",
         "fortawesome/font-awesome": "v4.7.0",
+        "opensilex/opencpu-client-php": "dev-master",
         "himiklab/yii2-handsontable-widget" : "v1.1.1",
         "phayes/geophp": "1.2"
     },
@@ -81,11 +82,15 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/OpenSILEX/guzzle-model-client"
+            "url": "https://github.com/opensilex/guzzle-model-client"
         }, 
         {
             "type": "vcs",
             "url": "https://github.com/niio972/handsontable-php"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/opensilex/opencpu-client-php"
         }
     ]
 }

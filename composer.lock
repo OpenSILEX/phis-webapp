@@ -4,6 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+    "content-hash": "a81ff6872bbd8b0fdf3f387ebc99092a",
     "content-hash": "05c766297ee7a05e6c5a1c1b8da57159",
     "packages": [
         {
@@ -2364,6 +2365,58 @@
                 "source": "https://github.com/niio972/handsontable-php/tree/master"
             },
             "time": "2018-06-05T21:35:22+00:00"
+        },
+        {
+            "name": "openSILEX/opencpu-client-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/OpenSILEX/opencpu-client-php.git",
+                "reference": "fecc7c3465fc91f15521957e97d505bf86c2710b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/OpenSILEX/opencpu-client-php/zipball/fecc7c3465fc91f15521957e97d505bf86c2710b",
+                "reference": "fecc7c3465fc91f15521957e97d505bf86c2710b",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~6.0",
+                "php": "^5.5 || ^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "openSILEX\\opencpuClientPHP\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "openSILEX\\openCPU-client-php\\": "tests/"
+                }
+            },
+            "license": [
+                "AGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Arnaud CHARLEROY",
+                    "email": "arnaud.charleroy@inra.fr",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A php client for openCPU Server",
+            "keywords": [
+                "R",
+                "javascript",
+                "opencpu",
+                "php"
+            ],
+            "support": {
+                "source": "https://github.com/OpenSILEX/opencpu-client-php/tree/master",
+                "issues": "https://github.com/OpenSILEX/opencpu-client-php/issues"
+            },
+            "time": "2019-03-22T11:00:17+00:00"
         },
         {
             "name": "phayes/geophp",
@@ -5661,7 +5714,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "opensilex/guzzle-model-client": 20,
-        "opensilex/handsontable-php": 20
+        "opensilex/handsontable-php": 20,
+        "opensilex/opencpu-client-php": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -12,6 +12,9 @@ return [
     //this param should be removed when the new version of data will be used instead of Dataset
     'baseURI' => 'http://www.opensilex.org/demo/',
     //\SILEX:info
+    
+    // DataAnalysis and visualisation module activation
+    'dataAnalysisModule' => true,
 
     // Index
     'indexPageSize' => 20,
