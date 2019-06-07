@@ -180,6 +180,7 @@ class YiiInstanceDefinitionModel extends \app\models\wsModels\WSActiveRecord {
      * ]
      */
     public function getInstancesDefinitionsUrisAndLabel($sessionToken) {
+        $this->pageSize = 500;
         $instanceDefinitions = $this->find($sessionToken, $this->attributesToArray());
         $instanceDefinitionsToReturn = [];
         

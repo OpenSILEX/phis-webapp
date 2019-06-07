@@ -44,7 +44,7 @@ class VariableSearch extends YiiVariableModel {
      * @return mixed DataProvider of the result 
      *               or string \app\models\wsModels\WSConstants::TOKEN if the user needs to log in
      */
-    public function search($sessionToken, $params) {
+    public function search($sessionToken, $params, $withDetails = false) {
         //1. load the searched params 
         $this->load($params);
         if (isset($params[YiiModelsConstants::PAGE])) {
@@ -56,8 +56,12 @@ class VariableSearch extends YiiVariableModel {
             return new \yii\data\ArrayDataProvider();
         }
         
+        $subservice = "";
+        if ($withDetails) {
+            $subservice = "/details";
+        }
         //3. Request to the web service and return result
-        $findResult = $this->find($sessionToken, $this->attributesToArray());
+        $findResult = $this->find($sessionToken, $this->attributesToArray(), $subservice);
         
         if (is_string($findResult)) {
             return $findResult;

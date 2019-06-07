@@ -109,11 +109,13 @@ abstract class WSActiveRecord extends \yii\base\Model {
      * @param string $sessionToken the user session token
      * @param array $attributes the search params. It is a key => value array. The key
      *                          is the name of the field.
+     * @param type $subservice allow to change subservice path for find services (optional)
      * @return an array with the results,
      *         "token" if the user needs to log in (invalid token).
      */
-    public function find($sessionToken, $attributes) {  
-        $requestRes = $this->wsModel->get($sessionToken, "", $attributes);
+    
+    public function find($sessionToken, $attributes, $subservice = "") {  
+        $requestRes = $this->wsModel->get($sessionToken, $subservice, $attributes);
 
         if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION})) {
             $this->totalPages = $requestRes->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_PAGES};
