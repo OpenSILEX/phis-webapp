@@ -48,7 +48,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $creationDate;
 
     const CREATION_DATE = "creationDate";
-    const CREATION_DATE_LABEL = Yii::t('app', 'Date of Annotation');
+    const CREATION_DATE_LABEL = "Annotation Date";
 
     /**
      * The creator of the annotation
@@ -88,7 +88,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $targets;
 
     const TARGETS = "targets";
-    const TARGETS_LABEL = Yii::t('app', 'Targets');
+    const TARGETS_LABEL = "Targets";
     const TARGET_SEARCH_LABEL = "target";
 
     /**
@@ -125,6 +125,7 @@ class YiiAnnotationModel extends WSActiveRecord {
         return [
             self::URI => self::URI_LABEL,
             self::CREATOR => Yii::t('app', self::CREATOR_LABEL),
+            self::CREATION_DATE => Yii::t('app', self::CREATION_DATE_LABEL),
             self::MOTIVATED_BY => Yii::t('app', self::MOTIVATED_BY_LABEL),
             self::BODY_VALUES => Yii::t('app', self::BODY_VALUES_LABEL),
             self::TARGETS => Yii::t('app', self::TARGETS_LABEL)
