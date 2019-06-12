@@ -691,8 +691,8 @@ require_once '../config/config.php';
         return $this->render('update', [
             'model' => $model,
             'objectsTypes' => json_encode($objectsTypes, JSON_UNESCAPED_SLASHES),
-            'experiments' => json_encode($experiments, JSON_UNESCAPED_SLASHES),
-            'species' => json_encode($species,JSON_UNESCAPED_SLASHES)
+            'experiments' => json_encode(array_values($experiments), JSON_UNESCAPED_SLASHES),
+            'species' => json_encode(array_values($species),JSON_UNESCAPED_SLASHES)
         ]);
     }
     
@@ -708,7 +708,14 @@ require_once '../config/config.php';
             "error" => false,
             "objectUris" => [],
             "messages" => []
-        ];        
+        ];
+        
+        $experiments = $this->getExperiments();
+        if ($experiments === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        }
+        
+        $species = $this->getSpecies();
 
         if (count($objects) > 0) {
 
@@ -717,10 +724,10 @@ require_once '../config/config.php';
                 $uri = $object[0];
                 $scientificObjectModel->label = $object[1];
                 $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
-                $experiment = $object[3];
+                $experiment = array_search($object[3], $experiments);
                 $scientificObjectModel->geometry = $object[4];
                 $scientificObjectModel->parent = $object[5];
-                $scientificObjectModel->species = $object[6];
+                $scientificObjectModel->species = array_search($object[6], $species);
                 $scientificObjectModel->variety = $object[7];  
                 $scientificObjectModel->modality = $object[8];
                 $scientificObjectModel->replication = $object[9];
