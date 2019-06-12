@@ -123,14 +123,15 @@ require_once '../config/config.php';
         
         return $objectsTypes;
     }
-    
+ 
+                       
     /**
      * get the experiments
      * @return array list of species
      */
-    public function getExperimentsURI() {
+    public function getExperiments() {
         $model = new YiiExperimentModel();
-        return $model->getExperimentsURIList(Yii::$app->session['access_token']);
+        return $model->getExperimentsURIAndLabelList(Yii::$app->session['access_token']);
     }
     
     /**
@@ -139,11 +140,8 @@ require_once '../config/config.php';
      */
     public function getSpecies() {
         $speciesModel = new \app\models\yiiModels\YiiSpeciesModel();
-        return $speciesModel->getSpeciesList(Yii::$app->session['access_token']);
+        return $speciesModel->getSpeciesUriLabelList(Yii::$app->session['access_token']);
     }
-    
-    
-    
     
     /**
      * get the csv file header
@@ -369,7 +367,7 @@ require_once '../config/config.php';
         if ($objectsTypes === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }
-        $experiments = $this->getExperimentsURI();
+        $experiments = $this->getExperiments();
         if ($experiments === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }        
@@ -379,8 +377,8 @@ require_once '../config/config.php';
         return $this->render('create', [
             'model' => $model,
             'objectsTypes' => json_encode($objectsTypes, JSON_UNESCAPED_SLASHES),
-            'experiments' => json_encode($experiments, JSON_UNESCAPED_SLASHES),
-            'species' => json_encode($species,JSON_UNESCAPED_SLASHES)
+            'experiments' => json_encode(array_values($experiments), JSON_UNESCAPED_SLASHES),
+            'species' => json_encode(array_values($species),JSON_UNESCAPED_SLASHES)
         ]);
     }
     
@@ -395,8 +393,15 @@ require_once '../config/config.php';
         $return = [
             "objectUris" => [],
             "messages" => []
-        ];        
-
+        ];
+        
+        $experiments = $this->getExperiments();
+        if ($experiments === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        }
+        
+        $species = $this->getSpecies();
+        
         if (count($objects) > 0) {
 
             foreach ($objects as $object) {
@@ -404,10 +409,10 @@ require_once '../config/config.php';
                 
                 $scientificObjectModel->label = $object[1];
                 $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
-                $scientificObjectModel->experiment = $object[3];
+                $scientificObjectModel->experiment = array_search($object[3], $experiments);
                 $scientificObjectModel->geometry = $object[4];
                 $scientificObjectModel->parent = $object[5];
-                $scientificObjectModel->species = $object[6];
+                $scientificObjectModel->species = array_search($object[6], $species);
                 $scientificObjectModel->variety = $object[7];  
                 $scientificObjectModel->modality = $object[8];
                 $scientificObjectModel->replication = $object[9];
@@ -676,7 +681,7 @@ require_once '../config/config.php';
         if ($objectsTypes === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }
-        $experiments = $this->getExperimentsURI();
+        $experiments = $this->getExperiments();
         if ($experiments === "token") {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }        
@@ -686,8 +691,8 @@ require_once '../config/config.php';
         return $this->render('update', [
             'model' => $model,
             'objectsTypes' => json_encode($objectsTypes, JSON_UNESCAPED_SLASHES),
-            'experiments' => json_encode($experiments, JSON_UNESCAPED_SLASHES),
-            'species' => json_encode($species,JSON_UNESCAPED_SLASHES)
+            'experiments' => json_encode(array_values($experiments), JSON_UNESCAPED_SLASHES),
+            'species' => json_encode(array_values($species),JSON_UNESCAPED_SLASHES)
         ]);
     }
     
@@ -703,7 +708,14 @@ require_once '../config/config.php';
             "error" => false,
             "objectUris" => [],
             "messages" => []
-        ];        
+        ];
+        
+        $experiments = $this->getExperiments();
+        if ($experiments === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        }
+        
+        $species = $this->getSpecies();
 
         if (count($objects) > 0) {
 
@@ -712,10 +724,10 @@ require_once '../config/config.php';
                 $uri = $object[0];
                 $scientificObjectModel->label = $object[1];
                 $scientificObjectModel->type = $this->getObjectTypeCompleteUri($object[2]);
-                $experiment = $object[3];
+                $experiment = array_search($object[3], $experiments);
                 $scientificObjectModel->geometry = $object[4];
                 $scientificObjectModel->parent = $object[5];
-                $scientificObjectModel->species = $object[6];
+                $scientificObjectModel->species = array_search($object[6], $species);
                 $scientificObjectModel->variety = $object[7];  
                 $scientificObjectModel->modality = $object[8];
                 $scientificObjectModel->replication = $object[9];
