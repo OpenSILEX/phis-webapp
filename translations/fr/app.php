@@ -51,6 +51,7 @@ return [
     'All Descendants' => 'Tous les Descendants',
 
     // Annotations
+    YiiAnnotationModel::LABEL => 'Annotation',
     YiiAnnotationModel::CREATION_DATE_LABEL => 'Date de l\'annotation',
     YiiAnnotationModel::MOTIVATED_BY_LABEL  => 'Motivée par',
     YiiAnnotationModel::TARGETS_LABEL  => 'Entités ciblées',
