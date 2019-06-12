@@ -129,6 +129,15 @@ class YiiSpeciesModel extends WSActiveRecord {
         }
     }
     
+    /**
+     * Get the list of uri and labels of the species.
+     * @param string $sessionToken
+     * @return Array
+     * @example [
+     *      "http://www.opensilex.org/id/species/betavulgaris" => "Betavulgaris", 
+     *      "http://www.opensilex.org/id/species/brassicanapus" => "Brassicanapus"
+     * ]
+     */
     public function getSpeciesUriLabelList($sessionToken) {
         $this->pageSize = 500;
         $species = $this->find($sessionToken, $this->attributesToArray());
