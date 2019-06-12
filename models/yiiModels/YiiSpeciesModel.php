@@ -107,7 +107,7 @@ class YiiSpeciesModel extends WSActiveRecord {
      *      "http://www.opensilex.org/id/species/brassicanapus"
      * ]
      */
-    public function getSpeciesList($sessionToken) {
+    public function getSpeciesUriList($sessionToken) {
         $species = $this->find($sessionToken, $this->attributesToArray());
         $speciesToReturn = [];
         
@@ -121,6 +121,29 @@ class YiiSpeciesModel extends WSActiveRecord {
             if ($this->totalPages > $this->page) {
                 $this->page++; //next page
                 $nextSpecies = $this->getSpeciesList($sessionToken);
+                
+                $speciesToReturn = array_merge($speciesToReturn, $nextSpecies);
+            }
+            
+            return $speciesToReturn;
+        }
+    }
+    
+    public function getSpeciesUriLabelList($sessionToken) {
+        $this->pageSize = 500;
+        $species = $this->find($sessionToken, $this->attributesToArray());
+        $speciesToReturn = [];
+        
+        if ($species !== null) {
+            //1. get the URIs
+            foreach($species as $specie) {
+                $speciesToReturn[$specie->uri] = $specie->label;
+            }
+            
+            //2. if there are other pages, get the other species
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextSpecies = $this->getSpeciesUriLabelList($sessionToken);
                 
                 $speciesToReturn = array_merge($speciesToReturn, $nextSpecies);
             }
