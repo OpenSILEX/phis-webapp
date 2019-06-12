@@ -55,7 +55,8 @@ use app\controllers\AnnotationController;
     echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            Yii::t('app',YiiAnnotationModel::TARGETS_LABEL)
+          'label' => Yii::t('app',YiiAnnotationModel::TARGETS_LABEL),
+          'attribute' => YiiAnnotationModel::TARGETS]
         ],
     ]);
     ?>
