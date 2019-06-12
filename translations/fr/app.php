@@ -51,8 +51,8 @@ return [
     'All Descendants' => 'Tous les Descendants',
 
     // Annotations
+    '{n, plural, =1{Add an annotation} other{Add annotations}}' => '{n, plural, =1{Ajouter une annotation} other{Ajouter des annotations}}',
     YiiAnnotationModel::LABEL => 'Annotation',
-    YiiAnnotationModel::ADD_ANNOTATION_LABEL => '{n, plural, =1{Add an annotation} other{Add annotations}}' => '{n, plural, =1{Ajouter une annotation} other{Ajouter des annotations}}',
     YiiAnnotationModel::CREATION_DATE_LABEL => 'Date de l\'annotation',
     YiiAnnotationModel::MOTIVATED_BY_LABEL  => 'Motivée par',
     YiiAnnotationModel::TARGETS_LABEL  => 'Entités ciblées',

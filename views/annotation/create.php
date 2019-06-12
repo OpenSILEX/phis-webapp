@@ -19,11 +19,11 @@ use app\models\yiiModels\YiiAnnotationModel;
 
 $this->title = Yii::t(
     'app',
-    YiiAnnotationModel::ADD_ANNOTATION,
+    '{n, plural, =1{Add an annotation} other{Add annotations}}',
     //'Create an {modelClass}', [
     //'modelClass' => YiiAnnotationModel::LABEL,
     //],
-  ['n' => 1]
+    ['n' => 1]
 );
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Annotation')];
 $this->params['breadcrumbs'][] = $this->title;

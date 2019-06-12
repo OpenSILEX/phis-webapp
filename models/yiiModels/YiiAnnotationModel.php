@@ -128,8 +128,7 @@ class YiiAnnotationModel extends WSActiveRecord {
             self::CREATION_DATE => Yii::t('app', self::CREATION_DATE_LABEL),
             self::MOTIVATED_BY => Yii::t('app', self::MOTIVATED_BY_LABEL),
             self::BODY_VALUES => Yii::t('app', self::BODY_VALUES_LABEL),
-            self::TARGETS => Yii::t('app', self::TARGETS_LABEL),
-            self::ADD_ANNOTATION => Yii::t('app', self::ADD_ANNOTATION_LABEL)
+            self::TARGETS => Yii::t('app', self::TARGETS_LABEL)
         ];
     }
 
