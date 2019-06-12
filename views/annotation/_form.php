@@ -56,7 +56,7 @@ use app\controllers\AnnotationController;
         'dataProvider' => $dataProvider,
         'columns' => [
           'label' => Yii::t('app',YiiAnnotationModel::TARGETS_LABEL),
-          'attribute' => YiiAnnotationModel::TARGETS]
+          'attribute' => YiiAnnotationModel::TARGETS
         ],
     ]);
     ?>
