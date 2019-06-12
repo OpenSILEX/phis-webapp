@@ -31,6 +31,12 @@ class YiiAnnotationModel extends WSActiveRecord {
     const LABEL = "Annotation";
 
     /**
+     * Add Annotation header used in annotation creation form
+     */
+    const ADD_ANNOTATION = "createAnAnnotation";
+    const ADD_ANNOTATION_LABEL = "Create an annotation";
+
+    /**
      * URI of the annotation
      * @example http://www.phenome-fppn.fr/platform/id/annotation/3ce85bf7-1d99-4831-9c13-4d7ebdafe1d6
      * @var string
