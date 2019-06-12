@@ -28,11 +28,10 @@
         </div>
     </div>
     <div id="loader" class="loader" style="display:none"></div>
-
     <script>
-        var objectsTypes = JSON.parse('<?php echo $objectsTypes; ?>');
-        var experiments = JSON.parse('<?php echo $experiments; ?>');
-        var species = JSON.parse('<?php echo $species; ?>');
+        var objectsTypes = JSON.parse('<?php echo addslashes($objectsTypes); ?>');
+        var experiments = JSON.parse('<?php echo addslashes($experiments); ?>');
+        var species = JSON.parse('<?php echo addslashes($species); ?>');
 
         $('#objects-created').hide();
 
