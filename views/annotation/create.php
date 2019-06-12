@@ -14,13 +14,16 @@ use app\models\yiiModels\YiiAnnotationModel;
 /**
  * @var yii\web\View $this
  * @var app\models\yiiModels\YiiAnnotationModel $model
- * Implements the create page for an annotation 
+ * Implements the create page for an annotation
  */
 
 $this->title = Yii::t(
-    'app', 'Create an {modelClass}', [
-    'modelClass' => YiiAnnotationModel::LABEL,
-    ]
+    'app',
+    YiiAnnotationModel::ADD_ANNOTATION
+    //'Create an {modelClass}', [
+    //'modelClass' => YiiAnnotationModel::LABEL,
+    //],
+  ['n' => 1]
 );
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Annotation')];
 $this->params['breadcrumbs'][] = $this->title;
@@ -36,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'model' => $model,
             AnnotationController::MOTIVATION_INSTANCES => ${AnnotationController::MOTIVATION_INSTANCES},
         ]
-    ) 
+    )
     ?>
 
 </div>
