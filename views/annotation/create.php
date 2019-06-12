@@ -19,7 +19,7 @@ use app\models\yiiModels\YiiAnnotationModel;
 
 $this->title = Yii::t(
     'app',
-    YiiAnnotationModel::ADD_ANNOTATION
+    YiiAnnotationModel::ADD_ANNOTATION,
     //'Create an {modelClass}', [
     //'modelClass' => YiiAnnotationModel::LABEL,
     //],
