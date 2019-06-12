@@ -51,6 +51,8 @@ return [
     'All Descendants' => 'Tous les Descendants',
 
     // Annotations
+    '{n, plural, =1{Add an annotation} other{Add annotations}}' => '{n, plural, =1{Ajouter une annotation} other{Ajouter des annotations}}',
+    YiiAnnotationModel::LABEL => 'Annotation',
     YiiAnnotationModel::CREATION_DATE_LABEL => 'Date de l\'annotation',
     YiiAnnotationModel::MOTIVATED_BY_LABEL  => 'Motivée par',
     YiiAnnotationModel::TARGETS_LABEL  => 'Entités ciblées',
@@ -58,6 +60,8 @@ return [
     AnnotationGridViewWidget::LINKED_ANNOTATIONS => "Annotations liées",
     AnnotationGridViewWidget::NO_LINKED_ANNOTATIONS => "Aucune annotation liée",
     'Annotations' => 'Annotations',
+    'Creator of the annotation' => 'Auteur de l\'annotation',
+    'Motivation of the annotation' => 'Motif de l\'annotation',
 
     'Acquisition session template' => 'Gabarit de session d\'aquisition',
     'Attenuator Filter' => 'Filtre Atténuateur',

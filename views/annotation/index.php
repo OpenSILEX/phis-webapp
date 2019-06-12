@@ -15,11 +15,11 @@ use kartik\select2\Select2;
 use app\components\helpers\Vocabulary;
 use yii\bootstrap\BaseHtml;
 
-/** 
- * Index of annotations (with search) 
- * @var $this yii\web\View 
- * @var $searchModel app\models\AnnotationSearch 
- * @var $dataProvider yii\data\ActiveDataProvider 
+/**
+ * Index of annotations (with search)
+ * @var $this yii\web\View
+ * @var $searchModel app\models\AnnotationSearch
+ * @var $dataProvider yii\data\ActiveDataProvider
  */
 
 $this->title = Yii::t('app', '{n, plural, =1{Annotation} other{Annotations}}', ['n' => 2]);
@@ -56,11 +56,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     'model' => $searchModel,
                     'name' => 'users_instances_filter',
                     'data' => $userInstances,
-                    'options' => ['multiple' => false, 'placeholder' => 'Creator of the annotation'],
+                    'options' => ['multiple' => false, 'placeholder' => Yii::t('app','Creator of the annotation')],
                     'pluginOptions' => [
                         'allowClear' => true,
                     ],
-                ])   
+                ])
                 ],
             YiiAnnotationModel::MOTIVATED_BY => [
                 'attribute' => YiiAnnotationModel::MOTIVATED_BY,
@@ -72,14 +72,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     'model' => $searchModel,
                     'name' => 'motivation_instances_filter',
                     'data' => ${AnnotationController::MOTIVATION_INSTANCES},
-                    'options' => ['multiple' => false, 'placeholder' => 'Motivation of the annotation'],
+                    'options' => ['multiple' => false, 'placeholder' => Yii::t('app','Motivation of the annotation')],
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
                 ])
             ],
             [
-                'label' => YiiAnnotationModel::CREATION_DATE_LABEL,
+                'label' => Yii::t('app',YiiAnnotationModel::CREATION_DATE_LABEL),
                 'attribute' => YiiAnnotationModel::CREATION_DATE
             ],
             ['class' => 'yii\grid\ActionColumn',

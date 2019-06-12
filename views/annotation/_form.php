@@ -18,7 +18,7 @@ use app\controllers\AnnotationController;
  * @var yii\web\View $this
  * @var app\models\yiiModels\YiiAnnotationModel $model
  * @var yii\widgets\ActiveForm $form
- * Implements the create page for an annotation 
+ * Implements the create page for an annotation
  * @see app\views\annotation\create.php
  */
 ?>
@@ -55,11 +55,12 @@ use app\controllers\AnnotationController;
     echo GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            YiiAnnotationModel::TARGETS
+          ['label' => Yii::t('app',YiiAnnotationModel::TARGETS_LABEL),
+          'attribute' => YiiAnnotationModel::TARGETS]
         ],
     ]);
     ?>
-    
+
     <!--input list of targets-->
     <?php
     foreach ($model->targets as $index => $target) {

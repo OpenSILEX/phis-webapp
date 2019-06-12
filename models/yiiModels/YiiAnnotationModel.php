@@ -15,12 +15,12 @@ use Yii;
 
 /**
  * The Yii model for the Annotation. Used with web services.
- * Implements a customized Active Record (WSActiveRecord, for the web services 
+ * Implements a customized Active Record (WSActiveRecord, for the web services
  * access)
  * @see app\models\wsModels\WSAnnotationModel
  * @see app\models\wsModels\WSActiveRecord
- * @update [Andréas Garcia] 11 March, 2019: rename field "comments" -> "bodyValues" 
- * @author Morgane Vidal <morgane.vidal@inra.fr> 
+ * @update [Andréas Garcia] 11 March, 2019: rename field "comments" -> "bodyValues"
+ * @author Morgane Vidal <morgane.vidal@inra.fr>
  * @author Arnaud Charleroy <arnaud.charleroy@.fr>
  */
 class YiiAnnotationModel extends WSActiveRecord {
@@ -48,7 +48,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $creationDate;
 
     const CREATION_DATE = "creationDate";
-    const CREATION_DATE_LABEL = "Date of Annotation";
+    const CREATION_DATE_LABEL = "Annotation Date";
 
     /**
      * The creator of the annotation
@@ -81,7 +81,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     const BODY_VALUES_LABEL = "Description";
 
     /**
-     * A target associate to this annotation 
+     * A target associated to this annotation
      * @example http://www.phenome-fppn.fr/phenovia/2017/o1032481
      * @var string
      */
@@ -93,11 +93,11 @@ class YiiAnnotationModel extends WSActiveRecord {
 
     /**
      * The return url after annotation creation
-     * @var string 
+     * @var string
      */
     public $returnUrl;
     const RETURN_URL = "returnUrl";
-        
+
     public function __construct($pageSize = null, $page = null) {
         $date = new \DateTime();
         $this->creationDate = $date->format(\DateTime::ATOM);
@@ -125,6 +125,7 @@ class YiiAnnotationModel extends WSActiveRecord {
         return [
             self::URI => self::URI_LABEL,
             self::CREATOR => Yii::t('app', self::CREATOR_LABEL),
+            self::CREATION_DATE => Yii::t('app', self::CREATION_DATE_LABEL),
             self::MOTIVATED_BY => Yii::t('app', self::MOTIVATED_BY_LABEL),
             self::BODY_VALUES => Yii::t('app', self::BODY_VALUES_LABEL),
             self::TARGETS => Yii::t('app', self::TARGETS_LABEL)
@@ -132,7 +133,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * Permits to fill model parameters from web service data array 
+     * Permits to fill model parameters from web service data array
      * @param array $array key => value with annotation data value
      */
     protected function arrayToAttributes($array) {
@@ -145,8 +146,8 @@ class YiiAnnotationModel extends WSActiveRecord {
     }
 
     /**
-     * @return array used to send to the webservice in order to create a new 
-     * annotation. It is a public method in case that the user want to save 
+     * @return array used to send to the webservice in order to create a new
+     * annotation. It is a public method in case that the user want to save
      * these annotation data in multiple instances.
      */
     public function attributesToArray() {
