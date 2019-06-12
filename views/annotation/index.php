@@ -79,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ])
             ],
             [
-                'label' => YiiAnnotationModel::CREATION_DATE_LABEL,
+                'label' => Yii::t('app',YiiAnnotationModel::CREATION_DATE_LABEL),
                 'attribute' => YiiAnnotationModel::CREATION_DATE
             ],
             ['class' => 'yii\grid\ActionColumn',
