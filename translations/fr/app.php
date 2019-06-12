@@ -61,7 +61,7 @@ return [
     AnnotationGridViewWidget::NO_LINKED_ANNOTATIONS => "Aucune annotation liée",
     'Annotations' => 'Annotations',
     'Creator of the annotation' => 'Auteur de l\'annotation',
-    'Motivation of the annotation' => 'Motivation de l\'annotation',
+    'Motivation of the annotation' => 'Motif de l\'annotation',
 
     'Acquisition session template' => 'Gabarit de session d\'aquisition',
     'Attenuator Filter' => 'Filtre Atténuateur',
