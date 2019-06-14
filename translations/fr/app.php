@@ -45,7 +45,6 @@ return [
     // translations in alphabetical order
 
     // A
-    'A radiometric target can be described by the value of its coefficients to the bidirectional reflectance distribution function (see the BRDF ' => 'Une cible radiométrique peut être décrite par la valeur de ses coefficients à la fonction de distribution de la réflectivité bidirectionnelle (voir la ',
     'Acquisition session template' => 'Gabarit de session d\'aquisition',
     'Add Dataset' => 'Importer un jeu de données',
     'Add Document' => 'Ajouter un document',

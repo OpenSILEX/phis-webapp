@@ -18,6 +18,7 @@ return [
     // translations in alphabetical order
 
     // A
+    'A radiometric target can be described by the value of its coefficients to the bidirectional reflectance distribution function (see the BRDF ' => 'Une cible radiométrique peut être décrite par la valeur de ses coefficients à la fonction de distribution de la réflectivité bidirectionnelle (voir la ',
     'About' => "SILEX-PHIS est un système d'information de phénotypage haut-débit. Il est dit 'hybride' car il est basé sur
             différentes technologies de stockage de données : les bases relationnelles, les systèmes NoSQL et les outils
             du Web sémantique. SILEX-PHIS est développé pour gérer trois types de données : les mesures dites en ligne, les mesures
