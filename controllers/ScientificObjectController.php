@@ -403,7 +403,9 @@ require_once '../config/config.php';
         $species = $this->getSpecies();
         
         if (count($objects) > 0) {
-
+            $objectsToInsert = count($objects);
+            $cpt = 0;
+            $forWebService = [];
             foreach ($objects as $object) {
                 $scientificObjectModel = new YiiScientificObjectModel();
                 
@@ -418,16 +420,25 @@ require_once '../config/config.php';
                 $scientificObjectModel->replication = $object[9];
                 
                 $scientificObject = $scientificObjectModel->attributesToArray();
-                $forWebService = $this->getArrayForWebServiceCreate($scientificObject);
-                $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
+                $forWebService[] = $this->getArrayForWebServiceCreate($scientificObject);
+                $cpt++;
+                if ($cpt === 200 || $cpt === $objectsToInsert) {
+                    $objectsToInsert = $objectsToInsert - $cpt;
+                    $cpt = 0;
+                    
+                    $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
                 
-                if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
-                    $return["objectUris"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES}[0];
-                    $return["messages"][] = "object saved";
-                }
-                else {
-                    $return["objectUris"][] = null;
-                    $return["messages"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->details;
+                    if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
+                        foreach ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES} as $scientificObjectUri) {
+                            $return["objectUris"][] = $scientificObjectUri;
+                            $return["messages"][] = "object saved";
+                        }
+                    } else {
+                        foreach ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status as $status) {
+                            $return["objectUris"][] = null;
+                            $return["messages"][] = $status->exception->details;
+                        }
+                    }
                 }
             }      
           
@@ -549,10 +560,8 @@ require_once '../config/config.php';
             $replication["value"] = $scientificObject[YiiScientificObjectModel::REPLICATION];
             $p["properties"][] = $replication;
         }
-       
-        $forWebService[] = $p;    
 
-        return $forWebService;
+        return $p;
     }
     
     
