@@ -63,6 +63,30 @@ class ImageController extends \yii\web\Controller {
     }
     
     /**
+     * search images (for one concerned item, by date) and return the result
+     * @return the images corresponding to the search
+     * @throws Exception
+     */
+    public function actionSearchFromScientificObject() {
+        $searchModel = new DataFileSearch($pageSize = 100);
+         if ($searchModel->load(Yii::$app->request->post())) {
+            $searchModel ->startDate= Yii::$app->request->post()["startDate"];
+            $searchModel ->endDate= Yii::$app->request->post()["endDate"];
+            $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->post());
+            // $startDate =Yii::$app->request->post()["startDate"];
+            
+            return $this->renderAjax('_simple_images_visualization', [
+                        'model' => $searchModel,
+                        'data' => $searchResult
+                   ]);
+         }
+        return $this->renderAjax('_simple_images_visualization', [
+                        'model' => $searchModel
+                   ]);
+       
+    }
+    
+    /**
      * Proxy action to get data file image from web service
      * @param type $imageUri
      */

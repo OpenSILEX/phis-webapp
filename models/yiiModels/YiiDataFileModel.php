@@ -43,6 +43,18 @@ class YiiDataFileModel extends WSActiveRecord {
      */
     public $concernedItems;
     const CONCERNED_ITEMS = "concernedItems";
+   /**
+     * the start date is the beginning of the day from a time in the temporal serie (e.g YYYY-MM-DDT00:00:00+0200
+     * @var string
+     */
+    public $startDate;
+    const START_DATE="startDate";
+     /**
+     * the end date is the end of the day from a time in the temporal serie (e.g YYYY-MM-DDT23:59:00+0200
+     * @var string
+     */
+    public $endDate;
+    const END_DATE="endDate";
     
     /**
      * Initialize wsModel. In this class, wsModel is a WSImageModel
@@ -63,7 +75,7 @@ class YiiDataFileModel extends WSActiveRecord {
     public function rules() {
         return [
           [['uri', 'rdfType'], 'required'],  
-          [['concernedItems'], 'safe']
+          [['concernedItems','startDate','endDate'], 'safe']
         ];
     }
     
@@ -110,6 +122,12 @@ class YiiDataFileModel extends WSActiveRecord {
         }
         if ($this->pageSize != null) {
             $attributesArray[WSConstants::PAGE_SIZE] = $this->pageSize;
+        }
+        if($this->startDate != null) {
+            $attributesArray[self::START_DATE] = $this->startDate;
+        }
+        if($this->endDate !=null) {
+            $attributesArray[self::END_DATE] = $this ->endDate;
         }
         
         return $attributesArray;

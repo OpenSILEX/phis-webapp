@@ -11,10 +11,13 @@ use Yii;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use miloschuman\highcharts\Highcharts;
+use yii\web\JsExpression;
+use yii\helpers\Url;
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
 
 /**
  * @var model app\models\yiiModels\YiiScientificObjectModel
@@ -24,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
  */
 
 ?>
+
 <div class="scientific-object-data-visualization">
     <div class="data-visualization-form well">
         <?php $form = ActiveForm::begin(); 
@@ -95,6 +99,8 @@ $this->params['breadcrumbs'][] = $this->title;
                              'data' => $data["scientificObjectData"][0]["data"]];
                 
             
+            $url2 = Url::to(['image/search-from-scientific-object']);
+            $objectURI = $model->uri;
             echo Highcharts::widget([
                 'id' => 'test',
                     'options' => [
@@ -102,9 +108,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         'xAxis' => [
                            'type' => 'datetime',
                            'title' => 'Date',
-                        ],
-                        'chart' => [
-                            'zoomType' => 'x'
+//                        ],
+//                        'chart' => [
+//                            'zoomType' => 'x',
+//                            'events'=> [
+//                                'click' =>  new JsExpression("function(event){  alert('TEST appel ajax'+\"$url2\");}")
+//                                
+//                            ]
                         ],
                         'yAxis' => [
                            'title' => null,
@@ -115,13 +125,48 @@ $this->params['breadcrumbs'][] = $this->title;
                         'series' => $series,
                         'tooltip' => [
                                'xDateFormat'=> '%Y-%m-%d %H:%M',
-                           ] 
+                           ] ,
+                        'plotOptions' => [
+                            'series' => [
+                                'cursor' =>'pointer',
+                                'point' => [
+                                    'events' => [
+                                        'click' => new JsExpression(" function() {"
+                                               // . "alert ('la serie X en YYYY-MM-DDTHH:MM:SSZ : '+Highcharts.dateFormat('%a %d %b %H:%M:%S', this.x));"
+                                                . "var searchFormData = new FormData();"
+                                                . "console.log('URI :'+\"$objectURI\");"
+                                                . "console.log('url :'+\"$url2\");"
+                                                . "searchFormData.append('concernedItems[]', \"$objectURI\");"
+                                                . "searchFormData.append('DataFileSearch[rdfType]','http://www.opensilex.org/vocabulary/oeso#HemisphericalImage');"
+                                                . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT00:00:00+0200', this.x));"
+                                                . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT23:59:00+0200', this.x));"
+                                                . "$.ajax({url: \"$url2\","
+                                                . "   type: 'POST',"
+                                                . "   processData: false,"
+                                                . "   datatype: 'json',"
+                                                . "   contentType: false,"
+                                                . "   data: searchFormData   "
+                                                . "}).done(function (data) { $('#visualization-images').html(data);});"
+                                                . "}")
+                                             
+                                    ]
+                                ]
+                            ]
+                        ]
                     ]
                  ]);
             }
         }
     ?>
-
+    
     <?php ActiveForm::end(); ?>
+        <div id="visualization-images">
+            test
+        </div>
     </div>
 </div>
+<script> //Highcharts stuff
+   
+</script>
+    
+    
