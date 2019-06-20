@@ -156,6 +156,7 @@ return [
     'Generated URI' => 'URI générée',
     'Geographic Location' => 'Localisation géographique',
     'Geometry' => 'Géométrie',
+    'Graphic visualization' => 'Visualisation graphique',
     'Groups' => 'Groupes',
     'Guest' => 'Invité',
 
