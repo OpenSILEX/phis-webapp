@@ -785,7 +785,7 @@ class ScientificObjectController extends Controller {
      * @return mixed the visualization page
      */
     public function actionDataVisualization($uri, $label, $experimentUri = null) {
-        $show=false;
+        $show = false;
         $scientificObject = new YiiScientificObjectModel();
         $scientificObject->uri = $uri;
         $scientificObject->label = $label;
@@ -793,6 +793,7 @@ class ScientificObjectController extends Controller {
 
         //Get the list of the variables
         $variables = [];
+
         //If the experiment URI is empty, we get all the variables. 
         if (empty($experimentUri)) {
             $variableModel = new \app\models\yiiModels\YiiVariableModel();
@@ -851,18 +852,25 @@ class ScientificObjectController extends Controller {
                 $show = $_POST['show'];
             }
 
+
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
+            $filter = isset($_POST['filter']) ? $_POST['filter'] : null;  
+            $filterNameSelected = isset($_POST['name']) ? $_POST['name'] : null; 
+            $filterValueSelected = isset($_POST['value']) ? $_POST['value'] : null;
+
 
 
             return $this->render('data_visualization', [
-            'model' => $scientificObject,
-            'variables' => $variables,
-            'data' => $toReturn,
-            'show' => $show,
-            'dateStart' => $searchModel->startDate,
-            'dateEnd' => $searchModel->endDate,
-            'imageTypes' => $imageTypes,
-            'imageTypeSelected' => $imageTypeSelected
+                        'model' => $scientificObject,
+                        'variables' => $variables,
+                        'data' => $toReturn,
+                        'show' => $show,
+                        'dateStart' => $searchModel->startDate,
+                        'dateEnd' => $searchModel->endDate,
+                        'imageTypes' => $imageTypes,
+                        'imageTypeSelected' => $imageTypeSelected,
+                        'filterNameSelected' =>$filterNameSelected,
+                        'filterValueSelected' => $filterValueSelected
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [

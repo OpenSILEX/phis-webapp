@@ -22,7 +22,6 @@ use yii\helpers\Url;
 <div class="image-visualization well">
     <h3><?= Yii::t('app', 'Images Visualization') ?> (<?= Yii::t('app', 'On selected plot') ?>)</h3>
     
-   
     <div class="images">
         <?php 
             if (isset($data) && !empty($data->getModels())) {                
