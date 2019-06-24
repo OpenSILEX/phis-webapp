@@ -101,69 +101,77 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <br/>
 
+
             <div class="row">
-                <div class="col-md-2">
 
-                    <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => 'Show photo', 'onchange' => 'doThings(this);']) ?>
+                <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => 'View Images', 'onchange' => 'doThings(this);']) ?>
 
-                </div>
+            </div>
 
-                <div class="col-md-10">
-                    <div id="photoFilter">
-                        <fieldset style="border: 1px solid #5A9016; padding: 10px;" >
-                            <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
-                                Images Selection
-                            </legend>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class ="required" >
-                                        <?php
-                                        echo '<label class="control-label" >Type</label>';
-                                        echo \kartik\select2\Select2::widget([
-                                            'name' => 'imageType',
-                                            'data' => $imageTypes,
-                                            'value' => $imageTypeSelected ? $imageTypeSelected : null,
-                                            'options' => [
-                                                'placeholder' => Yii::t('app/messages', 'Select image type ...'),
-                                                'multiple' => false
-                                            ],
-                                            'pluginOptions' => [
-                                                'allowClear' => true
-                                            ],
-                                            'pluginEvents' => [
-                                                "select2:select" => "function() {  $('#graphic').hide();"
-                                                . "                                $('#visualization-images').hide();  }",
-                                            ],
-                                        ]);
-                                        ?>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
+            <div class="row">
+                <div id="photoFilter">
+                    <fieldset style="border: 1px solid #5A9016; padding: 10px;" >
+                        <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
+                            Images Selection
+                        </legend>
 
-                                    <div id="filter-widget" style=" display: inline-block;">
-
-
-                                        <label>FILTER</label>
-                                        <div class="form-inline">
-                                            <input type="text" class="form-control" placeholder="NAME" name="name" value="<?=  $filterNameSelected ? $filterNameSelected:'' ?>">
-                                            <input type="text" class="form-control" placeholder="VALUE" name="value" value="<?= $filterValueSelected ? $filterValueSelected:'' ?>">
-                                            <input type="hidden" class="form-control" name="filter" >
-                                        </div>
-                                        <button id="filter-button" type="button" class="btn btn btn-primary">Add</button>
-
-                                        <div></div>
-                                        <ul class="list-unstyled" id="todo"></ul>
-                                    </div>
-
-                                </div>
+                        <div class ="required" >
+                            <?php
+                            echo '<label class="control-label" >Type</label>';
+                            echo \kartik\select2\Select2::widget([
+                                'name' => 'imageType',
+                                'data' => $this->params['imagesType'],
+                                'value' => $imageTypeSelected ? $imageTypeSelected : null,
+                                'options' => [
+                                    'placeholder' => Yii::t('app/messages', 'Select image type ...'),
+                                    'multiple' => false
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                                'pluginEvents' => [
+                                    "select2:select" => "function() {  $('#graphic').hide();"
+                                    . "                                $('#visualization-images').hide();  }",
+                                ],
+                            ]);
+                            ?>
+                        </div>
 
 
 
-                        </fieldset>
+                        <h3><?= Yii::t('app', 'Provenance') ?></h3>
 
-                    </div>
+                        <?php
+                        // Create Provenance select values array
+                        foreach ($this->params['provenances'] as $uri => $provenance) {
+                            $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
+                        }
+                        ?>
+                        <?php
+                        echo \kartik\select2\Select2::widget([
+                            'name' => 'provenances',
+                            'data' => $provenancesArray,
+                            'value' => $selectedProvenance ? $selectedProvenance : null,
+                            'options' => [
+                                'placeholder' => Yii::t('app/messages', 'Select provenance ...'),
+                                'multiple' => false
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                            'pluginEvents' => [
+                                "select2:select" => "function() {  $('#graphic').hide();"
+                                . "                                $('#visualization-images').hide();  }",
+                            ],
+                        ]);
+                        ?>
+
+
+                    </fieldset>
+
                 </div>
             </div>
+
             <div class="form-group row">
                 <?= Html::submitButton(Yii::t('app', 'Show data'), ['class' => 'btn btn-primary']) ?>
             </div>
@@ -218,8 +226,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "console.log('url :'+\"$url2\");"
                                                     . "searchFormData.append('concernedItems[]', \"$objectURI\");"
                                                     . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
-                                                    //  . "searchFormData.append('jsonValueFilter', '{\'metadata.position\':\'7\'}');"
-                                                    . "searchFormData.append('jsonValueFilter', \"$filterSelected\");"
+                                                    . "searchFormData.append('provenance',\"$selectedProvenance\");"
+                                                   // . "searchFormData.append('jsonValueFilter', \"$filterSelected\");"
                                                     . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT00:00:00+0200', this.x));"
                                                     . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT23:59:00+0200', this.x));"
                                                     . "$.ajax({url: \"$url2\","
@@ -304,19 +312,6 @@ $this->params['breadcrumbs'][] = $this->title;
             $('#photoFilter').hide();
         }
     }
-    $('#filter-button').click(function () {
-        $('#graphic').hide();
-        $('#visualization-images').hide();
-        if ($('#todo li').length < 1) {
-            $('#todo').append("<li>{'" + $("input[name=name]").val() + "':'" + $("input[name=value]").val() + "'} <a href='#' class='close'  aria-hidden='true'>&times;</a></li>");
-            $("input[name=filter]").val("{'metadata." + $("input[name=name]").val() + "':'" + $("input[name=value]").val() + "'}");
-//            $("input[name=value]").val("");
-//            $("input[name=name]").val("");
-        }
 
-    });
-    $("body").on('click', '#todo a', function () {
-        $(this).closest("li").remove();
-    });
 </script>
 

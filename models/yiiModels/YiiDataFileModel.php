@@ -66,12 +66,19 @@ class YiiDataFileModel extends WSActiveRecord {
     const END_DATE = "endDate";
 
     /**
-     * the end date is the end of the day from a time in the temporal serie (e.g YYYY-MM-DDT23:59:00+0200
+     *
      * @var string
      */
     public $jsonValueFilter;
 
     const JSON_VALUE_FILTER = "jsonValueFilter";
+    /**
+     *
+     * @var string
+     */
+    public $provenance;
+
+    const PROVENANCE = "provenance";
 
     /**
      * Initialize wsModel. In this class, wsModel is a WSImageModel
@@ -148,6 +155,9 @@ class YiiDataFileModel extends WSActiveRecord {
         }
         if ($this->jsonValueFilter != null) {
             $attributesArray[self::JSON_VALUE_FILTER] = $this->jsonValueFilter;
+        }
+         if ($this->provenance != null) {
+            $attributesArray[self::PROVENANCE] = $this->provenance;
         }
 
         return $attributesArray;

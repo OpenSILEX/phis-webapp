@@ -785,6 +785,7 @@ class ScientificObjectController extends Controller {
      * @return mixed the visualization page
      */
     public function actionDataVisualization($uri, $label, $experimentUri = null) {
+        $token = Yii::$app->session['access_token'];
         $show = false;
         $scientificObject = new YiiScientificObjectModel();
         $scientificObject->uri = $uri;
@@ -797,13 +798,19 @@ class ScientificObjectController extends Controller {
         //If the experiment URI is empty, we get all the variables. 
         if (empty($experimentUri)) {
             $variableModel = new \app\models\yiiModels\YiiVariableModel();
-            $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
+            $variables = $variableModel->getInstancesDefinitionsUrisAndLabel($token);
         } else { //There is an experiment. Get the variables linked to the experiment.
             $experimentModel = new YiiExperimentModel();
-            $variables = $experimentModel->getMeasuredVariables(Yii::$app->session['access_token'], $scientificObject->experiment);
+            $variables = $experimentModel->getMeasuredVariables($token, $scientificObject->experiment);
         }
+
+        // Load existing provenances
+        $provenanceService = new \app\models\wsModels\WSProvenanceModel();
+        $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
+        $this->view->params["provenances"] = $provenances;
+        // Load images type
         $imageModel = new \app\models\yiiModels\YiiImageModel();
-        $imageTypes = $imageModel->getRdfTypes(Yii::$app->session['access_token']);
+         $this->view->params["imagesType"] = $imageModel->getRdfTypes($token);
 
 
         //Search data for the scientific object and the given variable.
@@ -817,7 +824,7 @@ class ScientificObjectController extends Controller {
             $searchModel->startDate = $_POST['dateStart'];
             $searchModel->endDate = $_POST['dateEnd'];
 
-            $searchResult = $searchModel->search(Yii::$app->session['access_token'], null);
+            $searchResult = $searchModel->search($token, null);
 
             /* Build array for highChart
              * e.g : 
@@ -854,9 +861,8 @@ class ScientificObjectController extends Controller {
 
 
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
-            $filter = isset($_POST['filter']) ? $_POST['filter'] : null;  
-            $filterNameSelected = isset($_POST['name']) ? $_POST['name'] : null; 
-            $filterValueSelected = isset($_POST['value']) ? $_POST['value'] : null;
+            $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
+
 
 
 
@@ -869,8 +875,7 @@ class ScientificObjectController extends Controller {
                         'dateEnd' => $searchModel->endDate,
                         'imageTypes' => $imageTypes,
                         'imageTypeSelected' => $imageTypeSelected,
-                        'filterNameSelected' =>$filterNameSelected,
-                        'filterValueSelected' => $filterValueSelected
+                        'selectedProvenance' => $selectedProvenance
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [
@@ -879,6 +884,22 @@ class ScientificObjectController extends Controller {
                         'imageTypes' => $imageTypes
             ]);
         }
+    }
+
+    /**
+     * Create an associative array of the provenances objects indexed by their URI
+     * @param type $provenances
+     * @return array
+     */
+    private function mapProvenancesByUri($provenances) {
+        $provenancesMap = [];
+        if ($provenances !== null) {
+            foreach ($provenances as $provenance) {
+                $provenancesMap[$provenance->uri] = $provenance;
+            }
+        }
+
+        return $provenancesMap;
     }
 
 }

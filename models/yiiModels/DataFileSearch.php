@@ -35,7 +35,7 @@ class DataFileSearch extends YiiDataFileModel {
     public function rules() {
         return [
           [['rdfType'], 'required'],
-          [['concernedItems','jsonValueFilter'], 'safe']  
+          [['concernedItems','jsonValueFilter','provenance'], 'safe']  
         ];
     }
     
