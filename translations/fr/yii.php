@@ -1,6 +1,6 @@
 <?php
 //**********************************************************************************************
-//                                       yii.php 
+//                                       yii.php
 //
 // Author(s): Morgane VIDAL
 // PHIS-SILEX version 1.0
@@ -29,61 +29,11 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    //spaces and ponctuation
     ' and ' => ' et ',
     '(not set)' => '(non défini)',
-    'Add Sensors' => 'Ajouter des Capteurs',
-    'Add Vectors' => 'Ajouter des Vecteurs',
-    'Add Radiometric Target' => 'Ajouter une Cible Radiométrique',
-    'Update Radiometric Target' => 'Mettre à jour une Cible Radiométrique',
-    'An internal server error occurred.' => 'Une erreur de serveur interne s\'est produite.',
-    'Are you sure you want to delete this item?' => 'Voulez-vous réellement supprimer cet élément ?',
-    'Create' => 'Créer',
-    'Delete' => 'Supprimer',
-    'Error' => 'Erreur',
-    'File upload failed.' => 'Le téléchargement du fichier a échoué.',
-    'Home' => 'Accueil',
-    'Invalid data received for parameter "{param}".' => 'Données non valides reçues pour le paramètre « {param} ».',
-    'Login Required' => 'Identifiant requis',
-    'Missing required arguments: {params}' => 'Arguments manquants requis : {params}',
-    'Missing required parameters: {params}' => 'Paramètres manquants requis : {params}',
-    'No' => 'Non',
-    'No results found.' => 'Aucun résultat trouvé.',
-    'Only files with these MIME types are allowed: {mimeTypes}.' => 'Seulement les fichiers ayant ces types MIME sont autorisés : {mimeTypes}.',
-    'Only files with these extensions are allowed: {extensions}.' => 'Les extensions de fichier autorisées sont : {extensions}.',
-    'Page not found.' => 'Page non trouvée.',
-    'Please fix the following errors:' => 'Veuillez vérifier les erreurs suivantes :',
-    'Please upload a file.' => 'Veuillez télécharger un fichier.',
-    'Reset' => 'Réinitialiser',
-    'Search' => 'Rechercher',
-    'Showing <b>{begin, number}-{end, number}</b> of <b>{totalCount, number}</b> {totalCount, plural, one{item} other{items}}.' => 'Affichage de <b>{begin, number}-{end, number}</b> sur <b>{totalCount, number}</b> {totalCount, plural, one{élément} other{éléments}}.',
-    'The combination {values} of {attributes} has already been taken.' => 'La combinaison {values} / {attributes} a déjà été sélectionnée.',
-    'The file "{file}" is not an image.' => 'Le fichier « {file} » n\'est pas une image.',
-    'The file "{file}" is too big. Its size cannot exceed {formattedLimit}.' => 'Le fichier « {file} » est trop gros. Sa taille ne peut dépasser {limit, number} {limit, plural, one{octet} other{octets}}.',
-    'The file "{file}" is too small. Its size cannot be smaller than {formattedLimit}.' => 'Le fichier « {file} » est trop petit. Sa taille ne peut être inférieure à {limit, number} {limit, plural, one{octet} other{octets}}.',
-    'The format of {attribute} is invalid.' => 'Le format de {attribute} est invalide',
-    'The image "{file}" is too large. The height cannot be larger than {limit, number} {limit, plural, one{pixel} other{pixels}}.' => 'L\'image « {file} » est trop grande. La hauteur ne peut être supérieure à {limit, number} {limit, plural, one{pixel} other{pixels}}.',
-    'The image "{file}" is too large. The width cannot be larger than {limit, number} {limit, plural, one{pixel} other{pixels}}.' => 'L\'image « {file} » est trop large. La largeur ne peut être supérieure à {limit, number} {limit, plural, one{pixel} other{pixels}}.',
-    'The image "{file}" is too small. The height cannot be smaller than {limit, number} {limit, plural, one{pixel} other{pixels}}.' => 'L\'image « {file} » est trop petite. La hauteur ne peut être inférieure à {limit, number} {limit, plural, one{pixel} other{pixels}}.',
-    'The image "{file}" is too small. The width cannot be smaller than {limit, number} {limit, plural, one{pixel} other{pixels}}.' => 'L\'image « {file} » est trop petite. La largeur ne peut être inférieure à {limit, number} {limit, plural, one{pixel} other{pixels}}.',
-    'The requested view "{name}" was not found.' => 'La vue {name} n\'a pas été trouvée.',
-    'The verification code is incorrect.' => 'Le code de vérification est incorrect.',
-    'Total <b>{count, number}</b> {count, plural, one{item} other{items}}.' => 'Total <b>{count, number}</b> {count, plural, one{élément} other{éléments}}.',
-    'Unable to verify your data submission.' => 'Impossible de vérifier votre envoi de données.',
-    'Unknown alias: -{name}' => 'Alias inconnu : -{name}',
-    'Unknown option: --{name}' => 'Option inconnue : --{name}',
-    'Update' => 'Modifier',
-    'View' => 'Voir',
-    'Yes' => 'Oui',
-    'You are not allowed to perform this action.' => 'Vous n\'êtes pas autorisé à effectuer cette action.',
-    'You can upload at most {limit, number} {limit, plural, one{file} other{files}}.' => 'Vous pouvez télécharger au maximum {limit, number} {limit, plural, one{fichier} other{fichiers}}.',
-    'in {delta, plural, =1{a day} other{# days}}' => 'dans {delta, plural, =1{un jour} other{# jours}}',
-    'in {delta, plural, =1{a minute} other{# minutes}}' => 'dans {delta, plural, =1{une minute} other{# minutes}}',
-    'in {delta, plural, =1{a month} other{# months}}' => 'dans {delta, plural, =1{un mois} other{# mois}}',
-    'in {delta, plural, =1{a second} other{# seconds}}' => 'dans {delta, plural, =1{une seconde} other{# secondes}}',
-    'in {delta, plural, =1{a year} other{# years}}' => 'dans {delta, plural, =1{un an} other{# ans}}',
-    'in {delta, plural, =1{an hour} other{# hours}}' => 'dans {delta, plural, =1{une heure} other{# heures}}',
-    'just now' => 'juste maintenant',
-    'the input value' => 'la valeur d\'entrée',
+    
+    // {attribute}
     '{attribute} "{value}" has already been taken.' => '{attribute} « {value} » a déjà été pris.',
     '{attribute} cannot be blank.' => '{attribute} ne peut être vide.',
     '{attribute} contains wrong subnet mask.' => '{attribute} contient un mauvais masque de sous-réseau',
@@ -112,6 +62,8 @@ return [
     '{attribute} should contain at least {min, number} {min, plural, one{character} other{characters}}.' => '{attribute} doit comporter au moins {min, number} {min, plural, one{caractère} other{caractères}}.',
     '{attribute} should contain at most {max, number} {max, plural, one{character} other{characters}}.' => '{attribute} doit comporter au plus {max, number} {max, plural, one{caractère} other{caractères}}.',
     '{attribute} should contain {length, number} {length, plural, one{character} other{characters}}.' => '{attribute} doit comporter {length, number} {length, plural, one{caractère} other{caractères}}.',
+
+    // {delta}
     '{delta, plural, =1{1 day} other{# days}}' => 'il y a {delta, plural, =1{un jour} other{# jours}}',
     '{delta, plural, =1{1 hour} other{# hours}}' => 'il y a {delta, plural, =1{une heure} other{# heures}}',
     '{delta, plural, =1{1 minute} other{# minutes}}' => 'il y a {delta, plural, =1{une minute} other{# minutes}}',
@@ -124,6 +76,8 @@ return [
     '{delta, plural, =1{a second} other{# seconds}} ago' => 'il y a {{une seconde} other{# secondes}}',
     '{delta, plural, =1{a year} other{# years}} ago' => 'il y a {{un an} other{# ans}}',
     '{delta, plural, =1{an hour} other{# hours}} ago' => 'il y a {{une heure} other{# heures}}',
+
+    // {nFormatted}
     '{nFormatted} B' => '{n} o',
     '{nFormatted} GB' => '{n} Go',
     '{nFormatted} GiB' => '{n} Gio',
@@ -146,4 +100,96 @@ return [
     '{nFormatted} {n, plural, =1{petabyte} other{petabytes}}' => '{n, plural, =1{# petaoctet} other{# petaoctets}}',
     '{nFormatted} {n, plural, =1{tebibyte} other{tebibytes}}' => '',
     '{nFormatted} {n, plural, =1{terabyte} other{terabytes}}' => '{n, plural, =1{# teraoctet} other{# teraoctets}}',
+
+    // A
+    'Add Sensors' => 'Ajouter des Capteurs',
+    'Add Vectors' => 'Ajouter des Vecteurs',
+    'Add Radiometric Target' => 'Ajouter une Cible Radiométrique',
+    'An internal server error occurred.' => 'Une erreur de serveur interne s\'est produite.',
+    'Are you sure you want to delete this item?' => 'Voulez-vous réellement supprimer cet élément ?',
+
+    // C
+    'Create' => 'Créer',
+
+    // D
+    'Delete' => 'Supprimer',
+
+    // E
+    'Error' => 'Erreur',
+
+    // F
+    'File upload failed.' => 'Le téléchargement du fichier a échoué.',
+
+    // H
+    'Home' => 'Accueil',
+
+    // I
+    'in {delta, plural, =1{a day} other{# days}}' => 'dans {delta, plural, =1{un jour} other{# jours}}',
+    'in {delta, plural, =1{a minute} other{# minutes}}' => 'dans {delta, plural, =1{une minute} other{# minutes}}',
+    'in {delta, plural, =1{a month} other{# months}}' => 'dans {delta, plural, =1{un mois} other{# mois}}',
+    'in {delta, plural, =1{a second} other{# seconds}}' => 'dans {delta, plural, =1{une seconde} other{# secondes}}',
+    'in {delta, plural, =1{a year} other{# years}}' => 'dans {delta, plural, =1{un an} other{# ans}}',
+    'in {delta, plural, =1{an hour} other{# hours}}' => 'dans {delta, plural, =1{une heure} other{# heures}}',
+    'Invalid data received for parameter "{param}".' => 'Données non valides reçues pour le paramètre « {param} ».',
+
+    //J
+    'just now' => 'juste maintenant',
+
+    // L
+    'Login Required' => 'Identifiant requis',
+
+    // M
+    'Missing required arguments: {params}' => 'Arguments manquants requis : {params}',
+    'Missing required parameters: {params}' => 'Paramètres manquants requis : {params}',
+
+    // N
+    'No' => 'Non',
+    'No results found.' => 'Aucun résultat trouvé.',
+
+    // O
+    'Only files with these MIME types are allowed: {mimeTypes}.' => 'Seulement les fichiers ayant ces types MIME sont autorisés : {mimeTypes}.',
+    'Only files with these extensions are allowed: {extensions}.' => 'Les extensions de fichier autorisées sont : {extensions}.',
+
+    // P
+    'Page not found.' => 'Page non trouvée.',
+    'Please fix the following errors:' => 'Veuillez vérifier les erreurs suivantes :',
+    'Please upload a file.' => 'Veuillez télécharger un fichier.',
+
+    // R
+    'Reset' => 'Réinitialiser',
+
+    // S
+    'Search' => 'Rechercher',
+    'Showing <b>{begin, number}-{end, number}</b> of <b>{totalCount, number}</b> {totalCount, plural, one{item} other{items}}.' => 'Affichage de <b>{begin, number}-{end, number}</b> sur <b>{totalCount, number}</b> {totalCount, plural, one{élément} other{éléments}}.',
+
+    // T
+    'The combination {values} of {attributes} has already been taken.' => 'La combinaison {values} / {attributes} a déjà été sélectionnée.',
+    'The file "{file}" is not an image.' => 'Le fichier « {file} » n\'est pas une image.',
+    'The file "{file}" is too big. Its size cannot exceed {formattedLimit}.' => 'Le fichier « {file} » est trop gros. Sa taille ne peut dépasser {limit, number} {limit, plural, one{octet} other{octets}}.',
+    'The file "{file}" is too small. Its size cannot be smaller than {formattedLimit}.' => 'Le fichier « {file} » est trop petit. Sa taille ne peut être inférieure à {limit, number} {limit, plural, one{octet} other{octets}}.',
+    'The format of {attribute} is invalid.' => 'Le format de {attribute} est invalide',
+    'the input value' => 'la valeur d\'entrée',
+    'The image "{file}" is too large. The height cannot be larger than {limit, number} {limit, plural, one{pixel} other{pixels}}.' => 'L\'image « {file} » est trop grande. La hauteur ne peut être supérieure à {limit, number} {limit, plural, one{pixel} other{pixels}}.',
+    'The image "{file}" is too large. The width cannot be larger than {limit, number} {limit, plural, one{pixel} other{pixels}}.' => 'L\'image « {file} » est trop large. La largeur ne peut être supérieure à {limit, number} {limit, plural, one{pixel} other{pixels}}.',
+    'The image "{file}" is too small. The height cannot be smaller than {limit, number} {limit, plural, one{pixel} other{pixels}}.' => 'L\'image « {file} » est trop petite. La hauteur ne peut être inférieure à {limit, number} {limit, plural, one{pixel} other{pixels}}.',
+    'The image "{file}" is too small. The width cannot be smaller than {limit, number} {limit, plural, one{pixel} other{pixels}}.' => 'L\'image « {file} » est trop petite. La largeur ne peut être inférieure à {limit, number} {limit, plural, one{pixel} other{pixels}}.',
+    'The requested view "{name}" was not found.' => 'La vue {name} n\'a pas été trouvée.',
+    'The verification code is incorrect.' => 'Le code de vérification est incorrect.',
+    'Total <b>{count, number}</b> {count, plural, one{item} other{items}}.' => 'Total <b>{count, number}</b> {count, plural, one{élément} other{éléments}}.',
+
+    // U
+    'Unable to verify your data submission.' => 'Impossible de vérifier votre envoi de données.',
+    'Unknown alias: -{name}' => 'Alias inconnu : -{name}',
+    'Unknown option: --{name}' => 'Option inconnue : --{name}',
+    'Update' => 'Modifier',
+    'Update Radiometric Target' => 'Mettre à jour une Cible Radiométrique',
+
+    // V
+    'View' => 'Voir',
+
+    // Y
+    'Yes' => 'Oui',
+    'You are not allowed to perform this action.' => 'Vous n\'êtes pas autorisé à effectuer cette action.',
+    'You can upload at most {limit, number} {limit, plural, one{file} other{files}}.' => 'Vous pouvez télécharger au maximum {limit, number} {limit, plural, one{fichier} other{fichiers}}.'
+
 ];
