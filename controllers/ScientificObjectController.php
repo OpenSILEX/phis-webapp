@@ -422,6 +422,7 @@ require_once '../config/config.php';
                 $scientificObject = $scientificObjectModel->attributesToArray();
                 $forWebService[] = $this->getArrayForWebServiceCreate($scientificObject);
                 $cpt++;
+                //Insert the scientific objects by 200
                 if ($cpt === 200 || $cpt === $objectsToInsert) {
                     $objectsToInsert = $objectsToInsert - $cpt;
                     $cpt = 0;
