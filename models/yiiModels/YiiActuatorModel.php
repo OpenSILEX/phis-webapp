@@ -133,7 +133,7 @@ class YiiActuatorModel extends WSActiveRecord {
      */
     public function rules() {
        return [ 
-           [['rdfType', 'uri'], 'required'], 
+           [['rdfType', 'uri', 'brand', 'personInCharge', 'label'], 'required'], 
            [['serialNumber', 'model', 'dateOfPurchase', 'dateOfLastCalibration', 'documents',
               'brand', 'label', 'inServiceDate', 'personInCharge', 'properties'], 'safe']
         ]; 
