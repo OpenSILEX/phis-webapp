@@ -28,14 +28,17 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="scientific-object-data-visualization">
-    <div class="data-visualization-form well">
+    <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form">Search criteria</a>
+
+    <div class="collapse in" id="data-visualization-form" >
         <?php
         $form = ActiveForm::begin();
         if (empty($variables)) {
             echo "<p>" . Yii::t('app/messages', 'No variables linked to the experiment of the scientific object.') . "</p>";
         } else {
             ?>
-            <div class="row">
+
+            <div class="form-group">
                 <?php
                 $selectedVariable = null;
                 if (isset($data)) {
@@ -59,10 +62,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]);
                 ?>
             </div>
-            <br/>
 
-            <div class="row">
-                <div class="col-md-6">
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
                     <?=
                     \kartik\date\DatePicker::widget([
                         'name' => 'dateStart',
@@ -80,7 +83,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ])
                     ?>
                 </div>
-                <div class="col-md-6">
+                <div class="form-group col-md-6">
                     <?=
                     \kartik\date\DatePicker::widget([
                         'name' => 'dateEnd',
@@ -99,23 +102,23 @@ $this->params['breadcrumbs'][] = $this->title;
                     ?>
                 </div>
             </div>
-            <br/>
 
 
-            <div class="row">
+
+            <div class="form-group">
 
                 <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => 'View Images', 'onchange' => 'doThings(this);']) ?>
 
             </div>
 
-            <div class="row">
+            <div class="form-row">
                 <div id="photoFilter">
                     <fieldset style="border: 1px solid #5A9016; padding: 10px;" >
                         <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
                             Images Selection
                         </legend>
 
-                        <div class ="required" >
+                        <div class ="form-group required" >
                             <?php
                             echo '<label class="control-label" >Type</label>';
                             echo \kartik\select2\Select2::widget([
@@ -136,45 +139,75 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                             ?>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label class="control-label" >Filter Position</label>
 
 
+                                <?php
+                                echo \kartik\select2\Select2::widget([
+                                    'name' => 'position',
+                                    'data' => Yii::$app->params['image.filter']['metadata.position'],
+                                    'value' => $selectedPosition ? $selectedPosition : null,
+                                    'options' => [
+                                        'placeholder' => Yii::t('app/messages', 'Select position ...'),
+                                        'multiple' => false
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
+                                    'pluginEvents' => [
+                                        "select2:select" => "function() {  $('#graphic').hide();"
+                                        . "                                $('#visualization-images').hide();  }",
+                                    ],
+                                ]);
+                                ?>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label" ><?= Yii::t('app', 'Provenance') ?></label>
 
-                        <h3><?= Yii::t('app', 'Provenance') ?></h3>
+                                <?php
+                                // Create Provenance select values array
+                                foreach ($this->params['provenances'] as $uri => $provenance) {
+                                    $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
+                                }
+                                ?>
+                                <?php
+                                echo \kartik\select2\Select2::widget([
+                                    'name' => 'provenances',
+                                    'data' => $provenancesArray,
+                                    'value' => $selectedProvenance ? $selectedProvenance : null,
+                                    'options' => [
+                                        'placeholder' => Yii::t('app/messages', 'Select provenance ...'),
+                                        'multiple' => false
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
+                                    'pluginEvents' => [
+                                        "select2:select" => "function() {  $('#graphic').hide();"
+                                        . "                                $('#visualization-images').hide();  }",
+                                    ],
+                                ]);
+                                ?>
+                            </div>
 
-                        <?php
-                        // Create Provenance select values array
-                        foreach ($this->params['provenances'] as $uri => $provenance) {
-                            $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
-                        }
-                        ?>
-                        <?php
-                        echo \kartik\select2\Select2::widget([
-                            'name' => 'provenances',
-                            'data' => $provenancesArray,
-                            'value' => $selectedProvenance ? $selectedProvenance : null,
-                            'options' => [
-                                'placeholder' => Yii::t('app/messages', 'Select provenance ...'),
-                                'multiple' => false
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                            'pluginEvents' => [
-                                "select2:select" => "function() {  $('#graphic').hide();"
-                                . "                                $('#visualization-images').hide();  }",
-                            ],
-                        ]);
-                        ?>
 
+                        </div>
 
                     </fieldset>
 
                 </div>
             </div>
 
-            <div class="form-group row">
-                <?= Html::submitButton(Yii::t('app', 'Show data'), ['class' => 'btn btn-primary']) ?>
+            <div class="form-group ">
+                <?= Html::submitButton(Yii::t('app', 'Show data'), ['class' => 'btn btn-primary pull-right']) ?>
             </div>
+
+            <?php ActiveForm::end(); ?>
+        </div>
+
+        <div class="data-visualization-chart well">
             <?php
         }
         if (isset($data)) {
@@ -227,7 +260,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "searchFormData.append('concernedItems[]', \"$objectURI\");"
                                                     . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
                                                     . "searchFormData.append('provenance',\"$selectedProvenance\");"
-                                                   // . "searchFormData.append('jsonValueFilter', \"$filterSelected\");"
+                                                    . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
                                                     . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT00:00:00+0200', this.x));"
                                                     . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT23:59:00+0200', this.x));"
                                                     . "$.ajax({url: \"$url2\","
@@ -236,8 +269,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "   datatype: 'json',"
                                                     . "   contentType: false,"
                                                     . "   data: searchFormData   "
-                                                    . "}).done(function (data) { $('#visualization-images').html(data);}
-                                                        ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});"
+                                                    . "}).done(function (data) { $('#visualization-images').html(data);$('html, body').stop().animate({scrollTop: $('#visualization-images').offset().top}, 1000 );}
+                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});"
                                                     . "}")
                                         ]
                                     ]
@@ -288,14 +321,23 @@ $this->params['breadcrumbs'][] = $this->title;
             }
         }
         ?>
-
-        <?php ActiveForm::end(); ?>
-        <div id="visualization-images">
-
-        </div>
     </div>
+    <div id="visualization-images">
+
+    </div>
+
 </div>
 <script> //Highcharts stuff
+    $(document).ready(function () {
+        <?php
+        if (isset($data)) {
+            echo "$('#data-visualization-form').collapse('hide');";
+          
+        }
+        ?>
+    });
+
+
     var checked = $('#showWidget').is(':checked');
     if (checked) {
         $('#photoFilter').show();

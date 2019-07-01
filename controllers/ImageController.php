@@ -80,8 +80,7 @@ class ImageController extends \yii\web\Controller {
 
             return $this->renderAjax('_simple_images_visualization', [
                         'model' => $searchModel,
-                        'data' => $searchResult,
-                        'metadata' => Yii::$app->request->post()["metadata"]
+                        'data' => $searchResult
             ]);
         }
         return $this->renderAjax('_simple_images_visualization', [

@@ -810,7 +810,7 @@ class ScientificObjectController extends Controller {
         $this->view->params["provenances"] = $provenances;
         // Load images type
         $imageModel = new \app\models\yiiModels\YiiImageModel();
-         $this->view->params["imagesType"] = $imageModel->getRdfTypes($token);
+        $this->view->params["imagesType"] = $imageModel->getRdfTypes($token);
 
 
         //Search data for the scientific object and the given variable.
@@ -862,7 +862,10 @@ class ScientificObjectController extends Controller {
 
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
-
+            $selectedPosition = isset($_POST['position']) ? $_POST['position'] : null;
+            if(isset($_POST['position']) &&$_POST['position']!=="" ){
+                $filterToSend = "{'metadata.position':'".$_POST['position']."'}";
+            }
 
 
 
@@ -873,15 +876,15 @@ class ScientificObjectController extends Controller {
                         'show' => $show,
                         'dateStart' => $searchModel->startDate,
                         'dateEnd' => $searchModel->endDate,
-                        'imageTypes' => $imageTypes,
                         'imageTypeSelected' => $imageTypeSelected,
-                        'selectedProvenance' => $selectedProvenance
+                        'selectedProvenance' => $selectedProvenance,
+                        'selectedPosition' => $selectedPosition,
+                        'filterToSend' => $filterToSend
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [
                         'model' => $scientificObject,
-                        'variables' => $variables,
-                        'imageTypes' => $imageTypes
+                        'variables' => $variables
             ]);
         }
     }
