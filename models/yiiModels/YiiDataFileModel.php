@@ -72,13 +72,7 @@ class YiiDataFileModel extends WSActiveRecord {
     public $jsonValueFilter;
 
     const JSON_VALUE_FILTER = "jsonValueFilter";
-    /**
-     *
-     * @var string
-     */
-    public $provenance;
-
-    const PROVENANCE = "provenance";
+   
 
     /**
      * Initialize wsModel. In this class, wsModel is a WSImageModel
@@ -156,9 +150,7 @@ class YiiDataFileModel extends WSActiveRecord {
         if ($this->jsonValueFilter != null) {
             $attributesArray[self::JSON_VALUE_FILTER] = $this->jsonValueFilter;
         }
-         if ($this->provenance != null) {
-            $attributesArray[self::PROVENANCE] = $this->provenance;
-        }
+       
 
         return $attributesArray;
     }

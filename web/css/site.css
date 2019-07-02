@@ -2,6 +2,22 @@ html,body {
     height: 100%;
 }
 
+ul.images {
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  max-width: 1140px;
+  overflow-x: auto;
+}
+
+ul.images li {
+  display: inline-block;
+  width: 200px;
+  margin: 0 2px;
+  
+  
+}
+
 /*SILEX:info
 use for all DetailView
 \SILEX:info*/

@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="scientific-object-data-visualization">
-    <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form">Search criteria</a>
+    <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px; line-height: 1.5em;">Search criteria <i class ="fa-large fa fa-search"></i></a>
 
     <div class="collapse in" id="data-visualization-form" >
         <?php
@@ -37,77 +37,109 @@ $this->params['breadcrumbs'][] = $this->title;
             echo "<p>" . Yii::t('app/messages', 'No variables linked to the experiment of the scientific object.') . "</p>";
         } else {
             ?>
-
-            <div class="form-group">
-                <?php
-                $selectedVariable = null;
-                if (isset($data)) {
-                    $selectedVariable = $data["variable"];
-                }
-                echo \kartik\select2\Select2::widget([
-                    'name' => 'variable',
-                    'data' => $variables,
-                    'value' => $selectedVariable,
-                    'options' => [
-                        'placeholder' => Yii::t('app/messages', 'Select a variable ...'),
-                        'multiple' => false
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                    'pluginEvents' => [
-                        "select2:select" => "function() {  $('#graphic').hide();"
-                        . "                                $('#visualization-images').hide(); }",
-                    ]
-                ]);
-                ?>
-            </div>
-
-
             <div class="form-row">
-                <div class="form-group col-md-6">
-                    <?=
-                    \kartik\date\DatePicker::widget([
-                        'name' => 'dateStart',
-                        'options' => ['placeholder' => Yii::t('app', 'Enter date start')],
-                        'value' => isset($dateStart) ? $dateStart : null,
-                        'pluginOptions' => [
-                            'autoclose' => true,
-                            'format' => 'yyyy-mm-dd',
-                            'orientation' => 'bottom'
-                        ],
-                        'pluginEvents' => [
-                            "select2:select" => "function() {  $('#graphic').hide();"
-                            . "                                $('#visualization-images').hide();  }",
-                        ]
-                    ])
-                    ?>
-                </div>
-                <div class="form-group col-md-6">
-                    <?=
-                    \kartik\date\DatePicker::widget([
-                        'name' => 'dateEnd',
-                        'value' => isset($dateEnd) ? $dateEnd : null,
-                        'options' => ['placeholder' => Yii::t('app', 'Enter date end')],
-                        'pluginOptions' => [
-                            'autoclose' => true,
-                            'format' => 'yyyy-mm-dd',
-                            'orientation' => 'bottom'
-                        ],
-                        'pluginEvents' => [
-                            "select2:select" => "function() {  $('#graphic').hide();"
-                            . "                                $('#visualization-images').hide();  }",
-                        ]
-                    ])
-                    ?>
-                </div>
+
+                <fieldset style="border: 1px solid #5A9016; padding: 10px;" >
+                    <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
+                        Data Search
+                    </legend>
+
+                    <div class="form-row">
+                        <div class="form-group required col-md-6">
+                            <label class="control-label" ><?= Yii::t('app', 'Variable') ?></label>
+
+                            <?php
+                            echo \kartik\select2\Select2::widget([
+                                'name' => 'variable',
+                                'data' => $variables,
+                                'value' => $selectedVariable ? $selectedVariable : null,
+                                'options' => [
+                                    'placeholder' => Yii::t('app/messages', 'Select a variable ...'),
+                                    'multiple' => false
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                                'pluginEvents' => [
+                                    "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text('UPDATE'); }",
+                                ]
+                            ]);
+                            ?>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="control-label" ><?= Yii::t('app', 'Provenance') ?></label>
+
+                            <?php
+                            // Create Provenance select values array
+                            foreach ($this->params['provenances'] as $uri => $provenance) {
+                                $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
+                            }
+                            ?>
+                            <?php
+                            echo \kartik\select2\Select2::widget([
+                                'name' => 'provenances',
+                                'data' => $provenancesArray,
+                                'value' => $selectedProvenance ? $selectedProvenance : null,
+                                'options' => [
+                                    'placeholder' => Yii::t('app/messages', 'Select provenance ...'),
+                                    'multiple' => false
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                                'pluginEvents' => [
+                                    "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text('UPDATE'); }",
+                                ],
+                            ]);
+                            ?>
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <?=
+                            \kartik\date\DatePicker::widget([
+                                'name' => 'dateStart',
+                                'options' => ['placeholder' => Yii::t('app', 'Enter date start')],
+                                'value' => isset($dateStart) ? $dateStart : null,
+                                'pluginOptions' => [
+                                    'autoclose' => true,
+                                    'format' => 'yyyy-mm-dd',
+                                    'orientation' => 'bottom'
+                                ],
+                                'pluginEvents' => [
+                                    "changeDate" => "function() { $('#scientific-object-data-visualization-submit-button').text('UPDATE');  }",
+                                ]
+                            ])
+                            ?>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <?=
+                            \kartik\date\DatePicker::widget([
+                                'name' => 'dateEnd',
+                                'value' => isset($dateEnd) ? $dateEnd : null,
+                                'options' => ['placeholder' => Yii::t('app', 'Enter date end')],
+                                'pluginOptions' => [
+                                    'autoclose' => true,
+                                    'format' => 'yyyy-mm-dd',
+                                    'orientation' => 'bottom'
+                                ],
+                                'pluginEvents' => [
+                                    "changeDate" => "function() { $('#scientific-object-data-visualization-submit-button').text('UPDATE');  }",
+                                ]
+                            ])
+                            ?>
+                        </div>
+                    </div>
+
+                </fieldset>
             </div>
 
+            <div class="form-group" style="margin-bottom: 0px;">
 
-
-            <div class="form-group">
-
-                <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => 'View Images', 'onchange' => 'doThings(this);']) ?>
+                <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => 'Show Images', 'onchange' => 'doThings(this);']) ?>
 
             </div>
 
@@ -115,7 +147,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div id="photoFilter">
                     <fieldset style="border: 1px solid #5A9016; padding: 10px;" >
                         <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
-                            Images Selection
+                            Image Search
                         </legend>
 
                         <div class ="form-group required" >
@@ -133,64 +165,35 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'allowClear' => true
                                 ],
                                 'pluginEvents' => [
-                                    "select2:select" => "function() {  $('#graphic').hide();"
-                                    . "                                $('#visualization-images').hide();  }",
+                                    "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text('UPDATE');  }",
                                 ],
                             ]);
                             ?>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label class="control-label" >Filter Position</label>
+                        <div class="form-group">
+
+                            <label class="control-label" >Filter Position</label>
 
 
-                                <?php
-                                echo \kartik\select2\Select2::widget([
-                                    'name' => 'position',
-                                    'data' => Yii::$app->params['image.filter']['metadata.position'],
-                                    'value' => $selectedPosition ? $selectedPosition : null,
-                                    'options' => [
-                                        'placeholder' => Yii::t('app/messages', 'Select position ...'),
-                                        'multiple' => false
-                                    ],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
-                                    'pluginEvents' => [
-                                        "select2:select" => "function() {  $('#graphic').hide();"
-                                        . "                                $('#visualization-images').hide();  }",
-                                    ],
-                                ]);
-                                ?>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label class="control-label" ><?= Yii::t('app', 'Provenance') ?></label>
+                            <?php
+                            echo \kartik\select2\Select2::widget([
+                                'name' => 'position',
+                                'data' => Yii::$app->params['image.filter']['metadata.position'],
+                                'value' => $selectedPosition ? $selectedPosition : null,
+                                'options' => [
+                                    'placeholder' => Yii::t('app/messages', 'Select position ...'),
+                                    'multiple' => false
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                                'pluginEvents' => [
+                                    "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text('UPDATE'); }",
+                                ],
+                            ]);
+                            ?>
 
-                                <?php
-                                // Create Provenance select values array
-                                foreach ($this->params['provenances'] as $uri => $provenance) {
-                                    $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
-                                }
-                                ?>
-                                <?php
-                                echo \kartik\select2\Select2::widget([
-                                    'name' => 'provenances',
-                                    'data' => $provenancesArray,
-                                    'value' => $selectedProvenance ? $selectedProvenance : null,
-                                    'options' => [
-                                        'placeholder' => Yii::t('app/messages', 'Select provenance ...'),
-                                        'multiple' => false
-                                    ],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
-                                    'pluginEvents' => [
-                                        "select2:select" => "function() {  $('#graphic').hide();"
-                                        . "                                $('#visualization-images').hide();  }",
-                                    ],
-                                ]);
-                                ?>
-                            </div>
+
 
 
                         </div>
@@ -200,19 +203,29 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
 
-            <div class="form-group ">
-                <?= Html::submitButton(Yii::t('app', 'Show data'), ['class' => 'btn btn-primary pull-right']) ?>
-            </div>
+            <?= Html::submitButton(Yii::t('app', 'SHOW'), ['class' => 'btn btn-primary ', 'id' => 'scientific-object-data-visualization-submit-button']) ?>
 
             <?php ActiveForm::end(); ?>
         </div>
+        <div id="visualization-images">
 
-        <div class="data-visualization-chart well">
+            <?php
+            if (isset($data) && isset($show) && $show == true && !empty($data)) {
+                echo "<div class='image-visualization ' style='height:146px;'><br><div class='alert alert-info' id='scientific-object-data-visualization-alert-div' role='alert-info'>
+                    <p>You have to click on data to see images</p>   </div></div>";
+            }
+            ?>
+
+
+
+        </div>
+
+        <div class="data-visualization-chart ">
             <?php
         }
         if (isset($data)) {
             if (empty($data)) {
-                echo "<p>" . Yii::t('app/messages', 'No result found.') . "</p>";
+                echo "  <div class='well '><p>" . Yii::t('app/messages', 'No result found.') . "</p></div>";
             } else {
                 $series = [];
                 $series[] = ['name' => $data["scientificObjectData"][0]["label"],
@@ -269,7 +282,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "   datatype: 'json',"
                                                     . "   contentType: false,"
                                                     . "   data: searchFormData   "
-                                                    . "}).done(function (data) { $('#visualization-images').html(data);$('html, body').stop().animate({scrollTop: $('#visualization-images').offset().top}, 1000 );}
+                                                    . "}).done(function (data) { $('#visualization-images').html(data);}
                                                     ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});"
                                                     . "}")
                                         ]
@@ -322,19 +335,25 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         ?>
     </div>
-    <div id="visualization-images">
 
-    </div>
 
 </div>
 <script> //Highcharts stuff
     $(document).ready(function () {
-        <?php
-        if (isset($data)) {
-            echo "$('#data-visualization-form').collapse('hide');";
-          
-        }
-        ?>
+<?php
+if (isset($data)) {
+    echo "$('#data-visualization-form').collapse('hide');";
+}
+?>
+        $('#data-visualization-form').on('hidden.bs.collapse', function () {
+            $('#graphic').show();
+            $('#visualization-images').show();
+        });
+        $('#data-visualization-form').on('show.bs.collapse', function () {
+            $('#graphic').hide();
+            $('#visualization-images').hide();
+        });
+
     });
 
 
@@ -346,6 +365,7 @@ $this->params['breadcrumbs'][] = $this->title;
         $('#photoFilter').hide();
     }
     function doThings(element) {
+        $('#scientific-object-data-visualization-submit-button').text('UPDATE');
         var checked = $(element).is(':checked');
         if (checked) {
             $('#photoFilter').show();

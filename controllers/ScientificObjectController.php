@@ -823,6 +823,7 @@ class ScientificObjectController extends Controller {
             $searchModel->variable = $_POST['variable'];
             $searchModel->startDate = $_POST['dateStart'];
             $searchModel->endDate = $_POST['dateEnd'];
+            $searchModel->provenance = $_POST['provenances'];
 
             $searchResult = $searchModel->search($token, null);
 
@@ -860,11 +861,12 @@ class ScientificObjectController extends Controller {
             }
 
 
+            $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
             $selectedPosition = isset($_POST['position']) ? $_POST['position'] : null;
-            if(isset($_POST['position']) &&$_POST['position']!=="" ){
-                $filterToSend = "{'metadata.position':'".$_POST['position']."'}";
+            if (isset($_POST['position']) && $_POST['position'] !== "") {
+                $filterToSend = "{'metadata.position':'" . $_POST['position'] . "'}";
             }
 
 
@@ -876,6 +878,7 @@ class ScientificObjectController extends Controller {
                         'show' => $show,
                         'dateStart' => $searchModel->startDate,
                         'dateEnd' => $searchModel->endDate,
+                        'selectedVariable' => $selectedVariable,
                         'imageTypeSelected' => $imageTypeSelected,
                         'selectedProvenance' => $selectedProvenance,
                         'selectedPosition' => $selectedPosition,
