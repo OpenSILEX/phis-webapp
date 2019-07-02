@@ -21,7 +21,7 @@ return [
 
     // Forms
     'dateTimeFormatDateTimeRangePickerStandard' => 'Y-m-dTH:i:sZ',
-    'dateTimeFormatDateTimePickerUserFriendly' => 'yyyy-mm-dd HH:ii:ss',
+    'dateTimeFormatDateTimePickerUserFriendly' => 'yyyy-mm-dd hh:ii:ss',
     'dateRangeSeparator' => ' - ',
     'textAreaRowsNumber' => 6,
 
