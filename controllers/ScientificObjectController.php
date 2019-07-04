@@ -630,19 +630,17 @@ require_once '../config/config.php';
         }
         $searchParams = [];
         // Set page size to 200 for better performances
-        $searchModel->pageSize = 200;
+        $searchModel->pageSize = 10000;
         
         //get all the data (if multiple pages) and write them in a file
         $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
 
-        $headerFile = "ScientificObjectURI" . ScientificObjectController::DELIM_CSV .
+        $stringToWrite = "ScientificObjectURI" . ScientificObjectController::DELIM_CSV .
                       "Alias" . ScientificObjectController::DELIM_CSV .
                       "RdfType" . ScientificObjectController::DELIM_CSV .
                       "ExperimentURI" . ScientificObjectController::DELIM_CSV . 
                       "Geometry" . ScientificObjectController::DELIM_CSV . 
                       "\n";
-
-        file_put_contents($serverFilePath, $headerFile);
 
         $totalPage = 1;
         for ($i = 0; $i < $totalPage; $i++) {
@@ -664,18 +662,18 @@ require_once '../config/config.php';
                     $wktGeometry = "";
                 }
             
-                $stringToWrite = $model->uri . ScientificObjectController::DELIM_CSV . 
+                $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV . 
                                  $model->label . ScientificObjectController::DELIM_CSV .
                                  $model->rdfType . ScientificObjectController::DELIM_CSV .
                                  $model->experiment . ScientificObjectController::DELIM_CSV . 
                                  '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
                                  "\n";
-
-                file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
+                
             }
             
             $totalPage = intval($searchModel->totalPages);
         }
+        file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
         Yii::$app->response->sendFile($serverFilePath); 
     }
     
