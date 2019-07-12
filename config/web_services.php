@@ -10,3 +10,6 @@
 
 define('WS_PHIS_PATH', 'http://localhost:8080/opensilex/rest/');
 define('WS_PHIS_PATH_DOC', 'http://localhost:8080/opensilex/');
+
+//define('WS_PHIS_PATH', 'http://138.102.159.36:8080/openSilexSandBoxAPI/rest/');
+//define('WS_PHIS_PATH_DOC', 'http://138.102.159.36:8080/openSilexSandBoxAPI/');

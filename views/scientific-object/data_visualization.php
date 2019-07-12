@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="scientific-object-data-visualization">
-    <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px; line-height: 1.5em;">Search criteria <i class ="fa-large fa fa-search"></i></a>
+    <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px; line-height: 1.5em;"><?= Yii::t('app', 'Search Criteria') ?><i class ="fa-large fa fa-search"></i></a>
 
     <div class="collapse in" id="data-visualization-form" >
         <?php
@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <fieldset style="border: 1px solid #5A9016; padding: 10px;" >
                     <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
-                        Data Search
+                        <?= Yii::t('app', 'Data Search') ?>
                     </legend>
 
                     <div class="form-row">
@@ -54,14 +54,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'data' => $variables,
                                 'value' => $selectedVariable ? $selectedVariable : null,
                                 'options' => [
-                                    'placeholder' => Yii::t('app/messages', 'Select a variable ...'),
+                                    'placeholder' => Yii::t('app/messages', 'Select a variable...'),
                                     'multiple' => false
                                 ],
                                 'pluginOptions' => [
                                     'allowClear' => true
                                 ],
                                 'pluginEvents' => [
-                                    "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text('UPDATE'); }",
+                                    "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\"); }",
                                 ]
                             ]);
                             ?>
@@ -82,27 +82,26 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'data' => $provenancesArray,
                                 'value' => $selectedProvenance ? $selectedProvenance : null,
                                 'options' => [
-                                    'placeholder' => Yii::t('app/messages', 'Select provenance ...'),
+                                    'placeholder' => Yii::t('app/messages', 'Select provenance...'),
                                     'multiple' => false
                                 ],
                                 'pluginOptions' => [
                                     'allowClear' => true
                                 ],
                                 'pluginEvents' => [
-                                    "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text('UPDATE'); }",
+                                    "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\"); }",
                                 ],
                             ]);
                             ?>
                         </div>
                     </div>
 
-
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <?=
                             \kartik\date\DatePicker::widget([
                                 'name' => 'dateStart',
-                                'options' => ['placeholder' => Yii::t('app', 'Enter date start')],
+                                'options' => ['placeholder' => Yii::t('app/messages', 'Enter start date')],
                                 'value' => isset($dateStart) ? $dateStart : null,
                                 'pluginOptions' => [
                                     'autoclose' => true,
@@ -110,7 +109,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'orientation' => 'bottom'
                                 ],
                                 'pluginEvents' => [
-                                    "changeDate" => "function() { $('#scientific-object-data-visualization-submit-button').text('UPDATE');  }",
+                                    "changeDate" => "function() { $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\");  }",
                                 ]
                             ])
                             ?>
@@ -120,26 +119,25 @@ $this->params['breadcrumbs'][] = $this->title;
                             \kartik\date\DatePicker::widget([
                                 'name' => 'dateEnd',
                                 'value' => isset($dateEnd) ? $dateEnd : null,
-                                'options' => ['placeholder' => Yii::t('app', 'Enter date end')],
+                                'options' => ['placeholder' => Yii::t('app/messages', 'Enter end date')],
                                 'pluginOptions' => [
                                     'autoclose' => true,
                                     'format' => 'yyyy-mm-dd',
                                     'orientation' => 'bottom'
                                 ],
                                 'pluginEvents' => [
-                                    "changeDate" => "function() { $('#scientific-object-data-visualization-submit-button').text('UPDATE');  }",
+                                    "changeDate" => "function() { $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\");  }",
                                 ]
                             ])
                             ?>
                         </div>
                     </div>
-
                 </fieldset>
             </div>
 
             <div class="form-group" style="margin-bottom: 0px;">
 
-                <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => 'Show Images', 'onchange' => 'doThings(this);']) ?>
+                <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => Yii::t('app', 'Show Images'), 'onchange' => 'doThings(this);']) ?>
 
             </div>
 
@@ -147,63 +145,59 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div id="photoFilter">
                     <fieldset style="border: 1px solid #5A9016; padding: 10px;" >
                         <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
-                            Image Search
+                            <?= Yii::t('app', 'Image Search') ?>
                         </legend>
 
-                        <div class ="form-group required" >
-                            <?php
-                            echo '<label class="control-label" >Type</label>';
-                            echo \kartik\select2\Select2::widget([
-                                'name' => 'imageType',
-                                'data' => $this->params['imagesType'],
-                                'value' => $imageTypeSelected ? $imageTypeSelected : null,
-                                'options' => [
-                                    'placeholder' => Yii::t('app/messages', 'Select image type ...'),
-                                    'multiple' => false
-                                ],
-                                'pluginOptions' => [
-                                    'allowClear' => true
-                                ],
-                                'pluginEvents' => [
-                                    "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text('UPDATE');  }",
-                                ],
-                            ]);
-                            ?>
+                        <div class="form-row">
+                            <div class="form-group required col-md-12">
+
+                                <label class="control-label" ><?= Yii::t('app', 'Type') ?></label>
+                                <?php
+                                echo \kartik\select2\Select2::widget([
+                                    'name' => 'imageType',
+                                    'data' => $this->params['imagesType'],
+                                    'value' => $imageTypeSelected ? $imageTypeSelected : null,
+                                    'options' => [
+                                        'placeholder' => Yii::t('app/messages', 'Select image type...'),
+                                        'multiple' => false
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
+                                    'pluginEvents' => [
+                                        "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\");  }",
+                                    ],
+                                ]);
+                                ?>
+                            </div>
+                            <div class="form-group col-md-12">
+
+                                <label class="control-label" ><?= Yii::t('app', 'Image View') ?></label>
+
+                                <?php
+                                echo \kartik\select2\Select2::widget([
+                                    'name' => 'position',
+                                    'data' => Yii::$app->params['image.filter']['metadata.position'],
+                                    'value' => $selectedPosition ? $selectedPosition : null,
+                                    'options' => [
+                                        'placeholder' => Yii::t('app/messages', 'Select image view...'),
+                                        'multiple' => false
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
+                                    'pluginEvents' => [
+                                        "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\"); }",
+                                    ],
+                                ]);
+                                ?>
+                            </div>
                         </div>
-                        <div class="form-group">
-
-                            <label class="control-label" >Filter Position</label>
-
-
-                            <?php
-                            echo \kartik\select2\Select2::widget([
-                                'name' => 'position',
-                                'data' => Yii::$app->params['image.filter']['metadata.position'],
-                                'value' => $selectedPosition ? $selectedPosition : null,
-                                'options' => [
-                                    'placeholder' => Yii::t('app/messages', 'Select position ...'),
-                                    'multiple' => false
-                                ],
-                                'pluginOptions' => [
-                                    'allowClear' => true
-                                ],
-                                'pluginEvents' => [
-                                    "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text('UPDATE'); }",
-                                ],
-                            ]);
-                            ?>
-
-
-
-
-                        </div>
-
                     </fieldset>
-
                 </div>
             </div>
 
-            <?= Html::submitButton(Yii::t('app', 'SHOW'), ['class' => 'btn btn-primary ', 'id' => 'scientific-object-data-visualization-submit-button']) ?>
+            <?= Html::submitButton(Yii::t('app', 'Show'), ['class' => 'btn btn-primary ', 'id' => 'scientific-object-data-visualization-submit-button']) ?>
 
             <?php ActiveForm::end(); ?>
         </div>
@@ -242,13 +236,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             'xAxis' => [
                                 'type' => 'datetime',
                                 'title' => 'Date',
-//                        ],
-//                        'chart' => [
-//                            'zoomType' => 'x',
-//                            'events'=> [
-//                                'click' =>  new JsExpression("function(event){  alert('TEST appel ajax'+\"$url2\");}")
-//                                
-//                            ]
                             ],
                             'yAxis' => [
                                 'title' => null,
@@ -266,7 +253,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'point' => [
                                         'events' => [
                                             'click' => new JsExpression(" function() {"
-                                                    // . "alert ('la serie X en YYYY-MM-DDTHH:MM:SSZ : '+Highcharts.dateFormat('%a %d %b %H:%M:%S', this.x));"
                                                     . "var searchFormData = new FormData();"
                                                     . "console.log('URI :'+\"$objectURI\");"
                                                     . "console.log('url :'+\"$url2\");"
@@ -299,13 +285,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             'xAxis' => [
                                 'type' => 'datetime',
                                 'title' => 'Date',
-//                        ],
-//                        'chart' => [
-//                            'zoomType' => 'x',
-//                            'events'=> [
-//                                'click' =>  new JsExpression("function(event){  alert('TEST appel ajax'+\"$url2\");}")
-//                                
-//                            ]
                             ],
                             'yAxis' => [
                                 'title' => null,
@@ -365,7 +344,7 @@ if (isset($data)) {
         $('#photoFilter').hide();
     }
     function doThings(element) {
-        $('#scientific-object-data-visualization-submit-button').text('UPDATE');
+        $('#scientific-object-data-visualization-submit-button').text('<?php echo Yii::t('app', 'Update') ?>');
         var checked = $(element).is(':checked');
         if (checked) {
             $('#photoFilter').show();

@@ -883,12 +883,10 @@ class ScientificObjectController extends Controller {
                 $scientificObjectData["data"] = $data;
                 $toReturn["scientificObjectData"][] = $scientificObjectData;
             }
-
-            if (isset($_POST['show'])) {
-                $show = $_POST['show'];
-            }
-
-
+            //on FORM submitted:
+            //check if image visualization is activated
+            $show = isset($_POST['show']) ? $_POST['show'] : null;
+           
             $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
@@ -896,8 +894,6 @@ class ScientificObjectController extends Controller {
             if (isset($_POST['position']) && $_POST['position'] !== "") {
                 $filterToSend = "{'metadata.position':'" . $_POST['position'] . "'}";
             }
-
-
 
             return $this->render('data_visualization', [
                         'model' => $scientificObject,

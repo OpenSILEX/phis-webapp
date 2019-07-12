@@ -1,7 +1,7 @@
 <?php
 
 //******************************************************************************
-//                                       _form_images_visualization.php
+//                                       _simple_images_visualization.php
 //
 // Author(s): Morgane Vidal <morgane.vidal@inra.fr>
 // PHIS-SILEX version 1.0
@@ -45,7 +45,7 @@ use yii\helpers\Url;
         ?>
     </ul>
     <!--Image modal-->
-    <div class="modal fade" id="modal" role="dialog">
+    <div class="modal " id="modal" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
             <div class="modal-content">

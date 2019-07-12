@@ -63,7 +63,8 @@ class ImageController extends \yii\web\Controller {
     }
 
     /**
-     * search images (for one concerned item, by date) and return the result
+     * search images (for one concerned item. with rdf type, date and json filter value ) 
+     * and return the result
      * @return the images corresponding to the search
      * @throws Exception
      */
@@ -75,7 +76,6 @@ class ImageController extends \yii\web\Controller {
             $searchModel->concernedItems = Yii::$app->request->post()["concernedItems"];
             $searchModel->jsonValueFilter = Yii::$app->request->post()["jsonValueFilter"];
             $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->post());
-            // $startDate =Yii::$app->request->post()["startDate"];
 
             return $this->renderAjax('_simple_images_visualization', [
                         'model' => $searchModel,

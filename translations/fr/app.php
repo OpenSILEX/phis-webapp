@@ -101,6 +101,7 @@ return [
     // D
     'Data' => 'Données',
     'Data file' => 'Fichier de données',
+    'Data Search'=>'Recherche de données',
     'Dataset' => 'Jeux de données',
     'Dataset Creation Date' => 'Données Insérées',
     'Date' => 'Date',
@@ -165,6 +166,9 @@ return [
     'Hemisphericals' => 'Hémisphériques',
 
     // I
+    
+    'Image Search'=>'Recherche d\'images',
+    'Image View'=>'Vue de l\'image',
     'Images Visualization' => 'Visualisation d\'Images',
     'In Service Date' => 'Date de Mise en Service',
     'Insertion status' => 'Statut d\'insertion',
@@ -248,6 +252,7 @@ return [
     // S
     'Scientific Contacts' => 'Contacts scientifiques',
     'Scientific Supervisors' => 'Superviseurs scientifiques',
+    'Search Criteria' =>'Critères de recherche',
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',
     'Select type...' => 'Sélectionez le type',
@@ -259,6 +264,7 @@ return [
     'Server File Path' => 'Lien du Fichier sur le Serveur',
     'Shape' => 'Forme',
     'Shooting Configuration' => 'Configuration de prise de vue',
+    'Show' => 'Voir',
     'Show Images' => 'Afficher les Images',
     'Specific properties' => 'Propriétés spécifiques',
     'Spectral hemispheric reflectance file' => 'Fichier de réflectance hémisphérique spectrale',
