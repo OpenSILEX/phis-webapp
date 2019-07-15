@@ -629,20 +629,7 @@ class ScientificObjectController extends Controller {
             $searchModel->experiment = isset($searchParams["experiment"]) ? $searchParams["experiment"] : null;
         }
         $searchParams = [];
-        // Set page size to 200 for better performances
-<<<<<<< 75562721b1c405f0c10aa5166aa27c214f681ced
-        $searchModel->pageSize = 200;
-
-        //get all the data (if multiple pages) and write them in a file
-        $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
-
-        $headerFile = "ScientificObjectURI" . ScientificObjectController::DELIM_CSV .
-                "Alias" . ScientificObjectController::DELIM_CSV .
-                "RdfType" . ScientificObjectController::DELIM_CSV .
-                "ExperimentURI" . ScientificObjectController::DELIM_CSV .
-                "Geometry" . ScientificObjectController::DELIM_CSV .
-                "\n";
-=======
+        // Set page size to 10000for better performances
         $searchModel->pageSize = 10000;
         
         //get all the data (if multiple pages) and write them in a file
@@ -654,7 +641,6 @@ class ScientificObjectController extends Controller {
                       "ExperimentURI" . ScientificObjectController::DELIM_CSV . 
                       "Geometry" . ScientificObjectController::DELIM_CSV . 
                       "\n";
->>>>>>> optimization of the scientific objects download
 
         $totalPage = 1;
         for ($i = 0; $i < $totalPage; $i++) {
@@ -675,17 +661,6 @@ class ScientificObjectController extends Controller {
                 } else {
                     $wktGeometry = "";
                 }
-<<<<<<< 75562721b1c405f0c10aa5166aa27c214f681ced
-
-                $stringToWrite = $model->uri . ScientificObjectController::DELIM_CSV .
-                        $model->label . ScientificObjectController::DELIM_CSV .
-                        $model->rdfType . ScientificObjectController::DELIM_CSV .
-                        $model->experiment . ScientificObjectController::DELIM_CSV .
-                        '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV .
-                        "\n";
-
-                file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
-=======
             
                 $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV . 
                                  $model->label . ScientificObjectController::DELIM_CSV .
@@ -694,17 +669,12 @@ class ScientificObjectController extends Controller {
                                  '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
                                  "\n";
                 
->>>>>>> optimization of the scientific objects download
             }
 
             $totalPage = intval($searchModel->totalPages);
         }
-<<<<<<< 75562721b1c405f0c10aa5166aa27c214f681ced
-        Yii::$app->response->sendFile($serverFilePath);
-=======
         file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
-        Yii::$app->response->sendFile($serverFilePath); 
->>>>>>> optimization of the scientific objects download
+        Yii::$app->response->sendFile($serverFilePath);
     }
 
     /**

@@ -18,7 +18,7 @@ class config {
     public static function path() {
 
         $appli = 'phis-webapp';
-        $hostname = '147.99.7.91';
+        $hostname = 'localhost';
 
         $basePath = $appli.'/web';
 
