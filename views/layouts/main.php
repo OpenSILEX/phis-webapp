@@ -113,10 +113,6 @@ ToastrAsset::register($this);
                                 [
                                     'label' => Icon::show('search', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'View'),
                                     'url' => ['/data/index']
-//                                ],
-//                                [
-//                                    'label' => Icon::show('chart-line', [], Icon::FA) . " " . Yii::t('app', 'Graphic visualization'),
-//                                    'url' => ['/data/visualization']
                                 ]
                             ]
                         ];

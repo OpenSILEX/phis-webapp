@@ -12,23 +12,30 @@ return [
     //this param should be removed when the new version of data will be used instead of Dataset
     'baseURI' => 'http://www.opensilex.org/demo/',
     //\SILEX:info
+    
     // DataAnalysis and visualisation module activation
     'dataAnalysisModule' => true,
+
     // Index
     'indexPageSize' => 20,
+
     // Forms
     'dateTimeFormatDateTimeRangePickerStandard' => 'Y-m-dTH:i:sZ',
     'dateTimeFormatDateTimePickerUserFriendly' => 'yyyy-mm-dd hh:ii:ss',
     'dateRangeSeparator' => ' - ',
     'textAreaRowsNumber' => 6,
+
     // Annotation
     'annotationWidgetPageSize' => 5,
+
     // Event
     'eventIndexNumberOfConcernedItemsToDisplay' => 3,
     'eventAnnotationWidgetPageSize' => 5,
     'eventWidgetPageSize' => 5,
+
     // Web service
     'webServicePageSizeMax' => 2097152,
+
     // ONTOLOGY -----------------------------------------------------------------
     //-------- Concepts
     'Actuator' => 'http://www.opensilex.org/vocabulary/oeso#Actuator',
@@ -51,18 +58,23 @@ return [
     'AcquisitionSessionUAVDocument' => 'http://www.opensilex.org/vocabulary/oeso#AcquisitionSessionUAVDocument',
     'FieldRobot' => 'http://www.opensilex.org/vocabulary/oeso#FieldRobot',
     'AcquisitionSessionPhenomobileDocument' => 'http://www.opensilex.org/vocabulary/oeso#AcquisitionSessionPhenomobileDocument',
+
     'RadiometricTarget' => 'http://www.opensilex.org/vocabulary/oeso#RadiometricTarget',
     'SpectralHemisphericDirectionalReflectanceFile' => 'http://www.opensilex.org/vocabulary/oeso#SpectralHemisphericDirectionalReflectanceFile',
+
     'Infrastructure' => 'http://www.opensilex.org/vocabulary/oeso#Infrastructure',
     'LocalInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#LocalInfrastructure',
     'NationalInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#NationalInfrastructure',
     'EuropeanInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#EuropeanInfrastructure',
     'Installation' => 'http://www.opensilex.org/vocabulary/oeso#Installation',
+
     // Event
     'event' => 'http://www.opensilex.org/vocabulary/oeev#Event',
     'moveFrom' => 'http://www.opensilex.org/vocabulary/oeev#MoveFrom',
     'moveTo' => 'http://www.opensilex.org/vocabulary/oeev#MoveTo',
+
     'Provenance' => 'http://www.opensilex.org/vocabulary/oeso#Provenance',
+
     //-------- Relations
     'aperture' => 'http://www.opensilex.org/vocabulary/oeso#aperture',
     'brdfP1' => 'http://www.opensilex.org/vocabulary/oeso#brdfP1',
@@ -111,11 +123,12 @@ return [
     'waveband' => 'http://www.opensilex.org/vocabulary/oeso#waveband',
     'wavelength' => 'http://www.opensilex.org/vocabulary/oeso#wavelength',
     'width' => 'http://www.opensilex.org/vocabulary/oeso#width',
+
     // Event
     'from' => 'http://www.opensilex.org/vocabulary/oeev#from',
-    'to' => 'http://www.opensilex.org/vocabulary/oeev#to',
-    //filters
-    'image.filter' =>
-    ['metadata.position' => ['1', '2', '3', '4', '5', '6', '7', '8','9','10'],
+    'to' => 'http://www.opensilex.org/vocabulary/oeev#to', //filters
+    'image.filter' => [
+        'metadata.position' => [
+            '1', '2', '3', '4', '5', '6', '7', '8','9','10'],
     ]
 ];

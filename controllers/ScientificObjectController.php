@@ -756,21 +756,6 @@ class ScientificObjectController extends Controller {
         }
         return json_encode($return, JSON_UNESCAPED_SLASHES);
     }
-
-    public function actionDataVisualizationMultipleScientificObjects() {
-
-        $variableModel = new \app\models\yiiModels\YiiVariableModel();
-        $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
-
-
-        if (isset($_GET['model'])) {
-            $model = $_GET['model'];
-        }
-        return $this->render('test', [
-                    'model' => $model
-        ]);
-    }
-
     /**
      * Generates the page to visualize data about a scientific object.
      * SILEX:info

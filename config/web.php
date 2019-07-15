@@ -41,44 +41,44 @@ $config = [
         ],
         //Translation
         'i18n' => [
-            'translations' => [
-                //liste d'expressions régulières pour déterminer où chercher le fichier
-                'app*' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    //chemin des fichiers
-                    'basePath' => '@app/translations',
-                    'fileMap' => [
-                        //affinage de l'expression régulière avec fichier correspondant
-                        'app' => 'app.php',
-                        'app/messages' => 'messages.php',
-                        'app/error' => 'error.php',
-                    ],
+        'translations' => [
+            //liste d'expressions régulières pour déterminer où chercher le fichier
+            'app*' => [
+                'class' => 'yii\i18n\PhpMessageSource',
+                //chemin des fichiers
+                'basePath' => '@app/translations',
+                'fileMap' => [
+                    //affinage de l'expression régulière avec fichier correspondant
+                    'app' => 'app.php',
+                    'app/messages' => 'messages.php',
+                    'app/error' => 'error.php',
                 ],
-                'yii*' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@app/translations',
-                    'fileMap' => [
-                        'yii' => 'yii.php',
-                    ],
+            ],
+            'yii*' => [
+                'class' => 'yii\i18n\PhpMessageSource',
+                'basePath' => '@app/translations',
+                'fileMap' => [
+                    'yii' => 'yii.php',
                 ],
             ],
         ],
-    /*
-      'urlManager' => [
-      'enablePrettyUrl' => true,
-      'showScriptName' => false,
-      'rules' => [
-      ],
-      ],
-     */
+    ],
+        /*
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+            ],
+        ],
+        */
     ],
     'params' => $params,
     'on beforeRequest' => function() {
-        $preferredLanguage = isset(Yii::$app->request->cookies['language']) ? (string) Yii::$app->request->cookies['language'] : null;
+        $preferredLanguage = isset(Yii::$app->request->cookies['language']) ? (string)Yii::$app->request->cookies['language'] : null;
         if ($preferredLanguage === null) {
-            $preferredLanguage = 'en';
+            $preferredLanguage='en';   
         }
-        Yii::$app->language = $preferredLanguage;
+        Yii::$app->language=$preferredLanguage;
     }
 ];
 

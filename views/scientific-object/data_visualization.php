@@ -29,7 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="scientific-object-data-visualization">
     <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px; line-height: 1.5em;"><?= Yii::t('app', 'Search Criteria') ?><i class ="fa-large fa fa-search"></i></a>
-
     <div class="collapse in" id="data-visualization-form" >
         <?php
         $form = ActiveForm::begin();
@@ -137,7 +136,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <div class="form-group" style="margin-bottom: 0px;">
 
-                <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => Yii::t('app', 'Show Images'), 'onchange' => 'doThings(this);']) ?>
+                <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => Yii::t('app', 'Show Images'), 'onchange' => 'onShow(this);']) ?>
 
             </div>
 
@@ -210,8 +209,6 @@ $this->params['breadcrumbs'][] = $this->title;
             }
             ?>
 
-
-
         </div>
 
         <div class="data-visualization-chart ">
@@ -224,8 +221,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 $series = [];
                 $series[] = ['name' => $data["scientificObjectData"][0]["label"],
                     'data' => $data["scientificObjectData"][0]["data"]];
-
-
                 $url2 = Url::to(['image/search-from-scientific-object']);
                 $objectURI = $model->uri;
                 if ($show) {
@@ -332,9 +327,7 @@ if (isset($data)) {
             $('#graphic').hide();
             $('#visualization-images').hide();
         });
-
     });
-
 
     var checked = $('#showWidget').is(':checked');
     if (checked) {
@@ -343,7 +336,7 @@ if (isset($data)) {
         // reset values
         $('#photoFilter').hide();
     }
-    function doThings(element) {
+    function onShow(element) {
         $('#scientific-object-data-visualization-submit-button').text('<?php echo Yii::t('app', 'Update') ?>');
         var checked = $(element).is(':checked');
         if (checked) {

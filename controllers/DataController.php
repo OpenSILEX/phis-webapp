@@ -16,7 +16,6 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use app\models\yiiModels\YiiModelsConstants;
-use app\models\yiiModels\YiiExperimentModel;
 
 /**
  * CRUD actions for YiiDataModel
@@ -26,7 +25,6 @@ use app\models\yiiModels\YiiExperimentModel;
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class DataController extends Controller {
-
     /**
      * Define the behaviors
      * 
@@ -42,14 +40,7 @@ class DataController extends Controller {
             ],
         ];
     }
-
-    public function actionVisualization() {
-        $experimentModel = new YiiExperimentModel();
-        return $this->render('visualization', [
-                    'model' => $experimentModel
-        ]);
-    }
-
+    
     /**
      * search data (by variable, start date, end date). Used in the
      * experiment map visualisation (layer view)
@@ -57,23 +48,23 @@ class DataController extends Controller {
      */
     public function actionSearchFromLayer() {
         $searchModel = new \app\models\yiiModels\DataSearchLayers();
-
+        
         //1. get Variable uri list
         $variableModel = new \app\models\yiiModels\YiiVariableModel($pageSize = 500);
         $this->view->params["variables"] = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
-
+        
         if ($searchModel->load(Yii::$app->request->post())) {
             $scientificObjects = explode(",", Yii::$app->request->post()["agronomicalObjects"]);
-
+            
             $toReturn["variable"] = $searchModel->variable;
-
+            
             //2. For each given scientific object, get data            
             foreach ($scientificObjects as $scientificObject) {
                 $agronomicalObject = [];
                 $searchModel->object = $scientificObject;
-
+                
                 $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->post());
-
+                
                 /* Build array for highChart
                  * e.g : 
                  * {
@@ -89,25 +80,25 @@ class DataController extends Controller {
                 $agronomicalObject["uri"] = $searchModel->object;
                 foreach ($searchResult->getModels() as $model) {
                     $dataToSave = null;
-                    $dataToSave[] = (strtotime($model->date)) * 1000;
+                    $dataToSave[] = (strtotime($model->date))*1000;
                     $dataToSave[] = doubleval($model->value);
-                    $agronomicalObject["data"][] = $dataToSave;
+                    $agronomicalObject["data"][]= $dataToSave;
                 }
-
+                
                 $toReturn["agronomicalObjects"][] = $agronomicalObject;
             }
-
+            
             return $this->renderAjax('_form_data_graph', [
                         'model' => $searchModel,
                         'data' => $toReturn,
-            ]);
+                   ]);
         } else {
             return $this->renderAjax('_form_data_graph', [
                         'model' => $searchModel
-            ]);
+                   ]);
         }
     }
-
+    
     /**
      * Prepare and show the index page of the data. Use the DataSearch class.
      * @see \app\models\yiiModels\DataSearch
@@ -115,20 +106,20 @@ class DataController extends Controller {
      */
     public function actionIndex() {
         $searchModel = new \app\models\yiiModels\DataSearch();
-
+        
         //list of variables
         $variableModel = new \app\models\yiiModels\YiiVariableModel();
         $variables = $variableModel->getInstancesDefinitionsUrisAndLabel(Yii::$app->session['access_token']);
-
+        
         //Get the search params and update pagination
-        $searchParams = Yii::$app->request->queryParams;
+        $searchParams = Yii::$app->request->queryParams;        
         if (isset($searchParams[YiiModelsConstants::PAGE])) {
-            $searchParams[YiiModelsConstants::PAGE] --;
+            $searchParams[YiiModelsConstants::PAGE]--;
         }
-
+        
         if (empty($searchParams["variable"])) {
             $key = $value = NULL;
-
+            
             //The variable search parameter is required. 
             //If there is no variable, get the first variable uri.
             //SILEX:info
@@ -140,26 +131,26 @@ class DataController extends Controller {
                 break;
             }
         }
-
+        
         $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
-
+        
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN) {
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->render('/site/error', [
-                            'name' => Yii::t('app/messages', 'Internal error'),
-                            'message' => $searchResult]);
+                        'name' => Yii::t('app/messages','Internal error'),
+                        'message' => $searchResult]);
             }
         } else {
             return $this->render('index', [
-                        'searchModel' => $searchModel,
-                        'dataProvider' => $searchResult,
-                        'variables' => $variables
+               'searchModel' => $searchModel,
+               'dataProvider' => $searchResult,
+               'variables' => $variables
             ]);
         }
     }
-
+    
     /**
      * Download a csv corresponding to the search params of the index view of the data search.
      * @return the csv file.
@@ -173,24 +164,24 @@ class DataController extends Controller {
             $searchModel->object = isset($searchParams["object"]) ? $searchParams["object"] : null;
             $searchModel->provenance = isset($searchParams["provenance"]) ? $searchParams["provenance"] : null;
         }
-
+        
         // Set page size to 200 for better performances
         $searchModel->pageSize = 200;
-
+        
         //get all the data (if multiple pages) and write them in a file
         $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
-
+        
         $headerFile = "variable URI" . ScientificObjectController::DELIM_CSV .
-                "variable" . ScientificObjectController::DELIM_CSV .
-                "date" . ScientificObjectController::DELIM_CSV .
-                "value" . ScientificObjectController::DELIM_CSV .
-                "object URI" . ScientificObjectController::DELIM_CSV .
-                "object" . ScientificObjectController::DELIM_CSV .
-                "provenance URI" . ScientificObjectController::DELIM_CSV .
-                "provenance" . ScientificObjectController::DELIM_CSV .
-                "\n";
+                      "variable" . ScientificObjectController::DELIM_CSV .
+                      "date" . ScientificObjectController::DELIM_CSV .
+                      "value" . ScientificObjectController::DELIM_CSV .
+                      "object URI" . ScientificObjectController::DELIM_CSV . 
+                      "object" . ScientificObjectController::DELIM_CSV . 
+                      "provenance URI" . ScientificObjectController::DELIM_CSV . 
+                      "provenance" . ScientificObjectController::DELIM_CSV . 
+                      "\n";
         file_put_contents($serverFilePath, $headerFile);
-
+        
         $totalPage = 1;
         for ($i = 0; $i < $totalPage; $i++) {
             //1. call service for each page
@@ -201,28 +192,27 @@ class DataController extends Controller {
             //2. write in file
             $models = $searchResult->getmodels();
             foreach ($models as $model) {
-                $stringToWrite = $model->variable->uri . ScientificObjectController::DELIM_CSV .
-                        $model->variable->label . ScientificObjectController::DELIM_CSV .
-                        $model->date . ScientificObjectController::DELIM_CSV .
-                        $model->value . ScientificObjectController::DELIM_CSV .
-                        $model->object->uri . ScientificObjectController::DELIM_CSV;
+                $stringToWrite = $model->variable->uri . ScientificObjectController::DELIM_CSV . 
+                                 $model->variable->label . ScientificObjectController::DELIM_CSV . 
+                                 $model->date . ScientificObjectController::DELIM_CSV .
+                                 $model->value . ScientificObjectController::DELIM_CSV .
+                                 $model->object->uri . ScientificObjectController::DELIM_CSV ;
                 $objectLabels = "";
                 if (isset($model->object)) {
                     foreach ($model->object->labels as $label) {
                         $objectLabels .= $label . " ";
                     }
                 }
-
+                
                 $stringToWrite .= $objectLabels . ScientificObjectController::DELIM_CSV .
-                        $model->provenance->uri . ScientificObjectController::DELIM_CSV .
-                        $model->provenance->label . ScientificObjectController::DELIM_CSV .
-                        "\n";
+                                  $model->provenance->uri . ScientificObjectController::DELIM_CSV .
+                                  $model->provenance->label . ScientificObjectController::DELIM_CSV . 
+                                 "\n";
                 file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
             }
-
+            
             $totalPage = intval($searchModel->totalPages);
         }
-        Yii::$app->response->sendFile($serverFilePath);
+        Yii::$app->response->sendFile($serverFilePath); 
     }
-
 }

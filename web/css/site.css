@@ -2,6 +2,7 @@ html,body {
     height: 100%;
 }
 
+/*Vertival list of images on the scientific objects visualization view*/
 ul.images {
   margin: 0;
   padding: 0;

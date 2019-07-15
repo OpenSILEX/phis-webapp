@@ -66,7 +66,7 @@ class YiiDataFileModel extends WSActiveRecord {
     const END_DATE = "endDate";
 
     /**
-     *
+     * a json value for other search parameters  
      * @var string
      */
     public $jsonValueFilter;

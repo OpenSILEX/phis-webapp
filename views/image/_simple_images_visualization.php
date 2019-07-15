@@ -3,13 +3,13 @@
 //******************************************************************************
 //                                       _simple_images_visualization.php
 //
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
+// Author(s): Julien Bonnefont <julien.bonnefont@inra.fr>
 // PHIS-SILEX version 1.0
 // Copyright © - INRA - 2018
 // Creation date: 3 janv. 2018
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  3 janv. 2018
-// Subject: visualisation of images
+// Last modification date:  15 juillet 2019
+// Subject: visualization of images of a scientific object
 //******************************************************************************
 
 use yii\helpers\Html;
