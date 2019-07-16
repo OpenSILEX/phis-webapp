@@ -200,15 +200,47 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
         </div>
-        <div id="visualization-images">
+        <div id="visualization-images"  class="container" >
 
             <?php
             if (isset($data) && isset($show) && $show == true && !empty($data)) {
-                echo "<div class='image-visualization ' style='height:146px;'><br><div class='alert alert-info' id='scientific-object-data-visualization-alert-div' role='alert-info'>
-                    <p>You have to click on data to see images</p>   </div></div>";
+                echo "<div id='image-visualization ' style='height:146px;'><br><div class='alert alert-info' id='scientific-object-data-visualization-alert-div' role='alert-info'>
+                    <p>You have to click on data to see images</p></div></div>";
             }
             ?>
+            <ul id="visualization-images-list" class="images" >
 
+            </ul>
+
+            <div class="modal " id="lightbox">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                                <ol id="carousel-indicators" class="carousel-indicators">
+
+
+                                </ol>
+                                <div id="carousel-inner" class="carousel-inner">
+
+                                </div>
+                                <!-- Controls -->
+                                <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>                   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
         </div>
 
         <div class="data-visualization-chart ">
@@ -262,7 +294,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "   processData: false,"
                                                     . "   datatype: 'json',"
                                                     . "   contentType: false,"
-                                                    . "   data: searchFormData   "
+                                                    . "   data: searchFormData,"
+                                                    . "   imagesCount:this.imagesCount   "
                                                     . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
                                                     ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});"
                                                     . "test2();}")
@@ -314,6 +347,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <script> //Highcharts stuff
     $(document).ready(function () {
+        var imagesCount = 0;
 <?php
 if (isset($data)) {
     echo "$('#data-visualization-form').collapse('hide');";
@@ -331,23 +365,32 @@ if (isset($data)) {
     /**
      in this html fragment, all images information for a day and one scientific object in a special HTML format to be used with a carousel bootstrap
      widget and a vertical list up to the graphic(..)
+     
+     **/
+    function onDayImageListHTMLFragmentReception(data) {
 
-    **/
-    function onDayImageListHTMLFragmentReception(data){
-        
-         $('#visualization-images').html(data);
+        var fragment = $(data);
+        $('#visualization-images-list').append(fragment.find('#image-visualization-list-fragment').html());
+        $('#carousel-indicators').append(fragment.find('#carousel-indicators-fragment').html());
+        $('#carousel-inner').append(fragment.find('#carousel-inner-fragment').html());
+        this.imagesCount = this.imagesCount + fragment.find('#image-visualization-list-fragment').length;
+        $('[data-toggle="tooltip"]').tooltip();
+
     }
-    function test2(){
+
+    function test2() {
         console.log("ça colle colle");
     }
 
     var checked = $('#showWidget').is(':checked');
+
     if (checked) {
         $('#photoFilter').show();
     } else {
         // reset values
         $('#photoFilter').hide();
     }
+
     function onShow(element) {
         $('#scientific-object-data-visualization-submit-button').text('<?php echo Yii::t('app', 'Update') ?>');
         var checked = $(element).is(':checked');

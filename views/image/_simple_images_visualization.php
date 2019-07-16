@@ -19,59 +19,79 @@ use yii\helpers\Url;
 /* @var $model app\models\YiiImageModel */
 ?>
 
-<div class="image-visualization " style="height:146px;">
+<div id="image-visualization " style="height:146px;">
 
 
-    <ul class="images" >
+    <ul id ="image-visualization-list-fragment" class="images" >
         <?php
         if (isset($data) && !empty($data->getModels())) {
             //Preparation of the items array for the sortable widget
-  ;
+
             foreach ($data->getModels() as $image) {
                 $url = Url::to(['image/get', 'imageUri' => urlencode($image->uri)]);
-                 $obj = $model->concernedItems[0];
+                $obj = $model->concernedItems[0];
                 echo
-                '<li >' .
+                '<li  ><a href="#lightbox" data-toggle="modal">' .
                 Html::img($url, [
                     'width' => 200,
-                    'onclick' => 'showImage("' . $url . '")',
+                    //  'onclick' => 'showImage()',
                     'data-html' => 'true',
                     'title' => $obj,
                     'data-toggle' => 'tooltip',
-                    'data-placement' => 'bottom'
+                    'data-placement' => 'bottom',
                 ]) .
-                '</li>';
+                '</a></li>';
             }
-        } else {
-            echo "<br><div class='alert alert-info' id='scientific-object-data-visualization-alert-div' role='alert-info'>
-                    <p>You have to click on data to see images</p>   </div>";
         }
         ?>
     </ul>
-    <!--Image modal-->
-    <div class="modal " id="modal" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <!--<h4 class="modal-title"></h4>-->
-                </div>
-                <div class="modal-body">
-                    <img src=""alt="" id="modalImage" class="img-responsive">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script> //Modal show 
-        function showImage(imagePath) {
-            $('#modalImage').attr("src", imagePath);
-            $('#modal').modal({show: true});
+    <ol id="carousel-indicators-fragment" class="carousel-indicators">
+        <?php
+        if (isset($data) && !empty($data->getModels())) {
+            //Preparation of the items array for the sortable widget
+            $count = $imagesCount;
+            foreach ($data->getModels() as $image) {
+                $first = true;
+                if ($first) {
+                    echo
+                    '<li data-target="#carousel-example-generic" data-slide-to="0" class="active" ></li>';
+                } else {
+                    '<li data-target="#carousel-example-generic" data-slide-to= "' . $count . '"  ></li>';
+                }
+                $first = false;
+                $count += 1;
+            }
         }
-          $('[data-toggle="tooltip"]').tooltip();
-    </script>
+        ?>
+
+    </ol>
+    <div id="carousel-inner-fragment" class="carousel-inner" role="listbox">
+        <?php
+        if (isset($data) && !empty($data->getModels())) {
+            //Preparation of the items array for the sortable widget
+            $first = true;
+            foreach ($data->getModels() as $image) {
+                $url = Url::to(['image/get', 'imageUri' => urlencode($image->uri)]);
+                $obj = $model->concernedItems[0];
+                if ($first) {
+                    echo
+                    ' <div class="item active ">' .
+                    Html::img($url, [
+                    ]) .
+                    '</div>';
+                } else {
+                    echo
+                    ' <div class="item ">' .
+                    Html::img($url, [
+                    ]) .
+                    '</div>';
+                }
+                $first = false;
+            }
+        }
+        ?>
+
+    </div>         
+
 
 </div>
