@@ -26,21 +26,25 @@ use yii\helpers\Url;
         <?php
         if (isset($data) && !empty($data->getModels())) {
             //Preparation of the items array for the sortable widget
-
+  ;
             foreach ($data->getModels() as $image) {
                 $url = Url::to(['image/get', 'imageUri' => urlencode($image->uri)]);
+                 $obj = $model->concernedItems[0];
                 echo
                 '<li >' .
                 Html::img($url, [
                     'width' => 200,
-                    'onclick' => 'showImage("' . $url . '")'
+                    'onclick' => 'showImage("' . $url . '")',
+                    'data-html' => 'true',
+                    'title' => $obj,
+                    'data-toggle' => 'tooltip',
+                    'data-placement' => 'bottom'
                 ]) .
-              '</li>';
+                '</li>';
             }
         } else {
             echo "<br><div class='alert alert-info' id='scientific-object-data-visualization-alert-div' role='alert-info'>
                     <p>You have to click on data to see images</p>   </div>";
-            
         }
         ?>
     </ul>
@@ -67,6 +71,7 @@ use yii\helpers\Url;
             $('#modalImage').attr("src", imagePath);
             $('#modal').modal({show: true});
         }
+          $('[data-toggle="tooltip"]').tooltip();
     </script>
 
 </div>

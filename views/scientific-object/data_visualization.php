@@ -263,9 +263,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "   datatype: 'json',"
                                                     . "   contentType: false,"
                                                     . "   data: searchFormData   "
-                                                    . "}).done(function (data) { $('#visualization-images').html(data);}
+                                                    . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
                                                     ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});"
-                                                    . "}")
+                                                    . "test2();}")
                                         ]
                                     ]
                                 ]
@@ -328,6 +328,18 @@ if (isset($data)) {
             $('#visualization-images').hide();
         });
     });
+    /**
+     in this html fragment, all images information for a day and one scientific object in a special HTML format to be used with a carousel bootstrap
+     widget and a vertical list up to the graphic(..)
+
+    **/
+    function onDayImageListHTMLFragmentReception(data){
+        
+         $('#visualization-images').html(data);
+    }
+    function test2(){
+        console.log("ça colle colle");
+    }
 
     var checked = $('#showWidget').is(':checked');
     if (checked) {
