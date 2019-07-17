@@ -200,36 +200,36 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
         </div>
-        <div id="visualization-images"  class="container" >
+        <div id="visualization-images"   >
 
             <?php
             if (isset($data) && isset($show) && $show == true && !empty($data)) {
-                echo "<div id='image-visualization ' style='height:146px;'><br><div class='alert alert-info' id='scientific-object-data-visualization-alert-div' role='alert-info'>
+                echo "<div id='scientific-object-data-visualization-alert-div' style='height:146px;'><br><div class='alert alert-info' role='alert-info'>
                     <p>You have to click on data to see images</p></div></div>";
             }
             ?>
+            <div id="imagesCount" style="display: none;" data-id=0 ></div>
             <ul id="visualization-images-list" class="images" >
 
             </ul>
 
-            <div class="modal " id="lightbox">
+            <div class="modal carousel and slide " data-ride="carousel"  data-interval="false" id="lightbox">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-body">
-                            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                            <div    >
                                 <ol id="carousel-indicators" class="carousel-indicators">
-
 
                                 </ol>
                                 <div id="carousel-inner" class="carousel-inner">
 
                                 </div>
                                 <!-- Controls -->
-                                <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                                <a class="left carousel-control" href="#lightbox" role="button" data-slide="prev">
                                     <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                                     <span class="sr-only">Previous</span>
                                 </a>
-                                <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                                <a class="right carousel-control" href="#lightbox" role="button" data-slide="next">
                                     <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                                     <span class="sr-only">Next</span>
                                 </a>                   
@@ -237,9 +237,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                 </div>
-
-
-
             </div>
         </div>
 
@@ -289,13 +286,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
                                                     . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT00:00:00+0200', this.x));"
                                                     . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT23:59:00+0200', this.x));"
+                                                    . "searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
                                                     . "$.ajax({url: \"$url2\","
                                                     . "   type: 'POST',"
                                                     . "   processData: false,"
                                                     . "   datatype: 'json',"
                                                     . "   contentType: false,"
                                                     . "   data: searchFormData,"
-                                                    . "   imagesCount:this.imagesCount   "
                                                     . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
                                                     ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});"
                                                     . "test2();}")
@@ -347,7 +344,9 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <script> //Highcharts stuff
     $(document).ready(function () {
-        var imagesCount = 0;
+
+
+
 <?php
 if (isset($data)) {
     echo "$('#data-visualization-form').collapse('hide');";
@@ -370,16 +369,22 @@ if (isset($data)) {
     function onDayImageListHTMLFragmentReception(data) {
 
         var fragment = $(data);
-        $('#visualization-images-list').append(fragment.find('#image-visualization-list-fragment').html());
-        $('#carousel-indicators').append(fragment.find('#carousel-indicators-fragment').html());
-        $('#carousel-inner').append(fragment.find('#carousel-inner-fragment').html());
-        this.imagesCount = this.imagesCount + fragment.find('#image-visualization-list-fragment').length;
-        $('[data-toggle="tooltip"]').tooltip();
-
+        if ($.trim(fragment.find('#carousel-inner-fragment').html())!=='') {
+            $('#scientific-object-data-visualization-alert-div').hide();
+            $('#visualization-images-list').append(fragment.find('#image-visualization-list-fragment').html());
+            $('#carousel-indicators').append(fragment.find('#carousel-indicators-fragment').html());
+            $('#carousel-inner').append(fragment.find('#carousel-inner-fragment').html());
+            $('[data-toggle="tooltip"]').tooltip();
+            console.log(fragment.find('#carousel-inner-fragment').html());
+            $('#imagesCount').attr('data-id', fragment.find('#counterFragment').attr('data-id'));
+        }
+        
     }
+
 
     function test2() {
         console.log("ça colle colle");
+
     }
 
     var checked = $('#showWidget').is(':checked');
