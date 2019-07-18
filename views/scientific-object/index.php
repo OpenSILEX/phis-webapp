@@ -30,15 +30,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
         <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
         <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
-        <?php
-        
-        if ($searchModel->totalCount> 10) {
-            // This button is disabled 
-            echo Html::a(Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('yii', 'Visualization'), ['data-visualization-multiple-scientific-objects', 'model' => $searchModel], ['class' => 'btn btn-success', 'disabled' => 'disabled']);
-        } else {
-            echo Html::a(Icon::show('eye-open', [], Icon::BSG) . " " . Yii::t('yii', 'Visualization'), ['data-visualization-multiple-scientific-objects', 'model' => $searchModel], ['class' => 'btn btn-success']);
-        }
-        ?>
     </p>
 
     <?=

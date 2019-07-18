@@ -23,8 +23,8 @@ use yii\helpers\Url;
     <?php
     if (isset($data) && !empty($data->getModels())) {
         //Preparation of the items array for the sortable widget
-        $count = $imagesCount +count($data->getModels());
-      
+        $count = $imagesCount + count($data->getModels());
+
         echo '<div id="counterFragment" data-id=' . $count . ' ></div>';
     }
     ?>
@@ -38,30 +38,25 @@ use yii\helpers\Url;
             foreach ($data->getModels() as $image) {
                 $url = Url::to(['image/get', 'imageUri' => urlencode($image->uri)]);
                 $obj = $model->concernedItems[0];
+                $date = $image->date;
+                $position = $image->metadata->position;
+                //var_dump($image -> metadata ->position);
 
                 if ($first && $count == 0) {
                     echo
-                    '<li  ><a href="#lightbox" data-toggle="modal"  data-slide-to="0">' .
-                    Html::img($url, [
-                        'width' => 200,
-                        'data-html' => 'true',
-                        'title' => $obj,
-                        'data-toggle' => 'tooltip',
-                        'data-placement' => 'bottom',
-                    ]) .
-                    '</a></li>';
+                    '<li  ><a href="#lightbox" data-toggle="modal"  data-slide-to="0">';
                 } else {
                     echo
-                    '<li  ><a href="#lightbox" data-toggle="modal" data-slide-to= "' . $count . '">' .
-                    Html::img($url, [
-                        'width' => 200,
-                        'data-html' => 'true',
-                        'title' => $obj,
-                        'data-toggle' => 'tooltip',
-                        'data-placement' => 'bottom',
-                    ]) .
-                    '</a></li>';
+                    '<li  ><a href="#lightbox" data-toggle="modal" data-slide-to= "' . $count . '">';
                 }
+                echo Html::img($url, [
+                    'width' => 200,
+                    'data-html' => 'true',
+                    'title' => 'Position: ' . $position . '<br>Date: ' . $date,
+                    'data-toggle' => 'tooltip',
+                    'data-placement' => 'bottom',
+                ]) .
+                '</a></li>';
                 $first = false;
                 $count += 1;
             }
@@ -69,54 +64,54 @@ use yii\helpers\Url;
         ?>
     </ul>
     <ol id="carousel-indicators-fragment" class="carousel-indicators">
-<?php
-if (isset($data) && !empty($data->getModels())) {
-    //Preparation of the items array for the sortable widget
-    $count = $imagesCount;
+        <?php
+        if (isset($data) && !empty($data->getModels())) {
+            //Preparation of the items array for the sortable widget
+            $count = $imagesCount;
 
-    $first = true;
-    foreach ($data->getModels() as $image) {
+            $first = true;
+            foreach ($data->getModels() as $image) {
 
-        if ($first && $count == 0) {
-            echo
-            '<li data-target="#lightbox" data-slide-to="0" class="active" ></li>';
-        } else {
-            echo
-            '<li data-target="#lightbox" data-slide-to= "' . $count . '"  ></li>';
+                if ($first && $count == 0) {
+                    echo
+                    '<li data-target="#lightbox" data-slide-to="0" class="active" ></li>';
+                } else {
+                    echo
+                    '<li data-target="#lightbox" data-slide-to= "' . $count . '"  ></li>';
+                }
+                $first = false;
+                $count += 1;
+            }
         }
-        $first = false;
-        $count += 1;
-    }
-}
-?>
+        ?>
 
     </ol>
     <div id="carousel-inner-fragment" class="carousel-inner" role="listbox">
-<?php
-if (isset($data) && !empty($data->getModels())) {
-    //Preparation of the items array for the sortable widget
-    $first = true;
-     $count = $imagesCount;
-    foreach ($data->getModels() as $image) {
-        $url = Url::to(['image/get', 'imageUri' => urlencode($image->uri)]);
-        $obj = $model->concernedItems[0];
-        if ($first && $count == 0) {
-            echo
-            ' <div class="item active ">' .
-            Html::img($url, [
-            ]) .
-            '</div>';
-        } else {
-            echo
-            ' <div class="item ">' .
-            Html::img($url, [
-            ]) .
-            '</div>';
+        <?php
+        if (isset($data) && !empty($data->getModels())) {
+            //Preparation of the items array for the sortable widget
+            $first = true;
+            $count = $imagesCount;
+            foreach ($data->getModels() as $image) {
+                $url = Url::to(['image/get', 'imageUri' => urlencode($image->uri)]);
+                $obj = $model->concernedItems[0];
+                $date = $image->date;
+                $position = $image->metadata->position;
+                if ($first && $count == 0) {
+                    echo
+                    ' <div class="item pickgradient active ">';
+                } else {
+                    echo
+                    ' <div class="item pickgradient" >';
+                }
+                echo Html::img($url, [
+                ]) .
+                '<div class="carousel-caption">Position: '.$position.'<br>Date: '.$date.'</div>'
+                . '</div>';
+                $first = false;
+            }
         }
-        $first = false;
-    }
-}
-?>
+        ?>
 
     </div>         
 
