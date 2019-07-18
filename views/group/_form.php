@@ -73,7 +73,7 @@ function updateName() {
                     'id' => 'groupName'
                     ],
                 'addon' => [
-                    'prepend' => ['content'=>'ORGANIZATION-'],]]);
+                    'prepend' => ['content'=> Yii::t('app', 'ORGANIZATION') . '-'],]]);
     } else {
         echo $form->field($model, 'name')->textInput(['readonly' => true, 'style' => 'background-color:#C4DAE7;']);
     }
@@ -89,7 +89,7 @@ function updateName() {
             'onChange' => 'updateName();',
             'data-toogle' => 'tooltip',
             'title' => 'Used for the URI. Example : INRA', 
-            'placeholder' => 'ORGANIZATION',
+            'placeholder' => Yii::t('app', 'ORGANIZATION'),
             'data-placement' => 'left']);
     }
     ?>    

@@ -210,6 +210,7 @@ return [
     'On selected plot(s)' => 'Sur les micro parcelles sélectionnées',
     'Ontologies References' => 'Références vers des Ontologies',
     'Organization' => 'Organisme',
+    'ORGANIZATION' => 'ORGANISME',
     'Owner' => 'Propriétaire',
 
     // P
