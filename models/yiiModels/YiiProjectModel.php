@@ -20,7 +20,7 @@ use Yii;
  *  (WSActiveRecord, for the web services access)
  * @see app\models\wsModels\WSProjectModel
  * @see app\models\wsModels\WSActiveRecord
- * @author Morgane Vidal <morgane.vidal@inra.fr>, Arnaud Charleroy <arnaud.charleroy@inra.fr>
+ * @author Morgane Vidal <morgane.vidal@inra.fr>
  * @update [Arnaud Charleroy] 14 September, 2018 : change the value of website attribute from ""  
  *                                                 to null because of the webservice rules validation
  */
@@ -33,6 +33,7 @@ class YiiProjectModel extends WSActiveRecord {
      */
     public $uri;
     const URI = "uri";
+    const LABEL = "label";
     /**
      * the project's name
      *  (e.g. DROught-tolerant yielding PlantS)
@@ -45,41 +46,95 @@ class YiiProjectModel extends WSActiveRecord {
      *  (e.g. DROPS)
      * @var string
      */
-    public $acronyme;
-    const ACRONYME = "acronyme";
+    public $shortname;
+    const SHORTNAME = "shortname";
+    
     /**
-     * the subproject type
-     *  (e.g. http://www.opensilex.org/vocabulary/oeso#CDD)
-     * @var string
+     * The list of projects related to the current project.
+     * @var array 
      */
-    public $subprojectType;
-    const SUBPROJECT_TYPE = "subprojectType";
+    public $relatedProjects;
+    const RELATED_PROJECTS = "relatedProjects";
+    
+    /**
+     * The financial support of the current project.
+     * @var 
+     */
     public $financialSupport;
     const FINANCIAL_SUPPORT = "financialSupport";
-    public $financialName;
-    const FINANCIAL_NAME = "financialName";
-    public $dateStart;
-    const DATE_START = "dateStart";
-    public $dateEnd;
-    const DATE_END = "dateEnd";
-    public $keywords;
-    const KEYWORDS = "keywords";
+    
+    /**
+     * The financial reference of the current project.
+     * @var string
+     */
+    public $financialReference;
+    const FINANCIAL_REFERENCE = "financialReference";
+    
+    /**
+     * The description of the current project.
+     * @var string
+     */
     public $description;
     const DESCRIPTION = "description";
-    public $objective;
-    const OBJECTIVE = "objective";
-    public $parentProject;
-    const PARENT_PROJECT = "parentProject";
-    public $website;
-    const WEBSITE = "website";
-    const CONTACTS = "contacts";
-    const CONTACT_TYPE = "type";
-    const CONTACT_SCIENTIFIC_CONTACT = "http://www.opensilex.org/vocabulary/oeso/#ScientificContact";
-    const CONTACT_PROJECT_COORDINATOR = "http://www.opensilex.org/vocabulary/oeso/#ProjectCoordinator";
-    const CONTACT_ADMINISTRATIVE_CONTACT = "http://www.opensilex.org/vocabulary/oeso/#AdministrativeContact";
-    public $scientificContacts;
+    
+    /**
+     * The date start of the project.
+     * @var string
+     */
+    public $startDate;
+    const DATE_START = "startDate";
+    
+    /**
+     * The date end of the project
+     * @var string
+     */
+    public $endDate;
+    const DATE_END = "endDate";
+    
+    /**
+     * The keywords of the project.
+     * @var array
+     */
+    public $keywords = [];
+    const KEYWORDS = "keywords";
+    
+    /**
+     * The home page of the project.
+     * @var string
+     */
+    public $homePage;
+    const HOME_PAGE = "homePage";
+    
+    /**
+     * The administrative contacts of the project.
+     * @var array
+     */
     public $administrativeContacts;
+    const ADMINISTRATIVE_CONTACTS = "administrativeContacts";
+    const FIRSTNAME = "firstname";
+    const LASTNAME = "lastname";
+    const EMAIL = "email";
+    
+    /**
+     * The project coordinators.
+     * @var array
+     */
     public $projectCoordinatorContacts;
+    const PROJECT_COORDINATORS = "coordinators";
+    
+    /**
+     * The scientific contacts of the project.
+     * @var array
+     */
+    public $scientificContacts;
+    const SCIENTIFIC_CONTACTS = "scientificContacts";
+    
+    /**
+     * The objective of the project.
+     * @var string
+     */
+    public $objective;
+    const OBJECTIVE = "objective";    
     
     public function __construct($pageSize = null, $page = null) {
         $this->wsModel = new WSProjectModel();
@@ -89,16 +144,15 @@ class YiiProjectModel extends WSActiveRecord {
     
     public function rules() {
         return [
-           [['uri', 'dateStart', 'dateEnd', 'name', 'acronyme'], 'required'],
-           [['uri', 'name', 'acronyme', 'dateStart', 'dateEnd', 
-               'scientificContacts', 'administrativeContacts', 'projectCoordinatorContacts'], 'safe'],
+           [['uri', 'dateStart', 'dateEnd', 'name', 'shortname'], 'required'],
+           [['uri', 'name', 'shortname', 'dateStart', 'dateEnd', 
+               'scientificContacts', 'administrativeContacts', 'projectCoordinatorContacts', 'relatedProjects'], 'safe'],
            [['description'], 'string'],
-           [['uri', 'parentProject', 'website'], 'string', 'max' => 300],
-           [['website'],'url'],
+           [['uri', 'homePage'], 'string', 'max' => 300],
+           [['homePage'],'url'],
            [['keywords'], 'string', 'max' => 500],
-           [['name', 'acronyme', 'subprojectType', 'financialSupport', 'financialName'], 'string', 'max' => 200],
-           [['objective'], 'string', 'max' => 256],
-           [['type'], 'string', 'max' => 100]
+           [['name', 'shortname', 'financialSupport', 'financialReference'], 'string', 'max' => 200],
+           [['objective'], 'string', 'max' => 256]
         ];
     }
     
@@ -106,56 +160,89 @@ class YiiProjectModel extends WSActiveRecord {
         return [
           'uri' => 'URI',
           'name' => Yii::t('app', 'Name'),
-          'acronyme' => 'Acronyme',
-          'subprojectType' => Yii::t('app', 'Subproject Type'),
+          'shortname' => Yii::t('app', 'Shortname'),
+          'relatedProjects' => Yii::t('app', 'Related Projects'),
           'financialSupport' => Yii::t('app', 'Financial Support'),
-          'financialName' => Yii::t('app', 'Financial Name'),
+          'financialReference' => Yii::t('app', 'Financial Reference'),
+          'description' => Yii::t('app', 'Description'),
           'dateStart' => Yii::t('app', 'Date Start'),
           'dateEnd' => Yii::t('app', 'Date End'),
           'keywords' => Yii::t('app', 'Keywords'),
-          'description' => 'Description',
-          'objective' => Yii::t('app', 'Objective'),
-          'parentProject' => Yii::t('app', 'Subproject Of'),
-          'website' => Yii::t('app', 'Website'),
-          'scientificContacts' => Yii::t('app', 'Scientific Contacts'),
+          'homePage' => Yii::t('app', 'Homepage'),
           'administrativeContacts' => Yii::t('app', 'Administrative Contacts'), 
-          'projectCoordinatorContacts' => Yii::t('app', 'Project Coordinators'),  
+          'projectCoordinatorContacts' => Yii::t('app', 'Project Coordinators'),
+          'scientificContacts' => Yii::t('app', 'Scientific Contacts'),
+          'objective' => Yii::t('app', 'Objective')
         ];
     }
     
     /**
-     * Permet de remplir les attributs en fonction des informations 
+     * Fill the attributes of the project from the content of the array given in parameter. 
      * comprises dans le tableau passé en paramètre
      * @param array $array tableau clé => valeur contenant les valeurs des attributs du projet
      */
     protected function arrayToAttributes($array) {
         $this->uri = $array[YiiProjectModel::URI];
         $this->name = $array[YiiProjectModel::NAME];
-        $this->acronyme = $array[YiiProjectModel::ACRONYME];
-        $this->subprojectType = $array[YiiProjectModel::SUBPROJECT_TYPE];
-        $this->financialSupport = $array[YiiProjectModel::FINANCIAL_SUPPORT];
-        $this->financialName = $array[YiiProjectModel::FINANCIAL_NAME];
-        $this->dateStart = $array[YiiProjectModel::DATE_START];
-        $this->dateEnd = $array[YiiProjectModel::DATE_END];
-        $this->keywords = $array[YiiProjectModel::KEYWORDS];
-        $this->description = $array[YiiProjectModel::DESCRIPTION];
-        $this->objective = $array[YiiProjectModel::OBJECTIVE];
-        $this->parentProject = $array[YiiProjectModel::PARENT_PROJECT];
-        $this->website = $array[YiiProjectModel::WEBSITE];
+        $this->shortname = $array[YiiProjectModel::SHORTNAME];
         
-        if (isset($array[YiiProjectModel::CONTACTS])) {
-            foreach ($array[YiiProjectModel::CONTACTS] as $contact) {
-                $projectContact[YiiUserModel::FIRST_NAME] = $contact->{YiiUserModel::FIRST_NAME};
-                $projectContact[YiiUserModel::FAMILY_NAME] = $contact->{YiiUserModel::FAMILY_NAME};
-                $projectContact[YiiUserModel::EMAIL] = $contact->{YiiUserModel::EMAIL};
-
-                if ($contact->{YiiProjectModel::CONTACT_TYPE} === YiiProjectModel::CONTACT_SCIENTIFIC_CONTACT) {
-                    $this->scientificContacts[] = $projectContact;
-                } else if ($contact->{YiiProjectModel::CONTACT_TYPE} === YiiProjectModel::CONTACT_ADMINISTRATIVE_CONTACT) {
-                    $this->administrativeContacts[] = $projectContact;
-                } else {
-                    $this->projectCoordinatorContacts[] = $projectContact;
-                }
+        if (isset($array[YiiProjectModel::FINANCIAL_SUPPORT])) {
+            $this->financialSupport->uri = $array[YiiProjectModel::FINANCIAL_SUPPORT]->uri;
+            $this->financialSupport->label = $array[YiiProjectModel::FINANCIAL_SUPPORT]->label;
+        }
+        
+        if (isset($array[YiiProjectModel::RELATED_PROJECTS])) {
+            foreach($array[YiiProjectModel::RELATED_PROJECTS] as $relatedProject) {
+                $newRelatedProject->uri = $relatedProject[YiiProjectModel::URI];
+                $newRelatedProject->label = $relatedProject[YiiProjectModel::LABEL];
+                $this->relatedProjects[] = $newRelatedProject;
+            }
+        }
+        
+        $this->financialReference = $array[YiiProjectModel::FINANCIAL_REFERENCE];
+        $this->description = $array[YiiProjectModel::DESCRIPTION];
+        $this->startDate = $array[YiiProjectModel::DATE_START];
+        $this->endDate = $array[YiiProjectModel::DATE_END];
+        
+        if (isset($array[YiiProjectModel::KEYWORDS])) {
+            foreach ($array[YiiProjectModel::KEYWORDS] as $keyword) {
+                $this->keywords[] = $keyword;
+            }
+        }
+        
+        $this->homePage = $array[YiiProjectModel::HOME_PAGE];
+        $this->objective = $array[YiiProjectModel::OBJECTIVE];
+        
+        if (isset($array[YiiProjectModel::ADMINISTRATIVE_CONTACTS])) {
+            foreach ($array[YiiProjectModel::ADMINISTRATIVE_CONTACTS] as $administrativeContact) {
+                $newAdministrativeContact->uri = $administrativeContact->uri;
+                $newAdministrativeContact->firstname = $administrativeContact->firstname;
+                $newAdministrativeContact->lastname = $administrativeContact->lastname;
+                $newAdministrativeContact->email = $administrativeContact->email;
+                
+                $this->administrativeContacts[] = $newAdministrativeContact;
+            }
+        }
+        
+        if (isset($array[YiiProjectModel::PROJECT_COORDINATORS])) {
+            foreach ($array[YiiProjectModel::PROJECT_COORDINATORS] as $projectCoordinator) {
+                $newProjectCoordinator->uri = $projectCoordinator->uri;
+                $newProjectCoordinator->firstname = $projectCoordinator->firstname;
+                $newProjectCoordinator->lastname = $projectCoordinator->lastname;
+                $newProjectCoordinator->email = $projectCoordinator->email;
+                
+                $this->projectCoordinatorContacts[] = $newProjectCoordinator;
+            }
+        }
+        
+        if (isset($array[YiiProjectModel::SCIENTIFIC_CONTACTS])) {
+            foreach ($array[YiiProjectModel::SCIENTIFIC_CONTACTS] as $scientificContact) {
+                $newScientificContactContact->uri = $scientificContact->uri;
+                $newScientificContactContact->firstname = $scientificContact->firstname;
+                $newScientificContactContact->lastname = $scientificContact->lastname;
+                $newScientificContactContact->email = $scientificContact->email;
+                
+                $this->scientificContacts[] = $newScientificContactContact;
             }
         }
     }
@@ -169,16 +256,27 @@ class YiiProjectModel extends WSActiveRecord {
         $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiProjectModel::URI] = $this->uri;
         $elementForWebService[YiiProjectModel::NAME] = $this->name;
-        $elementForWebService[YiiProjectModel::ACRONYME]= $this->acronyme;
-        $elementForWebService[YiiProjectModel::SUBPROJECT_TYPE] = $this->subprojectType;
+        $elementForWebService[YiiProjectModel::SHORTNAME]= $this->shortname;
+        
+        if ($this->relatedProjects != null) {
+            foreach ($this->relatedProjects as $relatedProject) {
+                $elementForWebService[YiiProjectModel::RELATED_PROJECTS] = $relatedProject;
+            }
+        }
+        
         $elementForWebService[YiiProjectModel::FINANCIAL_SUPPORT] = $this->financialSupport;
-        $elementForWebService[YiiProjectModel::FINANCIAL_NAME] = $this->financialName;
-        $elementForWebService[YiiProjectModel::DATE_START] = $this->dateStart;
-        $elementForWebService[YiiProjectModel::DATE_END] = $this->dateEnd;
-        $elementForWebService[YiiProjectModel::KEYWORDS] = $this->keywords;
+        $elementForWebService[YiiProjectModel::FINANCIAL_REFERENCE] = $this->financialReference;
+        $elementForWebService[YiiProjectModel::DATE_START] = $this->startDate;
+        $elementForWebService[YiiProjectModel::DATE_END] = $this->endDate;
+        
+        if ($this->keywords != null) {
+            foreach ($this->keywords as $keyword) {
+                $elementForWebService[YiiProjectModel::KEYWORDS][] = $keyword;
+            }
+        }
+        
         $elementForWebService[YiiProjectModel::DESCRIPTION] = $this->description;
         $elementForWebService[YiiProjectModel::OBJECTIVE] = $this->objective;
-        $elementForWebService[YiiProjectModel::PARENT_PROJECT] = $this->parentProject;
 
         //SILEX:info
         // Unlike the other text attributes (description, keywords, etc.) 
@@ -188,29 +286,23 @@ class YiiProjectModel extends WSActiveRecord {
         // will raise an 400 error like:
         // [postProject.arg0[0].website]website is not an URL  | Invalid value
         //\SILEX:info
-        $elementForWebService[YiiProjectModel::WEBSITE] = ($this->website === "") ? null : $this->website;
+        $elementForWebService[YiiProjectModel::HOME_PAGE] = ($this->homePage === "") ? null : $this->homePage;
         
         if ($this->administrativeContacts != null) {
             foreach ($this->administrativeContacts as $administrativeContact) {
-               $contact[YiiProjectModel::CONTACT_TYPE] = YiiProjectModel::CONTACT_ADMINISTRATIVE_CONTACT;
-               $contact[YiiUserModel::EMAIL] = $administrativeContact;
-               $elementForWebService[YiiProjectModel::CONTACTS][] = $contact;
+               $elementForWebService[YiiProjectModel::ADMINISTRATIVE_CONTACTS][] = $administrativeContact;
             }
         }
         
         if ($this->projectCoordinatorContacts != null) {
             foreach ($this->projectCoordinatorContacts as $projectCoordinator) {
-                $contact[YiiProjectModel::CONTACT_TYPE] = YiiProjectModel::CONTACT_PROJECT_COORDINATOR;
-                $contact[YiiUserModel::EMAIL] = $projectCoordinator;
-                $elementForWebService[YiiProjectModel::CONTACTS][] = $contact;
+                $elementForWebService[YiiProjectModel::PROJECT_COORDINATORS][] = $projectCoordinator;
             }
         }
         
         if ($this->scientificContacts != null) {
             foreach ($this->scientificContacts as $scientificContact) {
-               $contact[YiiProjectModel::CONTACT_TYPE] = YiiProjectModel::CONTACT_SCIENTIFIC_CONTACT;
-               $contact[YiiUserModel::EMAIL] = $scientificContact;
-               $elementForWebService[YiiProjectModel::CONTACTS][] = $contact;
+               $elementForWebService[YiiProjectModel::SCIENTIFIC_CONTACTS][] = $scientificContact;
             }
         }
         

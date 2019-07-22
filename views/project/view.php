@@ -44,7 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a(Yii::t('app', 'Add Document'), [
                 'document/create', 
                 'concernedItemUri' => $model->uri, 
-                'concernedItemLabel' => $model->acronyme, 
+                'concernedItemLabel' => $model->shortname, 
                 'concernedItemRdfType' => Yii::$app->params["Project"],
                 YiiDocumentModel::RETURN_URL => Url::current()
             ], ['class' => $dataDocumentsProvider->getCount() > 0 ? 'btn btn-success' : 'btn btn-warning'])?>
@@ -59,30 +59,27 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'uri',
-            'acronyme',
+            'shortname',
             'name',
-            //'parentProject',
-            [
-                'attribute' => 'parentProject',
-                'format' => 'raw',
-                'value' => Html::a($model->parentProject, ['view', 'id' => $model->parentProject])
-            ],
-            'subprojectType',
             'objective',
-            'financialSupport',
-            'financialName',
             [
-                'attribute' => 'dateStart',
+                'attribute' => 'financialSupport',
+                'format' => 'raw',
+                'value' => $model->financialSupport->label . " (" . $model->financialSupport->uri . ")"
+            ],
+            'financialReference',
+            [
+                'attribute' => 'startDate',
                 'format' => 'raw',
                 'value' => function($model) {
-                    return date_format(date_create($model->dateStart), 'jS F Y');
+                    return date_format(date_create($model->startDate), 'jS F Y');
                 }
             ],
             [
-                'attribute' => 'dateEnd',
+                'attribute' => 'endDate',
                 'format' => 'raw',
                 'value' => function($model) {
-                    return date_format(date_create($model->dateEnd), 'jS F Y');
+                    return date_format(date_create($model->endDate), 'jS F Y');
                 }
             ],
             [
@@ -92,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $toReturn = "";
                     if (count($model->scientificContacts) > 0) {
                         foreach ($model->scientificContacts as $scientificContact) {
-                            $toReturn .= Html::a($scientificContact["firstName"] . " " . $scientificContact["familyName"], ['user/view', 'id' => $scientificContact["email"]]);
+                            $toReturn .= Html::a($scientificContact->firstname . " " . $scientificContact->lastname, ['user/view', 'id' => $scientificContact->email]);
                             $toReturn .= ", ";
                         }
                         $toReturn = rtrim($toReturn, ", ");
@@ -107,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $toReturn = "";
                     if (is_array($model->administrativeContacts) && count($model->administrativeContacts) > 0) {
                         foreach ($model->administrativeContacts as $administrativeContact) {
-                            $toReturn .= Html::a($administrativeContact["firstName"] . " " . $administrativeContact["familyName"], ['user/view', 'id' => $administrativeContact["email"]]);
+                            $toReturn .= Html::a($administrativeContact->firstname . " " . $administrativeContact->lastname, ['user/view', 'id' => $administrativeContact->email]);
                             $toReturn .= ", ";
                         }
                         $toReturn = rtrim($toReturn, ", ");
@@ -122,7 +119,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $toReturn = "";
                     if (count($model->projectCoordinatorContacts) > 0) {
                         foreach ($model->projectCoordinatorContacts as $projectCoordinatorContact) {
-                            $toReturn .= Html::a($projectCoordinatorContact["firstName"] . " " . $projectCoordinatorContact["familyName"], ['user/view', 'id' => $projectCoordinatorContact["email"]]);
+                            $toReturn .= Html::a($projectCoordinatorContact->firstname . " " . $projectCoordinatorContact->lastname, ['user/view', 'id' => $projectCoordinatorContact->email]);
                             $toReturn .= ", ";
                         }
                         $toReturn = rtrim($toReturn, ", ");
@@ -131,11 +128,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute' => 'website',
+                'attribute' => 'homePage',
                 'format' => 'raw',
-                'value' => Html::a($model->website, $model->website)
+                'value' => Html::a($model->homePage, $model->homePage)
             ],
-            'keywords',
+            [
+                'attribute' => 'keywords',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    $toReturn = "";
+                    foreach ($model->keywords as $keyword) {
+                        $toReturn .= $keyword . " ";
+                    }
+                    return $toReturn;
+                }
+            ],
             [
                 'attribute' => 'description',
                 'contentOptions' => ['class' => 'multi-line'], 
@@ -170,7 +177,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
     
-    <!-- Sensor events -->
+    <!-- events -->
     <?php
         echo EventGridViewWidget::widget(
             [

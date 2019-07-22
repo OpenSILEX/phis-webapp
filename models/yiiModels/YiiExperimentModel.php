@@ -234,7 +234,7 @@ class YiiExperimentModel extends WSActiveRecord {
         if (isset($array[YiiExperimentModel::PROJECTS])) {
             foreach ($array[YiiExperimentModel::PROJECTS] as $project) {
                 $experimentProject[YiiProjectModel::URI] = $project->{YiiProjectModel::URI};
-                $experimentProject[YiiProjectModel::ACRONYME] = $project->{YiiProjectModel::ACRONYME};
+                $experimentProject[YiiProjectModel::SHORTNAME] = $project->{YiiProjectModel::SHORTNAME};
                 $this->projects[] = $experimentProject;            
             }
         }

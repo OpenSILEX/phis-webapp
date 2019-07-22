@@ -41,17 +41,21 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            //'uri',
-            //'name',
-            'acronyme',
-            'financialSupport',
+            'shortname',
             [
-              'attribute' => 'dateStart',
+              'attribute' => 'financialSupport',
               'format' => 'raw',
-               'value' => 'dateStart',
+              'value' => function($model, $key, $index) {
+                    return $model->financialSupport->label;
+               },
+            ],
+            [
+              'attribute' => 'startDate',
+              'format' => 'raw',
+              'value' => 'startDate',
               'filter' => DatePicker::widget([
                     'model' => $searchModel, 
-                    'attribute' => 'dateStart',
+                    'attribute' => 'startDate',
                     'pluginOptions' => [
                         'autoclose'=>true,
                         'format' => 'yyyy-mm-dd'
@@ -59,27 +63,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]),
             ],
             [
-              'attribute' => 'dateEnd',
+              'attribute' => 'endDate',
               'format' => 'raw',
-               'value' => 'dateEnd',
+               'value' => 'endDate',
               'filter' => DatePicker::widget([
                     'model' => $searchModel, 
-                    'attribute' => 'dateEnd',
+                    'attribute' => 'endDate',
                     'pluginOptions' => [
                         'autoclose'=>true,
                         'format' => 'yyyy-mm-dd'
                     ]
                 ]),
             ],
-            // 'subprojectType',
-            // 'financialName',
-            // 'keywords',
-            // 'description',
-            // 'objective',
-            // 'parentProject',
-            // 'scientificContact',
-            // 'administrativeContact',
-            // 'projectCoordinator'
 
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',
