@@ -429,9 +429,9 @@ class ScientificObjectController extends Controller {
                 if ($cpt === 200 || $cpt === $objectsToInsert) {
                     $objectsToInsert = $objectsToInsert - $cpt;
                     $cpt = 0;
-                    
+
                     $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
-                
+
                     if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
                         foreach ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES} as $scientificObjectUri) {
                             $return["objectUris"][] = $scientificObjectUri;
@@ -631,16 +631,16 @@ class ScientificObjectController extends Controller {
         $searchParams = [];
         // Set page size to 10000for better performances
         $searchModel->pageSize = 10000;
-        
+
         //get all the data (if multiple pages) and write them in a file
         $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
 
         $stringToWrite = "ScientificObjectURI" . ScientificObjectController::DELIM_CSV .
-                      "Alias" . ScientificObjectController::DELIM_CSV .
-                      "RdfType" . ScientificObjectController::DELIM_CSV .
-                      "ExperimentURI" . ScientificObjectController::DELIM_CSV . 
-                      "Geometry" . ScientificObjectController::DELIM_CSV . 
-                      "\n";
+                "Alias" . ScientificObjectController::DELIM_CSV .
+                "RdfType" . ScientificObjectController::DELIM_CSV .
+                "ExperimentURI" . ScientificObjectController::DELIM_CSV .
+                "Geometry" . ScientificObjectController::DELIM_CSV .
+                "\n";
 
         $totalPage = 1;
         for ($i = 0; $i < $totalPage; $i++) {
@@ -661,14 +661,13 @@ class ScientificObjectController extends Controller {
                 } else {
                     $wktGeometry = "";
                 }
-            
-                $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV . 
-                                 $model->label . ScientificObjectController::DELIM_CSV .
-                                 $model->rdfType . ScientificObjectController::DELIM_CSV .
-                                 $model->experiment . ScientificObjectController::DELIM_CSV . 
-                                 '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
-                                 "\n";
-                
+
+                $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV .
+                        $model->label . ScientificObjectController::DELIM_CSV .
+                        $model->rdfType . ScientificObjectController::DELIM_CSV .
+                        $model->experiment . ScientificObjectController::DELIM_CSV .
+                        '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV .
+                        "\n";
             }
 
             $totalPage = intval($searchModel->totalPages);
@@ -756,6 +755,7 @@ class ScientificObjectController extends Controller {
         }
         return json_encode($return, JSON_UNESCAPED_SLASHES);
     }
+
     /**
      * Generates the page to visualize data about a scientific object.
      * SILEX:info
@@ -822,26 +822,55 @@ class ScientificObjectController extends Controller {
              *  }]
              * }
              */
+            
+            /* Build array for highChart
+             * e.g : 
+             * {
+             *   "variable": "http:\/\/www.opensilex.org\/demo\/id\/variable\/v0000001",
+             *   "scientificObjectData": [
+             *          "label": "Scientific object label",
+             *          "dataFromProvenance": [
+             *                     "provenance":"Data provenance uri",
+             *                     "data": ["1,874809","2015-02-10"],
+             *                             ["2,313261","2015-03-15"],..
+             *    ]
+             *  ]
+             * }
+             */
+            
             $data = [];
             $scientificObjectData["label"] = $label;
             foreach ($searchResult->getModels() as $model) {
                 if (!empty($model->value)) {
                     $dataToSave = null;
-                    $dataToSave[] = (strtotime($model->date)) * 1000;
-                    $dataToSave[] = doubleval($model->value);
+                    $dataToSave["provenanceUri"] = $model->provenanceUri;
+                    $dataToSave["date"] = (strtotime($model->date)) * 1000;
+                    $dataToSave["value"] = doubleval($model->value);
                     $data[] = $dataToSave;
                 }
+            }
+            // Transform to map based to the provenance value
+
+            $dataByProvenance = array();
+            foreach ($data as $dataEl) {
+                $dataByProvenanceToSave = null;
+                $dataByProvenanceToSave[] = $dataEl['date'];
+                $dataByProvenanceToSave[] = $dataEl['value'];
+                $dataByProvenance[$dataEl['provenanceUri']][] = $dataByProvenanceToSave;
             }
 
             if (!empty($data)) {
                 $toReturn["variable"] = $searchModel->variable;
-                $scientificObjectData["data"] = $data;
+                $scientificObjectData["dataFromProvenance"] = $dataByProvenance;
                 $toReturn["scientificObjectData"][] = $scientificObjectData;
             }
+            
+            
+            
             //on FORM submitted:
             //check if image visualization is activated
             $show = isset($_POST['show']) ? $_POST['show'] : null;
-           
+
             $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
@@ -861,7 +890,8 @@ class ScientificObjectController extends Controller {
                         'imageTypeSelected' => $imageTypeSelected,
                         'selectedProvenance' => $selectedProvenance,
                         'selectedPosition' => $selectedPosition,
-                        'filterToSend' => $filterToSend
+                        'filterToSend' => $filterToSend,
+                        'test' => $searchResult->getModels(),
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [

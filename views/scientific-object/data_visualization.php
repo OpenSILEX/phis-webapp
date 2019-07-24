@@ -28,9 +28,11 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="scientific-object-data-visualization">
+
     <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px; line-height: 1.5em;"><?= Yii::t('app', 'Search Criteria') ?><i class ="fa-large fa fa-search"></i></a>
     <div class="collapse in" id="data-visualization-form" >
         <?php
+       
         $form = ActiveForm::begin();
         if (empty($variables)) {
             echo "<p>" . Yii::t('app/messages', 'No variables linked to the experiment of the scientific object.') . "</p>";
@@ -248,19 +250,29 @@ $this->params['breadcrumbs'][] = $this->title;
                 echo "  <div class='well '><p>" . Yii::t('app/messages', 'No result found.') . "</p></div>";
             } else {
                 $series = [];
-                $series[] = ['name' => $data["scientificObjectData"][0]["label"],
-                    'data' => $data["scientificObjectData"][0]["data"]];
+                foreach ($data["scientificObjectData"][0]["dataFromProvenance"]as $dataFromProvenanceKey =>$dataFromProvenanceValue) {
+                    $series[] = ['name' => $dataFromProvenanceKey,
+                        'data' => $dataFromProvenanceValue];
+                }
+
                 $url2 = Url::to(['image/search-from-scientific-object']);
                 $objectURI = $model->uri;
                 if ($show) {
                     echo Highcharts::widget([
                         'id' => 'graphic',
                         'options' => [
-                            'title' => ['text' => $variables[$data["variable"]]],
+                            'chart'=> [
+                                'zoomType'=>'x'
+                            ],
+                            'title' => [
+                                'text' => $variables[$data["variable"]]
+                            ],
+                            'subtitle'=>[
+                                'text'=>'Click and drag in the plot area to zoom in'
+                            ],
                             'xAxis' => [
                                 'type' => 'datetime',
-                                'title' => 'Date',
-                            ],
+                                'title' => 'Date'],
                             'yAxis' => [
                                 'title' => null,
                                 'labels' => [
@@ -278,11 +290,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'events' => [
                                             'click' => new JsExpression(" function() {"
                                                     . "var searchFormData = new FormData();"
-                                                    . "console.log('URI :'+\"$objectURI\");"
-                                                    . "console.log('url :'+\"$url2\");"
+                                                    . "console.log(this.series.name);"
                                                     . "searchFormData.append('concernedItems[]', \"$objectURI\");"
                                                     . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
-                                                    . "searchFormData.append('provenance',\"$selectedProvenance\");"
+                                                    . "searchFormData.append('provenance',this.series.name);"
                                                     . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
                                                     . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT00:00:00+0200', this.x));"
                                                     . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT23:59:00+0200', this.x));"
@@ -297,7 +308,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});"
                                                     . "test2();}")
                                         ]
-                                    ]
+                                    ],
+                                    
                                 ]
                             ]
                         ]
@@ -306,7 +318,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     echo Highcharts::widget([
                         'id' => 'graphic',
                         'options' => [
+                            'chart'=> [
+                                'zoomType'=>'x'
+                            ],
                             'title' => ['text' => $variables[$data["variable"]]],
+                            'subtitle'=>[
+                                'text'=>'Click and drag in the plot area to zoom in'
+                            ],
                             'xAxis' => [
                                 'type' => 'datetime',
                                 'title' => 'Date',
@@ -369,7 +387,7 @@ if (isset($data)) {
     function onDayImageListHTMLFragmentReception(data) {
 
         var fragment = $(data);
-        if ($.trim(fragment.find('#carousel-inner-fragment').html())!=='') {
+        if ($.trim(fragment.find('#carousel-inner-fragment').html()) !== '') {
             $('#scientific-object-data-visualization-alert-div').hide();
             $('#visualization-images-list').append(fragment.find('#image-visualization-list-fragment').html());
             $('#carousel-indicators').append(fragment.find('#carousel-indicators-fragment').html());
@@ -378,7 +396,7 @@ if (isset($data)) {
             console.log(fragment.find('#carousel-inner-fragment').html());
             $('#imagesCount').attr('data-id', fragment.find('#counterFragment').attr('data-id'));
         }
-        
+
     }
 
 
