@@ -11,6 +11,7 @@ namespace app\models\yiiModels;
 
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSProjectModel;
+use app\models\wsModels\WSUriModel;
 
 use Yii;
 
@@ -57,11 +58,11 @@ class YiiProjectModel extends WSActiveRecord {
     const RELATED_PROJECTS = "relatedProjects";
     
     /**
-     * The financial support of the current project.
+     * The financial funding of the current project.
      * @var 
      */
-    public $financialSupport;
-    const FINANCIAL_SUPPORT = "financialSupport";
+    public $financialFunding;
+    const FINANCIAL_FUNDING = "financialFunding";
     
     /**
      * The financial reference of the current project.
@@ -144,14 +145,13 @@ class YiiProjectModel extends WSActiveRecord {
     
     public function rules() {
         return [
-           [['uri', 'dateStart', 'dateEnd', 'name', 'shortname'], 'required'],
+           [['uri', 'startDate', 'endDate', 'name', 'shortname'], 'required'],
            [['uri', 'name', 'shortname', 'dateStart', 'dateEnd', 
-               'scientificContacts', 'administrativeContacts', 'projectCoordinatorContacts', 'relatedProjects'], 'safe'],
+               'scientificContacts', 'administrativeContacts', 'projectCoordinatorContacts', 'relatedProjects', 'keywords'], 'safe'],
            [['description'], 'string'],
            [['uri', 'homePage'], 'string', 'max' => 300],
            [['homePage'],'url'],
-           [['keywords'], 'string', 'max' => 500],
-           [['name', 'shortname', 'financialSupport', 'financialReference'], 'string', 'max' => 200],
+           [['name', 'shortname', 'financialFunding', 'financialReference'], 'string', 'max' => 200],
            [['objective'], 'string', 'max' => 256]
         ];
     }
@@ -162,7 +162,7 @@ class YiiProjectModel extends WSActiveRecord {
           'name' => Yii::t('app', 'Name'),
           'shortname' => Yii::t('app', 'Shortname'),
           'relatedProjects' => Yii::t('app', 'Related Projects'),
-          'financialSupport' => Yii::t('app', 'Financial Support'),
+          'financialFunding' => Yii::t('app', 'Financial Funding'),
           'financialReference' => Yii::t('app', 'Financial Reference'),
           'description' => Yii::t('app', 'Description'),
           'dateStart' => Yii::t('app', 'Date Start'),
@@ -186,13 +186,14 @@ class YiiProjectModel extends WSActiveRecord {
         $this->name = $array[YiiProjectModel::NAME];
         $this->shortname = $array[YiiProjectModel::SHORTNAME];
         
-        if (isset($array[YiiProjectModel::FINANCIAL_SUPPORT])) {
-            $this->financialSupport->uri = $array[YiiProjectModel::FINANCIAL_SUPPORT]->uri;
-            $this->financialSupport->label = $array[YiiProjectModel::FINANCIAL_SUPPORT]->label;
+        if (isset($array[YiiProjectModel::FINANCIAL_FUNDING])) {
+            $this->financialFunding->uri = $array[YiiProjectModel::FINANCIAL_FUNDING]->uri;
+            $this->financialFunding->label = $array[YiiProjectModel::FINANCIAL_FUNDING]->label;
         }
         
         if (isset($array[YiiProjectModel::RELATED_PROJECTS])) {
             foreach($array[YiiProjectModel::RELATED_PROJECTS] as $relatedProject) {
+                $newRelatedProject = null;
                 $newRelatedProject->uri = $relatedProject[YiiProjectModel::URI];
                 $newRelatedProject->label = $relatedProject[YiiProjectModel::LABEL];
                 $this->relatedProjects[] = $newRelatedProject;
@@ -215,6 +216,7 @@ class YiiProjectModel extends WSActiveRecord {
         
         if (isset($array[YiiProjectModel::ADMINISTRATIVE_CONTACTS])) {
             foreach ($array[YiiProjectModel::ADMINISTRATIVE_CONTACTS] as $administrativeContact) {
+                $newAdministrativeContact = null;
                 $newAdministrativeContact->uri = $administrativeContact->uri;
                 $newAdministrativeContact->firstname = $administrativeContact->firstname;
                 $newAdministrativeContact->lastname = $administrativeContact->lastname;
@@ -226,6 +228,7 @@ class YiiProjectModel extends WSActiveRecord {
         
         if (isset($array[YiiProjectModel::PROJECT_COORDINATORS])) {
             foreach ($array[YiiProjectModel::PROJECT_COORDINATORS] as $projectCoordinator) {
+                $newProjectCoordinator = null;
                 $newProjectCoordinator->uri = $projectCoordinator->uri;
                 $newProjectCoordinator->firstname = $projectCoordinator->firstname;
                 $newProjectCoordinator->lastname = $projectCoordinator->lastname;
@@ -237,12 +240,13 @@ class YiiProjectModel extends WSActiveRecord {
         
         if (isset($array[YiiProjectModel::SCIENTIFIC_CONTACTS])) {
             foreach ($array[YiiProjectModel::SCIENTIFIC_CONTACTS] as $scientificContact) {
-                $newScientificContactContact->uri = $scientificContact->uri;
-                $newScientificContactContact->firstname = $scientificContact->firstname;
-                $newScientificContactContact->lastname = $scientificContact->lastname;
-                $newScientificContactContact->email = $scientificContact->email;
+                $newScientificContact = null;
+                $newScientificContact->uri = $scientificContact->uri;
+                $newScientificContact->firstname = $scientificContact->firstname;
+                $newScientificContact->lastname = $scientificContact->lastname;
+                $newScientificContact->email = $scientificContact->email;
                 
-                $this->scientificContacts[] = $newScientificContactContact;
+                $this->scientificContacts[] = $newScientificContact;
             }
         }
     }
@@ -264,8 +268,13 @@ class YiiProjectModel extends WSActiveRecord {
             }
         }
         
-        $elementForWebService[YiiProjectModel::FINANCIAL_SUPPORT] = $this->financialSupport;
-        $elementForWebService[YiiProjectModel::FINANCIAL_REFERENCE] = $this->financialReference;
+        if ($this->financialFunding != null) {
+            $elementForWebService[YiiProjectModel::FINANCIAL_FUNDING] = $this->financialFunding;
+        }
+        
+        if ($this->financialReference != null) {
+            $elementForWebService[YiiProjectModel::FINANCIAL_REFERENCE] = $this->financialReference;
+        }    
         $elementForWebService[YiiProjectModel::DATE_START] = $this->startDate;
         $elementForWebService[YiiProjectModel::DATE_END] = $this->endDate;
         
@@ -275,8 +284,13 @@ class YiiProjectModel extends WSActiveRecord {
             }
         }
         
-        $elementForWebService[YiiProjectModel::DESCRIPTION] = $this->description;
-        $elementForWebService[YiiProjectModel::OBJECTIVE] = $this->objective;
+        if ($this->description != null) {
+            $elementForWebService[YiiProjectModel::DESCRIPTION] = $this->description;
+        }
+        
+        if ($this->objective != null) {
+            $elementForWebService[YiiProjectModel::OBJECTIVE] = $this->objective;
+        }
 
         //SILEX:info
         // Unlike the other text attributes (description, keywords, etc.) 
@@ -336,4 +350,67 @@ class YiiProjectModel extends WSActiveRecord {
             return $requestRes;
         }
     }
+    
+    public function getFinancialFundingsUriAndLabels($sessionToken) {
+        $financialFundings = $this->getFinancialFundings($sessionToken);
+        
+        $financialFundingsToReturn = [];
+        
+        foreach ($financialFundings as $financialFunding) {
+            $financialFundingsToReturn[$financialFunding->uri] = $financialFunding->label;
+        }
+        
+        return $financialFundingsToReturn;
+    }
+    
+    public function getFinancialFundings($sessionToken) {
+        $params = [];
+        
+        $wsUriModel = new WSUriModel();
+        $requestRes = $wsUriModel->getInstances($sessionToken, Yii::$app->params["FinancialFunding"], $params);
+        $financialFundings = [];
+        
+        if (!is_string($requestRes)) {
+            if (!isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
+               
+                foreach ($requestRes as $instance) {
+                    $financialFundings[$instance->uri] = $instance->label;
+                }
+            }
+        } 
+        
+        return $requestRes;
+    }
+    
+    /**
+     * Get all the projects uri and label
+     * @return array the list of the projects uri and label existing in the database
+     * @example returned array : 
+     * [
+     *      ["http://www.opensilex.fr/platform/DROPS"] => "project label",
+     *      ...
+     * ]
+     */
+    public function getAllProjectsUrisAndLabels($sessionToken) {
+        $foundedProjects = $this->find($sessionToken, $this->attributesToArray());
+        $projectsToReturn = [];
+        
+        if ($foundedProjects !== null) {
+            foreach($foundedProjects as $project) {
+                $projectsToReturn[$project->uri] = $project->shortname;
+            }
+            
+            // If there are other pages, get the other projects
+            if ($this->totalPages > $this->page) {
+                $this->page++; //next page
+                $nextProject = $this->getAllProjectsUrisAndLabels($sessionToken);
+
+                $projectsToReturn = array_merge($projectsToReturn, $nextProject);
+            }
+        }
+        return $projectsToReturn;
+    }
+    
+    
+    
 }

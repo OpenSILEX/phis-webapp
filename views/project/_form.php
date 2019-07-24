@@ -49,7 +49,7 @@ function changeSpaces(text, idInput) {
     
     <?php
     if ($model->isNewRecord) {
-        echo $form->field($model, 'acronyme')->textInput([
+        echo $form->field($model, 'shortname')->textInput([
             'maxlength' => true, 
             'id' => 'projectAcronyme', 
             'onkeyup' => 'changeSpaces(this.value, this.id);',
@@ -57,57 +57,47 @@ function changeSpaces(text, idInput) {
             'title' => Yii::t('app/messages','No spaces allowed. Used for the URI. Example : drops'), 
             'data-placement' => 'left']);
     } else {
-        echo $form->field($model, 'acronyme')->textInput(['maxlength' => true, 'readOnly' => true, 'style' => 'background-color:#C4DAE7;']);
+        echo $form->field($model, 'shortname')->textInput(['maxlength' => true, 'readOnly' => true, 'style' => 'background-color:#C4DAE7;']);
     }
     ?>
     
     <?= $form->field($model, 'name')->textInput(['maxlength' => true, 'id' => 'projectName', 'data-toogle' => 'tooltip', 'title' => 'ex: DROught-tolerant yielding PlantS', 'data-placement' => 'left']) ?>
     
-    <?php if ($this->params['listProjects'] !== null) { 
-            echo '<hr style="border-color : gray;">';
-            echo '<h3>Subproject of <i>(optional)</i></h3>';
-
-            echo $form->field($model, 'parentProject')->widget(\kartik\select2\Select2::classname(), [
-                    'data' =>$this->params['listProjects'],
-                    'options' => ['placeholder' => 'Select parent project',
-                                  'multiple' => false],
-                ]);
-            
-            
-            echo $form->field($model, 'subprojectType')->widget(\kartik\select2\Select2::classname(), [
-                    'data' => [
-                        'Thesis' => 'Thesis',
-                        'CDD' => 'CDD'],
-                    'options' => ['placeholder' => 'Select subproject type',
-                                  'multiple' => false],
-                    'pluginOptions' => [
-                        'tags'=>true,
-                    ]
-                ]);
-            echo '<hr style="border-color : gray;">';
-        }
+    <?php 
+        echo $form->field($model, 'relatedProjects')->widget(\kartik\select2\Select2::classname(), [
+                'data' =>$this->params['listProjects'],
+                'options' => ['placeholder' => 'Select related project',
+                              'multiple' => false],
+                'pluginOptions' => [
+                    'tags'=>true,
+                    'allowClear' => true
+                ]
+            ]);
     ?>
     
     <?= $form->field($model, 'objective')->textInput(['maxlength' => true]) ?>
     
-    <?= $form->field($model, 'financialSupport')->widget(\kartik\select2\Select2::classname(), [
-        'data' => [
-                'ANR' => 'ANR',
-                'INRA' => 'INRA',
-                'Unit' => 'Unit',
-                'European' => 'European',
-                'International' => 'International'],
-        'options' => ['placeholder' => 'Select financial support',
-                      'multiple' => false],
-        'pluginOptions' => [
-            'tags'=>true,
-        ]
+    <?php
+        $financialValue = null;
+        if ($model->financialFunding != null) {
+            $financialValue[] = $model->financialFunding->uri;
+        }
+        
+        echo $form->field($model, 'financialFunding')->widget(\kartik\select2\Select2::classname(), [
+            'data' => $this->params['listFinancialFundings'],
+            'options' => ['placeholder' => Yii::t('app', 'Select financial funding'),
+                          'multiple' => false,
+                            'value' => $financialValue],
+            'pluginOptions' => [
+                'tags'=>true,
+                'allowClear' => true
+            ]
     ]) ?>
 
     
-    <?= $form->field($model, 'financialName')->textInput(['maxlength' => true, 'id' => 'projectFinancialName', 'data-toogle' => 'tooltip', 'title' => 'Code contrat', 'data-placement' => 'left']) ?>
+    <?= $form->field($model, 'financialReference')->textInput(['maxlength' => true, 'id' => 'projectFinancialName', 'data-toogle' => 'tooltip', 'title' => 'Code contrat', 'data-placement' => 'left']) ?>
     
-    <?= $form->field($model, 'dateStart')->widget(\kartik\date\DatePicker::className(), [
+    <?= $form->field($model, 'startDate')->widget(\kartik\date\DatePicker::className(), [
         'options' => ['placeholder' => 'Enter date start'],
         'pluginOptions' => [
             'autoclose' => true,
@@ -115,7 +105,7 @@ function changeSpaces(text, idInput) {
         ]
     ]) ?>
     
-    <?= $form->field($model, 'dateEnd')->widget(\kartik\date\DatePicker::className(), [
+    <?= $form->field($model, 'endDate')->widget(\kartik\date\DatePicker::className(), [
         'options' => ['placeholder' => 'Enter date end'],
         'pluginOptions' => [
             'autoclose' => true,
@@ -187,10 +177,11 @@ function changeSpaces(text, idInput) {
             ],
         ]); 
     } else {
+
         echo $form->field($model, 'projectCoordinatorContacts')->widget(\kartik\select2\Select2::classname(),[
             'data' => $this->params['listContacts'],
             'options' => [
-                'value' => $this->params['listActualProjectCoordinators'],
+                'value' => $this->params['listActualCoordinators'],
                 'multiple' => true
             ],
             'pluginOptions' => [
@@ -200,10 +191,19 @@ function changeSpaces(text, idInput) {
     }
     ?>
 
-    <?= $form->field($model, 'website')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'homePage')->textInput(['maxlength' => true]) ?>
     
-    <?= $form->field($model, 'keywords')->textInput(['maxlength' => true, 'id' => 'projectKeywords', 'data-toogle' => 'tooltip', 'title' => 'keyword1, keyword2, etc.', 'data-placement' => 'left']) ?>
-    
+    <?php echo $form->field($model, 'keywords')->widget(\kartik\select2\Select2::classname(),[
+            'data' => [],
+            'options' => [
+                'multiple' => true
+            ],
+            'pluginOptions' => [
+                'tags' => true,
+                'allowClear' => true
+            ],
+        ]); 
+    ?>
     <?= $form->field($model, 'description')->textarea(['rows' => '6']) ?>
     
     

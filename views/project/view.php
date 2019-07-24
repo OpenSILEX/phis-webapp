@@ -63,9 +63,15 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'objective',
             [
-                'attribute' => 'financialSupport',
+                'attribute' => 'financialFunding',
                 'format' => 'raw',
-                'value' => $model->financialSupport->label . " (" . $model->financialSupport->uri . ")"
+                'value' => function($model) {
+                               if ($model->financialFunding != null) {
+                                   return $model->financialFunding->label . " (" . $model->financialFunding->uri . ")";
+                               } else {
+                                   return null;
+                               }
+                            }
             ],
             'financialReference',
             [

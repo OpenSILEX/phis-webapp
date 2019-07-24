@@ -43,10 +43,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'shortname',
             [
-              'attribute' => 'financialSupport',
+              'attribute' => 'financialFunding',
               'format' => 'raw',
               'value' => function($model, $key, $index) {
-                    return $model->financialSupport->label;
+                    return $model->financialFunding->label;
                },
             ],
             [
