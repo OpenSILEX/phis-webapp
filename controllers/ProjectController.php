@@ -213,7 +213,6 @@ class ProjectController extends Controller {
             $dataToSend[] = $projectModel->attributesToArray();
             
             $requestRes = $projectModel->update($sessionToken, $dataToSend);
-            
             if (is_string($requestRes) && $requestRes === WSConstants::TOKEN) { //User must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
@@ -227,6 +226,7 @@ class ProjectController extends Controller {
             $this->view->params['listActualScientificContacts'] = $this->getActualScientificContactsFromModel($model);
             $this->view->params['listActualCoordinators'] = $this->getActualCoordinatorsFromModel($model);
             $this->view->params['listActualAdministrativeContacts'] = $this->getActualAdministrativeContactsFromModel($model);
+            $this->view->params['listActualProjects'] = $this->getActualProjects($model);
             
             $userModel = new YiiUserModel();
             $contacts = $userModel->getPersonsURIAndName($sessionToken);
@@ -244,8 +244,22 @@ class ProjectController extends Controller {
     }
     
     /**
-     * Get the list of the scientific contacts of the model with the format 
-     * $contacts[$contact->uri] = $contact->firstname . " " . $contact->lastname;
+     * Get the list of uris relatedProjects of the model.
+     * @param type $model
+     * @return type
+     */
+    private function getActualProjects($model) {
+        $projects = [];
+        if (isset($model->relatedProjects)) {
+            foreach ($model->relatedProjects as $relatedProject) {
+                $projects[] = $relatedProject->uri;
+            }
+        }
+        return $projects;
+    }
+    
+    /**
+     * Get the list of uris of the scientific contacts of the model.
      * Used to show the lists of contacts in the update form.
      * @see ProjectController::actionUpdate()
      */
@@ -260,8 +274,7 @@ class ProjectController extends Controller {
     }
     
     /**
-     * Get the list of the project coordinators of the model with the format 
-     * $contacts[$contact->uri] = $contact->firstname . " " . $contact->lastname;
+     * Get the list of uris of the project coordinators of the model.
      * Used to show the lists of contacts in the update form.
      * @see ProjectController::actionUpdate()
      */
@@ -276,8 +289,7 @@ class ProjectController extends Controller {
     }
     
     /**
-     * Get the list of the administrative contacts of the model with the format 
-     * $contacts[$contact->uri] = $contact->firstname . " " . $contact->lastname;
+     * Get the list of uris of the administrative contacts of the model.
      * Used to show the lists of contacts in the update form.
      * @see ProjectController::actionUpdate()
      */

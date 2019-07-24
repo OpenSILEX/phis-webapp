@@ -194,8 +194,8 @@ class YiiProjectModel extends WSActiveRecord {
         if (isset($array[YiiProjectModel::RELATED_PROJECTS])) {
             foreach($array[YiiProjectModel::RELATED_PROJECTS] as $relatedProject) {
                 $newRelatedProject = null;
-                $newRelatedProject->uri = $relatedProject[YiiProjectModel::URI];
-                $newRelatedProject->label = $relatedProject[YiiProjectModel::LABEL];
+                $newRelatedProject->uri = $relatedProject->uri;
+                $newRelatedProject->label = $relatedProject->label;
                 $this->relatedProjects[] = $newRelatedProject;
             }
         }
@@ -263,8 +263,9 @@ class YiiProjectModel extends WSActiveRecord {
         $elementForWebService[YiiProjectModel::SHORTNAME]= $this->shortname;
         
         if ($this->relatedProjects != null) {
+            $elementForWebService[YiiProjectModel::RELATED_PROJECTS] = [];
             foreach ($this->relatedProjects as $relatedProject) {
-                $elementForWebService[YiiProjectModel::RELATED_PROJECTS] = $relatedProject;
+                $elementForWebService[YiiProjectModel::RELATED_PROJECTS][] = $relatedProject;
             }
         }
         

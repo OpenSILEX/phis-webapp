@@ -63,6 +63,21 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'objective',
             [
+                'attribute' => 'relatedProjects',
+                'format' => 'raw',
+                'value' => function ($model) {
+                                $toReturn = "";
+                                if (count($model->relatedProjects) > 0) {
+                                    foreach ($model->relatedProjects as $relatedProject) {
+                                        $toReturn .= Html::a($relatedProject->label, ['project/view', 'id' => $relatedProject->uri]);
+                                        $toReturn .= ", ";
+                                    }
+                                    $toReturn = rtrim($toReturn, ", ");
+                                }
+                                return $toReturn;
+                            }
+            ],
+            [
                 'attribute' => 'financialFunding',
                 'format' => 'raw',
                 'value' => function($model) {

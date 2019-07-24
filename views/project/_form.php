@@ -67,7 +67,8 @@ function changeSpaces(text, idInput) {
         echo $form->field($model, 'relatedProjects')->widget(\kartik\select2\Select2::classname(), [
                 'data' =>$this->params['listProjects'],
                 'options' => ['placeholder' => 'Select related project',
-                              'multiple' => false],
+                              'multiple' => true,
+                    'value' => $this->params['listActualProjects']],
                 'pluginOptions' => [
                     'tags'=>true,
                     'allowClear' => true
