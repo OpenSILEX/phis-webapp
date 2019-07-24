@@ -642,10 +642,7 @@ require_once '../config/config.php';
                       "Geometry" . ScientificObjectController::DELIM_CSV . 
                       "\n";
 
-//        file_put_contents($serverFilePath, $headerFile);
-
         $totalPage = 1;
-//        $stringToWrite="";
         for ($i = 0; $i < $totalPage; $i++) {
             //1. call service for each page
             $searchParams["page"] = $i;
@@ -671,8 +668,6 @@ require_once '../config/config.php';
                                  $model->experiment . ScientificObjectController::DELIM_CSV . 
                                  '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
                                  "\n";
-
-                
             }
             
             $totalPage = intval($searchModel->totalPages);

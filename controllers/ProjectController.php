@@ -189,7 +189,7 @@ class ProjectController extends Controller {
             
             $this->view->params['listProjects'] = $projectModel->getAllProjectsUrisAndLabels($sessionToken);
             $this->view->params['listContacts'] = $contacts;
-            $this->view->params['listFinancialFundings'] = $projectModel->getFinancialFundingsUriAndLabels($sessionToken);
+            $this->view->params['listFinancialFundings'] = $projectModel->getFinancialFundings($sessionToken);
             $projectModel->isNewRecord = true;
 
             return $this->render('create', [
@@ -233,7 +233,7 @@ class ProjectController extends Controller {
             
             $this->view->params['listProjects'] = $projectModel->getAllProjectsUrisAndLabels($sessionToken);
             $this->view->params['listContacts'] = $contacts;
-            $this->view->params['listFinancialFundings'] = $projectModel->getFinancialFundingsUriAndLabels($sessionToken);
+            $this->view->params['listFinancialFundings'] = $projectModel->getFinancialFundings($sessionToken);
             $model->isNewRecord = false;
 
             return $this->render('update', [

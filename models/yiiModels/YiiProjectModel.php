@@ -351,18 +351,12 @@ class YiiProjectModel extends WSActiveRecord {
         }
     }
     
-    public function getFinancialFundingsUriAndLabels($sessionToken) {
-        $financialFundings = $this->getFinancialFundings($sessionToken);
-        
-        $financialFundingsToReturn = [];
-        
-        foreach ($financialFundings as $financialFunding) {
-            $financialFundingsToReturn[$financialFunding->uri] = $financialFunding->label;
-        }
-        
-        return $financialFundingsToReturn;
-    }
-    
+    /**
+     * Get the list of financial fundings.
+     * @param type $sessionToken
+     * @return array key => value 
+     *              financial funding uri => financial funding label
+     */
     public function getFinancialFundings($sessionToken) {
         $params = [];
         
@@ -379,7 +373,7 @@ class YiiProjectModel extends WSActiveRecord {
             }
         } 
         
-        return $requestRes;
+        return $financialFundings;
     }
     
     /**
@@ -409,8 +403,5 @@ class YiiProjectModel extends WSActiveRecord {
             }
         }
         return $projectsToReturn;
-    }
-    
-    
-    
+    }    
 }
