@@ -26,18 +26,30 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
-    </p>
+
+    <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
+    <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
+    <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
+
+
+    <button type="button" id="cart-btn" class="btn btn-warning pull-right" > 
+        <span class="glyphicon glyphicon-shopping-cart">
+        </span>
+        <strong id="cart-articles" >&nbsp;0
+        </strong>
+    </button>
 
     <?=
     GridView::widget([
+        'id' => 'scientific-object-table',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'class' => 'yii\grid\CheckboxColumn',
+                'checkboxOptions' => function($model) {
+                    return ['value' => $model->uri];
+                }],
             [
                 'attribute' => 'uri',
                 'format' => 'raw',
@@ -119,3 +131,24 @@ $this->params['breadcrumbs'][] = $this->title;
     ]);
     ?>
 </div>
+<script>
+
+    $('input:checkbox', $('#scientific-object-table')).change(function (e) {
+        var checked = $(this).is(':checked');
+        console.log("checked?: " + checked);
+        console.log("value?: " + $(this).val());
+    });
+    //To remove a cookie from our domain / we have to remove the cookie when we first go to the page but how to know that ? how to know i go to another view/controller and be back ?
+    Cookies.remove('name', { path: '' }); 
+    Cookies.remove('favorite_food', { path: '' }); 
+    function alertCookie() {
+        Cookies.set('name', 'lol');
+        console.log(Cookies.get('name'));
+    }
+    alertCookie();
+    
+    // select all : ajaxcall to find all the sci object uri and keep it on the cookie
+
+
+
+</script>

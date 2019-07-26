@@ -47,6 +47,11 @@ ul.images li {
 }
 
 
+.btn:focus,.btn:active {
+   outline: none !important;
+   box-shadow: none !important;
+}
+
 
 /*SILEX:info
 use for all DetailView
