@@ -198,14 +198,6 @@ class ProjectController extends Controller {
         }
     }
     
-    public function getAllProjectsUrisAndLabelExceptOne($projectURI) {
-        $model = new YiiProjectModel();
-        $projectsList = $model->getAllProjectsUrisAndLabels(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
-        
-        $projectsToReturn = [];
-        
-    }
-    
     /**
      * update a project
      * @param string $id the project's uri
