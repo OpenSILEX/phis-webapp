@@ -24,6 +24,7 @@ use Yii;
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  * @update [Arnaud Charleroy] 14 September, 2018 : change the value of website attribute from ""  
  *                                                 to null because of the webservice rules validation
+ * @update [Morgane Vidal] 29 July, 2019 : change the attributes of the project model according to the updates in the web service (PostgreSQL to RDF4J)
  */
 class YiiProjectModel extends WSActiveRecord {
 
