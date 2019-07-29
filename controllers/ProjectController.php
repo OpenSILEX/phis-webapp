@@ -198,6 +198,14 @@ class ProjectController extends Controller {
         }
     }
     
+    public function getAllProjectsUrisAndLabelExceptOne($projectURI) {
+        $model = new YiiProjectModel();
+        $projectsList = $model->getAllProjectsUrisAndLabels(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+        
+        $projectsToReturn = [];
+        
+    }
+    
     /**
      * update a project
      * @param string $id the project's uri
@@ -232,7 +240,10 @@ class ProjectController extends Controller {
             $userModel = new YiiUserModel();
             $contacts = $userModel->getPersonsURIAndName($sessionToken);
             
-            $this->view->params['listProjects'] = $projectModel->getAllProjectsUrisAndLabels($sessionToken);
+            $projects = $projectModel->getAllProjectsUrisAndLabels($sessionToken);
+            unset($projects[$model->uri]);
+            
+            $this->view->params['listProjects'] = $projects;
             $this->view->params['listContacts'] = $contacts;
             $this->view->params['listFinancialFundings'] = $projectModel->getFinancialFundings($sessionToken);
             $model->isNewRecord = false;
