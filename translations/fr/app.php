@@ -145,7 +145,9 @@ return [
     'File Extension' => 'Extension du Fichier',
     'File Informations' => 'Informations sur le Fichier',
     'File Path' => 'Chemin du Fichier',
+    'Financial Funding' => 'Support financier',
     'Financial Name' => 'Nom du financeur',
+    'Financial Reference' => 'Référence du financeur',
     'Financial Support' => 'Support financier',
     'First Name' => 'Prénom',
     'Focal Length' => 'Distance Focale',
@@ -162,6 +164,7 @@ return [
     // H
     'Height' => 'Hauteur',
     'Hemisphericals' => 'Hémisphériques',
+    'Homepage' => 'Site web',
 
     // I
     'Images Visualization' => 'Visualisation d\'Images',
@@ -237,6 +240,7 @@ return [
     'Reference URI' => 'URI de Référence',
     'Reflectance value' => 'Valeur de la réflectance',
     'Register an event' => 'Enregistrer un événement',
+    'Related Projects' => 'Projets en lien',
     'Related References' => 'Références Externes',
     'Relation' => 'Relation',
     'Relation Type' => 'Type de Relation',
@@ -258,6 +262,7 @@ return [
     'Server File Path' => 'Lien du Fichier sur le Serveur',
     'Shape' => 'Forme',
     'Shooting Configuration' => 'Configuration de prise de vue',
+    'Shortname' => 'Acronyme',
     'Show Images' => 'Afficher les Images',
     'Specific properties' => 'Propriétés spécifiques',
     'Spectral hemispheric reflectance file' => 'Fichier de réflectance hémisphérique spectrale',
