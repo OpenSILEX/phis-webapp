@@ -47,7 +47,7 @@ class ImageController extends \yii\web\Controller {
      */
     public function actionSearchFromLayer() {
         $searchModel = new DataFileSearch($pageSize = 100);
-        if ($searchModel->load(Yii::$app->request->post())) {
+        if (Yii::$app->request->post()["concernedItems"]) {
             $searchModel->concernedItems = Yii::$app->request->post()["concernedItems"];
             $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->post());
 
