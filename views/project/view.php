@@ -58,9 +58,9 @@ $this->params['breadcrumbs'][] = $this->title;
     DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'uri',
             'shortname',
             'name',
+            'uri',
             'objective',
             [
                 'attribute' => 'relatedProjects',
@@ -69,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 $toReturn = "";
                                 if (count($model->relatedProjects) > 0) {
                                     foreach ($model->relatedProjects as $relatedProject) {
-                                        $toReturn .= Html::a($relatedProject->label, ['project/view', 'id' => $relatedProject->uri]);
+                                        $toReturn .= Html::a($relatedProject->label, ['project/view', 'id' => $relatedProject->uri], ['target'=>'_blank']);
                                         $toReturn .= ", ";
                                     }
                                     $toReturn = rtrim($toReturn, ", ");
@@ -82,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function($model) {
                                if ($model->financialFunding != null) {
-                                   return $model->financialFunding->label . " (" . $model->financialFunding->uri . ")";
+                                   return $model->financialFunding->label;
                                } else {
                                    return null;
                                }
@@ -110,7 +110,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $toReturn = "";
                     if (count($model->scientificContacts) > 0) {
                         foreach ($model->scientificContacts as $scientificContact) {
-                            $toReturn .= Html::a($scientificContact->firstname . " " . $scientificContact->lastname, ['user/view', 'id' => $scientificContact->email]);
+                            $toReturn .= Html::a($scientificContact->firstname . " " . $scientificContact->lastname, ['user/view', 'id' => $scientificContact->email], ['target'=>'_blank']);
                             $toReturn .= ", ";
                         }
                         $toReturn = rtrim($toReturn, ", ");
@@ -125,7 +125,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $toReturn = "";
                     if (is_array($model->administrativeContacts) && count($model->administrativeContacts) > 0) {
                         foreach ($model->administrativeContacts as $administrativeContact) {
-                            $toReturn .= Html::a($administrativeContact->firstname . " " . $administrativeContact->lastname, ['user/view', 'id' => $administrativeContact->email]);
+                            $toReturn .= Html::a($administrativeContact->firstname . " " . $administrativeContact->lastname, ['user/view', 'id' => $administrativeContact->email], ['target'=>'_blank']);
                             $toReturn .= ", ";
                         }
                         $toReturn = rtrim($toReturn, ", ");
@@ -140,7 +140,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $toReturn = "";
                     if (count($model->projectCoordinatorContacts) > 0) {
                         foreach ($model->projectCoordinatorContacts as $projectCoordinatorContact) {
-                            $toReturn .= Html::a($projectCoordinatorContact->firstname . " " . $projectCoordinatorContact->lastname, ['user/view', 'id' => $projectCoordinatorContact->email]);
+                            $toReturn .= Html::a($projectCoordinatorContact->firstname . " " . $projectCoordinatorContact->lastname, ['user/view', 'id' => $projectCoordinatorContact->email], ['target'=>'_blank']);
                             $toReturn .= ", ";
                         }
                         $toReturn = rtrim($toReturn, ", ");
@@ -151,7 +151,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'homePage',
                 'format' => 'raw',
-                'value' => Html::a($model->homePage, $model->homePage)
+                'value' => Html::a($model->homePage, $model->homePage, ['target'=>'_blank'])
             ],
             [
                 'attribute' => 'keywords',

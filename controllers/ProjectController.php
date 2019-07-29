@@ -218,7 +218,6 @@ class ProjectController extends Controller {
             } else {
                 return $this->redirect(['view', 'id' => $projectModel->uri]);
             }
-            
         } else {
             //Get existing projects for the dropdownlist
             $model = $this->findModel($id);
@@ -227,6 +226,8 @@ class ProjectController extends Controller {
             $this->view->params['listActualCoordinators'] = $this->getActualCoordinatorsFromModel($model);
             $this->view->params['listActualAdministrativeContacts'] = $this->getActualAdministrativeContactsFromModel($model);
             $this->view->params['listActualProjects'] = $this->getActualProjects($model);
+            $this->view->params['listActualKeywords'] = $this->getActualKeywords($model);
+            
             
             $userModel = new YiiUserModel();
             $contacts = $userModel->getPersonsURIAndName($sessionToken);
@@ -256,6 +257,21 @@ class ProjectController extends Controller {
             }
         }
         return $projects;
+    }
+    
+    /**
+     * Get the list of keywords of the model.
+     * @param type $model
+     * @return type
+     */
+    private function getActualKeywords($model) {
+        $keywords = [];
+        if (isset($model->keywords)) {
+            foreach ($model->keywords as $keyword) {
+                $keywords[$keyword] = $keyword;
+            }
+        }
+        return $keywords;
     }
     
     /**

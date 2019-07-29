@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $toReturn = "";
                     if (count($model->projects) > 0) {
                         foreach ($model->projects as $project) {
-                            $toReturn .= Html::a($project["acronyme"], ['project/view', 'id' => $project["uri"]]);
+                            $toReturn .= Html::a($project[app\models\yiiModels\YiiProjectModel::SHORTNAME], ['project/view', 'id' => $project["uri"]]);
                             $toReturn .= ", ";
                         }
                         $toReturn = rtrim($toReturn, ", ");

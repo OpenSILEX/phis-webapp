@@ -195,15 +195,15 @@ function changeSpaces(text, idInput) {
     <?= $form->field($model, 'homePage')->textInput(['maxlength' => true]) ?>
     
     <?php echo $form->field($model, 'keywords')->widget(\kartik\select2\Select2::classname(),[
-            'data' => [],
+            'data' => $this->params['listActualKeywords'],
             'options' => [
-                'multiple' => true
+                'multiple' => true,
             ],
             'pluginOptions' => [
                 'tags' => true,
                 'allowClear' => true
             ],
-        ]); 
+        ]);
     ?>
     <?= $form->field($model, 'description')->textarea(['rows' => '6']) ?>
     
