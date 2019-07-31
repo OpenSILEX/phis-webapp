@@ -73,6 +73,12 @@ class YiiDataFileModel extends WSActiveRecord {
 
     const JSON_VALUE_FILTER = "jsonValueFilter";
    
+    
+    public $provenance;
+
+    const PROVENANCE = "provenance";
+   
+
 
     /**
      * Initialize wsModel. In this class, wsModel is a WSImageModel
@@ -93,7 +99,7 @@ class YiiDataFileModel extends WSActiveRecord {
     public function rules() {
         return [
             [['uri', 'rdfType'], 'required'],
-            [['concernedItems', 'startDate', 'endDate', 'jsonValueFilter'], 'safe']
+            [['concernedItems', 'startDate', 'endDate', 'jsonValueFilter','provenance'], 'safe']
         ];
     }
 
@@ -149,6 +155,9 @@ class YiiDataFileModel extends WSActiveRecord {
         }
         if ($this->jsonValueFilter != null) {
             $attributesArray[self::JSON_VALUE_FILTER] = $this->jsonValueFilter;
+        }
+         if ($this->provenance != null) {
+            $attributesArray[self::PROVENANCE] = $this->provenance;
         }
        
 

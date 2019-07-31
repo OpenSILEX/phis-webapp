@@ -75,6 +75,7 @@ class ImageController extends \yii\web\Controller {
             $searchModel->endDate = Yii::$app->request->post()["endDate"];
             $searchModel->concernedItems = Yii::$app->request->post()["concernedItems"];
             $searchModel->jsonValueFilter = Yii::$app->request->post()["jsonValueFilter"];
+            $searchModel->provenance = Yii::$app->request->post()["provenance"];
             $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->post());
             $imagesCount =  Yii::$app->request->post()["imagesCount"];
             return $this->renderAjax('_simple_images_visualization', [

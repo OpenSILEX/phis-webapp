@@ -840,6 +840,7 @@ class ScientificObjectController extends Controller {
             
             $data = [];
             $scientificObjectData["label"] = $label;
+            
             foreach ($searchResult->getModels() as $model) {
                 if (!empty($model->value)) {
                     $dataToSave = null;
