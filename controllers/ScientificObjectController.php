@@ -668,7 +668,6 @@ require_once '../config/config.php';
                                  $model->experiment . ScientificObjectController::DELIM_CSV . 
                                  '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
                                  "\n";
-                
             }
             
             $totalPage = intval($searchModel->totalPages);

@@ -106,8 +106,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
         'options' => $options,
         'pluginOptions' => [
             'autoclose' => true,
-            'format' => Yii::$app->params['dateTimeFormatDateTimePickerUserFriendly'],
-            'initialDate' => date("Y-m-d H:i:0")
+            'format' => Yii::$app->params['dateTimeFormatDateTimePickerUserFriendly']
         ]
     ])
     ?>
