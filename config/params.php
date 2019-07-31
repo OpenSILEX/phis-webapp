@@ -67,6 +67,8 @@ return [
     'NationalInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#NationalInfrastructure',
     'EuropeanInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#EuropeanInfrastructure',
     'Installation' => 'http://www.opensilex.org/vocabulary/oeso#Installation',
+    
+    'FinancialFunding' => 'http://www.opensilex.org/vocabulary/oeso#FinancialFunding',
 
     // Event
     'event' => 'http://www.opensilex.org/vocabulary/oeev#Event',

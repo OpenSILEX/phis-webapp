@@ -661,13 +661,13 @@ class ScientificObjectController extends Controller {
                 } else {
                     $wktGeometry = "";
                 }
-
-                $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV .
-                        $model->label . ScientificObjectController::DELIM_CSV .
-                        $model->rdfType . ScientificObjectController::DELIM_CSV .
-                        $model->experiment . ScientificObjectController::DELIM_CSV .
-                        '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV .
-                        "\n";
+ 
+                $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV . 
+                                 $model->label . ScientificObjectController::DELIM_CSV .
+                                 $model->rdfType . ScientificObjectController::DELIM_CSV .
+                                 $model->experiment . ScientificObjectController::DELIM_CSV . 
+                                 '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
+                                 "\n";
             }
 
             $totalPage = intval($searchModel->totalPages);

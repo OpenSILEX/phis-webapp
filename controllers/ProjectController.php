@@ -157,26 +157,13 @@ class ProjectController extends Controller {
         }
     }
     
-   /**
-     * 
-     * @param mixed $projects projects list
-     * @return ArrayHelper list of the persons 'uri' => 'name'
-     */
-    private function projectsToMap($projects) {
-        if ($projects !== null) {
-            return ArrayHelper::map($projects, 'uri', 'name');
-        } else {
-            return null;
-        }
-    } 
-    
     /**
      * @action Create a Project
      * @return mixed
      */
     public function actionCreate() {
         $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
-        $projectModel = new YiiProjectModel(null, null);
+        $projectModel = new YiiProjectModel();
         
         //If the form is filled, create project
         if ($projectModel->load(Yii::$app->request->post())) {
@@ -196,34 +183,18 @@ class ProjectController extends Controller {
                         'message' => $requestRes->{WSConstants::ACCESS_TOKEN}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}]);
                 }
             }
-        } else { //If the form is not filled, it should be generate
-            //Get the already existing project for the dropdownlist
-            //SILEX:conception
-            // This quick fix is used to show all users available. We need 
-            // to discuss another way to populate dropdown lists.
-            //SILEX:conception
-            $searchModel = new ProjectSearch();
-            $projects = $searchModel->find($sessionToken,[]);
-            
+        } else { //If the form is not filled, it should be generate            
             $userModel = new YiiUserModel();
-            $contacts = $userModel->getPersonsMailsAndName($sessionToken);
+            $contacts = $userModel->getPersonsURIAndName($sessionToken);
             
-            if (is_string($projects)) {
-                return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => $projects]);
-            } else if (is_array ($projects) && isset($projects[WSConstants::TOKEN])) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                $projects = $this->projectsToMap($projects);
-                $this->view->params['listProjects'] = $projects;
-                $this->view->params['listContacts'] = $contacts;
-                $projectModel->isNewRecord = true;
+            $this->view->params['listProjects'] = $projectModel->getAllProjectsUrisAndLabels($sessionToken);
+            $this->view->params['listContacts'] = $contacts;
+            $this->view->params['listFinancialFundings'] = $projectModel->getFinancialFundings($sessionToken);
+            $projectModel->isNewRecord = true;
 
-                return $this->render('create', [
-                    'model' => $projectModel,
-                ]);
-            }
+            return $this->render('create', [
+                'model' => $projectModel,
+            ]);
         }
     }
     
@@ -242,64 +213,112 @@ class ProjectController extends Controller {
             $dataToSend[] = $projectModel->attributesToArray();
             
             $requestRes = $projectModel->update($sessionToken, $dataToSend);
-            
             if (is_string($requestRes) && $requestRes === WSConstants::TOKEN) { //User must log in
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
                 return $this->redirect(['view', 'id' => $projectModel->uri]);
             }
-            
         } else {
             //Get existing projects for the dropdownlist
             $model = $this->findModel($id);
             
-            $searchModel = new ProjectSearch();
-            $projects = $searchModel->find($sessionToken,[]);
+            $this->view->params['listActualScientificContacts'] = $this->getActualScientificContactsFromModel($model);
+            $this->view->params['listActualCoordinators'] = $this->getActualCoordinatorsFromModel($model);
+            $this->view->params['listActualAdministrativeContacts'] = $this->getActualAdministrativeContactsFromModel($model);
+            $this->view->params['listActualProjects'] = $this->getActualProjects($model);
+            $this->view->params['listActualKeywords'] = $this->getActualKeywords($model);
+            
             
             $userModel = new YiiUserModel();
-            $contacts = $userModel->getPersonsMailsAndName($sessionToken);
+            $contacts = $userModel->getPersonsURIAndName($sessionToken);
             
-            $actualScientificContacts = null;
-            $actualAdministrativeContacts = null;
-            $actualProjectCoordinators = null;
+            $projects = $projectModel->getAllProjectsUrisAndLabels($sessionToken);
+            unset($projects[$model->uri]);
             
-            if ($model->scientificContacts != null) {
-                foreach ($model->scientificContacts as $scientificContact) {
-                    $actualScientificContacts[] = $scientificContact["email"];
-                }
-            }
-            
-            if ($model->administrativeContacts != null) {
-                foreach ($model->administrativeContacts as $administrativeContact) {
-                    $actualAdministrativeContacts[] = $administrativeContact["email"];
-                }
-            }
-            
-            if ($model->projectCoordinatorContacts != null) {
-                foreach ($model->projectCoordinatorContacts as $projectCoordinator) {
-                    $actualProjectCoordinators[] = $projectCoordinator["email"];
-                }
-            }
+            $this->view->params['listProjects'] = $projects;
+            $this->view->params['listContacts'] = $contacts;
+            $this->view->params['listFinancialFundings'] = $projectModel->getFinancialFundings($sessionToken);
+            $model->isNewRecord = false;
 
-            if (is_string($projects)) {
-                return $this->render('/site/error', [
-                    'name' => Yii::t('app/messages','Internal error'),
-                    'message' => $projects]);
-            } else if (is_array ($projects) && isset($projects[WSConstants::TOKEN])) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                $projects = $this->projectsToMap($projects);
-                $this->view->params['listProjects'] = $projects;
-                $this->view->params['listContacts'] = $contacts;
-                $this->view->params['listActualScientificContacts'] = $actualScientificContacts;
-                $this->view->params['listActualAdministrativeContacts'] = $actualAdministrativeContacts;
-                $this->view->params['listActualProjectCoordinators'] = $actualProjectCoordinators;
-                $model->isNewRecord = false;
-
-                return $this->render('update', [
-                    'model' => $model,
-                ]);
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+            
+        }
+    }
+    
+    /**
+     * Get the list of uris relatedProjects of the model.
+     * @param type $model
+     * @return type
+     */
+    private function getActualProjects($model) {
+        $projects = [];
+        if (isset($model->relatedProjects)) {
+            foreach ($model->relatedProjects as $relatedProject) {
+                $projects[] = $relatedProject->uri;
             }
         }
+        return $projects;
+    }
+    
+    /**
+     * Get the list of keywords of the model.
+     * @param type $model
+     * @return type
+     */
+    private function getActualKeywords($model) {
+        $keywords = [];
+        if (isset($model->keywords)) {
+            foreach ($model->keywords as $keyword) {
+                $keywords[$keyword] = $keyword;
+            }
+        }
+        return $keywords;
+    }
+    
+    /**
+     * Get the list of uris of the scientific contacts of the model.
+     * Used to show the lists of contacts in the update form.
+     * @see ProjectController::actionUpdate()
+     */
+    private function getActualScientificContactsFromModel($model) {
+        $scientificContacts = [];
+        if (isset($model->scientificContacts)) {
+            foreach ($model->scientificContacts as $scientificContact) {
+                $scientificContacts[] = $scientificContact->uri;
+            }
+        }
+        return $scientificContacts;
+    }
+    
+    /**
+     * Get the list of uris of the project coordinators of the model.
+     * Used to show the lists of contacts in the update form.
+     * @see ProjectController::actionUpdate()
+     */
+    private function getActualCoordinatorsFromModel($model) {
+        $coordinators = [];
+        if (isset($model->projectCoordinatorContacts)) {
+            foreach ($model->projectCoordinatorContacts as $projectCoordinator) {
+                $coordinators[] = $projectCoordinator->uri;
+            }
+        }
+        return $coordinators;
+    }
+    
+    /**
+     * Get the list of uris of the administrative contacts of the model.
+     * Used to show the lists of contacts in the update form.
+     * @see ProjectController::actionUpdate()
+     */
+    private function getActualAdministrativeContactsFromModel($model) {
+        $administrativeContacts = [];
+        if (isset($model->administrativeContacts)) {
+            foreach ($model->administrativeContacts as $administrativeContact) {
+                $administrativeContacts[] = $administrativeContact->uri;
+            }
+        }
+        return $administrativeContacts;
     }
 }
