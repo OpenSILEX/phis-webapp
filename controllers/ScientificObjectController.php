@@ -567,11 +567,50 @@ class ScientificObjectController extends Controller {
         return $p;
     }
 
+    public function actionAddToCart() {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+        $searchParams = Yii::$app->request->queryParams;
+        if (Yii::$app->request->post()["page"]) {
+            
+        }
+        $pageNumber = $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE];
+        //unset( Yii::$app->session['cart']);
+        if (Yii::$app->request->post()["item"]) {
+            if (isset(Yii::$app->session['cart'])) {
+                $temp = Yii::$app->session['cart'];
+                if (!in_array(Yii::$app->request->post()["item"], $temp[Yii::$app->request->post()["page"]])) {
+                    $temp[Yii::$app->request->post()["page"]][] = Yii::$app->request->post()["item"];
+                }
+            } else {
+                Yii::$app->session['cart'] = [];
+                $temp = array();
+                $temp[Yii::$app->request->post()["page"]][] = Yii::$app->request->post()["item"];
+            }
+            Yii::$app->session['cart'] = $temp;
+            return [
+                "status" => "success"
+            ];
+        }
+    }
+
+    public function actionRemoveToCart() {
+        Yii::$app->request->post()["item"];
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return [
+            "status" => "success"
+        ];
+    }
+
     /**
      * scientific objects index (list of scientific objects)
      * @return mixed
      */
     public function actionIndex() {
+        //TEST
+        // Get the selected obj.sci from the session 
+        //TEST
+
         $searchModel = new ScientificObjectSearch();
 
         //Get the search params and update the page if needed
@@ -606,11 +645,14 @@ class ScientificObjectController extends Controller {
             foreach ($objectsTypes as $objectType) {
                 $scientificObjectsTypesToReturn[$objectType] = explode("#", $objectType)[1];
             }
+            $session = Yii::$app->session;
 
             return $this->render('index', [
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
-                        'scientificObjectTypes' => $scientificObjectsTypesToReturn
+                        'scientificObjectTypes' => $scientificObjectsTypesToReturn,
+                        'test' => $session['cart'],
+                        'page' => $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]
             ]);
         }
     }
@@ -661,13 +703,13 @@ class ScientificObjectController extends Controller {
                 } else {
                     $wktGeometry = "";
                 }
- 
-                $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV . 
-                                 $model->label . ScientificObjectController::DELIM_CSV .
-                                 $model->rdfType . ScientificObjectController::DELIM_CSV .
-                                 $model->experiment . ScientificObjectController::DELIM_CSV . 
-                                 '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
-                                 "\n";
+
+                $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV .
+                        $model->label . ScientificObjectController::DELIM_CSV .
+                        $model->rdfType . ScientificObjectController::DELIM_CSV .
+                        $model->experiment . ScientificObjectController::DELIM_CSV .
+                        '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV .
+                        "\n";
             }
 
             $totalPage = intval($searchModel->totalPages);
@@ -822,7 +864,7 @@ class ScientificObjectController extends Controller {
              *  }]
              * }
              */
-            
+
             /* Build array for highChart
              * e.g : 
              * {
@@ -837,15 +879,21 @@ class ScientificObjectController extends Controller {
              *  ]
              * }
              */
-            
+
             $data = [];
             $scientificObjectData["label"] = $label;
-            
+            $one = true;
             foreach ($searchResult->getModels() as $model) {
                 if (!empty($model->value)) {
                     $dataToSave = null;
                     $dataToSave["provenanceUri"] = $model->provenanceUri;
-                    $dataToSave["date"] = (strtotime($model->date)) * 1000;
+                    if ($one) {
+                        $datestring = $model->date;
+                        $strtotime = strtotime($model->date);
+                        $one = false;
+                    }
+
+                    $dataToSave["date"] = (strtotime($model->date)) * 1000; //need the * 1000 because PHP uses epoch time in seconds, Javascript uses milliseconds.
                     $dataToSave["value"] = doubleval($model->value);
                     $data[] = $dataToSave;
                 }
@@ -865,9 +913,9 @@ class ScientificObjectController extends Controller {
                 $scientificObjectData["dataFromProvenance"] = $dataByProvenance;
                 $toReturn["scientificObjectData"][] = $scientificObjectData;
             }
-            
-            
-            
+
+
+
             //on FORM submitted:
             //check if image visualization is activated
             $show = isset($_POST['show']) ? $_POST['show'] : null;
@@ -892,7 +940,8 @@ class ScientificObjectController extends Controller {
                         'selectedProvenance' => $selectedProvenance,
                         'selectedPosition' => $selectedPosition,
                         'filterToSend' => $filterToSend,
-                        'test' => $searchResult->getModels(),
+                        'datestring' => $datestring,
+                        'strtotime' => $strtotime,
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [

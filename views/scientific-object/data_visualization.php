@@ -242,6 +242,8 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <div class="data-visualization-chart ">
+            <div id="clientLocalTimeOffset" style="display: none;" data-id=0 ></div>
+
             <?php
         }
         if (isset($data)) {
@@ -253,13 +255,15 @@ $this->params['breadcrumbs'][] = $this->title;
                     $series[] = ['name' => $dataFromProvenanceKey,
                         'data' => $dataFromProvenanceValue];
                 }
-               // var_dump($series);
+                var_dump($strtotime);
+                var_dump($datestring);
                 $url2 = Url::to(['image/search-from-scientific-object']);
                 $objectURI = $model->uri;
                 if ($show) {
                     echo Highcharts::widget([
                         'id' => 'graphic',
                         'options' => [
+                            'time' => ['timezoneOffset' => -2 * 60],
                             'chart' => [
                                 'zoomType' => 'x'
                             ],
@@ -292,7 +296,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "console.log( Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', 1500768000000));"
                                                     . "searchFormData.append('concernedItems[]', \"$objectURI\");"
                                                     . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
-                                                   // . "searchFormData.append('provenance',this.series.name);"
+                                                    // . "searchFormData.append('provenance',this.series.name);"
                                                     . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
                                                     . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
                                                     . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
@@ -304,7 +308,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "   contentType: false,"
                                                     . "   data: searchFormData,"
                                                     . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
-                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});"
+                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR ajax callback : ' + jqXHR);});"
                                                     . "test2();}")
                                         ]
                                     ],
@@ -316,13 +320,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     echo Highcharts::widget([
                         'id' => 'graphic',
                         'options' => [
-                            'time'=> ['timezoneOffset'=> -2 * 60],
+                            'time' => ['timezoneOffset' => -2 * 60],
                             'chart' => [
                                 'zoomType' => 'x'
                             ],
                             'title' => ['text' => $variables[$data["variable"]]],
                             'subtitle' => [
-                                'text' => 'Click and drag in the plot area to zoom in'
+                                'text' => '(no images)'
                             ],
                             'xAxis' => [
                                 'type' => 'datetime',
@@ -396,12 +400,11 @@ if (isset($data)) {
 
     }
 
-
+    console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    console.log(new Date().getTimezoneOffset());
     function test2() {
         console.log("ça colle colle");
-
     }
-
     var checked = $('#showWidget').is(':checked');
 
     if (checked) {
