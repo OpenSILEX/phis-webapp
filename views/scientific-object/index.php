@@ -162,7 +162,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     });
-    //To remove a cookie from our domain / we have to remove the cookie when we first go to the page but how to know that ? how to know i go to another view/controller and be back ?
+    //To  remove a cookie from our domain / we have to remove the cookie when we first go to the page but how to know that ? how to know i go to another view/controller and be back ?
     //Cookies.remove('name', { path: '' }); 
     function alertCookie() {
         Cookies.set('name', 'lol');
