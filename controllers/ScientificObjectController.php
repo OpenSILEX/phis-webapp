@@ -20,7 +20,6 @@ use yii\filters\VerbFilter;
 use app\models\yiiModels\YiiScientificObjectModel;
 use app\models\yiiModels\ScientificObjectSearch;
 use app\models\yiiModels\YiiExperimentModel;
-use app\models\wsModels\WSUriModel;
 
 require_once '../config/config.php';
 
@@ -423,6 +422,7 @@ class ScientificObjectController extends Controller {
                 $scientificObjectModel->replication = $object[9];
 
                 $scientificObject = $scientificObjectModel->attributesToArray();
+
                 $forWebService[] = $this->getArrayForWebServiceCreate($scientificObject);
                 $cpt++;
                 //Insert the scientific objects by 200
@@ -567,36 +567,86 @@ class ScientificObjectController extends Controller {
         return $p;
     }
 
+    /**
+     * Ajax call from index view : an sci. obj. or all sci. obj. from the page are add to the cart (session variable)
+     * @return the count of the cart
+     * 
+     */
     public function actionAddToCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-        $searchParams = Yii::$app->request->queryParams;
-        if (Yii::$app->request->post()["page"]) {
-            
-        }
-        $pageNumber = $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE];
-        //unset( Yii::$app->session['cart']);
-        if (Yii::$app->request->post()["item"]) {
-            if (isset(Yii::$app->session['cart'])) {
-                $temp = Yii::$app->session['cart'];
-                if (!in_array(Yii::$app->request->post()["item"], $temp[Yii::$app->request->post()["page"]])) {
-                    $temp[Yii::$app->request->post()["page"]][] = Yii::$app->request->post()["item"];
+        $items = Yii::$app->request->post()["items"];
+        if ($items) {
+            if (isset($session['cart'])) {
+                $temp = $session['cart'];
+
+                foreach ($items as $item) {
+                    if (!in_array($item, $temp)) {
+                        $temp[] = $item;
+                    }
                 }
+                $session['cart'] = $temp;
             } else {
-                Yii::$app->session['cart'] = [];
+                $session['cart'] = [];
                 $temp = array();
-                $temp[Yii::$app->request->post()["page"]][] = Yii::$app->request->post()["item"];
+                foreach ($items as $item) {
+
+                    $temp[] = $item;
+                }
+                $session['cart'] = $temp;
             }
-            Yii::$app->session['cart'] = $temp;
-            return [
-                "status" => "success"
-            ];
+        }
+       
+        return ['totalCount' => count($session['cart'])];
+    }
+
+ /**
+     * Ajax call from index view : an sci. obj. or all sci. obj. from the page are removed from the cart (session variable)
+     * @return the count of the cart
+     * 
+     */
+    public function actionRemoveFromCart() {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+        if (Yii::$app->request->post()["items"]) {
+
+            $temp = $session['cart'];
+            $items = Yii::$app->request->post()["items"];
+            $temp = array_diff($temp, $items);
+            $session['cart'] = $temp;
+            if (count($items) > 1) {
+                return ['totalCount' => count($session['cart']),
+                    'allPageSelected' => "o"];
+            }
+            return ['totalCount' => count($session['cart'])];
         }
     }
 
-    public function actionRemoveToCart() {
-        Yii::$app->request->post()["item"];
+ /**
+     * Ajax call from index view : all sci. obj.  are add to the cart (session variable)
+     * @return the count of the cart
+     * 
+     */
+    public function actionAllToAddToCart() {
+
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+        unset($session['cart']);
+        $session['cart'] = [];
+        $temp = $this->getUriObjectList(Yii::$app->request->post()["alias"], Yii::$app->request->post()["type"], Yii::$app->request->post()["experiment"], Yii::$app->session['access_token']);
+        $session['cart'] = $temp;
+        return ['totalCount' => count($temp)];
+    }
+
+     /**
+     * Ajax call from index view : all sci. obj.  are removed from the cart (session variable)
+     * @return the count of the cart
+     * 
+     */
+    public function actionAllToRemoveFromCart() {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+        unset($session['cart']);
         return [
             "status" => "success"
         ];
@@ -651,10 +701,49 @@ class ScientificObjectController extends Controller {
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
                         'scientificObjectTypes' => $scientificObjectsTypesToReturn,
-                        'test' => $session['cart'],
-                        'page' => $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]
+                        'total' => count($session['cart']),
+                        'cart' => $session['cart'],
+                        'searchParams' => $searchParams
             ]);
         }
+    }
+
+     /**
+     * Function to select all the filtered sci. obj.
+     * @param type $label
+     * @param type $type
+     * @param type $experiment
+     * @param type $token
+     * @return array of uri
+     * 
+     */
+    public function getUriObjectList($label, $type, $experiment, $token) {
+
+        $searchModel = new ScientificObjectSearch();
+        $searchModel->label = isset($label) ? $label : null;
+        $searchModel->type = isset($type) ? $type : null;
+        $searchModel->experiment = isset($experiment) ? $experiment : null;
+        $searchParams = []; // ???
+        // Set page size to 10000 for better performances
+        $searchModel->pageSize = 10000;
+        $totalPage = 1;
+        $items = array();
+        for ($i = 0; $i < $totalPage; $i++) {
+            //1. call service for each page
+            $searchParams["page"] = $i;
+
+            $searchResult = $searchModel->search($token, $searchParams);
+
+            //2. write sci. obj in array
+            $models = $searchResult->getmodels();
+
+            foreach ($models as $model) {
+                $items[] = $model->uri;
+            }
+
+            $totalPage = intval($searchModel->totalPages);
+        }
+        return $items;
     }
 
     /**
@@ -666,17 +755,16 @@ class ScientificObjectController extends Controller {
         $searchModel = new ScientificObjectSearch();
         if (isset($_GET['model'])) {
             $searchParams = $_GET['model'];
-            $searchModel->label = isset($searchParams["alias"]) ? $searchParams["alias"] : null;
+            $searchModel->label = isset($searchParams["alias"]) ? $searchParams["alias"] : null;  //why alias ? and not label , c'est quoi l'alias ?
             $searchModel->type = isset($searchParams["type"]) ? $searchParams["type"] : null;
             $searchModel->experiment = isset($searchParams["experiment"]) ? $searchParams["experiment"] : null;
         }
-        $searchParams = [];
-        // Set page size to 10000for better performances
+        $searchParams = []; // ???
+        // Set page size to 10000 for better performances
         $searchModel->pageSize = 10000;
 
         //get all the data (if multiple pages) and write them in a file
         $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
-
         $stringToWrite = "ScientificObjectURI" . ScientificObjectController::DELIM_CSV .
                 "Alias" . ScientificObjectController::DELIM_CSV .
                 "RdfType" . ScientificObjectController::DELIM_CSV .
@@ -703,7 +791,6 @@ class ScientificObjectController extends Controller {
                 } else {
                     $wktGeometry = "";
                 }
-
                 $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV .
                         $model->label . ScientificObjectController::DELIM_CSV .
                         $model->rdfType . ScientificObjectController::DELIM_CSV .
@@ -849,7 +936,6 @@ class ScientificObjectController extends Controller {
             $searchModel->startDate = $_POST['dateStart'];
             $searchModel->endDate = $_POST['dateEnd'];
             $searchModel->provenance = $_POST['provenances'];
-
             $searchResult = $searchModel->search($token, null);
 
             /* Build array for highChart
@@ -919,7 +1005,6 @@ class ScientificObjectController extends Controller {
             //on FORM submitted:
             //check if image visualization is activated
             $show = isset($_POST['show']) ? $_POST['show'] : null;
-
             $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
@@ -927,7 +1012,6 @@ class ScientificObjectController extends Controller {
             if (isset($_POST['position']) && $_POST['position'] !== "") {
                 $filterToSend = "{'metadata.position':'" . $_POST['position'] . "'}";
             }
-
             return $this->render('data_visualization', [
                         'model' => $scientificObject,
                         'variables' => $variables,

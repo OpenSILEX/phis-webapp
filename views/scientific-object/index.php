@@ -23,25 +23,20 @@ $this->title = Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="scientific-object-index">
+<div id="scientific-object-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php var_dump($test);
-    ?>
-
+  
 
     <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
     <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
 
-    <a class="btn icon-btn btn-danger pull-right" href="#">
-        <span class="glyphicon btn-glyphicon glyphicon-trash img-circle text-danger"></span>
-        Clean
-    </a>
+
     <button type="button" id="cart-btn" class="btn btn-warning pull-right" > 
-        <span class="glyphicon glyphicon-shopping-cart ">
+        <span id="cart-span" class="glyphicon glyphicon-shopping-cart ">
         </span>
-        <strong id="cart-articles" >&nbsp;0
+        <strong id="cart-articles" data-count=" <?php echo $total; ?> " > <?php echo $total; ?>
         </strong>
     </button>
 
@@ -51,11 +46,16 @@ $this->params['breadcrumbs'][] = $this->title;
         'id' => 'scientific-object-table',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+      //  'layout' => "{summary}\n{pager}\n{items}",
+        'summary' => " <input id='select-all-objects' type ='checkbox' value='{totalCount}' ><strong>Select all the {totalCount} scientific objects</strong>",
         'columns' => [
             [
                 'class' => 'yii\grid\CheckboxColumn',
-                'checkboxOptions' => function($model) {
-                    return ['value' => $model->uri];
+                'checkboxOptions' => function($model) use($cart) {
+                    $itemUri = $model->uri;
+                    $bool = in_array($itemUri, $cart);
+                    return ['value' => $itemUri,
+                        'checked' => $bool];
                 }],
             [
                 'attribute' => 'uri',
@@ -139,39 +139,152 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 </div>
 <script>
-    console.log(<?php echo isset($page)? $page+1: 1 ?>);
-    $('input:checkbox', $('#scientific-object-table')).change(function (e) {
+
+    //function who check the all object from the page case if all objects are checked
+
+    function areAllItemsChecked() {
+        var result = true;
+        $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
+            if (!$(this).is(':checked') && $(this).val() !== "1") {
+                result = false;
+                return false; // breaks
+            }
+        });
+        return result;
+    }
+    if (areAllItemsChecked()) {
+        $('#scientific-object-table .select-on-check-all').prop("checked", true);
+    }
+
+    //function to check is the all object from all page must be checked
+    function areAllItemsFromAllPagesChecked() {
+        return  +$('#cart-articles').text() === +$('#select-all-objects').val() ? true : false;
+    }
+    if (areAllItemsFromAllPagesChecked()) {
+        $('#select-all-objects').prop("checked", true);
+    }
+    //function to get all checked objects in the page that wasn't check before to add on the session cart
+    function getAllObjectsFromThePage() {
+        var items = [];
+        $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
+            if ($(this).val() !== "1") {
+              
+                items.push($(this).val());
+            }
+        });
+        return items;
+    }
+
+    $('#select-all-objects').change(function (e) {
         var checked = $(this).is(':checked');
-        console.log("checked?: " + checked);
-        console.log("value?: " + $(this).val());
-        
+        var uriSearchParameter = "<?php echo $searchParams["ScientificObjectSearch"]["uri"] ?>";
+        var labelSearchParameter = "<?php echo $searchParams["ScientificObjectSearch"]["label"] ?>";
+        var typeSearchParameter = "<?php echo $searchParams["ScientificObjectSearch"]["type"] ?>";
+        var experimentSearchParameter = "<?php echo $searchParams["ScientificObjectSearch"]["experiment"] ?>";
+
+        console.log(labelSearchParameter);
         if (checked) {
+            $('#cart-span').removeClass().addClass('glyphicon glyphicon-refresh glyphicon-refresh-animate');
+            var ajaxUrl = '<?php echo Url::to(['scientific-object/all-to-add-to-cart']) ?>';
+            $.post(ajaxUrl, {
+                "uri": uriSearchParameter,
+                "alias": labelSearchParameter,
+                "type": typeSearchParameter,
+                "experiment": experimentSearchParameter
+
+            }).done(function (data) {
+                console.log(data.totalCount);
+                $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
+                    $(this).prop("checked", true);
+                });
+                $('#cart-articles').text(data.totalCount);
+                $('#cart-span').removeClass().addClass('glyphicon glyphicon-shopping-cart');
+
+            }).fail(function (jqXHR, textStatus) {
+                alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
+            });
+        } else {
+            $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
+                $(this).prop("checked", false);
+            });
+
+            var ajaxUrl = '<?php echo Url::to(['scientific-object/all-to-remove-from-cart']) ?>';
+            $.post(ajaxUrl).done(function (data) {
+                $('#cart-articles').text("0");
+
+            }).fail(function (jqXHR, textStatus) {
+                alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
+            });
+        }
+    });
+    $('#scientific-object-table .select-on-check-all').change(function (e) {
+        var checked = $(this).is(':checked');
+        if (checked) {
+
             var ajaxUrl = '<?php echo Url::to(['scientific-object/add-to-cart']) ?>';
             $.post(ajaxUrl, {
-                "page":'<?php echo isset($page)? $page+1: 1?>',
-                "item": $(this).val()
+                "items[]": getAllObjectsFromThePage()
+            }).done(function (data) {
+
+                $('#cart-articles').text(data.totalCount);
+                if (areAllItemsFromAllPagesChecked()) {
+                    $('#select-all-objects').prop("checked", true);
+                }
+            }).fail(function (jqXHR, textStatus) {
+                alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
             });
-            console.log("checked");
+
         } else {
-            var ajaxUrl = '<?php echo Url::to(['scientific-object/remove-to-cart']) ?>';
+            var ajaxUrl = '<?php echo Url::to(['scientific-object/remove-from-cart']) ?>';
             $.post(ajaxUrl, {
-                "item": $(this).val()
+                "items[]": getAllObjectsFromThePage()
+            }).done(function (data) {
+                if ($('#select-all-objects').prop("checked")) {
+                    $('#select-all-objects').prop("checked", false);
+                }
+                $('#cart-articles').text(data.totalCount);
+            }).fail(function (jqXHR, textStatus) {
+                alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
             });
-
         }
-
-
     });
-    //To  remove a cookie from our domain / we have to remove the cookie when we first go to the page but how to know that ? how to know i go to another view/controller and be back ?
-    //Cookies.remove('name', { path: '' }); 
-    function alertCookie() {
-        Cookies.set('name', 'lol');
-        console.log(Cookies.get('name'));
-    }
-    alertCookie();
+    $('input:checkbox', $('#scientific-object-table .table')).change(function (e) {
+        if ($(this).val() !== "1") { //valeur de la checkbox to select all the items from all pages
+            var checked = $(this).is(':checked');
+            if (checked) {
+                var ajaxUrl = '<?php echo Url::to(['scientific-object/add-to-cart']) ?>';
+                var items = [];
+                items.push($(this).val());
+                $.post(ajaxUrl, {
+                    "items[]": items
+                }).done(function (data) {
+                    $('#cart-articles').text(data.totalCount);
+                    if (areAllItemsChecked()) {
+                        $('#scientific-object-table .select-on-check-all').prop("checked", true);
+                    }
+                    if (areAllItemsFromAllPagesChecked()) {
+                        $('#select-all-objects').prop("checked", true);
+                    }
+                }).fail(function (jqXHR, textStatus) {
+                    alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
+                });
 
-    // select all : ajaxcall to find all the sci object uri and keep it on the cookie
-
-
+            } else {
+                var ajaxUrl = '<?php echo Url::to(['scientific-object/remove-from-cart']) ?>';
+                var items = [];
+                items.push($(this).val());
+                $.post(ajaxUrl, {
+                    "items[]": items
+                }).done(function (data) {
+                    $('#cart-articles').text(data.totalCount);
+                    if ($('#select-all-objects').prop("checked")) {
+                        $('#select-all-objects').prop("checked", false);
+                    }
+                }).fail(function (jqXHR, textStatus) {
+                    alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
+                });
+            }
+        }
+    });
 
 </script>
