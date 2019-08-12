@@ -21,7 +21,7 @@ return [
 
     // Forms
     'dateTimeFormatDateTimeRangePickerStandard' => 'Y-m-dTH:i:sZ',
-    'dateTimeFormatDateTimePickerUserFriendly' => 'yyyy-mm-dd HH:ii:ss',
+    'dateTimeFormatDateTimePickerUserFriendly' => 'yyyy-mm-dd hh:ii:ss',
     'dateRangeSeparator' => ' - ',
     'textAreaRowsNumber' => 6,
 
@@ -67,6 +67,8 @@ return [
     'NationalInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#NationalInfrastructure',
     'EuropeanInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#EuropeanInfrastructure',
     'Installation' => 'http://www.opensilex.org/vocabulary/oeso#Installation',
+    
+    'FinancialFunding' => 'http://www.opensilex.org/vocabulary/oeso#FinancialFunding',
 
     // Event
     'event' => 'http://www.opensilex.org/vocabulary/oeev#Event',
