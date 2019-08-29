@@ -208,7 +208,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             var ajaxUrl = '<?php echo Url::to(['scientific-object/all-to-remove-from-cart']) ?>';
             $.post(ajaxUrl).done(function (data) {
-                $('#cart-articles').text("0");
+                 $('#cart-articles').text(data.totalCount);
 
             }).fail(function (jqXHR, textStatus) {
                 alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);

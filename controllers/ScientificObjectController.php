@@ -587,20 +587,46 @@ class ScientificObjectController extends Controller {
                 }
                 $session['cart'] = $temp;
             } else {
-                $session['cart'] = [];
-                $temp = array();
-                foreach ($items as $item) {
 
-                    $temp[] = $item;
-                }
-                $session['cart'] = $temp;
+                $session['cart'] = $items;
             }
         }
-       
+
         return ['totalCount' => count($session['cart'])];
     }
 
- /**
+  
+
+    /**
+     * Ajax call from index view : all sci. obj.  are add to the cart (session variable)
+     * @return the count of the cart
+     * 
+     */
+    public function actionAllToAddToCart() {
+
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+
+        $items = $this->getUriObjectList(Yii::$app->request->post()["alias"], Yii::$app->request->post()["type"], Yii::$app->request->post()["experiment"], Yii::$app->session['access_token']);
+        $session['allcart'] = $items;
+        if ($items) {
+            if (isset($session['cart'])) {
+                $temp = $session['cart'];
+
+                foreach ($items as $item) {
+                    if (!in_array($item, $temp)) {
+                        $temp[] = $item;
+                    }
+                }
+                $session['cart'] = $temp;
+            } else {
+                $session['cart'] = $items;
+            }
+        }
+        return ['totalCount' => count( $session['cart'])];
+    }
+    
+      /**
      * Ajax call from index view : an sci. obj. or all sci. obj. from the page are removed from the cart (session variable)
      * @return the count of the cart
      * 
@@ -622,23 +648,7 @@ class ScientificObjectController extends Controller {
         }
     }
 
- /**
-     * Ajax call from index view : all sci. obj.  are add to the cart (session variable)
-     * @return the count of the cart
-     * 
-     */
-    public function actionAllToAddToCart() {
-
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $session = Yii::$app->session;
-        unset($session['cart']);
-        $session['cart'] = [];
-        $temp = $this->getUriObjectList(Yii::$app->request->post()["alias"], Yii::$app->request->post()["type"], Yii::$app->request->post()["experiment"], Yii::$app->session['access_token']);
-        $session['cart'] = $temp;
-        return ['totalCount' => count($temp)];
-    }
-
-     /**
+    /**
      * Ajax call from index view : all sci. obj.  are removed from the cart (session variable)
      * @return the count of the cart
      * 
@@ -646,10 +656,11 @@ class ScientificObjectController extends Controller {
     public function actionAllToRemoveFromCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-        unset($session['cart']);
-        return [
-            "status" => "success"
-        ];
+        $allcarts=$session['allcart'];
+        $temp = $session['cart'];
+        $temp = array_diff($temp, $allcarts);
+        $session['cart'] = $temp;
+        return ['totalCount' => count($session['cart'])];
     }
 
     /**
@@ -708,7 +719,7 @@ class ScientificObjectController extends Controller {
         }
     }
 
-     /**
+    /**
      * Function to select all the filtered sci. obj.
      * @param type $label
      * @param type $type
