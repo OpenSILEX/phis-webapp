@@ -160,9 +160,7 @@ $this->params['breadcrumbs'][] = $this->title;
     function areAllItemsFromAllPagesChecked() {
         return  +$('#cart-articles').text() === +$('#select-all-objects').val() ? true : false;
     }
-    if (areAllItemsFromAllPagesChecked()) {
-        $('#select-all-objects').prop("checked", true);
-    }
+   
     //function to get all checked objects in the page that wasn't check before to add on the session cart
     function getAllObjectsFromThePage() {
         var items = [];
