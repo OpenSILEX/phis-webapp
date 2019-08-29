@@ -255,8 +255,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $series[] = ['name' => $dataFromProvenanceKey,
                         'data' => $dataFromProvenanceValue];
                 }
-                var_dump($strtotime);
-                var_dump($datestring);
+              
                 $url2 = Url::to(['image/search-from-scientific-object']);
                 $objectURI = $model->uri;
                 if ($show) {
