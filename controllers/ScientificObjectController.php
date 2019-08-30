@@ -595,8 +595,6 @@ class ScientificObjectController extends Controller {
         return ['totalCount' => count($session['cart'])];
     }
 
-  
-
     /**
      * Ajax call from index view : all sci. obj.  are add to the cart (session variable)
      * @return the count of the cart
@@ -607,7 +605,7 @@ class ScientificObjectController extends Controller {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
 
-        $items = $this->getUriObjectList(Yii::$app->request->post()["uri"],Yii::$app->request->post()["alias"], Yii::$app->request->post()["type"], Yii::$app->request->post()["experiment"], Yii::$app->session['access_token']);
+        $items = $this->getUriObjectList(Yii::$app->request->post()["uri"], Yii::$app->request->post()["alias"], Yii::$app->request->post()["type"], Yii::$app->request->post()["experiment"], Yii::$app->session['access_token']);
         $session['allcart'] = $items;
         if ($items) {
             if (isset($session['cart'])) {
@@ -623,10 +621,10 @@ class ScientificObjectController extends Controller {
                 $session['cart'] = $items;
             }
         }
-        return ['totalCount' => count( $session['cart'])];
+        return ['totalCount' => count($session['cart'])];
     }
-    
-      /**
+
+    /**
      * Ajax call from index view : an sci. obj. or all sci. obj. from the page are removed from the cart (session variable)
      * @return the count of the cart
      * 
@@ -656,11 +654,17 @@ class ScientificObjectController extends Controller {
     public function actionAllToRemoveFromCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-        $allcarts=$session['allcart'];
+        $allcarts = $session['allcart'];
         $temp = $session['cart'];
         $temp = array_diff($temp, $allcarts);
         $session['cart'] = $temp;
         return ['totalCount' => count($session['cart'])];
+    }
+
+    public function actionGetCart() {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+        return ['items' => $session['cart']];
     }
 
     /**
@@ -729,7 +733,7 @@ class ScientificObjectController extends Controller {
      * @return array of uri
      * 
      */
-    public function getUriObjectList($uri,$label, $type, $experiment, $token) {
+    public function getUriObjectList($uri, $label, $type, $experiment, $token) {
 
         $searchModel = new ScientificObjectSearch();
         $searchModel->uri = isset($uri) ? $uri : null;

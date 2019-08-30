@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div id="scientific-object-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-  
+
 
     <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
@@ -41,12 +41,14 @@ $this->params['breadcrumbs'][] = $this->title;
     </button>
 
 
+
+
     <?=
     GridView::widget([
         'id' => 'scientific-object-table',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-      //  'layout' => "{summary}\n{pager}\n{items}",
+        //  'layout' => "{summary}\n{pager}\n{items}",
         'summary' => " <input id='select-all-objects' type ='checkbox' value='{totalCount}' ><strong>Select all the {totalCount} scientific objects</strong>",
         'columns' => [
             [
@@ -137,6 +139,41 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]);
     ?>
+    <!-- The modal -->
+    <div class="modal  " id="cartView" tabindex="-1" role="dialog" aria-labelledby="modalLabelLarge" aria-hidden="true">
+        <div class="vertical-alignment-helper">
+            <div class="modal-dialog modal-lg vertical-align-center">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="modalLabelLarge"> <button id= "clean-cart-button" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i><strong> CLEAR</strong></button>	</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <table id="cart-table" class="table table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th style="width:50%">uri</th>
+                                    <th style="width:20%">label</th>
+                                    <th style="width:20%">Experiment</th>
+                                    <th style="width:10%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>    
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 <script>
 
@@ -160,18 +197,52 @@ $this->params['breadcrumbs'][] = $this->title;
     function areAllItemsFromAllPagesChecked() {
         return  +$('#cart-articles').text() === +$('#select-all-objects').val() ? true : false;
     }
-   
+
     //function to get all checked objects in the page that wasn't check before to add on the session cart
     function getAllObjectsFromThePage() {
         var items = [];
         $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
             if ($(this).val() !== "1") {
-              
+
                 items.push($(this).val());
             }
         });
         return items;
     }
+    $('#cart-btn').click(function () {
+
+        var ajaxUrl = '<?php echo Url::to(['scientific-object/get-cart']) ?>';
+        $.post(ajaxUrl).done(function (data) {
+            console.log(data.items);
+            var content = "";
+            jQuery.each(data.items, function (i, val) {
+                content += '<tr><td ><p>' + val + '</p></td><td >...</td><td >... </td><td class="actions" ><button class="btn btn-danger btn-sm" data-uri="' + val + '"><i class="fa fa-trash-o"></i></button></td></tr>';
+            });
+            $('#cart-table tbody').append(content);
+            $('#cart-table button').each(function (index, value) {
+                $(this).click(function () {
+                    var uri = $(this).attr("data-uri");
+                    console.log(uri);
+                });
+            });
+
+            $('#cartView').modal('show');
+
+
+        }).fail(function (jqXHR, textStatus) {
+            alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
+        });
+    });
+    $('#cart-btn').mouseover(function () {
+        console.log("in");
+        $('#cart-span').removeClass().addClass('glyphicon glyphicon-eye-open');
+        $('#cart-articles').hide();
+
+    }).mouseout(function () {
+        console.log("out");
+        $('#cart-span').removeClass().addClass('glyphicon glyphicon-shopping-cart');
+        $('#cart-articles').show();
+    });
 
     $('#select-all-objects').change(function (e) {
         var checked = $(this).is(':checked');
@@ -208,7 +279,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             var ajaxUrl = '<?php echo Url::to(['scientific-object/all-to-remove-from-cart']) ?>';
             $.post(ajaxUrl).done(function (data) {
-                 $('#cart-articles').text(data.totalCount);
+                $('#cart-articles').text(data.totalCount);
 
             }).fail(function (jqXHR, textStatus) {
                 alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
