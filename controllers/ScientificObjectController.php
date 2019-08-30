@@ -607,7 +607,7 @@ class ScientificObjectController extends Controller {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
 
-        $items = $this->getUriObjectList(Yii::$app->request->post()["alias"], Yii::$app->request->post()["type"], Yii::$app->request->post()["experiment"], Yii::$app->session['access_token']);
+        $items = $this->getUriObjectList(Yii::$app->request->post()["uri"],Yii::$app->request->post()["alias"], Yii::$app->request->post()["type"], Yii::$app->request->post()["experiment"], Yii::$app->session['access_token']);
         $session['allcart'] = $items;
         if ($items) {
             if (isset($session['cart'])) {
@@ -721,6 +721,7 @@ class ScientificObjectController extends Controller {
 
     /**
      * Function to select all the filtered sci. obj.
+     * @param type $uri
      * @param type $label
      * @param type $type
      * @param type $experiment
@@ -728,9 +729,10 @@ class ScientificObjectController extends Controller {
      * @return array of uri
      * 
      */
-    public function getUriObjectList($label, $type, $experiment, $token) {
+    public function getUriObjectList($uri,$label, $type, $experiment, $token) {
 
         $searchModel = new ScientificObjectSearch();
+        $searchModel->uri = isset($uri) ? $uri : null;
         $searchModel->label = isset($label) ? $label : null;
         $searchModel->type = isset($type) ? $type : null;
         $searchModel->experiment = isset($experiment) ? $experiment : null;
@@ -962,20 +964,6 @@ class ScientificObjectController extends Controller {
              * }
              */
 
-            /* Build array for highChart
-             * e.g : 
-             * {
-             *   "variable": "http:\/\/www.opensilex.org\/demo\/id\/variable\/v0000001",
-             *   "scientificObjectData": [
-             *          "label": "Scientific object label",
-             *          "dataFromProvenance": [
-             *                     "provenance":"Data provenance uri",
-             *                     "data": ["1,874809","2015-02-10"],
-             *                             ["2,313261","2015-03-15"],..
-             *    ]
-             *  ]
-             * }
-             */
 
             $data = [];
             $scientificObjectData["label"] = $label;
