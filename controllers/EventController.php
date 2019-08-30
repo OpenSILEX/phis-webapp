@@ -38,6 +38,11 @@ class EventController extends GenericController {
     const INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
     const EVENT_TYPES = "eventTypes";
     
+    const DEVICES_DATA = "devices";
+    const DEVICE_DATA_URI = "deviceUri";
+    const DEVICE_DATA_LABEL = "deviceLabel";
+    const DEVICE_DATA_TYPE = "deviceType";
+    
     const PARAM_CONCERNED_ITEMS_URIS = 'concernedItemsUris';
     const PARAM_RETURN_URL = "returnUrl";
 
@@ -128,6 +133,28 @@ class EventController extends GenericController {
      * Gets the event types URIs.
      * @return event types URIs 
      */
+    public function getDeviceTypes() {
+        $model = new \app\models\yiiModels\YiiSensorModel();
+        
+        $devicesTypes = [];
+        $model->page = 0;
+        $model->pageSize = Yii::$app->params['webServicePageSizeMax'];
+        $devicesTypesConcepts = $model->getSensorsTypes(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+        if ($devicesTypesConcepts === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
+        } else {
+            foreach ($devicesTypesConcepts[WSConstants::DATA] as $deviceType) {
+                $devicesTypes[$deviceType->uri] = $deviceType->uri;
+            }
+        }
+        
+        return $devicesTypes;
+    }
+    
+    /**
+     * Gets the event types URIs.
+     * @return event types URIs 
+     */
     public function getEventsTypes() {
         $model = new YiiEventModel();
         
@@ -169,6 +196,31 @@ class EventController extends GenericController {
         }
         
         return $infrastructuresUrisTypesLabels;
+    }
+    
+    /**
+     * Gets all infrastructures.
+     * @return experiments 
+     */
+    public function getDevicesUrisTypesLabels() {
+        $model = new \app\models\yiiModels\SensorSearch();
+        $model->page = 0;
+        $sensorsUrisTypesLabels = [];
+        $sensors = $model->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], null);
+        if ($sensors === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
+        } else {
+            foreach ($sensors->models as $sensor) {
+                $sensorsUrisTypesLabels[] =
+                    [
+                        self::DEVICE_DATA_URI => $sensor->uri,
+                        self::DEVICE_DATA_LABEL => $sensor->label,
+                        self::DEVICE_DATA_TYPE => $sensor->rdfType
+                    ];
+            }
+        }
+        
+        return $sensorsUrisTypesLabels;
     }
     
     /**
@@ -226,6 +278,8 @@ class EventController extends GenericController {
     private function loadFormParams() {
         $this->view->params[self::EVENT_TYPES] = $this->getEventsTypes();
         $this->view->params[self::INFRASTRUCTURES_DATA] = $this->getInfrastructuresUrisTypesLabels();
+        $this->view->params[self::DEVICES_DATA] = $this->getDevicesUrisTypesLabels();
+
     }
     
     /**

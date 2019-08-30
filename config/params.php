@@ -128,6 +128,7 @@ return [
 
     // Event
     'from' => 'http://www.opensilex.org/vocabulary/oeev#from',
-    'to' => 'http://www.opensilex.org/vocabulary/oeev#to'
+    'to' => 'http://www.opensilex.org/vocabulary/oeev#to',
+    'associatedWith' => 'http://www.opensilex.org/vocabulary/oeev#associatedWith'
 
 ];

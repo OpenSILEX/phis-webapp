@@ -61,6 +61,13 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
                 = $infrastructure[EventController::INFRASTRUCTURES_DATA_LABEL];
     }
     ?>
+    <?php
+    $devicesLabels = [];
+    foreach ($this->params[EventController::DEVICES_DATA] as $device) {
+        $devicesLabels[$device[EventController::DEVICE_DATA_URI]] 
+                = $device[EventController::DEVICE_DATA_LABEL];
+    }
+    ?>
     <?=
     $form->field($model, EventCreation::PROPERTY_FROM)->widget(Select2::classname(), [
         'data' => $infrastructuresLabels,
@@ -72,6 +79,14 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
     <?=
     $form->field($model, EventCreation::PROPERTY_TO)->widget(Select2::classname(), [
         'data' => $infrastructuresLabels,
+        'pluginOptions' => [
+            'allowClear' => false
+        ],
+    ]);
+    ?>
+    <?=
+    $form->field($model, EventCreation::PROPERTY_ASSOCIATED_WITH)->widget(Select2::classname(), [
+        'data' => $devicesLabels,
         'pluginOptions' => [
             'allowClear' => false
         ],
@@ -170,6 +185,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
         var hasPestDiv = $('div[class*="propertyhaspest"]');
         var fromDiv = $('div[class*="propertyfrom"]');
         var toDiv = $('div[class*="propertyto"]');
+        var associateDiv = $('div[class*="propertyassociatedwith"]');
         var propertyTypeDiv = $('div[class*="propertytype"]');
 
         var toSelect = toDiv.find(selectClass);
@@ -205,6 +221,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             hasPestDiv.hide();
             fromDiv.hide();
             toDiv.hide();
+            associateDiv.hide();
             propertyTypeDiv.hide();
         }
         
@@ -226,15 +243,23 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
                     case "http://www.opensilex.org/vocabulary/oeev#MoveFrom":
                         hasPestDiv.hide();
                         fromDiv.show();
+                        associateDiv.hide();
                         toDiv.hide();
                         break;
                     case "http://www.opensilex.org/vocabulary/oeev#MoveTo":
                         hasPestDiv.hide();
                         fromDiv.hide();
+                        associateDiv.hide();
                         toDiv.show();
                         break;
+                    case "http://www.opensilex.org/vocabulary/oeev#AddingProduct":
+                        hasPestDiv.hide();
+                        fromDiv.hide();
+                        toDiv.hide();
+                        associateDiv.show();
+                        break;
                     default:
-                        hidePropertyBlocs(hasPestDiv, fromDiv, toDiv);
+                        hidePropertyBlocs(hasPestDiv, fromDiv, toDiv, associateDiv);
                         break;
                 }
             });
