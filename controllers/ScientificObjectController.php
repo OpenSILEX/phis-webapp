@@ -661,6 +661,13 @@ class ScientificObjectController extends Controller {
         return ['totalCount' => count($session['cart'])];
     }
 
+    public function actionCleanCart() {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $session = Yii::$app->session;
+        unset($session['cart']);
+        return ['totalCount' => 0];
+    }
+
     public function actionGetCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;

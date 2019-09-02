@@ -31,16 +31,29 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
     <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
+    <!-- Example single danger button -->
+    <!-- Split button -->
+    <div class="btn-group pull-right">
+        <button type="button" id="cart-btn" class="btn btn-warning">
+            <span id="cart-span" class="glyphicon glyphicon-shopping-cart "></span>
+            <strong id="cart-articles" data-count=" <?php echo $total; ?> " > <?php echo $total; ?></strong>
+        </button>
+        <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>  <?=
+                EventButtonWidget::widget([
+                    EventButtonWidget::CONCERNED_ITEMS_URIS => null,
+                    EventButtonWidget::AS_LINK => false
+                ]);
+                ?></li>
+            <li><?php echo Html::a(Icon::show('line-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('yii', 'Visualization'), ['data-visualization-multiple-scientific-objects']); ?></li>
 
 
-    <button type="button" id="cart-btn" class="btn btn-warning pull-right" > 
-        <span id="cart-span" class="glyphicon glyphicon-shopping-cart ">
-        </span>
-        <strong id="cart-articles" data-count=" <?php echo $total; ?> " > <?php echo $total; ?>
-        </strong>
-    </button>
-
-
+        </ul>
+    </div>
 
 
     <?=
@@ -134,6 +147,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'dataVisualization' => function($url, $model, $key) {
                         return Html::a(Icon::show('line-chart', ['class' => 'fa-large'], Icon::FA), ['data-visualization', 'uri' => $model->uri, 'label' => $model->label, 'experimentUri' => $model->experiment]);
                     },
+//                    'update' => function($url, $model, $key) {
+//                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['update', 'id' => $model->uri]);
+//                    },
                 ]
             ]
         ],
@@ -159,7 +175,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <th style="width:50%">uri</th>
                                     <th style="width:20%">label</th>
                                     <th style="width:20%">Experiment</th>
-                                    <th style="width:10%"></th>
                                 </tr>
                             </thead>
                             <tbody>    
@@ -216,16 +231,9 @@ $this->params['breadcrumbs'][] = $this->title;
             console.log(data.items);
             var content = "";
             jQuery.each(data.items, function (i, val) {
-                content += '<tr><td ><p>' + val + '</p></td><td >...</td><td >... </td><td class="actions" ><button class="btn btn-danger btn-sm" data-uri="' + val + '"><i class="fa fa-trash-o"></i></button></td></tr>';
+                content += '<tr><td ><p>' + val + '</p></td><td >...</td><td >... </td></tr>';
             });
             $('#cart-table tbody').append(content);
-            $('#cart-table button').each(function (index, value) {
-                $(this).click(function () {
-                    var uri = $(this).attr("data-uri");
-                    console.log(uri);
-                });
-            });
-
             $('#cartView').modal('show');
 
 
@@ -354,6 +362,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 });
             }
         }
+    });
+
+    $('#clean-cart-button').click(function () {
+        var ajaxUrl = '<?php echo Url::to(['scientific-object/clean-cart']) ?>';
+        $.post(ajaxUrl).done(function (data) {
+            $('#cart-articles').text(data.totalCount);
+            $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
+                $(this).prop("checked", false);
+            });
+            $('#select-all-objects').prop("checked", false);
+            $('#cart-table tbody').html("");
+            $('#cartView').modal('hide');
+
+        }).fail(function (jqXHR, textStatus) {
+            alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
+        });
     });
 
 </script>

@@ -128,7 +128,8 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             'colHeaders' => ['URI'],
             'data' => $data,
             'rowHeaders' => true,
-            'contextMenu' => true
+            'contextMenu' => true,
+            'height'=> 200
         ];
     if (sizeof($model->concernedItems) > 0) {
         foreach($model->concernedItems as $concernedItem) {
@@ -145,8 +146,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             [
                 'data' => 'URI',
                 'type' => 'text',
-                'placeholder' => 'http://www.opensilex.org/example/2019/o19000002',
-                'width' => '380px'
+                'placeholder' => 'http://www.opensilex.org/example/2019/o19000002'
             ]
         ];
     }

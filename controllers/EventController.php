@@ -184,6 +184,10 @@ class EventController extends GenericController {
         // Display form
         if (!$event->load(Yii::$app->request->post())) { 
             $event->load(Yii::$app->request->get(), '');
+            if(!Yii::$app->request->get()['concernedItemsUris']){
+                 $event->load(array("concernedItemsUris"=>Yii::$app->session['cart']),'');
+            }
+           
             $event->creator = $this->getCreatorUri($sessionToken);
             $this->loadFormParams();
             return $this->render('create', ['model' =>  $event]);

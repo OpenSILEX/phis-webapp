@@ -56,7 +56,7 @@ class EventButtonWidget extends Widget {
         
         if (!$this->asLink) {
             $linkLabel = Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', self::ADD_EVENT_LABEL);
-            $linkAttributes = ['class' => 'btn btn-default'];
+           // $linkAttributes = ['class' => 'btn btn-default'];
         } else {
             $linkLabel = '<span class="fa fa-flag"></span>';
         }
