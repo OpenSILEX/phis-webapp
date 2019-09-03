@@ -73,9 +73,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php
                             // Create Provenance select values array
                             foreach ($this->params['provenances'] as $uri => $provenance) {
-                              foreach ($this->params['provenances'] as $uri => $provenance) {
                                // $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
-                                $provenancesArray[$uri]= "prov:(".explode("id/provenance/", $uri)[1].")";
+                                $provenancesArray[$uri]= $provenance->label."(prov:".explode("id/provenance/", $uri)[1].")";
+                      
                             }
                             ?>
                             <?php
