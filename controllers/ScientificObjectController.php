@@ -810,18 +810,7 @@ class ScientificObjectController extends Controller {
 
             $searchResult = $searchModel->search($token, null);
 
-            /* Build array for highChart
-             * e.g : 
-             * {
-             *   "variable": "http:\/\/www.opensilex.org\/demo\/id\/variable\/v0000001",
-             *   "scientificObjectData": [
-             *          "label": "Scientific object label",
-             *          "data": [["1,874809","2015-02-10"],
-             *                   ["2,313261","2015-03-15"]
-             *    ]
-             *  }]
-             * }
-             */
+          
             
             /* Build array for highChart
              * e.g : 
@@ -875,9 +864,11 @@ class ScientificObjectController extends Controller {
             $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
-            $selectedPosition = isset($_POST['position']) ? $_POST['position'] : null;
+            
             if (isset($_POST['position']) && $_POST['position'] !== "") {
-                $filterToSend = "{'metadata.position':'" . $_POST['position'] . "'}";
+                $selectedPosition =(int) $_POST['position'] ;
+                $selectedPosition = $selectedPosition+1; // the select pluggin return the index and not the value ?
+                $filterToSend = "{'metadata.position':'" . $selectedPosition . "'}";
             }
 
             return $this->render('data_visualization', [
@@ -890,9 +881,9 @@ class ScientificObjectController extends Controller {
                         'selectedVariable' => $selectedVariable,
                         'imageTypeSelected' => $imageTypeSelected,
                         'selectedProvenance' => $selectedProvenance,
-                        'selectedPosition' => $selectedPosition,
+                        'selectedPosition' => $selectedPosition-1, // seems that select widget use index when they are selectable number values
                         'filterToSend' => $filterToSend,
-                        'test' => $searchResult->getModels(),
+                        'test' => $selectedPosition,
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [
