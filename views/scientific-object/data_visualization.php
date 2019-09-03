@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px; line-height: 1.5em;"><i class ="fa-large fa fa-search"> <?= Yii::t('app', 'Search Criteria') ?></i></a>
     <div class="collapse in" id="data-visualization-form" >
         <?php
-        
+      
         $form = ActiveForm::begin();
         if (empty($variables)) {
             echo "<p>" . Yii::t('app/messages', 'No variables linked to the experiment of the scientific object.') . "</p>";
@@ -73,7 +73,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php
                             // Create Provenance select values array
                             foreach ($this->params['provenances'] as $uri => $provenance) {
-                                $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
+                               // $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
+                                $provenancesArray[$uri]= "prov:(".explode("id/provenance/", $uri)[1].")";
                             }
                             ?>
                             <?php
