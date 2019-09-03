@@ -18,7 +18,6 @@ $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-
 /**
  * @var model app\models\yiiModels\YiiScientificObjectModel
  * @var variables array
@@ -29,9 +28,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="scientific-object-data-visualization">
 
-    <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px; line-height: 1.5em;"><?= Yii::t('app', 'Search Criteria') ?><i class ="fa-large fa fa-search"></i></a>
+    <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px; line-height: 1.5em;"><i class ="fa-large fa fa-search"> <?= Yii::t('app', 'Search Criteria') ?></i></a>
     <div class="collapse in" id="data-visualization-form" >
         <?php
+        
         $form = ActiveForm::begin();
         if (empty($variables)) {
             echo "<p>" . Yii::t('app/messages', 'No variables linked to the experiment of the scientific object.') . "</p>";

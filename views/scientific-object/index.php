@@ -51,11 +51,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 ?></li>
             <li><?php echo Html::a(Icon::show('line-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('yii', 'Visualization'), ['data-visualization-multiple-scientific-objects']); ?></li>
 
-
+            
         </ul>
     </div>
-
-
+    
     <?=
     GridView::widget([
         'id' => 'scientific-object-table',
@@ -64,6 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
         //  'layout' => "{summary}\n{pager}\n{items}",
         'summary' => " <input id='select-all-objects' type ='checkbox' value='{totalCount}' ><strong>Select all the {totalCount} scientific objects</strong>",
         'columns' => [
+            
             [
                 'class' => 'yii\grid\CheckboxColumn',
                 'checkboxOptions' => function($model) use($cart) {
@@ -72,6 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return ['value' => $itemUri,
                         'checked' => $bool];
                 }],
+                        
             [
                 'attribute' => 'uri',
                 'format' => 'raw',
@@ -155,6 +156,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]);
     ?>
+    
     <!-- The modal -->
     <div class="modal  " id="cartView" tabindex="-1" role="dialog" aria-labelledby="modalLabelLarge" aria-hidden="true">
         <div class="vertical-alignment-helper">
@@ -381,3 +383,4 @@ $this->params['breadcrumbs'][] = $this->title;
     });
 
 </script>
+
