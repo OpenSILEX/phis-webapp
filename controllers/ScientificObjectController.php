@@ -982,8 +982,9 @@ class ScientificObjectController extends Controller {
             $one = true;
             foreach ($searchResult->getModels() as $model) {
                 if (!empty($model->value)) {
+                    $provenanceLabel=$provenances[$model->provenanceUri]->label;
                     $dataToSave = null;
-                    $dataToSave["provenanceUri"] = "prov:(".explode("id/provenance/", $model->provenanceUri)[1].")";
+                    $dataToSave["provenanceUri"] = $provenanceLabel."(prov:".explode("id/provenance/", $model->provenanceUri)[1].")";
                     $dataToSave["date"] = (strtotime($model->date)) * 1000;
                     $dataToSave["value"] = doubleval($model->value);
                     $data[] = $dataToSave;
