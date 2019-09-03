@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="scientific-object-data-visualization">
 
-    <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px; line-height: 1.5em;"><?= Yii::t('app', 'Search Criteria') ?><i class ="fa-large fa fa-search"></i></a>
+    <a   role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px; line-height: 1.5em;"><i class ="fa-large fa fa-search"> <?= Yii::t('app', 'Search Criteria') ?></i></a>
     <div class="collapse in" id="data-visualization-form" >
         <?php
         $form = ActiveForm::begin();
