@@ -290,4 +290,5 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
     </script>
 
     <?php ActiveForm::end(); ?>
+    </div>
 </div>
