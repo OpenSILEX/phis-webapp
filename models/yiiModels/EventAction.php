@@ -77,9 +77,9 @@ class EventAction extends YiiEventModel {
      * Specific properties associated with.
      * @var YiiPropertyModel
      */
-    public $propertyAssociatedWith;
-    const PROPERTY_ASSOCIATED_WITH = 'propertyAssociatedWith';
-    const PROPERTY_ASOOCIATED_LABEL = 'Associated with';
+    public $propertyAssociatedToASensor;
+    const PROPERTY_ASSOCIATED_TO_A_SENSOR = 'propertyAssociatedToASensor';
+    const PROPERTY_ASOOCIATED_TO_A_SENSOR_LABEL = 'Associated to a sensor';
     
     /**
      * Specific properties type.
@@ -112,7 +112,7 @@ class EventAction extends YiiEventModel {
                 self::PROPERTY_HAS_PEST, 
                 self::PROPERTY_FROM, 
                 self::PROPERTY_TO, 
-                self::PROPERTY_ASSOCIATED_WITH, 
+                self::PROPERTY_ASSOCIATED_TO_A_SENSOR, 
                 self::RETURN_URL,
             ],  'safe']
         ]; 
@@ -131,7 +131,7 @@ class EventAction extends YiiEventModel {
                 self::PROPERTY_HAS_PEST => Yii::t('app', self::PROPERTY_HAS_PEST_LABEL),
                 self::PROPERTY_FROM => Yii::t('app', self::PROPERTY_FROM_LABEL),
                 self::PROPERTY_TO => Yii::t('app', self::PROPERTY_TO_LABEL),
-                self::PROPERTY_ASSOCIATED_WITH => Yii::t('app', self::PROPERTY_ASOOCIATED_LABEL),
+                self::PROPERTY_ASSOCIATED_TO_A_SENSOR => Yii::t('app', self::PROPERTY_ASOOCIATED_TO_A_SENSOR_LABEL),
             ]
         );
     }
@@ -201,10 +201,10 @@ class EventAction extends YiiEventModel {
                 $property->rdfType = $this->propertyType;
                 $property->relation = Yii::$app->params['to'];
                 break;
-            case Yii::$app->params['associatedWith']:
-                $property->value = $this->propertyAssociatedWith;
+            case Yii::$app->params['AssociatedToASensor']:
+                $property->value = $this->propertyAssociatedToASensor;
                 $property->rdfType = $this->propertyType;
-                $property->relation = Yii::$app->params['associatedWith'];
+                $property->relation = Yii::$app->params['associatedToASensor'];
                 break;
             default : 
                 $property = null;

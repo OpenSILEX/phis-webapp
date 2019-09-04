@@ -62,10 +62,10 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
     }
     ?>
     <?php
-    $devicesLabels = [];
-    foreach ($this->params[EventController::DEVICES_DATA] as $device) {
-        $devicesLabels[$device[EventController::DEVICE_DATA_URI]] 
-                = $device[EventController::DEVICE_DATA_LABEL];
+    $sensorsLabels = [];
+    foreach ($this->params[EventController::SENSORS_DATA] as $sensor) {
+        $sensorsLabels[$sensor[EventController::SENSOR_DATA_URI]] 
+                = $sensor[EventController::SENSOR_DATA_LABEL];
     }
     ?>
     <?=
@@ -85,8 +85,8 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
     ]);
     ?>
     <?=
-    $form->field($model, EventCreation::PROPERTY_ASSOCIATED_WITH)->widget(Select2::classname(), [
-        'data' => $devicesLabels,
+    $form->field($model, EventCreation::PROPERTY_ASSOCIATED_TO_A_SENSOR)->widget(Select2::classname(), [
+        'data' => $sensorsLabels,
         'pluginOptions' => [
             'allowClear' => false
         ],
@@ -178,20 +178,21 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
         ) 
     ?>
     </div>
-    
+
     <script>
         var selectClass = "select";
 
         var hasPestDiv = $('div[class*="propertyhaspest"]');
         var fromDiv = $('div[class*="propertyfrom"]');
         var toDiv = $('div[class*="propertyto"]');
-        var associateDiv = $('div[class*="propertyassociatedwith"]');
         var propertyTypeDiv = $('div[class*="propertytype"]');
+        var associateToASensorDiv = $('div[class*="propertyassociatedtoasensor"]');
 
         var toSelect = toDiv.find(selectClass);
         var fromSelect = fromDiv.find(selectClass);
         var hasPestSelect = hasPestDiv.find(selectClass);
         var propertyTypeSelect = propertyTypeDiv.find(selectClass);
+        var associateToASensorSelect = associateToASensorDiv.find(selectClass);
 
         var typeSelect = $('select[id*="rdftype"]');
             
@@ -209,6 +210,10 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
         toSelect.on('change', function (e) {
             setPropertyType(toSelect.val());
         }); 
+        associateToASensorSelect.on('change', function (e) {
+            setPropertyType(associateToASensorSelect.val());
+        }); 
+        
         
         if(!dateOffsetInput.val() || dateOffsetInput.val() === "") { // if event creation
             setDateTimezoneOffsetWithUserDefaultOne();
@@ -221,8 +226,8 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             hasPestDiv.hide();
             fromDiv.hide();
             toDiv.hide();
-            associateDiv.hide();
             propertyTypeDiv.hide();
+            associateToASensorDiv.hide();
         }
         
         /**
@@ -243,23 +248,23 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
                     case "http://www.opensilex.org/vocabulary/oeev#MoveFrom":
                         hasPestDiv.hide();
                         fromDiv.show();
-                        associateDiv.hide();
                         toDiv.hide();
+                        associateToASensorDiv.hide();
                         break;
                     case "http://www.opensilex.org/vocabulary/oeev#MoveTo":
                         hasPestDiv.hide();
                         fromDiv.hide();
-                        associateDiv.hide();
                         toDiv.show();
+                        associateToASensorDiv.hide();
                         break;
-                    case "http://www.opensilex.org/vocabulary/oeev#AddingProduct":
+                    case "http://www.opensilex.org/vocabulary/oeev#AssociatedToASensor":
                         hasPestDiv.hide();
                         fromDiv.hide();
                         toDiv.hide();
-                        associateDiv.show();
+                        associateToASensorDiv.show();
                         break;
                     default:
-                        hidePropertyBlocs(hasPestDiv, fromDiv, toDiv, associateDiv);
+                        hidePropertyBlocs(hasPestDiv, fromDiv, toDiv, associateToASensorDiv);
                         break;
                 }
             });
@@ -284,6 +289,6 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
         };
     </script>
 
-<?php ActiveForm::end(); ?>
+    <?php ActiveForm::end(); ?>
+    </div>
 </div>
-
