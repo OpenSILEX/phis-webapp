@@ -429,6 +429,8 @@ require_once '../config/config.php';
                     
                     $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
                 
+                    $forWebService = [];
+                    
                     if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
                         foreach ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES} as $scientificObjectUri) {
                             $return["objectUris"][] = $scientificObjectUri;
