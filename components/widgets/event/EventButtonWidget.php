@@ -62,7 +62,7 @@ class EventButtonWidget extends Widget {
                 'data' => [
                     'method' => 'POST',
                     'params' => [EventController::PARAM_CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
-                        EventController::PARAM_RETURN_URL => Url::current(),'test'=>'toto']
+                        EventController::PARAM_RETURN_URL => Url::current(),'display'=>'display']
                 ]
         ];
 
