@@ -180,20 +180,19 @@ class EventController extends GenericController {
         $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         $event = new EventCreation();
         $event->isNewRecord = true;
-        
+       // var_dump(Yii::$app->request->post('test'));exit;
         // Display form
-        if (!$event->load(Yii::$app->request->post())) { 
-            $event->load(Yii::$app->request->get(), '');
-            if(!Yii::$app->request->get()['concernedItemsUris']){
-                 $event->load(array("concernedItemsUris"=>Yii::$app->session['cart']),'');
-            }
-           
+        if (Yii::$app->request->post('test')) { 
+           // $event->load(Yii::$app->request->post());
+            $event->load(array("concernedItemsUris"=>json_decode(Yii::$app->request->post()[self::PARAM_CONCERNED_ITEMS_URIS])),'');
+            $event->returnUrl=Yii::$app->request->post(self::PARAM_RETURN_URL, null);
+            var_dump(Yii::$app->request->post());exit;
             $event->creator = $this->getCreatorUri($sessionToken);
             $this->loadFormParams();
             return $this->render('create', ['model' =>  $event]);
            
         // Submit form    
-        } else {     
+        } else {   
             $dataToSend[] = $event->attributesToArray(); 
             $requestResults =  $event->insert($sessionToken, $dataToSend);
             return $this->handlePostPutResponse($requestResults, $event->returnUrl);

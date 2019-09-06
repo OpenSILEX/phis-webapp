@@ -45,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <ul class="dropdown-menu">
             <li>  <?=
                 EventButtonWidget::widget([
-                    EventButtonWidget::CONCERNED_ITEMS_URIS => null,
+                    EventButtonWidget::CONCERNED_ITEMS_URIS => json_encode(Yii::$app->session['cart'], JSON_UNESCAPED_SLASHES),
                     EventButtonWidget::AS_LINK => false
                 ]);
                 ?></li>
