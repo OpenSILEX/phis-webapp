@@ -47,7 +47,6 @@ class WSTokenModel extends \openSILEX\guzzleClientPHP\WSModel {
             $bodyRequest["client_id"] = $client_id;
         }
         $bodyToSend = $bodyRequest;
-        
         $requestRes = $this->post("", "", $bodyToSend);
 
         if (isset($requestRes->{WSConstants::ACCESS_TOKEN})) {
@@ -57,7 +56,7 @@ class WSTokenModel extends \openSILEX\guzzleClientPHP\WSModel {
             $date = new \DateTime();
             $date->add(new \DateInterval('PT' . $delay . 'S'));
             $tokenTimeout = $date->getTimestamp();
-//            var_dump($delay, new \DateTime(), $date, $tokenTimeout); die;
+
             // set cookie storing token timeout
             setcookie(
                 WSConstants::TOKEN_COOKIE_TIMEOUT,
