@@ -56,13 +56,15 @@ class WSTokenModel extends \openSILEX\guzzleClientPHP\WSModel {
             $date = new \DateTime();
             $date->add(new \DateInterval('PT' . $delay . 'S'));
             $tokenTimeout = $date->getTimestamp();
-            
+
             // set cookie storing token timeout
             setcookie(
                 WSConstants::TOKEN_COOKIE_TIMEOUT,
-                $tokenTimeout
+                $tokenTimeout,
+                time() + $delay,
+                '/'
             );
-                
+            
            return $requestRes->{WSConstants::ACCESS_TOKEN};
         } else {
             return null;
