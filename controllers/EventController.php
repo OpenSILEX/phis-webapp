@@ -37,8 +37,8 @@ class EventController extends GenericController {
     const INFRASTRUCTURES_DATA_LABEL = "infrastructureLabel";
     const INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
     const EVENT_TYPES = "eventTypes";
-    
     const PARAM_CONCERNED_ITEMS_URIS = 'concernedItemsUris';
+    const TYPE = 'type';
     const PARAM_RETURN_URL = "returnUrl";
 
     /**
@@ -180,18 +180,19 @@ class EventController extends GenericController {
         $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         $event = new EventCreation();
         $event->isNewRecord = true;
+        
         // Display form
-        if (Yii::$app->request->post('display')) { 
-            $event->load(Yii::$app->request->post());
-            $event->load(array(self::PARAM_CONCERNED_ITEMS_URIS =>json_decode(Yii::$app->request->post()[self::PARAM_CONCERNED_ITEMS_URIS], JSON_UNESCAPED_SLASHES)),'');
-            $event->returnUrl=Yii::$app->request->post(self::PARAM_RETURN_URL, null);
+        if (!$event->load(Yii::$app->request->post())) {
+            $event->load(Yii::$app->request->get(), '');
+            if(Yii::$app->request->get()['type']==="scientific-objects"){
+                 $event->load(array(self::PARAM_CONCERNED_ITEMS_URIS =>Yii::$app->session['cart']),'');
+            }
             $event->creator = $this->getCreatorUri($sessionToken);
             $this->loadFormParams();
             return $this->render('create', ['model' =>  $event]);
            
         // Submit form    
         } else {   
-            $event->load(Yii::$app->request->post());
             $dataToSend[] = $event->attributesToArray(); 
             $requestResults =  $event->insert($sessionToken, $dataToSend);
             return $this->handlePostPutResponse($requestResults, $event->returnUrl);

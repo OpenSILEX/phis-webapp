@@ -33,16 +33,21 @@ class EventButtonWidget extends Widget {
      * @var boolean
      */
     public $asLink = false;
-
     const AS_LINK = "asLink";
 
-    /**
+      /**
      * Defines the items which will be annotated.
      * @var array
      */
     public $concernedItemsUris;
-
     const CONCERNED_ITEMS_URIS = "concernedItemsUris";
+    
+    /**
+     * Defines the type of object which will be annotated.
+     * @var array
+     */
+    public $type;
+    const TYPE = "type";
 
     /**
      * Renders the event button.
@@ -52,18 +57,11 @@ class EventButtonWidget extends Widget {
         //SILEX:conception
         // Maybe create a widget bar and put buttons in it to use the same style
         //\SILEX:conception
-//        $uriArray = [
-//                'event/create',
-//                EventController::PARAM_CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
-//                EventController::PARAM_RETURN_URL => Url::current()
-//            ];
-        $uriArray1 =  ['/event/create'];
-        $uriArray2= [
-                'data' => [
-                    'method' => 'POST',
-                    'params' => [EventController::PARAM_CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
-                        EventController::PARAM_RETURN_URL => Url::current(),'display'=>'display']
-                ]
+        $uriArray = [
+                'event/create',
+                EventController::TYPE => $this->type,
+                EventController::PARAM_CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
+                EventController::PARAM_RETURN_URL => Url::current()
         ];
 
         if (!$this->asLink) {
@@ -75,8 +73,9 @@ class EventButtonWidget extends Widget {
         $linkAttributes["title"] = Yii::t('app', self::ADD_EVENT_LABEL);
 
         return Html::a(
-                        $linkLabel, $uriArray1,$uriArray2, $linkAttributes
+                    $linkLabel,
+                    $uriArray, 
+                    $linkAttributes
         );
     }
-
 }

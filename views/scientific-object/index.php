@@ -45,7 +45,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <ul class="dropdown-menu">
             <li>  <?=
                 EventButtonWidget::widget([
-                    EventButtonWidget::CONCERNED_ITEMS_URIS => json_encode(Yii::$app->session['cart'], JSON_UNESCAPED_SLASHES),
+                    EventButtonWidget::TYPE => "scientific-objects",
+                    EventButtonWidget::CONCERNED_ITEMS_URIS => null,
                     EventButtonWidget::AS_LINK => false
                 ]);
                 ?></li>
@@ -135,6 +136,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons' => [
                     'event' => function($url, $model, $key) {
                         return EventButtonWidget::widget([
+                                    EventButtonWidget::TYPE => "one",
                                     EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri],
                                     EventButtonWidget::AS_LINK => true
                         ]);
