@@ -1,8 +1,9 @@
 html,body {
     height: 100%;
 }
-
-/*Vertival list of images on the scientific objects visualization view*/
+/*SILEX:info*/
+/*use in views/scientific-object/date_visualization.php*/
+/*Vertical list of images*/
 ul.images {
   margin: 0;
   padding: 0;
@@ -10,23 +11,31 @@ ul.images {
   max-width: 1140px;
   overflow-x: auto;
 }
-
 ul.images li {
   display: inline-block;
   width: 200px;
   margin: 0 2px;
-  
-  
 }
-/* Bug for the carousel in the modal on the scientific objects visualization view*/
+/*//\SILEX:info*/
+
+/*SILEX:required*/
+/*use in views/scientific-object/date_visualization.php*/
+/* Fix position of the carousel in the modal*/
+/*//\SILEX:required*/
 .modal.and {
   position: fixed; 
 }
+ /*SILEX:info*/ 
+ /*use in views/scientific-object/date_visualization.php*/
 /*Override the default max-width of the tooltip*/
+/*//\SILEX:info*/
 .tooltip-inner {
     max-width: 500px !important; 
 }
 
+/*SILEX:info*/ 
+/*use in views/scientific-object/date_visualization.php*/
+/*Gradient on the photo in the modal to see the text in white */
 .pickgradient{
   position:relative;
   display:inline-block;
@@ -45,7 +54,7 @@ ul.images li {
   background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
 }
-
+/*//\SILEX:info*/
 
 .btn:focus,.btn:active {
    outline: none !important;

@@ -5,8 +5,8 @@
 //
 // Author(s): Julien Bonnefont <julien.bonnefont@inra.fr>
 // PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 3 janv. 2018
+// Copyright © - INRA - 2019
+// Creation date: 18 june. 2019
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 // Last modification date:  15 juillet 2019
 // Subject: visualization of images of a scientific object
@@ -40,7 +40,6 @@ use yii\helpers\Url;
                 $obj = $model->concernedItems[0];
                 $date = $image->date;
                 $position = $image->metadata->position;
-                //var_dump($image -> metadata ->position);
 
                 if ($first && $count == 0) {
                     echo
