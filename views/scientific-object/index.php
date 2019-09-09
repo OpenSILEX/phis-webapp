@@ -1,4 +1,5 @@
 <?php
+
 //**********************************************************************************************
 //                                       index.php 
 // SILEX-PHIS
@@ -25,21 +26,23 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
-    </p>
-    
-   <?= GridView::widget([
+
+    <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
+    <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
+    <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
+
+
+    <?=
+    GridView::widget([
+        'id' => 'scientific-object-table',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+          
             [
-              'attribute' => 'uri',
-              'format' => 'raw',
-              'value' => 'uri'
+                'attribute' => 'uri',
+                'format' => 'raw',
+                'value' => 'uri'
             ],
             'label',
             [
@@ -85,35 +88,35 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Html::a($this->params['listExperiments'][$model->experiment], ['experiment/view', 'id' => $model->experiment]);
                 },
                 'filter' => \kartik\select2\Select2::widget([
-                            'attribute' => 'experiment',
-                            'model' => $searchModel,
-                            'data' => $this->params['listExperiments'],
-                            'options' => [
-                                'placeholder' => 'Select experiment alias...'
-                            ]
-                        ]),
+                    'attribute' => 'experiment',
+                    'model' => $searchModel,
+                    'data' => $this->params['listExperiments'],
+                    'options' => [
+                        'placeholder' => 'Select experiment alias...'
+                    ]
+                ]),
             ],
             ['class' => 'yii\grid\ActionColumn',
                 'template' => '{event}<br/>{annotation}<br/>{dataVisualization}',
                 'buttons' => [
                     'event' => function($url, $model, $key) {
                         return EventButtonWidget::widget([
-                            EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri],
-                            EventButtonWidget::AS_LINK => true
-                        ]); 
+                                    EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri],
+                                    EventButtonWidget::AS_LINK => true
+                        ]);
                     },
                     'annotation' => function($url, $model, $key) {
                         return AnnotationButtonWidget::widget([
-                            AnnotationButtonWidget::TARGETS => [$model->uri],
-                            AnnotationButtonWidget::AS_LINK => true
-                        ]); 
+                                    AnnotationButtonWidget::TARGETS => [$model->uri],
+                                    AnnotationButtonWidget::AS_LINK => true
+                        ]);
                     },
                     'dataVisualization' => function($url, $model, $key) {
-                        return Html::a(Icon::show('line-chart', ['class' => 'fa-large'], Icon::FA), 
-                                        ['data-visualization', 'uri' => $model->uri, 'label' => $model->label, 'experimentUri' => $model->experiment]);
+                        return Html::a(Icon::show('line-chart', ['class' => 'fa-large'], Icon::FA), ['data-visualization', 'uri' => $model->uri, 'label' => $model->label, 'experimentUri' => $model->experiment]);
                     },
                 ]
             ]
         ],
-    ]); ?>
+    ]);
+    ?>
 </div>
