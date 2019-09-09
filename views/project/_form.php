@@ -70,7 +70,6 @@ function changeSpaces(text, idInput) {
                               'multiple' => true,
                     'value' => $this->params['listActualProjects']],
                 'pluginOptions' => [
-                    'tags'=>true,
                     'allowClear' => true
                 ]
             ]);
@@ -90,7 +89,6 @@ function changeSpaces(text, idInput) {
                           'multiple' => false,
                             'value' => $financialValue],
             'pluginOptions' => [
-                'tags'=>true,
                 'allowClear' => true
             ]
     ]) ?>
