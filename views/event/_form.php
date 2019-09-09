@@ -131,6 +131,24 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             'contextMenu' => true,
             'height'=> 200
         ];
+    if (sizeof($model->concernedItems) > 8) {
+          $settings = 
+            [
+                'colHeaders' => ['URI'],
+                'data' => $data,
+                'rowHeaders' => true,
+                'contextMenu' => true,
+                'height'=> 200
+            ];
+    } else{
+         $settings = 
+            [
+                'colHeaders' => ['URI'],
+                'data' => $data,
+                'rowHeaders' => true,
+                'contextMenu' => true,
+            ];
+    }
     if (sizeof($model->concernedItems) > 0) {
         foreach($model->concernedItems as $concernedItem) {
             $data[][0] = $concernedItem->uri;

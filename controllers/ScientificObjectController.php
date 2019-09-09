@@ -610,7 +610,6 @@ class ScientificObjectController extends Controller {
         if ($items) {
             if (isset($session['cart'])) {
                 $temp = $session['cart'];
-
                 foreach ($items as $item) {
                     if (!in_array($item, $temp)) {
                         $temp[] = $item;
@@ -638,10 +637,6 @@ class ScientificObjectController extends Controller {
             $items = Yii::$app->request->post()["items"];
             $temp = array_diff($temp, $items);
             $session['cart'] = $temp;
-            if (count($items) > 1) {
-                return ['totalCount' => count($session['cart']),
-                    'allPageSelected' => "o"];
-            }
             return ['totalCount' => count($session['cart'])];
         }
     }
