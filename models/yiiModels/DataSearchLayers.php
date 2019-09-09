@@ -88,6 +88,7 @@ class DataSearchLayers extends \app\models\yiiModels\YiiDataModel {
         $toReturn["startDate"] = $this->startDate;
         $toReturn["endDate"] = $this->endDate;
         $toReturn["provenance"] = $this->provenance;
+        $toReturn["pageSize"] = $this->pageSize;
                 
         return $toReturn;
     }

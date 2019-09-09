@@ -24,7 +24,7 @@ include_once '../config/web_services.php';
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ImageController extends \yii\web\Controller {
-    
+
     /**
      * define the behaviors
      * @return array
@@ -39,7 +39,7 @@ class ImageController extends \yii\web\Controller {
             ],
         ];
     }
-    
+
     /**
      * search images (by concerned items, rdf type) and return the result
      * @return the images corresponding to the search
@@ -47,29 +47,56 @@ class ImageController extends \yii\web\Controller {
      */
     public function actionSearchFromLayer() {
         $searchModel = new DataFileSearch($pageSize = 100);
-        if ($searchModel->load(Yii::$app->request->post())) {
+        if (Yii::$app->request->post()["concernedItems"]) {
             $searchModel->concernedItems = Yii::$app->request->post()["concernedItems"];
             $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->post());
 
-            return $this->renderAjax('_form_images_visualization', [ 
+            return $this->renderAjax('_form_images_visualization', [
                         'model' => $searchModel,
                         'data' => $searchResult
-                   ]);
+            ]);
         } else {
             return $this->renderAjax('_form_images_visualization', [
                         'model' => $searchModel
-                   ]);
+            ]);
         }
     }
-    
+
+    /**
+     * search images (for one concerned item. with rdf type, date and json filter value ) 
+     * and return the result
+     * @return the images corresponding to the search
+     * @throws Exception
+     */
+    public function actionSearchFromScientificObject() {
+        $searchModel = new DataFileSearch($pageSize = 100);
+        if ($searchModel->load(Yii::$app->request->post())) {
+            $searchModel->startDate = Yii::$app->request->post()["startDate"];
+            $searchModel->endDate = Yii::$app->request->post()["endDate"];
+            $searchModel->concernedItems = Yii::$app->request->post()["concernedItems"];
+            $searchModel->jsonValueFilter = Yii::$app->request->post()["jsonValueFilter"];
+            $searchModel->provenance = Yii::$app->request->post()["provenance"];
+            $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->post());
+            $imagesCount =  Yii::$app->request->post()["imagesCount"];
+            return $this->renderAjax('_simple_images_visualization', [
+                        'model' => $searchModel,
+                        'data' => $searchResult,
+                   'imagesCount' => $imagesCount
+            ]);
+        }
+        return $this->renderAjax('_simple_images_visualization', [
+                    'model' => $searchModel
+        ]);
+    }
+
     /**
      * Proxy action to get data file image from web service
      * @param type $imageUri
      */
     public function actionGet($imageUri) {
         $url = WS_PHIS_PATH . "data/file/" . $imageUri;
-        $imginfo = getimagesize( $url );
-        header("Content-type: ".$imginfo['mime']);
+        $imginfo = getimagesize($url);
+        header("Content-type: " . $imginfo['mime']);
         header('Content-Transfer-Encoding: binary');
         $file = fopen($url, 'rb');
 
@@ -77,4 +104,5 @@ class ImageController extends \yii\web\Controller {
         fpassthru($file);
         exit;
     }
+
 }

@@ -101,6 +101,7 @@ return [
     // D
     'Data' => 'Données',
     'Data file' => 'Fichier de données',
+    'Data Search'=>'Recherche de données',
     'Dataset' => 'Jeux de données',
     'Dataset Creation Date' => 'Données Insérées',
     'Date' => 'Date',
@@ -158,6 +159,7 @@ return [
     'Generated URI' => 'URI générée',
     'Geographic Location' => 'Localisation géographique',
     'Geometry' => 'Géométrie',
+    'Graphic visualization' => 'Visualisation graphique',
     'Groups' => 'Groupes',
     'Guest' => 'Invité',
 
@@ -167,6 +169,9 @@ return [
     'Homepage' => 'Site web',
 
     // I
+    
+    'Image Search'=>'Recherche d\'images',
+    'Image View'=>'Vue de l\'image',
     'Images Visualization' => 'Visualisation d\'Images',
     'In Service Date' => 'Date de Mise en Service',
     'Insertion status' => 'Statut d\'insertion',
@@ -252,6 +257,7 @@ return [
     // S
     'Scientific Contacts' => 'Contacts scientifiques',
     'Scientific Supervisors' => 'Superviseurs scientifiques',
+    'Search Criteria' =>'Critères de recherche',
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',
     'Select type...' => 'Sélectionez le type',
