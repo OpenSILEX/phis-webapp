@@ -128,7 +128,9 @@ return [
 
     // Event
     'from' => 'http://www.opensilex.org/vocabulary/oeev#from',
-    'to' => 'http://www.opensilex.org/vocabulary/oeev#to', //filters
+    'to' => 'http://www.opensilex.org/vocabulary/oeev#to', 
+
+    // Image filters
     'image.filter' => [
         'metadata.position' => [
             '1', '2', '3', '4', '5', '6', '7', '8','9','10'],
