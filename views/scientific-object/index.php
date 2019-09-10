@@ -24,16 +24,15 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div id="scientific-object-index">
-
     <h1><?= Html::encode($this->title) ?></h1>
-
-
+    
+   
     <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
     <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
-    <!-- Example single danger button -->
-    <!-- Split button -->
-    <div class="btn-group pull-right">
+    
+   <div class="btn-group pull-right">
+        
         <button type="button" id="cart-btn" class="btn btn-warning">
             <span id="cart-span" class="glyphicon glyphicon-shopping-cart "></span>
             <strong id="cart-articles" data-count=" <?php echo $total; ?> " > <?php echo $total; ?></strong>
@@ -43,24 +42,27 @@ $this->params['breadcrumbs'][] = $this->title;
             <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu">
-            <li>  <?=
-                EventButtonWidget::widget([
+            <li><?=
+            EventButtonWidget::widget([
                     EventButtonWidget::TYPE => "scientific-objects",
                     EventButtonWidget::CONCERNED_ITEMS_URIS => null,
                     EventButtonWidget::AS_LINK => false
                 ]);
-                ?></li>
-            <li><?php
-                echo Html::a(Icon::show('eraser', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('yii', 'Clear cart'), FALSE, [
-                    'onclick' => "$.ajax({
+            ?>
+            </li>
+            <li><?=
+            Html::a(Icon::show('eraser',['class' => 'fa-large'], Icon::FA) . " " . Yii::t('yii', 'Clear cart'),
+                    FALSE,
+                    ['onclick' => "$.ajax({
                                     type:'POST',
                                     url:'" . Url::to(['scientific-object/clean-cart']) . "',
                                     success:function(data) { afterClearCart(data);}});
-                             return false;",]);
-                ?></li>
-
-
+                                   return false;",]
+                    );
+            ?>
+            </li>
         </ul>
+        
     </div>
 
     <?=
@@ -68,15 +70,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'id' => 'scientific-object-table',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        //  'layout' => "{summary}\n{pager}\n{items}",
         'summary' => " <input id='select-all-objects' type ='checkbox' value='{totalCount}' ><strong>Select all the {totalCount} scientific objects</strong>",
         'columns' => [
             [
                 'class' => 'yii\grid\CheckboxColumn',
                 'checkboxOptions' => function($model) use($cart) {
                     $itemUri = $model->uri;
+                    $itemName = $model->label;
                     $bool = in_array($itemUri, $cart);
-                    return ['value' => $itemUri,
+                    return ['value' => $itemUri,'data'=>['name'=>$itemName],
                         'checked' => $bool];
                 }],
             [
@@ -155,9 +157,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'dataVisualization' => function($url, $model, $key) {
                         return Html::a(Icon::show('line-chart', ['class' => 'fa-large'], Icon::FA), ['data-visualization', 'uri' => $model->uri, 'label' => $model->label, 'experimentUri' => $model->experiment]);
                     },
-//                    'update' => function($url, $model, $key) {
-//                        return Html::a('<span class="glyphicon glyphicon-pencil"></span>', ['update', 'id' => $model->uri]);
-//                    },
                 ]
             ]
         ],
@@ -182,27 +181,25 @@ $this->params['breadcrumbs'][] = $this->title;
                             <thead>
                                 <tr>
                                     <th style="width:50%">uri</th>
-                                    <th style="width:20%">label</th>
-                                    <th style="width:20%">Experiment</th>
+                                    <th style="width:50%">label</th>
                                 </tr>
                             </thead>
                             <tbody>    
                             </tbody>
-
                         </table>
                     </div>
-
+                    
                 </div>
             </div>
         </div>
     </div>
-
-
+    <!--/The modal -->
+    
 </div>
 <script>
 
     //function who check the all object from the page case if all objects are checked
-
+   
     function areAllItemsChecked() {
         var result = true;
         $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
@@ -213,6 +210,7 @@ $this->params['breadcrumbs'][] = $this->title;
         });
         return result;
     }
+    
     if (areAllItemsChecked()) {
         $('#scientific-object-table .select-on-check-all').prop("checked", true);
     }
@@ -227,29 +225,38 @@ $this->params['breadcrumbs'][] = $this->title;
         var items = [];
         $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
             if ($(this).val() !== "1") {
-
                 items.push($(this).val());
             }
         });
         return items;
     }
+    //function to get all checked objects in the page that wasn't check before to add on the session cart
+    function getAllObjectsWithNameFromThePage() {
+        var items = {};
+        $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
+            if ($(this).val() !== "1") {
+                items[$(this).val()]=$(this).attr("data-name");
+            }
+        });
+        return items;
+    }
+    
     $('#cart-btn').click(function () {
 
         var ajaxUrl = '<?php echo Url::to(['scientific-object/get-cart']) ?>';
         $.post(ajaxUrl).done(function (data) {
             console.log(data.items);
             var content = "";
-            jQuery.each(data.items, function (i, val) {
-                content += '<tr><td ><p>' + val + '</p></td><td >...</td><td >... </td></tr>';
-            });
+            for (const [key, value] of Object.entries(data.items)) {
+                content += '<tr><td ><p>' + key + '</p></td><td ><p>' + value + '</p></td></tr>';
+            }
             $('#cart-table tbody').append(content);
             $('#cartView').modal('show');
-
-
         }).fail(function (jqXHR, textStatus) {
             alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
         });
     });
+    
     $('#cart-btn').mouseover(function () {
         console.log("in");
         $('#cart-span').removeClass().addClass('glyphicon glyphicon-eye-open');
@@ -303,13 +310,15 @@ $this->params['breadcrumbs'][] = $this->title;
             });
         }
     });
+    
     $('#scientific-object-table .select-on-check-all').change(function (e) {
         var checked = $(this).is(':checked');
         if (checked) {
 
             var ajaxUrl = '<?php echo Url::to(['scientific-object/add-to-cart']) ?>';
             $.post(ajaxUrl, {
-                "items[]": getAllObjectsFromThePage()
+                "items[]": getAllObjectsFromThePage(),
+                "scientific-object":getAllObjectsWithNameFromThePage()
             }).done(function (data) {
 
                 $('#cart-articles').text(data.totalCount);
@@ -323,7 +332,8 @@ $this->params['breadcrumbs'][] = $this->title;
         } else {
             var ajaxUrl = '<?php echo Url::to(['scientific-object/remove-from-cart']) ?>';
             $.post(ajaxUrl, {
-                "items[]": getAllObjectsFromThePage()
+                "items[]": getAllObjectsFromThePage(),
+                "scientific-object":getAllObjectsWithNameFromThePage()
             }).done(function (data) {
                 if ($('#select-all-objects').prop("checked")) {
                     $('#select-all-objects').prop("checked", false);
@@ -334,15 +344,19 @@ $this->params['breadcrumbs'][] = $this->title;
             });
         }
     });
+    
     $('input:checkbox', $('#scientific-object-table .table')).change(function (e) {
         if ($(this).val() !== "1") { //valeur de la checkbox to select all the items from all pages
             var checked = $(this).is(':checked');
             if (checked) {
                 var ajaxUrl = '<?php echo Url::to(['scientific-object/add-to-cart']) ?>';
                 var items = [];
+                var itemsWithName={};
+                itemsWithName[$(this).val()]=$(this).attr("data-name");
                 items.push($(this).val());
                 $.post(ajaxUrl, {
-                    "items[]": items
+                    "items[]": items,
+                    "scientific-object":itemsWithName
                 }).done(function (data) {
                     $('#cart-articles').text(data.totalCount);
                     if (areAllItemsChecked()) {
@@ -359,8 +373,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 var ajaxUrl = '<?php echo Url::to(['scientific-object/remove-from-cart']) ?>';
                 var items = [];
                 items.push($(this).val());
+                var itemsWithName={};
+                itemsWithName[$(this).val()]=$(this).attr("data-name");
                 $.post(ajaxUrl, {
-                    "items[]": items
+                    "items[]": items,
+                    "scientific-object":itemsWithName
                 }).done(function (data) {
                     $('#cart-articles').text(data.totalCount);
                     if ($('#select-all-objects').prop("checked")) {
