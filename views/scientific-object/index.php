@@ -50,12 +50,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     EventButtonWidget::AS_LINK => false
                 ]);
                 ?></li>
-            <li><?php echo Html::a(Icon::show('line-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('yii', 'Visualization'), ['data-visualization-multiple-scientific-objects']); ?></li>
+            <li><?php
+                echo Html::a(Icon::show('eraser', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('yii', 'Clear cart'), FALSE, [
+                    'onclick' => "$.ajax({
+                                    type:'POST',
+                                    url:'" . Url::to(['scientific-object/clean-cart']) . "',
+                                    success:function(data) { afterClearCart(data);}});
+                             return false;",]);
+                ?></li>
 
-            
+
         </ul>
     </div>
-    
+
     <?=
     GridView::widget([
         'id' => 'scientific-object-table',
@@ -64,7 +71,6 @@ $this->params['breadcrumbs'][] = $this->title;
         //  'layout' => "{summary}\n{pager}\n{items}",
         'summary' => " <input id='select-all-objects' type ='checkbox' value='{totalCount}' ><strong>Select all the {totalCount} scientific objects</strong>",
         'columns' => [
-            
             [
                 'class' => 'yii\grid\CheckboxColumn',
                 'checkboxOptions' => function($model) use($cart) {
@@ -73,7 +79,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     return ['value' => $itemUri,
                         'checked' => $bool];
                 }],
-                        
             [
                 'attribute' => 'uri',
                 'format' => 'raw',
@@ -158,7 +163,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]);
     ?>
-    
+
     <!-- The modal -->
     <div class="modal  " id="cartView" tabindex="-1" role="dialog" aria-labelledby="modalLabelLarge" aria-hidden="true">
         <div class="vertical-alignment-helper">
@@ -169,7 +174,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                        <h4 class="modal-title" id="modalLabelLarge"> <button id= "clean-cart-button" class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i><strong> CLEAR</strong></button>	</h4>
+                        <h4 class="modal-title" id="modalLabelLarge"> <button id= "clean-cart-button" class="btn btn-danger btn-sm"><strong> <?= Icon::show('eraser', ['class' => 'fa-large'], Icon::FA) . " " .Yii::t('yii', 'Clear cart');?></strong></button>	</h4>
                     </div>
 
                     <div class="modal-body">
@@ -371,11 +376,7 @@ $this->params['breadcrumbs'][] = $this->title;
     $('#clean-cart-button').click(function () {
         var ajaxUrl = '<?php echo Url::to(['scientific-object/clean-cart']) ?>';
         $.post(ajaxUrl).done(function (data) {
-            $('#cart-articles').text(data.totalCount);
-            $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
-                $(this).prop("checked", false);
-            });
-            $('#select-all-objects').prop("checked", false);
+            afterClearCart(data);
             $('#cart-table tbody').html("");
             $('#cartView').modal('hide');
 
@@ -383,6 +384,14 @@ $this->params['breadcrumbs'][] = $this->title;
             alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
         });
     });
+
+    function afterClearCart(data) {
+        $('#cart-articles').text(data.totalCount);
+        $('input:checkbox', $('#scientific-object-table .table')).each(function (index, value) {
+            $(this).prop("checked", false);
+        });
+        $('#select-all-objects').prop("checked", false);
+    }
 
 </script>
 
