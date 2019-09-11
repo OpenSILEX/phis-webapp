@@ -23,27 +23,63 @@ use Yii;
  * @author vincent.migot
  */
 class YiiDataFileModel extends WSActiveRecord {
-    
+
     /**
      * the uri of the data file (e.g http://www.phenome-fppn.fr/platform/2017/i170000000000)
      * @var string 
      */
     public $uri;
+
     const URI = "uri";
+
     /**
      * the uri of the rdf type of the data file (e.g http://www.opensilex.org/vocabulary/oeso#HemisphericalImage)
      * @var string
      */
     public $rdfType;
+
     const RDF_TYPE = "rdfType";
+
     /**
      * the items concerned by the data file
      * @var mixed (array<YiiConcernModel> or string)
      * @see YiiConcernedItemModel
      */
     public $concernedItems;
+
     const CONCERNED_ITEMS = "concernedItems";
+
+    /**
+     * the start date is the beginning of the day from a time in the temporal serie (e.g YYYY-MM-DDT00:00:00+0200
+     * @var string
+     */
+    public $startDate;
+
+    const START_DATE = "startDate";
+
+    /**
+     * the end date is the end of the day from a time in the temporal serie (e.g YYYY-MM-DDT23:59:00+0200
+     * @var string
+     */
+    public $endDate;
+
+    const END_DATE = "endDate";
+
+    /**
+     * a json value for other search parameters  
+     * @var string
+     */
+    public $jsonValueFilter;
+
+    const JSON_VALUE_FILTER = "jsonValueFilter";
+   
     
+    public $provenance;
+
+    const PROVENANCE = "provenance";
+   
+
+
     /**
      * Initialize wsModel. In this class, wsModel is a WSImageModel
      * @param string $pageSize number of elements per page
@@ -55,18 +91,18 @@ class YiiDataFileModel extends WSActiveRecord {
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize : $this->pageSize = null;
         ($page !== null || $page !== "") ? $this->page = $page : $this->page = null;
     }
-    
+
     /**
      * 
      * @return array the rules of the attributes
      */
     public function rules() {
         return [
-          [['uri', 'rdfType'], 'required'],  
-          [['concernedItems'], 'safe']
+            [['uri', 'rdfType'], 'required'],
+            [['concernedItems', 'startDate', 'endDate', 'jsonValueFilter','provenance'], 'safe']
         ];
     }
-    
+
     /**
      * 
      * @return array the labels of the attributes
@@ -77,7 +113,7 @@ class YiiDataFileModel extends WSActiveRecord {
             'concernedItems' => Yii::t('app', 'Concerned Items'),
         ];
     }
-    
+
     /**
      * allows to fill the attributes with the informations in the array given 
      * @param array $array array key => value which contains the metadata of an image
@@ -85,7 +121,7 @@ class YiiDataFileModel extends WSActiveRecord {
     protected function arrayToAttributes($array) {
         $this->uri = $array[self::URI];
         $this->rdfType = $array[self::RDF_TYPE];
-        
+
         foreach ($array[self::CONCERNED_ITEMS] as $concernedItemArray) {
             $concernedItem = new YiiConcernedItemModel();
             $concernedItem->arrayToAttributes($concernedItemArray);
@@ -111,34 +147,47 @@ class YiiDataFileModel extends WSActiveRecord {
         if ($this->pageSize != null) {
             $attributesArray[WSConstants::PAGE_SIZE] = $this->pageSize;
         }
-        
+        if ($this->startDate != null) {
+            $attributesArray[self::START_DATE] = $this->startDate;
+        }
+        if ($this->endDate != null) {
+            $attributesArray[self::END_DATE] = $this->endDate;
+        }
+        if ($this->jsonValueFilter != null) {
+            $attributesArray[self::JSON_VALUE_FILTER] = $this->jsonValueFilter;
+        }
+         if ($this->provenance != null) {
+            $attributesArray[self::PROVENANCE] = $this->provenance;
+        }
+       
+
         return $attributesArray;
     }
-    
+
     /**
      * get the list of the images types defined in the ontology.
      * @return the list of rdf types of images
      */
     public function getRdfTypes($sessionToken) {
         $imageConceptUri = "http://www.opensilex.org/vocabulary/oeso#Image";
-        
+
         $imagesTypes = [];
         $totalPages = 1;
         for ($i = 0; $i < $totalPages; $i++) {
             $this->page = $i;
-            
+
             $params = null;
-            
+
             if ($this->pageSize !== null) {
-                $params[WSConstants::PAGE_SIZE] = $this->pageSize; 
+                $params[WSConstants::PAGE_SIZE] = $this->pageSize;
             }
             if ($this->page !== null) {
                 $params[WSConstants::PAGE] = $this->page;
             }
-            
+
             $wsUriModel = new WSUriModel();
             $requestRes = $wsUriModel->getDescendants($sessionToken, $imageConceptUri, $params);
-            
+
             if (!is_string($requestRes)) {
                 if (isset($requestRes[WSConstants::TOKEN_INVALID])) {
                     return "token";
@@ -151,7 +200,8 @@ class YiiDataFileModel extends WSActiveRecord {
                 return $requestRes;
             }
         }
-        
+
         return $imagesTypes;
     }
+
 }

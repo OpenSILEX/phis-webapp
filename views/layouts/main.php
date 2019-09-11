@@ -432,7 +432,7 @@ ToastrAsset::register($this);
                 var onLogin = (controller == 'site' && action == 'login');
 
                 if (!onLogin && !onIndex ) {
-                    window.location.href = loginUrl;
+//                    window.location.href = loginUrl;
                 }
             }
         }

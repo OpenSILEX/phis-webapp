@@ -45,7 +45,9 @@ return [
     'Do you have an account or do you want to try PHIS ?' => 'Possédez-vous un compte ou souhaitez vous essayer PHIS ?',
 
     // E
+    'Enter end date'=>'Entrez la date de fin',
     'Enter in service date' => 'Renseigner la date de mise en service',
+    'Enter start date'=>'Entrez la date de début',
     'Error while creating linked documents' => 'Erreur lors de la création des documents liés',
     'Error while creating provenance' => 'Erreur lors de la création de la provenance',
     'Errors in file' => 'Il y a des erreurs dans le fichier',
@@ -90,6 +92,10 @@ return [
 
     // S
     'See the folowing list to get all species URI' => 'Regarder dans la liste suivante pour avoir toutes les URI d\'espèces',
+    'Select a variable...'=> 'Sélectionnez une variable...',
+    'Select image type...' => 'Sélectionnez le type d\'image...',
+    'Select image view...' => 'Sélectionnez la vue de l\'image...',
+    'Select provenance...'=>'Sélectionnez la provenance...',
     'Select type...' => 'Sélectionnez le type...',
     'Select one or many variables' => 'Sélectionnez une ou plusieurs variables',
     'Select existing provenance or create a new one' => 'Selectionnez une provenance existante où créez en une nouvelle',
@@ -111,6 +117,7 @@ return [
     'The value' => 'La valeur',
     'The variety used in the plot (e.g. apache)' => 'La variété du plot (ex. apache)',
     'To assign scientific objects to two experiments: (1) create the scientific objects on one of the experiments and (2) update them with the uri of the second experiment.' => 'Pour affecter des objets scientifiques à deux expériences: (1) créez les objets scientifiques sur l\'une des expériences et (2) mettez-les à jour avec l\'uri de la deuxième expérience.',
+    'to get more information about the columns content' => 'pour obtenir davantage d\'information sur le contenu de chaque colonne',
 
     // U
     'Unknown error' => 'Erreur inconnue',
