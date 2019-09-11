@@ -258,6 +258,7 @@ return [
     'Scientific Contacts' => 'Contacts scientifiques',
     'Scientific Supervisors' => 'Superviseurs scientifiques',
     'Search Criteria' =>'Critères de recherche',
+    'See' => 'Voir',
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',
     'Select type...' => 'Sélectionez le type',
@@ -281,6 +282,7 @@ return [
     //T
     'Team' => 'Équipe',
     'Technical Supervisors' => 'Superviseurs techniques',
+    'the documentation' => 'la documentation',
     'Timezone offset' => 'Fuseau horaire',
     'Title' => 'Titre',
     'Tools' => 'Outils',
