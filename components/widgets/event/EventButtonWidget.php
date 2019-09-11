@@ -33,20 +33,23 @@ class EventButtonWidget extends Widget {
      * @var boolean
      */
     public $asLink = false;
+
     const AS_LINK = "asLink";
 
-      /**
+    /**
      * Defines the items which will be annotated.
      * @var array
      */
     public $concernedItemsUris;
+
     const CONCERNED_ITEMS_URIS = "concernedItemsUris";
-    
+
     /**
      * Defines the type of object which will be annotated.
      * @var array
      */
     public $type;
+
     const TYPE = "type";
 
     /**
@@ -58,24 +61,26 @@ class EventButtonWidget extends Widget {
         // Maybe create a widget bar and put buttons in it to use the same style
         //\SILEX:conception
         $uriArray = [
-                'event/create',
-                EventController::TYPE => $this->type,
-                EventController::PARAM_CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
-                EventController::PARAM_RETURN_URL => Url::current()
+            'event/create',
+            EventController::TYPE => $this->type,
+            EventController::PARAM_CONCERNED_ITEMS_URIS => $this->concernedItemsUris,
+            EventController::PARAM_RETURN_URL => Url::current()
         ];
-
-        if (!$this->asLink) {
+         if (!$this->asLink) {
             $linkLabel = Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', self::ADD_EVENT_LABEL);
-            // $linkAttributes = ['class' => 'btn btn-default'];
+            
         } else {
             $linkLabel = '<span class="fa fa-flag"></span>';
+        } 
+        if(sizeof( $this->concernedItemsUris)==0 && !isset($this->type)){
+            $linkAttributes = ['class' => 'btn btn-default'];
         }
+       
         $linkAttributes["title"] = Yii::t('app', self::ADD_EVENT_LABEL);
 
         return Html::a(
-                    $linkLabel,
-                    $uriArray, 
-                    $linkAttributes
+                        $linkLabel, $uriArray, $linkAttributes
         );
     }
+
 }

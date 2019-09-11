@@ -77,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'checkboxOptions' => function($model) use($cart) {
                     $itemUri = $model->uri;
                     $itemName = $model->label;
-                    $bool = in_array($itemUri, $cart);
+                    $bool = isset($cart[$itemUri]);
                     return ['value' => $itemUri,'data'=>['name'=>$itemName],
                         'checked' => $bool];
                 }],

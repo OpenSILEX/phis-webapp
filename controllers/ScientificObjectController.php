@@ -577,46 +577,6 @@ class ScientificObjectController extends Controller {
      * @return array of uri
      * 
      */
-    public function getUriObjectList($uri, $label, $type, $experiment, $token) {
-
-        $searchModel = new ScientificObjectSearch();
-        $searchModel->uri = isset($uri) ? $uri : null;
-        $searchModel->label = isset($label) ? $label : null;
-        $searchModel->type = isset($type) ? $type : null;
-        $searchModel->experiment = isset($experiment) ? $experiment : null;
-        $searchParams = []; // ???
-        // Set page size to 10000 for better performances
-        $searchModel->pageSize = 10000;
-        $totalPage = 1;
-        $items = array();
-        for ($i = 0; $i < $totalPage; $i++) {
-            //1. call service for each page
-            $searchParams["page"] = $i;
-
-            $searchResult = $searchModel->search($token, $searchParams);
-
-            //2. write sci. obj in array
-            $models = $searchResult->getmodels();
-
-            foreach ($models as $model) {
-                $items[] = $model->uri;
-            }
-
-            $totalPage = intval($searchModel->totalPages);
-        }
-        return $items;
-    }
-    
-    /**
-     * Function to select all the filtered sci. obj.
-     * @param type $uri
-     * @param type $label
-     * @param type $type
-     * @param type $experiment
-     * @param type $token
-     * @return array of uri
-     * 
-     */
     public function getObjectList($uri, $label, $type, $experiment, $token) {
 
         $searchModel = new ScientificObjectSearch();
@@ -632,9 +592,8 @@ class ScientificObjectController extends Controller {
         for ($i = 0; $i < $totalPage; $i++) {
             //1. call service for each page
             $searchParams["page"] = $i;
-
             $searchResult = $searchModel->search($token, $searchParams);
-
+            
             //2. write sci. obj in array
             $models = $searchResult->getmodels();
 
@@ -647,8 +606,6 @@ class ScientificObjectController extends Controller {
         return $items;
     }
 
-   
-
     /**
      * Ajax call from index view : an sci. obj. or all sci. obj. from the page are add to the cart (session variable)
      * @return the count of the cart
@@ -657,24 +614,6 @@ class ScientificObjectController extends Controller {
     public function actionAddToCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-        $items = Yii::$app->request->post()["items"];
-
-        if ($items) {
-            if (isset($session['cart'])) {
-                $temp = $session['cart'];
-
-                foreach ($items as $item) {
-                    if (!in_array($item, $temp)) {
-                        $temp[] = $item;
-                    }
-                }
-                $session['cart'] = $temp;
-            } else {
-
-                $session['cart'] = $items;
-            }
-        }
-
         $itemsWithName = Yii::$app->request->post()["scientific-object"];
         if (isset($session['scientific-object'])) {
             $temp = $session['scientific-object'];
@@ -687,7 +626,7 @@ class ScientificObjectController extends Controller {
             $session['scientific-object'] = $itemsWithName;
         }
 
-        return ['totalCount' => count($session['cart'])];
+        return ['totalCount' => count($session['scientific-object'])];
     }
 
     /**
@@ -698,18 +637,13 @@ class ScientificObjectController extends Controller {
     public function actionRemoveFromCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-        if (Yii::$app->request->post()["items"]&&Yii::$app->request->post()["scientific-object"]) {
-
-            $temp = $session['cart'];
-            $items = Yii::$app->request->post()["items"];
-            $temp = array_diff($temp, $items);
-            $session['cart'] = $temp;
-            
+        if (Yii::$app->request->post()["scientific-object"]) {
             $cart=$session['scientific-object'];
             $itemsWithName = Yii::$app->request->post()["scientific-object"];
             $cart = array_diff_assoc($cart, $itemsWithName);
             $session['scientific-object']=$cart;
-            return ['totalCount' => count($session['cart'])];
+            
+            return ['totalCount' => count($session['scientific-object'])];
         }
     }
     /**
@@ -721,22 +655,6 @@ class ScientificObjectController extends Controller {
 
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-
-        $items = $this->getUriObjectList(Yii::$app->request->post()["uri"], Yii::$app->request->post()["alias"], Yii::$app->request->post()["type"], Yii::$app->request->post()["experiment"], Yii::$app->session['access_token']);
-        $session['allcart'] = $items;
-        if ($items) {
-            if (isset($session['cart'])) {
-                $temp = $session['cart'];
-                foreach ($items as $item) {
-                    if (!in_array($item, $temp)) {
-                        $temp[] = $item;
-                    }
-                }
-                $session['cart'] = $temp;
-            } else {
-                $session['cart'] = $items;
-            }
-        }
         
         $objects = $this->getObjectList(Yii::$app->request->post()["uri"], Yii::$app->request->post()["alias"], Yii::$app->request->post()["type"], Yii::$app->request->post()["experiment"], Yii::$app->session['access_token']);
         $session['all-scientific-object'] = $objects;
@@ -752,7 +670,7 @@ class ScientificObjectController extends Controller {
             }
         }
         
-        return ['totalCount' => count($session['cart'])];
+        return ['totalCount' => count($session['scientific-object'])];
     }
 
     /**
@@ -763,23 +681,18 @@ class ScientificObjectController extends Controller {
     public function actionAllToRemoveFromCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-        $allcarts = $session['allcart'];
-        $temp = $session['cart'];
-        $temp = array_diff($temp, $allcarts);
-        $session['cart'] = $temp;
         
         $allobjects = $session['all-scientific-object'];
         $cart = $session['scientific-object'];
         $cart = array_diff_assoc($cart, $allobjects);
         $session['scientific-object'] = $cart;
         
-        return ['totalCount' => count($session['cart'])];
+        return ['totalCount' => count($session['scientific-object'])];
     }
 
     public function actionCleanCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-        unset($session['cart']);
         unset($session['scientific-object']);
         
         return ['totalCount' => 0];
@@ -840,8 +753,8 @@ class ScientificObjectController extends Controller {
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
                         'scientificObjectTypes' => $scientificObjectsTypesToReturn,
-                        'total' => count($session['cart']),
-                        'cart' => $session['cart'],
+                        'total' => count($session['scientific-object']),
+                        'cart' => $session['scientific-object'],
                         'searchParams' => $searchParams,
             ]);
         }
