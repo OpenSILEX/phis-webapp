@@ -432,6 +432,7 @@ class ScientificObjectController extends Controller {
 
                     $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
 
+                    $forWebService = [];
                     if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
                         foreach ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES} as $scientificObjectUri) {
                             $return["objectUris"][] = $scientificObjectUri;
@@ -568,13 +569,13 @@ class ScientificObjectController extends Controller {
     }
 
     /**
-     * Function to select all the filtered sci. obj.
+     * Function to select all the filtered sci. obj. (URI & name)
      * @param type $uri
      * @param type $label
      * @param type $type
      * @param type $experiment
      * @param type $token
-     * @return array of uri
+     * @return associative array of uri => label
      * 
      */
     public function getObjectList($uri, $label, $type, $experiment, $token) {
@@ -593,12 +594,12 @@ class ScientificObjectController extends Controller {
             //1. call service for each page
             $searchParams["page"] = $i;
             $searchResult = $searchModel->search($token, $searchParams);
-            
+
             //2. write sci. obj in array
             $models = $searchResult->getmodels();
 
             foreach ($models as $model) {
-                  $items[$model->uri] = $model->label;
+                $items[$model->uri] = $model->label;
             }
 
             $totalPage = intval($searchModel->totalPages);
@@ -638,14 +639,15 @@ class ScientificObjectController extends Controller {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
         if (Yii::$app->request->post()["scientific-object"]) {
-            $cart=$session['scientific-object'];
+            $cart = $session['scientific-object'];
             $itemsWithName = Yii::$app->request->post()["scientific-object"];
             $cart = array_diff_assoc($cart, $itemsWithName);
-            $session['scientific-object']=$cart;
-            
+            $session['scientific-object'] = $cart;
+
             return ['totalCount' => count($session['scientific-object'])];
         }
     }
+
     /**
      * Ajax call from index view : all sci. obj.  are add to the cart (session variable)
      * @return the count of the cart
@@ -655,21 +657,21 @@ class ScientificObjectController extends Controller {
 
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-        
+
         $objects = $this->getObjectList(Yii::$app->request->post()["uri"], Yii::$app->request->post()["alias"], Yii::$app->request->post()["type"], Yii::$app->request->post()["experiment"], Yii::$app->session['access_token']);
         $session['all-scientific-object'] = $objects;
         if ($objects) {
             if (isset($session['scientific-object'])) {
                 $cart = $session['scientific-object'];
                 foreach ($objects as $uri => $name) {
-                   $cart[$uri] = $name;
+                    $cart[$uri] = $name;
                 }
                 $session['scientific-object'] = $cart;
             } else {
-                $session['scientific-object'] =  $objects;
+                $session['scientific-object'] = $objects;
             }
         }
-        
+
         return ['totalCount' => count($session['scientific-object'])];
     }
 
@@ -681,23 +683,33 @@ class ScientificObjectController extends Controller {
     public function actionAllToRemoveFromCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
-        
+
         $allobjects = $session['all-scientific-object'];
         $cart = $session['scientific-object'];
         $cart = array_diff_assoc($cart, $allobjects);
         $session['scientific-object'] = $cart;
-        
+
         return ['totalCount' => count($session['scientific-object'])];
     }
 
+    /**
+     * Ajax call from index view : delete the content of the cart 
+     * @return the count of the cart
+     * 
+     */
     public function actionCleanCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
         unset($session['scientific-object']);
-        
+
         return ['totalCount' => 0];
     }
 
+    /**
+     * Ajax call from index view : get the content of the cart
+     * @return array the content of the cart
+     * 
+     */
     public function actionGetCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $session = Yii::$app->session;
@@ -709,9 +721,6 @@ class ScientificObjectController extends Controller {
      * @return mixed
      */
     public function actionIndex() {
-        //TEST
-        // Get the selected obj.sci from the session 
-        //TEST
 
         $searchModel = new ScientificObjectSearch();
 
@@ -903,7 +912,7 @@ class ScientificObjectController extends Controller {
      * Generates the page to visualize data about a scientific object.
      * SILEX:info
      * the label and experiment parameter will have to be removed 
-     * when the /scientificObject/{uri} GET will be done in the web service.
+     * when the /scientificObject/{uri} GET will be done in the web service.
      * \SILEX:info
      * @param type $uri
      * @param type $label
@@ -958,6 +967,8 @@ class ScientificObjectController extends Controller {
              *   "variable": "http:\/\/www.opensilex.org\/demo\/id\/variable\/v0000001",
              *   "scientificObjectData": [
              *          "label": "Scientific object label",
+
+             * <<<<<<< HEAD
              *          "dataFromProvenance": [
              *                     "provenance":"Data provenance uri",
              *                     "data": ["1,874809","2015-02-10"],
@@ -1004,7 +1015,6 @@ class ScientificObjectController extends Controller {
             $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
-
             if (isset($_POST['position']) && $_POST['position'] !== "") {
                 $selectedPosition = (int) $_POST['position'];
                 $selectedPosition = $selectedPosition + 1; // the select pluggin return the index and not the value ?
