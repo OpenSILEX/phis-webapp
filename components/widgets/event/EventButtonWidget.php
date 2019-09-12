@@ -72,7 +72,7 @@ class EventButtonWidget extends Widget {
         } else {
             $linkLabel = '<span class="fa fa-flag"></span>';
         } 
-        if(sizeof( $this->concernedItemsUris)==0 && !isset($this->type)){
+        if(!isset($this->type)){
             $linkAttributes = ['class' => 'btn btn-default'];
         }
        
