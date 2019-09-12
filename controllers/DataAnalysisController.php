@@ -20,7 +20,7 @@ include_once '../config/web_services.php';
  * @see yii\web\Controller
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
-class DataAnalysisController extends \yii\web\Controller {
+class DataAnalysisController extends GenericController {
   
     /**
      * Define the behaviors of the controller
@@ -47,60 +47,24 @@ class DataAnalysisController extends \yii\web\Controller {
         $searchParams = Yii::$app->request->queryParams;
 
         $searchResult = $searchModel->search($searchParams);
-
-        // no applications returned - connection error or no opencpu applications
-        // are available
-        if (empty($searchResult)) {
-            return $this->render('/site/error', [
-                        'name' => Yii::t('app/warning', 'Informations'),
-                        'message' => Yii::t('app/messages', 'No application available')
-                        ]
-            );
+        
+        
+        if (is_string($searchResult)) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
+                return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+            } else {
+                return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                    SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
+                    SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
+            }
         } else {
-            return $this->render('index', [
+             return $this->render('index', [
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
                         ]
             );
         }
+      
     }
 
-    /**
-     * Show standalone Demo R application integrated in a iframe.
-     * The purpose of this application is to test a R function 
-     * which use any OpenSILEX webservice.
-     * It is a specific demo application that why it is fixed.
-     * @return string a view result
-     */
-    public function actionViewDemo() {
-        $searchModel = new DataAnalysisAppSearch();
-        // retreive information on default demo application
-        $appDemo = $searchModel->getApplicationInformation(
-                $searchModel::DEFAULT_TEST_DEMO_APP
-        );
-        // connection error or application not loaded
-        if (!empty($appDemo)) {
-            $appDemoInformation = $appDemo[$searchModel::DEFAULT_TEST_DEMO_APP];
-            $this->redirect($appDemoInformation[DataAnalysisAppSearch::APP_INDEX_URL]);
-        } else {
-            return $this->render('/site/error', [
-                        'name' => Yii::t('app/warning', 'Informations'),
-                        'message' => Yii::t('app/messages', 'Demonstration application not available')
-                        ]
-            );
-        }
-    }
-
-    /**
-     * Show standalone Demo R application integrated in a iframe.
-     * @return string a view result
-     */
-    public function actionView() {
-        $searchParams = Yii::$app->request->queryParams;
-        return $this->render('iframe-view', [
-                    'appUrl' => $searchParams["url"],
-                    'appName' => $searchParams["name"]
-                    ]
-        );
-    }
 }

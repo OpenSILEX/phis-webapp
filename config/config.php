@@ -31,7 +31,7 @@ class config {
             'basePath' => '/'.$basePath.'/',
             'hostnameURL' => 'http://'.$hostname.'/'.$appli,
             'documentsUrl' => '../web/documents/',
-            'ocpuServer' => 'http://'.$hostname.':8004/ocpu/',
+            'shinyProxyServer' => 'http://'.$hostname.':8004',
             //Concepts, relations uri
             'cVariable' => 'http://www.opensilex.org/vocabulary/oeso#Variable',
             'cTrait' => 'http://www.opensilex.org/vocabulary/oeso#Trait',

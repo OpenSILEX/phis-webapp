@@ -9,8 +9,7 @@
 //******************************************************************************
 
 use yii\helpers\Html;
-use app\models\yiiModels\DataAnalysisAppSearch;
-
+use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\yiiModels\DataAnalysisAppSearch */
 /* @var $dataProvider array */
@@ -20,28 +19,20 @@ $this->title = Yii::t('app',
         ['n' => 2]
         );
 $this->params['breadcrumbs'][] = $this->title;
-if (Yii::$app->session->hasFlash('scriptNotAvailable')) {
-    echo Html::tag("p", Yii::t('app/messages', 'Application not available'), ["class" => "alert alert-danger"]);
-}
 
-echo Html::beginTag("div", ["class" => "data-analysis-index"]);
-echo Html::beginTag("div", ["class" => "row"]);
-
-// each thumbnail (R application vignette)
-foreach ($dataProvider as $function => $appInfo) {
-    echo Html::beginTag("div", ["class" => "col-sm-5 col-md-4"]);
-    echo Html::beginTag("div", ["class" => "thumbnail"]);
-    $image = Html::img($appInfo[DataAnalysisAppSearch::APP_VIGNETTE_PATH],[
-                "class" => "img-responsive",
-                "alt" => $appInfo[DataAnalysisAppSearch::APP_SHORT_NAME]
-                ]);
-    echo Html::a( $image, $appInfo[DataAnalysisAppSearch::APP_INDEX_URL]);
-    echo Html::beginTag("center");
-    echo Html::tag("strong", Yii::t('app/messages', $appInfo[DataAnalysisAppSearch::APP_DESCRIPTION]));
-    echo Html::endTag("center");
-    echo Html::endTag("div");
-    echo Html::endTag("div");
-}
-
-echo Html::endTag("div");
-echo Html::endTag("div");
+echo GridView::widget([
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'columns' => [
+        ['class' => 'yii\grid\SerialColumn'],
+        'display_name',
+        'description',
+        [
+            'value' => 'application_url',
+            'format' => 'raw',
+              'value' => function ($model, $key, $index) {
+                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $model->application_url, ["target" => "_blank"]);
+              },
+        ],
+    ],
+]); 
