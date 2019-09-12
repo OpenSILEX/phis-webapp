@@ -8,7 +8,7 @@ return [
     'demoPassword' => 'guest',
     'opensilex-webapp-type' => 'opensilex', //'opensilex' or 'phis' (used to adapt the view)
     'dateTimeFormatPhp' => 'Y-m-d H:i:sP',
-    'csvSeparator' => ';',
+    'csvSeparator' => ',',
     //SILEX:info
     //this param should be removed when the new version of data will be used instead of Dataset
     'baseURI' => 'http://www.opensilex.org/demo/',
