@@ -38,6 +38,11 @@ class EventController extends GenericController {
     const INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
     const EVENT_TYPES = "eventTypes";
     
+    const SENSORS_DATA = "sensors";
+    const SENSOR_DATA_URI = "sensorUri";
+    const SENSOR_DATA_LABEL = "sensorLabel";
+    const SENSOR_DATA_TYPE = "sensorType";
+    
     const PARAM_CONCERNED_ITEMS_URIS = 'concernedItemsUris';
     const PARAM_RETURN_URL = "returnUrl";
 
@@ -128,6 +133,28 @@ class EventController extends GenericController {
      * Gets the event types URIs.
      * @return event types URIs 
      */
+    public function getSensorTypes() {
+        $model = new \app\models\yiiModels\YiiSensorModel();
+        
+        $sensorsTypes = [];
+        $model->page = 0;
+        $model->pageSize = Yii::$app->params['webServicePageSizeMax'];
+        $sensorsTypesConcepts = $model->getSensorsTypes(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+        if ($sensorsTypesConcepts === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
+        } else {
+            foreach ($sensorsTypesConcepts[WSConstants::DATA] as $sensorType) {
+                $sensorsTypes[$sensorType->uri] = $sensorType->uri;
+            }
+        }
+        
+        return $sensorsTypes;
+    }
+    
+    /**
+     * Gets the event types URIs.
+     * @return event types URIs 
+     */
     public function getEventsTypes() {
         $model = new YiiEventModel();
         
@@ -172,6 +199,32 @@ class EventController extends GenericController {
     }
     
     /**
+     * Gets all sensors.
+     * @return sensors 
+     */
+    public function getSensorsUrisTypesLabels() {
+        $model = new \app\models\yiiModels\SensorSearch();
+        $model->page = 0;
+        $model->pageSize = 10000;
+        $sensorsUrisTypesLabels = [];
+        $sensors = $model->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], null);
+        if ($sensors === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
+        } else {
+            foreach ($sensors->models as $sensor) {
+                $sensorsUrisTypesLabels[] =
+                    [
+                        self::SENSOR_DATA_URI => $sensor->uri,
+                        self::SENSOR_DATA_LABEL => $sensor->label,
+                        self::SENSOR_DATA_TYPE => $sensor->rdfType
+                    ];
+            }
+        }
+        
+        return $sensorsUrisTypesLabels;
+    }
+    
+    /**
      * Displays the form to create an event or creates it in case of form submission.
      * @return mixed redirect in case of error or after successfully create 
      * the event otherwise return the "create" view.
@@ -190,7 +243,7 @@ class EventController extends GenericController {
            
         // Submit form    
         } else {     
-            $dataToSend[] = $event->attributesToArray(); 
+            $dataToSend[] = $event->attributesToArray();
             $requestResults =  $event->insert($sessionToken, $dataToSend);
             return $this->handlePostPutResponse($requestResults, $event->returnUrl);
         }
@@ -226,6 +279,8 @@ class EventController extends GenericController {
     private function loadFormParams() {
         $this->view->params[self::EVENT_TYPES] = $this->getEventsTypes();
         $this->view->params[self::INFRASTRUCTURES_DATA] = $this->getInfrastructuresUrisTypesLabels();
+        $this->view->params[self::SENSORS_DATA] = $this->getSensorsUrisTypesLabels();
+
     }
     
     /**

@@ -74,6 +74,7 @@ return [
     'event' => 'http://www.opensilex.org/vocabulary/oeev#Event',
     'moveFrom' => 'http://www.opensilex.org/vocabulary/oeev#MoveFrom',
     'moveTo' => 'http://www.opensilex.org/vocabulary/oeev#MoveTo',
+    'AssociatedToASensor' => 'http://www.opensilex.org/vocabulary/oeev#AssociatedToASensor',
 
     'Provenance' => 'http://www.opensilex.org/vocabulary/oeso#Provenance',
 
@@ -128,7 +129,8 @@ return [
 
     // Event
     'from' => 'http://www.opensilex.org/vocabulary/oeev#from',
-    'to' => 'http://www.opensilex.org/vocabulary/oeev#to', 
+    'to' => 'http://www.opensilex.org/vocabulary/oeev#to',
+    'associatedToASensor' => 'http://www.opensilex.org/vocabulary/oeev#associatedToASensor',
 
     // Image filters
     'image.filter' => [
