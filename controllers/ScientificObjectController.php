@@ -661,13 +661,13 @@ class ScientificObjectController extends Controller {
                 } else {
                     $wktGeometry = "";
                 }
- 
-                $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV . 
-                                 $model->label . ScientificObjectController::DELIM_CSV .
-                                 $model->rdfType . ScientificObjectController::DELIM_CSV .
-                                 $model->experiment . ScientificObjectController::DELIM_CSV . 
-                                 '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
-                                 "\n";
+
+                $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV .
+                        $model->label . ScientificObjectController::DELIM_CSV .
+                        $model->rdfType . ScientificObjectController::DELIM_CSV .
+                        $model->experiment . ScientificObjectController::DELIM_CSV .
+                        '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV .
+                        "\n";
             }
 
             $totalPage = intval($searchModel->totalPages);
@@ -810,8 +810,8 @@ class ScientificObjectController extends Controller {
 
             $searchResult = $searchModel->search($token, null);
 
-          
-            
+
+
             /* Build array for highChart
              * e.g : 
              * {
@@ -826,15 +826,15 @@ class ScientificObjectController extends Controller {
              *  ]
              * }
              */
-            
+
             $data = [];
             $scientificObjectData["label"] = $label;
-            
+
             foreach ($searchResult->getModels() as $model) {
                 if (!empty($model->value)) {
                     $dataToSave = null;
-                    $provenanceLabel=$provenances[$model->provenanceUri]->label;
-                    $dataToSave["provenanceUri"] = $provenanceLabel." (prov:".explode("id/provenance/", $model->provenanceUri)[1].")";
+                    $provenanceLabel = $provenances[$model->provenanceUri]->label;
+                    $dataToSave["provenanceUri"] = $provenanceLabel . " (prov:" . explode("id/provenance/", $model->provenanceUri)[1] . ")";
                     $dataToSave["date"] = (strtotime($model->date)) * 1000;
                     $dataToSave["value"] = doubleval($model->value);
                     $data[] = $dataToSave;
@@ -855,9 +855,9 @@ class ScientificObjectController extends Controller {
                 $scientificObjectData["dataFromProvenance"] = $dataByProvenance;
                 $toReturn["scientificObjectData"][] = $scientificObjectData;
             }
-            
-            
-            
+
+
+
             //on FORM submitted:
             //check if image visualization is activated
             $show = isset($_POST['show']) ? $_POST['show'] : null;
@@ -865,11 +865,10 @@ class ScientificObjectController extends Controller {
             $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
-            
-            if (isset($_POST['position']) && $_POST['position'] !== "") {
-                $selectedPosition =(int) $_POST['position'] ;
-                $selectedPosition = $selectedPosition+1; // the select pluggin return the index and not the value ?
-                $filterToSend = "{'metadata.position':'" . $selectedPosition . "'}";
+            if (isset($_POST['filter']) && $_POST['filter'] !== "") {
+                $selectedPositionIndex = $_POST['filter'];
+                $attribut=explode(":",Yii::$app->params['image.filter']['metadata.position'][$selectedPositionIndex]);
+                $filterToSend = "{'metadata." . $attribut[0] . "':'".$attribut[1]."'}";
             }
 
             return $this->render('data_visualization', [
@@ -882,7 +881,7 @@ class ScientificObjectController extends Controller {
                         'selectedVariable' => $selectedVariable,
                         'imageTypeSelected' => $imageTypeSelected,
                         'selectedProvenance' => $selectedProvenance,
-                        'selectedPosition' => $selectedPosition-1, // seems that select widget use index when they are selectable number values
+                        'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
                         'filterToSend' => $filterToSend,
                         'test' => $selectedPosition,
             ]);

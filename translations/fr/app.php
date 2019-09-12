@@ -74,6 +74,7 @@ return [
     'BRDF coefficient P4' => 'Coefficient BRDF P4',
 
     // C
+    'Camera position' =>'Position de la caméra',
     'Campaign' => 'Campagne',
     'Carpet' => 'Moquette',
     'Characterize Sensor' => 'Caractériser un Capteur',
@@ -171,7 +172,6 @@ return [
     // I
     
     'Image Search'=>'Recherche d\'images',
-    'Image View'=>'Vue de l\'image',
     'Images Visualization' => 'Visualisation d\'Images',
     'In Service Date' => 'Date de Mise en Service',
     'Insertion status' => 'Statut d\'insertion',
