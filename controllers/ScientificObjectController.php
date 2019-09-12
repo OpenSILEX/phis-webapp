@@ -960,7 +960,6 @@ class ScientificObjectController extends Controller {
             $searchModel->endDate = $_POST['dateEnd'];
             $searchModel->provenance = $_POST['provenances'];
             $searchResult = $searchModel->search($token, null);
-
             /* Build array for highChart
              * e.g : 
              * {
@@ -980,7 +979,6 @@ class ScientificObjectController extends Controller {
 
             $data = [];
             $scientificObjectData["label"] = $label;
-            $one = true;
             foreach ($searchResult->getModels() as $model) {
                 if (!empty($model->value)) {
                     $dataToSave = null;
@@ -1015,10 +1013,10 @@ class ScientificObjectController extends Controller {
             $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
-            if (isset($_POST['position']) && $_POST['position'] !== "") {
-                $selectedPosition = (int) $_POST['position'];
-                $selectedPosition = $selectedPosition + 1; // the select pluggin return the index and not the value ?
-                $filterToSend = "{'metadata.position':'" . $selectedPosition . "'}";
+            if (isset($_POST['filter']) && $_POST['filter'] !== "") {
+                $selectedPositionIndex = $_POST['filter'];
+                $attribut=explode(":",Yii::$app->params['image.filter']['metadata.position'][$selectedPositionIndex]);
+                $filterToSend = "{'metadata." . $attribut[0] . "':'".$attribut[1]."'}";
             }
             return $this->render('data_visualization', [
                         'model' => $scientificObject,
@@ -1030,7 +1028,7 @@ class ScientificObjectController extends Controller {
                         'selectedVariable' => $selectedVariable,
                         'imageTypeSelected' => $imageTypeSelected,
                         'selectedProvenance' => $selectedProvenance,
-                        'selectedPosition' => $selectedPosition - 1, // seems that select widget use index when they are selectable number values
+                        'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
                         'filterToSend' => $filterToSend,
                         'test' => $selectedPosition,
             ]);
