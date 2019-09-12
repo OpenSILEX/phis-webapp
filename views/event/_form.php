@@ -140,7 +140,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
                 'contextMenu' => true,
                 'height'=> 200
             ];
-    } else{
+    } else {
          $settings = 
             [
                 'colHeaders' => ['URI'],

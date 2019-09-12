@@ -184,7 +184,7 @@ class EventController extends GenericController {
         // Display form
         if (!$event->load(Yii::$app->request->post())) {
             $event->load(Yii::$app->request->get(), '');
-            if(Yii::$app->request->get()['type']==="scientific-objects"){
+            if(Yii::$app->request->get()['type'] === "scientific-objects"){
                  $event->load(array(self::PARAM_CONCERNED_ITEMS_URIS =>Yii::$app->session['cart']),'');
             }
             $event->creator = $this->getCreatorUri($sessionToken);

@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
-    <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('yii', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
+    <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('app', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
 
     <div class="btn-group pull-right">
 
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'id' => 'scientific-object-table',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'summary' => " <input id='select-all-objects' type ='checkbox' value='{totalCount}' ><strong>Select all the {totalCount} scientific objects</strong>",
+        'summary' => " <input id='select-all-objects' type ='checkbox' value='{totalCount}' ><strong> ".Yii::t('app', 'Select all the')." {totalCount} ".Yii::t('app', 'scientific objects')." </strong>",
         'columns' => [
             [
                 'class' => 'yii\grid\CheckboxColumn',
@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]),
             ],
             [
-                'attribute' => 'properties',
+                'attribute' => Yii::t('app', 'Properties'),
                 'format' => 'raw',
                 'value' => function($model, $key, $index) {
                     $toReturn = "<ul>";
@@ -122,7 +122,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
-                'attribute' => 'experiment',
+                'attribute' => Yii::t('app', 'Experiment'),
                 'format' => 'raw',
                 'value' => function ($model, $key, $index) {
                     return Html::a($this->params['listExperiments'][$model->experiment], ['experiment/view', 'id' => $model->experiment]);

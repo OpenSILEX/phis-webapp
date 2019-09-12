@@ -206,7 +206,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php
             if (isset($data) && isset($show) && $show == true && !empty($data)) {
                 echo "<div id='scientific-object-data-visualization-alert-div' style='height:146px;'><br><div class='alert alert-info' role='alert-info'>
-                    <p>You have to click on data to see images</p></div></div>";
+                    <p>".Yii::t('app/messages', 'You have to click a graphic point to see images on that date.')."</p></div></div>";
             }
             ?>
             <div id="imagesCount" style="display: none;" data-id=0 ></div>
@@ -266,7 +266,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'text' => $variables[$data["variable"]]
                             ],
                             'subtitle' => [
-                                'text' => 'Click and drag in the plot area to zoom in'
+                                'text' => Yii::t('app/messages', 'Click and drag in the plot area to zoom in!')
                             ],
                             'xAxis' => [
                                 'type' => 'datetime',

@@ -27,6 +27,7 @@ require_once '../config/config.php';
  * CRUD actions for YiiScientificObjectModel
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiScientificObjectModel
+ * @update [Bonnefont Julien] 12 Septembre, 2019: add visualization functionnalities & cart & cart action to add Event on multipe scientific objects
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ScientificObjectController extends Controller {
@@ -611,7 +612,6 @@ class ScientificObjectController extends Controller {
     /**
      * Ajax call from index view : an sci. obj. or all sci. obj. from the page are add to the cart (session variable)
      * @return the count of the cart
-     * 
      */
     public function actionAddToCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -634,7 +634,6 @@ class ScientificObjectController extends Controller {
     /**
      * Ajax call from index view : an sci. obj. or all sci. obj. from the page are removed from the cart (session variable)
      * @return the count of the cart
-     * 
      */
     public function actionRemoveFromCart() {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -652,7 +651,6 @@ class ScientificObjectController extends Controller {
     /**
      * Ajax call from index view : all sci. obj.  are add to the cart (session variable)
      * @return the count of the cart
-     * 
      */
     public function actionAllToAddToCart() {
 
@@ -967,8 +965,6 @@ class ScientificObjectController extends Controller {
              *   "variable": "http:\/\/www.opensilex.org\/demo\/id\/variable\/v0000001",
              *   "scientificObjectData": [
              *          "label": "Scientific object label",
-
-             * <<<<<<< HEAD
              *          "dataFromProvenance": [
              *                     "provenance":"Data provenance uri",
              *                     "data": ["1,874809","2015-02-10"],
@@ -1017,7 +1013,7 @@ class ScientificObjectController extends Controller {
             if (isset($_POST['filter']) && $_POST['filter'] !== "") {
                 $selectedPositionIndex = $_POST['filter'];
                 $attribut=explode(":",Yii::$app->params['image.filter']['metadata.position'][$selectedPositionIndex]);
-                $filterToSend = "{'metadata." . $attribut[0] . "':'".$attribut[1]."'}";
+                $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
             }
             return $this->render('data_visualization', [
                         'model' => $scientificObject,

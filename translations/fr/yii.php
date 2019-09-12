@@ -110,7 +110,7 @@ return [
 
     // C
     'Create' => 'Créer',
-    'Clear cart' =>'Effacer le panier',
+    'Clear cart' => 'Effacer le panier',
 
     // D
     'Delete' => 'Supprimer',
