@@ -132,10 +132,8 @@ class DatasetController extends Controller {
         }
         
         $file = fopen('./documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv', 'w');
-          var_dump($file, $fileColumns, error_get_last());
         fputcsv($file, $fileColumns, $delimiter = Yii::$app->params['csvSeparator']);
         fclose($file);
-        var_dump($file, $fileColumns, error_get_last());
     }
 
     /**
