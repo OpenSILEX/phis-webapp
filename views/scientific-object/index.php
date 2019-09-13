@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
-    <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('app', 'Download Search Result'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
+    <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('app', 'Export'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
 
     <div class="btn-group pull-right">
 
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'id' => 'scientific-object-table',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'summary' => " <input id='select-all-objects' type ='checkbox' value='{totalCount}' ><strong> ".Yii::t('app', 'Select all the')." {totalCount} ".Yii::t('app', 'scientific objects')." </strong>",
+        'summary' => " <div id='select-all-div'><input id='select-all-objects' type ='checkbox' value='{totalCount}' ><strong> " . Yii::t('app', 'Select all the') . " {totalCount} " . Yii::t('app', 'scientific objects') . " </strong></div>",
         'columns' => [
             [
                 'class' => 'yii\grid\CheckboxColumn',
@@ -207,7 +207,11 @@ $this->params['breadcrumbs'][] = $this->title;
         });
         return result;
     }
-
+    //limite select all to 300
+    if ($('#select-all-objects').val() > 300) {
+        $('#select-all-div').html('<strong>' + $('#select-all-objects').val() + ' <?php echo Yii::t('app', 'scientific objects') ?></strong>');
+        $('#select-all-objects').hide();
+    }
     //function to check is the all object from all page must be checked
     function areAllItemsFromAllPagesChecked() {
         return  +$('#cart-articles').text() === +$('#select-all-objects').val() ? true : false;
