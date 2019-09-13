@@ -33,12 +33,6 @@ require_once '../config/config.php';
 class ScientificObjectController extends Controller {
 
     /**
-     * the delim caracter for the csv files
-     * @var DELIM_CSV
-     */
-    const DELIM_CSV = ";";
-
-    /**
      * the geometry column for the csv files
      * @var GEOMETRY
      */
@@ -284,14 +278,14 @@ class ScientificObjectController extends Controller {
         //create a library for the data type check (isGeometry, isDate, ...)
         //\SILEX:todo
         //1. check header
-        $headerCheck = $this->getCSVHeaderCorrespondancesOrErrors(str_getcsv($csvContent[0], ScientificObjectController::DELIM_CSV));
+        $headerCheck = $this->getCSVHeaderCorrespondancesOrErrors(str_getcsv($csvContent[0], Yii::$app->params['csvSeparator']));
         $errors = null;
         if (isset($headerCheck["Error"])) {
             $errors["header"] = $headerCheck["Error"];
         } else { //2. check each cell's content
             $experiments = [];
             for ($i = 1; $i < count($csvContent); $i++) {
-                $row = str_getcsv($csvContent[$i], ScientificObjectController::DELIM_CSV);
+                $row = str_getcsv($csvContent[$i], Yii::$app->params['csvSeparator']);
                 If ($row[$headerCheck["Geometry"]] != "") {
                     if (!$this->isGeometryOk($row[$headerCheck["Geometry"]])) {
                         $error = null;
@@ -637,11 +631,11 @@ class ScientificObjectController extends Controller {
         //get all the data (if multiple pages) and write them in a file
         $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
 
-        $stringToWrite = "ScientificObjectURI" . ScientificObjectController::DELIM_CSV .
-                "Alias" . ScientificObjectController::DELIM_CSV .
-                "RdfType" . ScientificObjectController::DELIM_CSV .
-                "ExperimentURI" . ScientificObjectController::DELIM_CSV .
-                "Geometry" . ScientificObjectController::DELIM_CSV .
+        $stringToWrite = "ScientificObjectURI" . Yii::$app->params['csvSeparator'] .
+                "Alias" . Yii::$app->params['csvSeparator'] .
+                "RdfType" . Yii::$app->params['csvSeparator'] .
+                "ExperimentURI" . Yii::$app->params['csvSeparator'] .
+                "Geometry" .
                 "\n";
 
         $totalPage = 1;
@@ -664,11 +658,11 @@ class ScientificObjectController extends Controller {
                     $wktGeometry = "";
                 }
  
-                $stringToWrite .= $model->uri . ScientificObjectController::DELIM_CSV . 
-                                 $model->label . ScientificObjectController::DELIM_CSV .
-                                 $model->rdfType . ScientificObjectController::DELIM_CSV .
-                                 $model->experiment . ScientificObjectController::DELIM_CSV . 
-                                 '"' . $wktGeometry . '"' . ScientificObjectController::DELIM_CSV . 
+                $stringToWrite .= $model->uri . Yii::$app->params['csvSeparator'] . 
+                                 $model->label . Yii::$app->params['csvSeparator'] .
+                                 $model->rdfType . Yii::$app->params['csvSeparator'] .
+                                 $model->experiment . Yii::$app->params['csvSeparator'] . 
+                                 '"' . $wktGeometry . '"' . Yii::$app->params['csvSeparator'] . 
                                  "\n";
             }
 
