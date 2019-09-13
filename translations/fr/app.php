@@ -74,6 +74,7 @@ return [
     'BRDF coefficient P4' => 'Coefficient BRDF P4',
 
     // C
+    'Camera position' =>'Position de la caméra',
     'Campaign' => 'Campagne',
     'Carpet' => 'Moquette',
     'Characterize Sensor' => 'Caractériser un Capteur',
@@ -127,6 +128,7 @@ return [
     'Error' => 'Erreur',
     'Errors while creating user' => 'Erreurs lors de la création de l\'utilisateur',
     'Experimental Organization' => 'Organisation expérimentale',
+    'Experiment'=>'Expérimentation',
     'Experiment Modalities' => 'Modalités Expérimentales',
     EventAction::EVENT_UNUPDATABLE_DUE_TO_UNUPDATABLE_PROPRTY_LABEL =>
         "L'événement ne peut être mis à jour que via le web service car une de "
@@ -171,7 +173,6 @@ return [
     // I
     
     'Image Search'=>'Recherche d\'images',
-    'Image View'=>'Vue de l\'image',
     'Images Visualization' => 'Visualisation d\'Images',
     'In Service Date' => 'Date de Mise en Service',
     'Insertion status' => 'Statut d\'insertion',
@@ -232,6 +233,7 @@ return [
     'Private Access' => 'Accès Privé',
     'Project Coordinators' => 'Coordinateurs du projets',
     'Project Type' => 'Type du projet',
+    'Properties'=>'Propriétés',
     PropertyWidget::NO_PROPERTY_LABEL => 'Aucune propriété spécifique',
     'Provenance comment' => 'Commentaire de la provenance',
     'Provenance (URI)' => 'Provenance (URI)',
@@ -256,9 +258,11 @@ return [
 
     // S
     'Scientific Contacts' => 'Contacts scientifiques',
+    'scientific objects' =>'objets scientifiques',
     'Scientific Supervisors' => 'Superviseurs scientifiques',
     'Search Criteria' =>'Critères de recherche',
     'See' => 'Voir',
+    'Select all the' =>'Sélectionnez l\'ensemble des',
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',
     'Select type...' => 'Sélectionez le type',

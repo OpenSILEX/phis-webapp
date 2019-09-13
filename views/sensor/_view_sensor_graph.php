@@ -35,9 +35,11 @@ if (is_array($sensorGraphData['data'])) {
 
     // Display Hightchart widget
     echo Highcharts::widget([
+        
         // Create a unique ID for each graph based on variable URI
         'id' => base64_encode($sensorGraphData["variableUri"]),
         'options' => [
+            'time' => ['timezoneOffset' => -2 * 60],
             'title' => ['text' => $sensorGraphData["graphName"] . ' - ' . $sensorGraphData["variableUri"]],
             'xAxis' => [
                 'type' => 'datetime',

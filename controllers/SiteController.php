@@ -91,6 +91,7 @@ class SiteController extends Controller
          if ($model->load(Yii::$app->request->post())) {
              $model->password = md5($model->password);
              if ($model->login()) {
+                Yii::$app->session['scientific-object']=null;
                 $this->getLoggedUsersGroups();
                 return $this->goHome();
              } else {
@@ -121,6 +122,8 @@ class SiteController extends Controller
 
             if ($model->login()) {
                 // Success
+                
+                Yii::$app->session['scientific-object']=null;
                 $this->getLoggedUsersGroups();
                 $result["success"] = true;
                 $result["sameUser"] = ($previousMail == $newMail);
@@ -151,6 +154,7 @@ class SiteController extends Controller
         Yii::$app->session['email'] = null;
         Yii::$app->session['isGuest'] = true;
         Yii::$app->session['groups'] = null;
+        Yii::$app->session['scientific-object']=null;
 
         // Remove cookie containing token timeout
         setcookie(

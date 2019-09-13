@@ -37,13 +37,14 @@ class EventController extends GenericController {
     const INFRASTRUCTURES_DATA_LABEL = "infrastructureLabel";
     const INFRASTRUCTURES_DATA_TYPE = "infrastructureType";
     const EVENT_TYPES = "eventTypes";
-    
+
     const SENSORS_DATA = "sensors";
     const SENSOR_DATA_URI = "sensorUri";
     const SENSOR_DATA_LABEL = "sensorLabel";
     const SENSOR_DATA_TYPE = "sensorType";
-    
+  
     const PARAM_CONCERNED_ITEMS_URIS = 'concernedItemsUris';
+    const TYPE = 'type';
     const PARAM_RETURN_URL = "returnUrl";
 
     /**
@@ -235,15 +236,18 @@ class EventController extends GenericController {
         $event->isNewRecord = true;
         
         // Display form
-        if (!$event->load(Yii::$app->request->post())) { 
+        if (!$event->load(Yii::$app->request->post())) {
             $event->load(Yii::$app->request->get(), '');
+            if(Yii::$app->request->get()['type'] === "scientific-objects"){
+                 $event->load(array(self::PARAM_CONCERNED_ITEMS_URIS =>array_keys(Yii::$app->session['scientific-object'])),'');
+            }
             $event->creator = $this->getCreatorUri($sessionToken);
             $this->loadFormParams();
             return $this->render('create', ['model' =>  $event]);
            
         // Submit form    
-        } else {     
-            $dataToSend[] = $event->attributesToArray();
+        } else {   
+            $dataToSend[] = $event->attributesToArray(); 
             $requestResults =  $event->insert($sessionToken, $dataToSend);
             return $this->handlePostPutResponse($requestResults, $event->returnUrl);
         }

@@ -97,38 +97,38 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-    <?=
-    \kartik\date\DatePicker::widget([
-        'name' => 'dateStart',
-        'options' => ['placeholder' => Yii::t('app/messages', 'Enter start date')],
-        'value' => isset($dateStart) ? $dateStart : null,
-        'pluginOptions' => [
-            'autoclose' => true,
-            'format' => 'yyyy-mm-dd',
-            'orientation' => 'bottom'
-        ],
-        'pluginEvents' => [
-            "changeDate" => "function() { $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\");  }",
-        ]
-    ])
-    ?>
+                            <?=
+                            \kartik\date\DatePicker::widget([
+                                'name' => 'dateStart',
+                                'options' => ['placeholder' => Yii::t('app/messages', 'Enter start date')],
+                                'value' => isset($dateStart) ? $dateStart : null,
+                                'pluginOptions' => [
+                                    'autoclose' => true,
+                                    'format' => 'yyyy-mm-dd',
+                                    'orientation' => 'bottom'
+                                ],
+                                'pluginEvents' => [
+                                    "changeDate" => "function() { $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\");  }",
+                                ]
+                            ])
+                            ?>
                         </div>
                         <div class="form-group col-md-6">
-    <?=
-    \kartik\date\DatePicker::widget([
-        'name' => 'dateEnd',
-        'value' => isset($dateEnd) ? $dateEnd : null,
-        'options' => ['placeholder' => Yii::t('app/messages', 'Enter end date')],
-        'pluginOptions' => [
-            'autoclose' => true,
-            'format' => 'yyyy-mm-dd',
-            'orientation' => 'bottom'
-        ],
-        'pluginEvents' => [
-            "changeDate" => "function() { $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\");  }",
-        ]
-    ])
-    ?>
+                            <?=
+                            \kartik\date\DatePicker::widget([
+                                'name' => 'dateEnd',
+                                'value' => isset($dateEnd) ? $dateEnd : null,
+                                'options' => ['placeholder' => Yii::t('app/messages', 'Enter end date')],
+                                'pluginOptions' => [
+                                    'autoclose' => true,
+                                    'format' => 'yyyy-mm-dd',
+                                    'orientation' => 'bottom'
+                                ],
+                                'pluginEvents' => [
+                                    "changeDate" => "function() { $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\");  }",
+                                ]
+                            ])
+                            ?>
                         </div>
                     </div>
                 </fieldset>
@@ -136,7 +136,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <div class="form-group" style="margin-bottom: 0px;">
 
-    <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => Yii::t('app', 'Show Images'), 'onchange' => 'onShow(this);']) ?>
+                <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => Yii::t('app', 'Show Images'), 'onchange' => 'onShow(this);']) ?>
 
             </div>
 
@@ -144,70 +144,71 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div id="photoFilter">
                     <fieldset style="border: 1px solid #5A9016; padding: 10px;" >
                         <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
-    <?= Yii::t('app', 'Image Search') ?>
+                            <?= Yii::t('app', 'Image Search') ?>
                         </legend>
 
                         <div class="form-row">
                             <div class="form-group required col-md-12">
 
                                 <label class="control-label" ><?= Yii::t('app', 'Type') ?></label>
-    <?php
-    echo \kartik\select2\Select2::widget([
-        'name' => 'imageType',
-        'data' => $this->params['imagesType'],
-        'value' => $imageTypeSelected ? $imageTypeSelected : null,
-        'options' => [
-            'placeholder' => Yii::t('app/messages', 'Select image type...'),
-            'multiple' => false
-        ],
-        'pluginOptions' => [
-            'allowClear' => true
-        ],
-        'pluginEvents' => [
-            "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\");  }",
-        ],
-    ]);
-    ?>
+                                <?php
+                                echo \kartik\select2\Select2::widget([
+                                    'name' => 'imageType',
+                                    'data' => $this->params['imagesType'],
+                                    'value' => $imageTypeSelected ? $imageTypeSelected : null,
+                                    'options' => [
+                                        'placeholder' => Yii::t('app/messages', 'Select image type...'),
+                                        'multiple' => false
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
+                                    'pluginEvents' => [
+                                        "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\");  }",
+                                    ],
+                                ]);
+                                ?>
                             </div>
                             <div class="form-group col-md-12">
 
-                                <label class="control-label" ><?= Yii::t('app', 'Image View') ?></label>
+                                <label class="control-label" ><?= Yii::t('app', 'Camera position') ?></label>
 
-    <?php
-    echo \kartik\select2\Select2::widget([
-        'name' => 'position',
-        'data' => Yii::$app->params['image.filter']['metadata.position'],
-        'value' => $selectedPosition ? $selectedPosition : null,
-        'options' => [
-            'placeholder' => Yii::t('app/messages', 'Select image view...'),
-            'multiple' => false
-        ],
-        'pluginOptions' => [
-            'allowClear' => true
-        ],
-        'pluginEvents' => [
-            "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\"); }",
-        ],
-    ]);
-    ?>
+                                <?php
+                                echo \kartik\select2\Select2::widget([
+                                    'name' => 'filter',
+                                    'data' => Yii::$app->params['image.filter']['metadata.position'],
+                                    'value' => $selectedPosition ? $selectedPosition : null,
+                                    'options' => [
+                                        'id' => 'filterSelect',
+                                        'placeholder' => Yii::t('app/messages', 'Select image view...'),
+                                        'multiple' => false
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
+                                    'pluginEvents' => [
+                                        "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\"); }",
+                                    ],
+                                ]);
+                                ?>
                             </div>
                         </div>
                     </fieldset>
                 </div>
             </div>
 
-    <?= Html::submitButton(Yii::t('app', 'Show'), ['class' => 'btn btn-primary ', 'id' => 'scientific-object-data-visualization-submit-button']) ?>
+            <?= Html::submitButton(Yii::t('app', 'Show'), ['class' => 'btn btn-primary ', 'id' => 'scientific-object-data-visualization-submit-button']) ?>
 
             <?php ActiveForm::end(); ?>
         </div>
         <div id="visualization-images"   >
 
-    <?php
-    if (isset($data) && isset($show) && $show == true && !empty($data)) {
-        echo "<div id='scientific-object-data-visualization-alert-div' style='height:146px;'><br><div class='alert alert-info' role='alert-info'>
-                    <p>You have to click on data to see images</p></div></div>";
-    }
-    ?>
+            <?php
+            if (isset($data) && isset($show) && $show == true && !empty($data)) {
+                echo "<div id='scientific-object-data-visualization-alert-div' style='height:146px;'><br><div class='alert alert-info' role='alert-info'>
+                    <p>".Yii::t('app/messages', 'You have to click a graphic point to see images on that date.')."</p></div></div>";
+            }
+            ?>
             <div id="imagesCount" style="display: none;" data-id=0 ></div>
             <ul id="visualization-images-list" class="images" >
 
@@ -241,128 +242,134 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <div class="data-visualization-chart ">
-    <?php
-}
-if (isset($data)) {
-    if (empty($data)) {
-        echo "  <div class='well '><p>" . Yii::t('app/messages', 'No result found.') . "</p></div>";
-    } else {
-        $series = [];
-        foreach ($data["scientificObjectData"][0]["dataFromProvenance"]as $dataFromProvenanceKey => $dataFromProvenanceValue) {
-            $series[] = ['name' => $dataFromProvenanceKey,
-                'data' => $dataFromProvenanceValue];
+            <?php
         }
-        $url2 = Url::to(['image/search-from-scientific-object']);
-        $objectURI = $model->uri;
-        if ($show) {
-            echo Highcharts::widget([
-                'id' => 'graphic',
-                'options' => [
-                    'chart' => [
-                        'zoomType' => 'x'
-                    ],
-                    'title' => [
-                        'text' => $variables[$data["variable"]]
-                    ],
-                    'subtitle' => [
-                        'text' => 'Click and drag in the plot area to zoom in'
-                    ],
-                    'xAxis' => [
-                        'type' => 'datetime',
-                        'title' => 'Date'],
-                    'yAxis' => [
-                        'title' => null,
-                        'labels' => [
-                            'format' => '{value:.2f}'
-                        ]
-                    ],
-                    'series' => $series,
-                    'tooltip' => [
-                        'xDateFormat' => '%Y-%m-%d %H:%M',
-                    ],
-                    'plotOptions' => [
-                        'series' => [
-                            'cursor' => 'pointer',
-                            'point' => [
-                                'events' => [
-                                    'click' => new JsExpression(" function() {"
-                                            . "var searchFormData = new FormData();"
-                                            . "console.log( Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', 1500768000000));"
-                                            . "searchFormData.append('concernedItems[]', \"$objectURI\");"
-                                            . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
-                                            . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
-                                            . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
-                                            . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
-                                            . "searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
-                                            . "$.ajax({url: \"$url2\","
-                                            . "   type: 'POST',"
-                                            . "   processData: false,"
-                                            . "   datatype: 'json',"
-                                            . "   contentType: false,"
-                                            . "   data: searchFormData,"
-                                            . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
-                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}")
+        if (isset($data)) {
+            if (empty($data)) {
+                echo "  <div class='well '><p>" . Yii::t('app/messages', 'No result found.') . "</p></div>";
+            } else {
+                $series = [];
+                foreach ($data["scientificObjectData"][0]["dataFromProvenance"]as $dataFromProvenanceKey => $dataFromProvenanceValue) {
+                    $series[] = ['name' => $dataFromProvenanceKey,
+                        'data' => $dataFromProvenanceValue];
+                }
+                $url2 = Url::to(['image/search-from-scientific-object']);
+                $objectURI = $model->uri;
+                if ($show) {
+                    echo Highcharts::widget([
+                        'id' => 'graphic',
+                        'options' => [
+                            'chart' => [
+                                'zoomType' => 'x'
+                            ],
+                            'title' => [
+                                'text' => $variables[$data["variable"]]
+                            ],
+                            'subtitle' => [
+                                'text' => Yii::t('app/messages', 'Click and drag in the plot area to zoom in!')
+                            ],
+                            'xAxis' => [
+                                'type' => 'datetime',
+                                'title' => 'Date'],
+                            'yAxis' => [
+                                'title' => null,
+                                'labels' => [
+                                    'format' => '{value:.2f}'
                                 ]
                             ],
-                        ]
-                    ]
-                ]
-            ]);
-        } else {
-            echo Highcharts::widget([
-                'id' => 'graphic',
-                'options' => [
-                    'time' => ['timezoneOffset' => -2 * 60],
-                    'chart' => [
-                        'zoomType' => 'x'
-                    ],
-                    'title' => ['text' => $variables[$data["variable"]]],
-                    'subtitle' => [
-                        'text' => 'Click and drag in the plot area to zoom in'
-                    ],
-                    'xAxis' => [
-                        'type' => 'datetime',
-                        'title' => 'Date',
-                    ],
-                    'yAxis' => [
-                        'title' => null,
-                        'labels' => [
-                            'format' => '{value:.2f}'
-                        ]
-                    ],
-                    'series' => $series,
-                    'tooltip' => [
-                        'xDateFormat' => '%Y-%m-%d %H:%M',
-                    ],
-                    'plotOptions' => [
-                        'series' => [
-                            'cursor' => 'pointer',
-                            'point' => [
-                                'events' => [
-                                    'click' => new JsExpression(" function() {"
-                                            . "}")
+                            'series' => $series,
+                            'tooltip' => [
+                                'xDateFormat' => '%Y-%m-%d %H:%M',
+                            ],
+                            'plotOptions' => [
+                                'series' => [
+                                    'cursor' => 'pointer',
+                                    'point' => [
+                                        'events' => [
+                                            'click' => new JsExpression(" function() {"
+                                                    . "var searchFormData = new FormData();"
+                                                    . "console.log( Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', 1500768000000));"
+                                                    . "searchFormData.append('concernedItems[]', \"$objectURI\");"
+                                                    . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
+                                                    . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
+                                                    . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
+                                                    . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
+                                                    . "searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
+                                                    . "$.ajax({url: \"$url2\","
+                                                    . "   type: 'POST',"
+                                                    . "   processData: false,"
+                                                    . "   datatype: 'json',"
+                                                    . "   contentType: false,"
+                                                    . "   data: searchFormData,"
+                                                    . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
+                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}")
+                                        ]
+                                    ],
                                 ]
                             ]
                         ]
-                    ]
-                ]
-            ]);
+                    ]);
+                } else {
+                    echo Highcharts::widget([
+                        'id' => 'graphic',
+                        'options' => [
+                            'time' => ['timezoneOffset' => -2 * 60],
+                            'chart' => [
+                                'zoomType' => 'x'
+                            ],
+                            'title' => ['text' => $variables[$data["variable"]]],
+                            'subtitle' => [
+                                'text' => 'Click and drag in the plot area to zoom in'
+                            ],
+                            'xAxis' => [
+                                'type' => 'datetime',
+                                'title' => 'Date',
+                            ],
+                            'yAxis' => [
+                                'title' => null,
+                                'labels' => [
+                                    'format' => '{value:.2f}'
+                                ]
+                            ],
+                            'series' => $series,
+                            'tooltip' => [
+                                'xDateFormat' => '%Y-%m-%d %H:%M',
+                            ],
+                            'plotOptions' => [
+                                'series' => [
+                                    'cursor' => 'pointer',
+                                    'point' => [
+                                        'events' => [
+                                            'click' => new JsExpression(" function() {"
+                                                    . "}")
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]);
+                }
+            }
         }
-    }
-}
-?>
+        ?>
     </div>
 
 
 </div>
-<script> 
+<script>
     $(document).ready(function () {
 
-        <?php
-        if (isset($data)) {
-            echo "$('#data-visualization-form').collapse('hide');";
-        }
-        ?>
+        $("#filterSelect").on("change", function (e) {
+            var id = $("#filterSelect").select2("data")[0].id;
+            console.log(id);
+
+        });
+
+<?php
+if (isset($data)) {
+    echo "$('#data-visualization-form').collapse('hide');";
+}
+?>
         $('#data-visualization-form').on('hidden.bs.collapse', function () {
             $('#graphic').show();
             $('#visualization-images').show();
@@ -371,7 +378,7 @@ if (isset($data)) {
             $('#graphic').hide();
             $('#visualization-images').hide();
         });
-        
+
     });
 
     /**
@@ -391,7 +398,7 @@ if (isset($data)) {
             $('#imagesCount').attr('data-id', fragment.find('#counterFragment').attr('data-id'));
         }
     }
-    
+
     var checked = $('#showWidget').is(':checked');
     if (checked) {
         $('#photoFilter').show();

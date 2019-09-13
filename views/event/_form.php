@@ -143,8 +143,27 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             'colHeaders' => ['URI'],
             'data' => $data,
             'rowHeaders' => true,
-            'contextMenu' => true
+            'contextMenu' => true,
+            'height'=> 200
         ];
+    if (sizeof($model->concernedItems) > 8) {
+          $settings = 
+            [
+                'colHeaders' => ['URI'],
+                'data' => $data,
+                'rowHeaders' => true,
+                'contextMenu' => true,
+                'height'=> 200
+            ];
+    } else {
+         $settings = 
+            [
+                'colHeaders' => ['URI'],
+                'data' => $data,
+                'rowHeaders' => true,
+                'contextMenu' => true,
+            ];
+    }
     if (sizeof($model->concernedItems) > 0) {
         foreach($model->concernedItems as $concernedItem) {
             $data[][0] = $concernedItem->uri;
@@ -160,8 +179,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             [
                 'data' => 'URI',
                 'type' => 'text',
-                'placeholder' => 'http://www.opensilex.org/example/2019/o19000002',
-                'width' => '380px'
+                'placeholder' => 'http://www.opensilex.org/example/2019/o19000002'
             ]
         ];
     }
