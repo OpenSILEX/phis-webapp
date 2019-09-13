@@ -207,11 +207,7 @@ $this->params['breadcrumbs'][] = $this->title;
         });
         return result;
     }
-    //limite select all to 300
-    if ($('#select-all-objects').val() > 300) {
-        $('#select-all-div').html('<strong>' + $('#select-all-objects').val() + ' <?php echo Yii::t('app', 'scientific objects') ?></strong>');
-        $('#select-all-objects').hide();
-    }
+  
     //function to check is the all object from all page must be checked
     function areAllItemsFromAllPagesChecked() {
         return  +$('#cart-articles').text() === +$('#select-all-objects').val() ? true : false;
