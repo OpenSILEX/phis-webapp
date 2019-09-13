@@ -42,7 +42,6 @@ class DatasetController extends Controller {
     //create a global configuration file for the csv files
     //\SILEX:TODO
 
-    const DELIM_CSV = ";";
     const AGRONOMICAL_OBJECT_URI = "ScientificObjectURI";
     const DATE = "Date";
     const VALUE = "Value";
@@ -75,7 +74,7 @@ class DatasetController extends Controller {
     private function csvToArray($csvContent) {
         $arrayCsvContent = [];
         foreach ($csvContent as $line) {
-            $arrayCsvContent[] = str_getcsv($line, DatasetController::DELIM_CSV);
+            $arrayCsvContent[] = str_getcsv($line, Yii::$app->params['csvSeparator']);
         }
         return $arrayCsvContent;
     }
@@ -95,7 +94,7 @@ class DatasetController extends Controller {
             return null;
         }
     }
-    
+
     /**
      * Create an associative array of the provenances objects indexed by their URI
      * @param type $provenances
@@ -108,7 +107,7 @@ class DatasetController extends Controller {
                 $provenancesMap[$provenance->uri] = $provenance;
             }
         }
-        
+
         return $provenancesMap;
     }
 
@@ -127,8 +126,13 @@ class DatasetController extends Controller {
             $fileColumns[] = $variableAlias;
         }
 
-        $file = fopen('./documents/DatasetFiles/datasetTemplate.csv', 'w');
-        fputcsv($file, $fileColumns, $delimiter = ";");
+        $csvPath = "coma";
+        if (Yii::$app->params['csvSeparator'] == ";") {
+            $csvPath = "semicolon";
+        }
+        
+        $file = fopen('./documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv', 'w');
+        fputcsv($file, $fileColumns, $delimiter = Yii::$app->params['csvSeparator']);
         fclose($file);
     }
 
@@ -306,13 +310,13 @@ class DatasetController extends Controller {
     public function actionCreate() {
         $datasetModel = new \app\models\yiiModels\YiiDatasetModel();
         $variablesModel = new \app\models\yiiModels\YiiVariableModel();
-        
+
         $token = Yii::$app->session['access_token'];
 
         // Load existing variables
         $variables = $variablesModel->getInstancesDefinitionsUrisAndLabel($token);
         $this->view->params["variables"] = $this->getVariablesListLabelToShowFromVariableList($variables);
-        
+
         // Load existing provenances
         $provenanceService = new WSProvenanceModel();
         $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
@@ -327,7 +331,7 @@ class DatasetController extends Controller {
 
             //Read CSV file content
             $fileContent = str_getcsv(file_get_contents($serverFilePath), "\n");
-            $csvHeaders = str_getcsv(array_shift($fileContent), DatasetController::DELIM_CSV);
+            $csvHeaders = str_getcsv(array_shift($fileContent), Yii::$app->params['csvSeparator']);
             unlink($serverFilePath);
 
             //Loaded given variables
@@ -335,7 +339,7 @@ class DatasetController extends Controller {
 
             // Check CSV header with variables
             if (array_slice($csvHeaders, 2) === $givenVariables) {
-                
+
                 // Get selected or create Provenance URI
                 if (!array_key_exists($datasetModel->provenanceUri, $provenances)) {
                     $provenanceUri = $this->createProvenance(
@@ -366,7 +370,7 @@ class DatasetController extends Controller {
                         // Save CSV data linked to provenance URI
                         $values = [];
                         foreach ($fileContent as $rowStr) {
-                            $row = str_getcsv($rowStr, DatasetController::DELIM_CSV);
+                            $row = str_getcsv($rowStr, Yii::$app->params['csvSeparator']);
                             $scientifObjectUri = $row[0];
                             $date = $row[1];
                             for ($i = 2; $i < count($row); $i++) {
@@ -394,32 +398,32 @@ class DatasetController extends Controller {
                         } else {
 
                             return $this->render('create', [
-                                    'model' => $datasetModel,
-                                    'errors' => $result->metadata->status
+                                        'model' => $datasetModel,
+                                        'errors' => $result->metadata->status
                             ]);
                         }
                     } else {
                         return $this->render('create', [
-                            'model' => $datasetModel,
-                            'errors' => [
-                                Yii::t("app/messages", "Error while creating linked documents")
-                            ]
+                                    'model' => $datasetModel,
+                                    'errors' => [
+                                        Yii::t("app/messages", "Error while creating linked documents")
+                                    ]
                         ]);
                     }
                 } else {
                     return $this->render('create', [
-                        'model' => $datasetModel,
-                        'errors' => [
-                            Yii::t("app/messages", "Error while creating provenance")
-                        ]
+                                'model' => $datasetModel,
+                                'errors' => [
+                                    Yii::t("app/messages", "Error while creating provenance")
+                                ]
                     ]);
                 }
             } else {
                 return $this->render('create', [
-                    'model' => $datasetModel,
-                    'errors' => [
-                        Yii::t("app/messages", "CSV file headers does not match selected variables")
-                    ]
+                            'model' => $datasetModel,
+                            'errors' => [
+                                Yii::t("app/messages", "CSV file headers does not match selected variables")
+                            ]
                 ]);
             }
         } else {
