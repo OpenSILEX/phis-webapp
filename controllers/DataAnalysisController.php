@@ -66,5 +66,20 @@ class DataAnalysisController extends GenericController {
         }
       
     }
+    
+     /**
+     * Displays a single annotation model.
+     * @return mixed
+     */
+    public function actionView($url) {
+        $sessionToken = Yii::$app->session['access_token'];
+        $url .= "&token=" . $sessionToken;
+
+        return $this->render('view', 
+                [
+                    'url' => $url,
+                ]
+            );
+    }
 
 }

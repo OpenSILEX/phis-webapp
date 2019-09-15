@@ -10,6 +10,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\bootstrap\BaseHtml;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\yiiModels\DataAnalysisAppSearch */
 /* @var $dataProvider array */
@@ -31,7 +33,7 @@ echo GridView::widget([
             'value' => 'application_url',
             'format' => 'raw',
               'value' => function ($model, $key, $index) {
-                    return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $model->application_url, ["target" => "_blank"]);
+                return Html::a(BaseHtml::icon('eye-open'), ['data-analysis/view', 'url' => $model->application_url]);
               },
         ],
     ],
