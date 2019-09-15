@@ -11,9 +11,10 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\bootstrap\BaseHtml;
+use kartik\icons\Icon;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\yiiModels\DataAnalysisAppSearch */
+/* @var $searchModel app\models\yiiModels\ScientificAppSearch */
 /* @var $dataProvider array */
 
 $this->title = Yii::t('app', 
@@ -22,6 +23,7 @@ $this->title = Yii::t('app',
         );
 $this->params['breadcrumbs'][] = $this->title;
 
+echo Html::tag("p","Shiny server info : " . $shinyServerStatus,["class"  => "alert alert-warning"]);
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
@@ -33,7 +35,16 @@ echo GridView::widget([
             'value' => 'application_url',
             'format' => 'raw',
               'value' => function ($model, $key, $index) {
-                return Html::a(BaseHtml::icon('eye-open'), ['data-analysis/view', 'url' => $model->application_url]);
+                $openButton = Html::a(BaseHtml::icon('eye-open'),[
+                    'data-analysis/view',
+                    'url' => $model->application_url
+                    ]);
+                $externalLink = Html::a(Icon::show('external-link', [],
+                        Icon::FA),
+                        $model->application_url ,
+                        ["target" => "_blank"]
+                        );
+                return $openButton . " " . $externalLink;
               },
         ],
     ],

@@ -126,6 +126,9 @@ class WSDataAnalysisModel extends \openSILEX\guzzleClientPHP\WSModel {
             return $requestRes;
         }
     }
-    
-    
+
+    protected function arrayToAttributes($array) {
+        
+    }
+
 }

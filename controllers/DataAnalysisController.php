@@ -11,7 +11,8 @@ namespace app\controllers;
 
 use Yii;
 use yii\filters\VerbFilter;
-use app\models\yiiModels\DataAnalysisAppSearch;
+use app\models\yiiModels\ScientificAppSearch;
+use app\models\wsModels\WSConstants;
 
 include_once '../config/web_services.php';
 
@@ -42,12 +43,17 @@ class DataAnalysisController extends GenericController {
      * @return string result of a view
      */
     public function actionIndex() {
-        $searchModel = new DataAnalysisAppSearch();
+        $searchModel = new ScientificAppSearch();
 
         $searchParams = Yii::$app->request->queryParams;
 
-        $searchResult = $searchModel->search($searchParams);
-        
+        $searchResult = $searchModel->search(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN],
+                $searchParams
+                );
+        $shinyServerStatus = $searchModel->shinyProxyServerStatus(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN]
+                );
         
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN_INVALID) {
@@ -61,6 +67,7 @@ class DataAnalysisController extends GenericController {
              return $this->render('index', [
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
+                        'shinyServerStatus' => $shinyServerStatus,
                         ]
             );
         }
@@ -72,8 +79,6 @@ class DataAnalysisController extends GenericController {
      * @return mixed
      */
     public function actionView($url) {
-        $sessionToken = Yii::$app->session['access_token'];
-        $url .= "&token=" . $sessionToken;
 
         return $this->render('view', 
                 [
