@@ -12,6 +12,7 @@
 // Subject: creation of dataset via CSV
 //***********************************************************************************************
 
+use Yii;
 use yii\helpers\Html;
 use unclead\multipleinput\MultipleInput;
 use kartik\form\ActiveForm;
@@ -191,7 +192,7 @@ use yii\helpers\Url;
       <div class="alert alert-info" role="alert">
         <b><?= Yii::t('app/messages', 'File Rules')?> : </b>
         <ul>
-            <li><?= Yii::t('app/messages', 'CSV separator must be')?> "<b><?= \app\controllers\DatasetController::DELIM_CSV ?></b>"</li>
+            <li><?= Yii::t('app/messages', 'CSV separator must be')?> "<b><?= Yii::$app->params['csvSeparator']?></b>"</li>
             <li><?= Yii::t('app/messages', 'Decimal separator for numeric values must be')?> "<b>.</b>"</li>
         </ul>
         <br/>
@@ -213,8 +214,14 @@ use yii\helpers\Url;
     </div>
 
     <p>
-        <i><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . 'documents/DatasetFiles/datasetTemplate.csv', ['id' => 'downloadDatasetTemplate']) ?></i>
-        <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/datasetExemple.csv') ?></i>
+        <?php 
+            $csvPath = "coma";
+            if (Yii::$app->params['csvSeparator'] == ";") {
+                $csvPath = "semicolon";
+            }
+        ?>
+        <i><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv', ['id' => 'downloadDatasetTemplate']) ?></i>
+        <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetExemple.csv') ?></i>
     </p>
     <?= $form->field($model, 'file')->widget(FileInput::classname(), [
         'options' => [

@@ -33,6 +33,11 @@ class EventCreation extends EventAction {
     const CREATOR = 'creator';
     
     /**
+    * To kind of object ? Vector, sensor, scientific object (link to the cart functionnality)
+    * proposition name: target/ category ..
+    */
+    public $category;
+    /**
      * @inheritdoc
      */
     public function rules() {
