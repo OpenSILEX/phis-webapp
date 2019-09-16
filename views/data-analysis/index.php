@@ -23,7 +23,7 @@ $this->title = Yii::t('app',
         );
 $this->params['breadcrumbs'][] = $this->title;
 
-echo Html::tag("p","Shiny server info : " . $shinyServerStatus,["class"  => "alert alert-warning"]);
+echo Html::tag("p","Scientific app server information : <b>" . $shinyServerStatus["message"] . "</b>",["class"  => "alert " . $shinyServerStatus["class"]]);
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,

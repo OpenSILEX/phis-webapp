@@ -11,6 +11,7 @@
 namespace app\models\yiiModels;
 
 use app\models\wsModels\WSConstants;
+use GuzzleHttp\Exception\ServerException;
 
 include_once '../config/web_services.php';
 require_once '../config/config.php';
@@ -70,12 +71,16 @@ class ScientificAppSearch extends YiiScientificAppModel {
     }
 
     public function shinyProxyServerStatus($sessionToken) {
-        $requestRes = $this->find($sessionToken, [], "/shinyServerStatus");
-        if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::STATUS})) {
-            $exception = $requestRes->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION};
-            return $exception->{"type"};
+        try {
+            $requestRes = $this->find($sessionToken, [], "/shinyServerStatus");
+            if (isset($requestRes->{WSConstants::METADATA}->{WSConstants::STATUS})) {
+                $exception = $requestRes->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION};
+                return ["message" => $exception->{"type"}, "class" => "alert-info"];
+            }
+        } catch (ServerException $exc) {
+            return ["message" => "Not running", "class" => "alert-danger"];
         }
-        return null;
+        return ["message" => "Unknown status", "class" => "alert-warn"];
     }
 
     protected function arrayToAttributes($array) {
