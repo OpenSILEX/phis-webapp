@@ -2,7 +2,7 @@
 
 return [
     // Global
-    'platform' => 'Demo',
+    'platform' => 'Test',
     'isDemo' => false,
     'demoLogin' => 'guest@opensilex.org',
     'demoPassword' => 'guest',
@@ -132,7 +132,7 @@ return [
     'from' => 'http://www.opensilex.org/vocabulary/oeev#from',
     'to' => 'http://www.opensilex.org/vocabulary/oeev#to',
     'associatedToASensor' => 'http://www.opensilex.org/vocabulary/oeev#associatedToASensor',
-
+    
     // Image filters
     'image.filter' => [
         'metadata.position' => [
@@ -148,5 +148,4 @@ return [
 //        'metadata.position' => [
 //            'label1:value1','label2:value2', 'label3:value3'],
 //        ]
-    
 ];
