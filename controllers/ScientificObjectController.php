@@ -28,6 +28,7 @@ require_once '../config/config.php';
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiScientificObjectModel
  * @update [Bonnefont Julien] 12 Septembre, 2019: add visualization functionnalities & cart & cart action to add Event on multipe scientific objects
+ * @update [Renaud COLIN]  20 September, 2019: add the "isPartOf" key/value into the returned array by the getArrayForWebServiceCreate() method. 
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ScientificObjectController extends Controller {
@@ -528,11 +529,13 @@ class ScientificObjectController extends Controller {
         $p["experiment"] = $scientificObject["experiment"];
         $p["geometry"] = $scientificObject["geometry"];
 
-        if ($scientificObject["ispartof"] != null) {
+        if ($scientificObject[YiiScientificObjectModel::ISPARTOF] != null) {
             $parent["relation"] = Yii::$app->params['isPartOf'];
-            $parent["value"] = $scientificObject["ispartof"];
+            $parent["value"] = $scientificObject[YiiScientificObjectModel::ISPARTOF];
             $p["properties"][] = $parent;
+            $p["isPartOf"] = $scientificObject[YiiScientificObjectModel::ISPARTOF];
         }
+
 
         if ($scientificObject["species"] != null) {
             $species["rdfType"] = Yii::$app->params['Species'];
