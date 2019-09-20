@@ -1,6 +1,6 @@
 <?php
 
-//**********************************************************************************************
+//***********************************************************************************************
 //                                       YiiScientificObjectModel.php 
 //
 // Author(s): Morgane VIDAL
@@ -10,7 +10,7 @@
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 // Last modification date:  August, 30 2017
 // Subject: The Yii model for the scientific objects. Used with web services
-//***********************************************************************************************
+//************************************************************************************************
 
 namespace app\models\yiiModels;
 

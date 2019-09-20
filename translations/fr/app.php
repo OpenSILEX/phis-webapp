@@ -74,6 +74,7 @@ return [
     'BRDF coefficient P4' => 'Coefficient BRDF P4',
 
     // C
+    'Camera position' =>'Position de la caméra',
     'Campaign' => 'Campagne',
     'Carpet' => 'Moquette',
     'Characterize Sensor' => 'Caractériser un Capteur',
@@ -101,6 +102,7 @@ return [
     // D
     'Data' => 'Données',
     'Data file' => 'Fichier de données',
+    'Data Search'=>'Recherche de données',
     'Dataset' => 'Jeux de données',
     'Dataset Creation Date' => 'Données Insérées',
     'Date' => 'Date',
@@ -126,6 +128,7 @@ return [
     'Error' => 'Erreur',
     'Errors while creating user' => 'Erreurs lors de la création de l\'utilisateur',
     'Experimental Organization' => 'Organisation expérimentale',
+    'Experiment'=>'Expérimentation',
     'Experiment Modalities' => 'Modalités Expérimentales',
     EventAction::EVENT_UNUPDATABLE_DUE_TO_UNUPDATABLE_PROPRTY_LABEL =>
         "L'événement ne peut être mis à jour que via le web service car une de "
@@ -158,6 +161,7 @@ return [
     'Generated URI' => 'URI générée',
     'Geographic Location' => 'Localisation géographique',
     'Geometry' => 'Géométrie',
+    'Graphic visualization' => 'Visualisation graphique',
     'Groups' => 'Groupes',
     'Guest' => 'Invité',
 
@@ -167,6 +171,8 @@ return [
     'Homepage' => 'Site web',
 
     // I
+    
+    'Image Search'=>'Recherche d\'images',
     'Images Visualization' => 'Visualisation d\'Images',
     'In Service Date' => 'Date de Mise en Service',
     'Insertion status' => 'Statut d\'insertion',
@@ -227,6 +233,7 @@ return [
     'Private Access' => 'Accès Privé',
     'Project Coordinators' => 'Coordinateurs du projets',
     'Project Type' => 'Type du projet',
+    'Properties'=>'Propriétés',
     PropertyWidget::NO_PROPERTY_LABEL => 'Aucune propriété spécifique',
     'Provenance comment' => 'Commentaire de la provenance',
     'Provenance (URI)' => 'Provenance (URI)',
@@ -251,7 +258,11 @@ return [
 
     // S
     'Scientific Contacts' => 'Contacts scientifiques',
+    'scientific objects' =>'objets scientifiques',
     'Scientific Supervisors' => 'Superviseurs scientifiques',
+    'Search Criteria' =>'Critères de recherche',
+    'See' => 'Voir',
+    'Select all the' =>'Sélectionnez l\'ensemble des',
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',
     'Select type...' => 'Sélectionez le type',
@@ -275,6 +286,7 @@ return [
     //T
     'Team' => 'Équipe',
     'Technical Supervisors' => 'Superviseurs techniques',
+    'the documentation' => 'la documentation',
     'Timezone offset' => 'Fuseau horaire',
     'Title' => 'Titre',
     'Tools' => 'Outils',

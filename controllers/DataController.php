@@ -171,14 +171,14 @@ class DataController extends Controller {
         //get all the data (if multiple pages) and write them in a file
         $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
         
-        $headerFile = "variable URI" . ScientificObjectController::DELIM_CSV .
-                      "variable" . ScientificObjectController::DELIM_CSV .
-                      "date" . ScientificObjectController::DELIM_CSV .
-                      "value" . ScientificObjectController::DELIM_CSV .
-                      "object URI" . ScientificObjectController::DELIM_CSV . 
-                      "object" . ScientificObjectController::DELIM_CSV . 
-                      "provenance URI" . ScientificObjectController::DELIM_CSV . 
-                      "provenance" . ScientificObjectController::DELIM_CSV . 
+        $headerFile = "variable URI" . Yii::$app->params['csvSeparator'] .
+                      "variable" . Yii::$app->params['csvSeparator'] .
+                      "date" . Yii::$app->params['csvSeparator'] .
+                      "value" . Yii::$app->params['csvSeparator'] .
+                      "object URI" . Yii::$app->params['csvSeparator'] . 
+                      "object" . Yii::$app->params['csvSeparator'] . 
+                      "provenance URI" . Yii::$app->params['csvSeparator'] . 
+                      "provenance" . Yii::$app->params['csvSeparator'] . 
                       "\n";
         file_put_contents($serverFilePath, $headerFile);
         
@@ -192,11 +192,11 @@ class DataController extends Controller {
             //2. write in file
             $models = $searchResult->getmodels();
             foreach ($models as $model) {
-                $stringToWrite = $model->variable->uri . ScientificObjectController::DELIM_CSV . 
-                                 $model->variable->label . ScientificObjectController::DELIM_CSV . 
-                                 $model->date . ScientificObjectController::DELIM_CSV .
-                                 $model->value . ScientificObjectController::DELIM_CSV .
-                                 $model->object->uri . ScientificObjectController::DELIM_CSV ;
+                $stringToWrite = $model->variable->uri . Yii::$app->params['csvSeparator'] . 
+                                 $model->variable->label . Yii::$app->params['csvSeparator'] . 
+                                 $model->date . Yii::$app->params['csvSeparator'] .
+                                 $model->value . Yii::$app->params['csvSeparator'] .
+                                 $model->object->uri . Yii::$app->params['csvSeparator'] ;
                 $objectLabels = "";
                 if (isset($model->object)) {
                     foreach ($model->object->labels as $label) {
@@ -204,9 +204,9 @@ class DataController extends Controller {
                     }
                 }
                 
-                $stringToWrite .= $objectLabels . ScientificObjectController::DELIM_CSV .
-                                  $model->provenance->uri . ScientificObjectController::DELIM_CSV .
-                                  $model->provenance->label . ScientificObjectController::DELIM_CSV . 
+                $stringToWrite .= $objectLabels . Yii::$app->params['csvSeparator'] .
+                                  $model->provenance->uri . Yii::$app->params['csvSeparator'] .
+                                  $model->provenance->label . Yii::$app->params['csvSeparator'] . 
                                  "\n";
                 file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
             }

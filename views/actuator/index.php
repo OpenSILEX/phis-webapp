@@ -80,6 +80,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'event' => function($url, $model, $key) {
                         return EventButtonWidget::widget([
+                            EventButtonWidget::TYPE => "one",
                             EventButtonWidget::CONCERNED_ITEMS_URIS => [$model->uri],
                             EventButtonWidget::AS_LINK => true
                         ]); 
