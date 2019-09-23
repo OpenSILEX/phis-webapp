@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a81ff6872bbd8b0fdf3f387ebc99092a",
-    "content-hash": "05c766297ee7a05e6c5a1c1b8da57159",
+    "content-hash": "4b43f8ed7edb33a076632b143edf858d",
     "packages": [
         {
             "name": "borales/yii2-phone-input",
@@ -2214,6 +2213,55 @@
             "time": "2019-01-21T22:06:44+00:00"
         },
         {
+            "name": "nezhelskoy/yii2-highlight",
+            "version": "v1.2.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nezhelskoy/yii2-highlight.git",
+                "reference": "e5a6653f53e1d0105261c3ed6f4ee22662ba34a8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nezhelskoy/yii2-highlight/zipball/e5a6653f53e1d0105261c3ed6f4ee22662ba34a8",
+                "reference": "e5a6653f53e1d0105261c3ed6f4ee22662ba34a8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "yiisoft/yii2": "~2"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "asset-installer-paths": {
+                    "bower-asset-library": "vendor/bower"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "nezhelskoy\\highlight\\": "src/",
+                    "nezhelskoy\\highlight\\examples\\": "examples/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry A. Nezhelskoy",
+                    "email": "dmitry@nezhelskoy.pro",
+                    "homepage": "http://nezhelskoy.pro"
+                }
+            ],
+            "description": "Yii2 highlight.js extension",
+            "keywords": [
+                "highlight",
+                "highlight.js",
+                "yii2"
+            ],
+            "time": "2017-03-08T13:50:49+00:00"
+        },
+        {
             "name": "oomphinc/composer-installers-extender",
             "version": "v1.1.2",
             "source": {
@@ -2365,58 +2413,6 @@
                 "source": "https://github.com/niio972/handsontable-php/tree/master"
             },
             "time": "2018-06-05T21:35:22+00:00"
-        },
-        {
-            "name": "openSILEX/opencpu-client-php",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/OpenSILEX/opencpu-client-php.git",
-                "reference": "fecc7c3465fc91f15521957e97d505bf86c2710b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/OpenSILEX/opencpu-client-php/zipball/fecc7c3465fc91f15521957e97d505bf86c2710b",
-                "reference": "fecc7c3465fc91f15521957e97d505bf86c2710b",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "~6.0",
-                "php": "^5.5 || ^7.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "openSILEX\\opencpuClientPHP\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "openSILEX\\openCPU-client-php\\": "tests/"
-                }
-            },
-            "license": [
-                "AGPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Arnaud CHARLEROY",
-                    "email": "arnaud.charleroy@inra.fr",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A php client for openCPU Server",
-            "keywords": [
-                "R",
-                "javascript",
-                "opencpu",
-                "php"
-            ],
-            "support": {
-                "source": "https://github.com/OpenSILEX/opencpu-client-php/tree/master",
-                "issues": "https://github.com/OpenSILEX/opencpu-client-php/issues"
-            },
-            "time": "2019-03-22T11:00:17+00:00"
         },
         {
             "name": "phayes/geophp",
@@ -5714,8 +5710,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "opensilex/guzzle-model-client": 20,
-        "opensilex/handsontable-php": 20,
-        "opensilex/opencpu-client-php": 20
+        "opensilex/handsontable-php": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

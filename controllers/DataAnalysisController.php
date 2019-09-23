@@ -11,7 +11,8 @@ namespace app\controllers;
 
 use Yii;
 use yii\filters\VerbFilter;
-use app\models\yiiModels\DataAnalysisAppSearch;
+use app\models\yiiModels\ScientificAppSearch;
+use app\models\wsModels\WSConstants;
 
 include_once '../config/web_services.php';
 
@@ -20,8 +21,8 @@ include_once '../config/web_services.php';
  * @see yii\web\Controller
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
-class DataAnalysisController extends \yii\web\Controller {
-  
+class DataAnalysisController extends GenericController {
+
     /**
      * Define the behaviors of the controller
      * @return array
@@ -37,70 +38,102 @@ class DataAnalysisController extends \yii\web\Controller {
         ];
     }
 
+    
+    
+    public function actionGallery() {
+        $dataProvider =[
+            'spatial' =>
+                [
+                    'label' => 'Spatial vizualisation',
+                    'items' => [
+                        'mapField' => [
+                                'descriptionFilePath' => 'mapField/mapField.html', 
+                                'RfunctionPath' => 'mapField/mapField.R',
+                                    ]
+                        ],
+                ],
+            'timeSeries' =>
+                [
+                    'label' => 'Time series',
+                    'items' => [
+                        'plotVar' => [
+                                'descriptionFilePath' => 'plotVar/vignette.png', 
+                                'RfunctionPath' => 'plotVar/plotVar.R',
+                                    ]
+                        ]
+                ],
+            'lineGraphs' =>
+                [
+                    'label' => 'Line graphs',
+                    'items' => [
+                        'compareVarieties' => [
+                                'descriptionFilePath' => 'compareVarieties/vignette.png', 
+                                'RfunctionPath' => 'compareVarieties/compareVarieties.R',
+                                    ]
+                        ]
+                ]
+        ];
+        
+        
+        return $this->render('gallery', [
+                    'galleryFilePath' => '@app/web/RGallery',
+                    'dataProvider' => $dataProvider
+                    ]
+        );
+    }
+    
+    public function actionViewGalleryItem() {
+        $searchParams = Yii::$app->request->queryParams;
+        return $this->render('view-gallery-item', [
+                    'descriptionFilePath' => $searchParams["descriptionFilePath"],
+                    'RfunctionPath' => $searchParams["RfunctionPath"]
+                ]);
+    }
+    
     /**
      * Show in a gallery all available R applications
      * @return string result of a view
      */
     public function actionIndex() {
-        $searchModel = new DataAnalysisAppSearch();
+        $searchModel = new ScientificAppSearch();
 
         $searchParams = Yii::$app->request->queryParams;
 
-        $searchResult = $searchModel->search($searchParams);
-
-        // no applications returned - connection error or no opencpu applications
-        // are available
-        if (empty($searchResult)) {
-            return $this->render('/site/error', [
-                        'name' => Yii::t('app/warning', 'Informations'),
-                        'message' => Yii::t('app/messages', 'No application available')
-                        ]
-            );
+        $searchResult = $searchModel->search(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams
+        );
+        $shinyServerStatus = $searchModel->shinyProxyServerStatus(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN]
+        );
+      
+        if (is_string($searchResult)) {
+            if ($searchResult === WSConstants::TOKEN_INVALID) {
+                return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+            } else {
+                return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                            SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
+                            SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
+            }
         } else {
             return $this->render('index', [
                         'searchModel' => $searchModel,
                         'dataProvider' => $searchResult,
-                        ]
+                        'shinyServerStatus' => $shinyServerStatus,
+                            ]
             );
         }
     }
 
     /**
-     * Show standalone Demo R application integrated in a iframe.
-     * The purpose of this application is to test a R function 
-     * which use any OpenSILEX webservice.
-     * It is a specific demo application that why it is fixed.
-     * @return string a view result
+     * Displays a single annotation model.
+     * @return mixed
      */
-    public function actionViewDemo() {
-        $searchModel = new DataAnalysisAppSearch();
-        // retreive information on default demo application
-        $appDemo = $searchModel->getApplicationInformation(
-                $searchModel::DEFAULT_TEST_DEMO_APP
-        );
-        // connection error or application not loaded
-        if (!empty($appDemo)) {
-            $appDemoInformation = $appDemo[$searchModel::DEFAULT_TEST_DEMO_APP];
-            $this->redirect($appDemoInformation[DataAnalysisAppSearch::APP_INDEX_URL]);
-        } else {
-            return $this->render('/site/error', [
-                        'name' => Yii::t('app/warning', 'Informations'),
-                        'message' => Yii::t('app/messages', 'Demonstration application not available')
-                        ]
-            );
-        }
-    }
-
-    /**
-     * Show standalone Demo R application integrated in a iframe.
-     * @return string a view result
-     */
-    public function actionView() {
-        $searchParams = Yii::$app->request->queryParams;
-        return $this->render('iframe-view', [
-                    'appUrl' => $searchParams["url"],
-                    'appName' => $searchParams["name"]
+    public function actionView($url) {
+        return $this->render('view',
+                    [
+                        'url' => $url,
                     ]
         );
     }
+
 }

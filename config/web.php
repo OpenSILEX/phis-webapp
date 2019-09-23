@@ -63,6 +63,13 @@ $config = [
             ],
         ],
     ],
+    'assetManager' => [
+        'bundles' => [
+            'nezhelskoy\highlight\HighlightAsset' => [
+                'css' => ['dist/styles/googlecode.css'],
+            ],
+        ]
+    ],
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,

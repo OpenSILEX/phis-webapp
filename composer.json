@@ -38,9 +38,9 @@
         "lavrentiev/yii2-toastr": "2.0.2",
         "webtoucher/yii2-js-cookie": "1.0.0",
         "fortawesome/font-awesome": "v4.7.0",
-        "opensilex/opencpu-client-php": "dev-master",
         "himiklab/yii2-handsontable-widget" : "v1.1.1",
-        "phayes/geophp": "1.2"
+        "phayes/geophp": "1.2",
+        "nezhelskoy/yii2-highlight": "v1.2.8"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "2.0.14",
@@ -87,10 +87,6 @@
         {
             "type": "vcs",
             "url": "https://github.com/niio972/handsontable-php"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/opensilex/opencpu-client-php"
         }
     ]
 }
