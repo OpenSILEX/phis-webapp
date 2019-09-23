@@ -4,51 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "05c766297ee7a05e6c5a1c1b8da57159",
+    "content-hash": "22de4dc29dc1c1eb5c6987d83b07c4f4",
     "packages": [
-        {
-            "name": "alcea/yii2-prism-syntax-highlighter",
-            "version": "v1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/alceanicu/yii2-prism-syntax-highlighter.git",
-                "reference": "cd2c59ce783f243fa2cffadb2525836410485673"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/alceanicu/yii2-prism-syntax-highlighter/zipball/cd2c59ce783f243fa2cffadb2525836410485673",
-                "reference": "cd2c59ce783f243fa2cffadb2525836410485673",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0",
-                "yiisoft/yii2": "*"
-            },
-            "type": "yii2-extension",
-            "autoload": {
-                "psr-4": {
-                    "alcea\\yii2PrismSyntaxHighlighter\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT License"
-            ],
-            "authors": [
-                {
-                    "name": "Niku Alcea",
-                    "email": "nicu.alcea@gmail.com"
-                }
-            ],
-            "description": "Prism Syntax Highlighter for Yii2",
-            "keywords": [
-                "SyntaxHighlighter",
-                "php",
-                "prism",
-                "yii2"
-            ],
-            "time": "2016-12-30T22:58:11+00:00"
-        },
         {
             "name": "borales/yii2-phone-input",
             "version": "0.1.2",
@@ -2254,6 +2211,55 @@
                 "yii2"
             ],
             "time": "2019-01-21T22:06:44+00:00"
+        },
+        {
+            "name": "nezhelskoy/yii2-highlight",
+            "version": "v1.2.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nezhelskoy/yii2-highlight.git",
+                "reference": "e5a6653f53e1d0105261c3ed6f4ee22662ba34a8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nezhelskoy/yii2-highlight/zipball/e5a6653f53e1d0105261c3ed6f4ee22662ba34a8",
+                "reference": "e5a6653f53e1d0105261c3ed6f4ee22662ba34a8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "yiisoft/yii2": "~2"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "asset-installer-paths": {
+                    "bower-asset-library": "vendor/bower"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "nezhelskoy\\highlight\\": "src/",
+                    "nezhelskoy\\highlight\\examples\\": "examples/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry A. Nezhelskoy",
+                    "email": "dmitry@nezhelskoy.pro",
+                    "homepage": "http://nezhelskoy.pro"
+                }
+            ],
+            "description": "Yii2 highlight.js extension",
+            "keywords": [
+                "highlight",
+                "highlight.js",
+                "yii2"
+            ],
+            "time": "2017-03-08T13:50:49+00:00"
         },
         {
             "name": "oomphinc/composer-installers-extender",

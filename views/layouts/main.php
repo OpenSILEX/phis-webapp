@@ -65,14 +65,6 @@ ToastrAsset::register($this);
                                         [
                                             'label' => Icon::show('area-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'R Gallery'), 
                                             'url' => ['/data-analysis/gallery'],
-                                        ],
-                                        [
-                                            'label' => Icon::show('bar-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Standalone R App} other{Standalone R Apps}}', ['n' => 2]), 
-                                            'url' => ['/data-analysis/index' ,"integrated" => false],
-                                        ],
-                                        [
-                                            'label' => Icon::show('flask', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Try a R app'), 
-                                            'url' => ['/data-analysis/view-demo'],
                                         ]
                                     ]
                                 ];

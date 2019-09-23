@@ -9,46 +9,39 @@
 //******************************************************************************
 
 use yii\helpers\Html;
-use app\models\yiiModels\DataAnalysisAppSearch;
-use yii\helpers\HtmlPurifier;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\yiiModels\DataAnalysisAppSearch */
 /* @var $dataProvider array */
 
-$this->title = Yii::t('app', 
-        '{n, plural, =1{Statistical/Visualization Application} other{Statistical/Visualization Applications}}',
-        ['n' => 2]
-        );
+$this->title = Yii::t('app', '{n, plural, =1{Statistical/Visualization Application} other{Statistical/Visualization Applications}}', ['n' => 2]
+);
 $this->params['breadcrumbs'][] = $this->title;
 
 //var_dump($dataProvider);exit;
 echo Html::beginTag("div", ["class" => "data-analysis-index"]);
 echo Html::beginTag("div", ["class" => "row"]);
-// HtmlPurifier::process($post->text)
-//echo $this->renderFile($galleryFilePath . 'spatial/mapField/mapField.html');
-// each thumbnail (R application vignette)
 foreach ($dataProvider as $category => $categoryInfo) {
     echo Html::beginTag("div", ["class" => "row"]);
     $numberOfItems = count(($categoryInfo['items']));
     echo Html::tag("hr");
-    echo Html::tag("h2", Yii::t('app',$categoryInfo["label"]) . ' ('. $numberOfItems .')');
+    echo Html::tag("h2", Yii::t('app', $categoryInfo["label"]) . ' (' . $numberOfItems . ')');
     echo Html::tag("hr");
 
     foreach ($categoryInfo['items'] as $categoryItem => $categoryItemInfo) {
 
         echo Html::beginTag("div", ["class" => "col-sm-4 col-md-3"]);
         echo Html::beginTag("div", ["class" => "thumbnail"]);
-        $image = Html::img('RGallery/'. $category .'/' . $categoryItem .  '/vignette.png', [
+        $image = Html::img('RGallery/' . $category . '/' . $categoryItem . '/vignette.png', [
                     "class" => "img-responsive",
                     "alt" => $categoryItem
         ]);
         $exampleUrl = Url::to(
                         [
                             'data-analysis/view-gallery-item',
-                            'descriptionFilePath' => $galleryFilePath . '/'. $category . '/'. $categoryItemInfo['descriptionFilePath'],
-                            'RfunctionPath' => $galleryFilePath . '/'. $category . '/'. $categoryItemInfo['RfunctionPath'],
+                            'descriptionFilePath' => $galleryFilePath . '/' . $category . '/' . $categoryItemInfo['descriptionFilePath'],
+                            'RfunctionPath' => $galleryFilePath . '/' . $category . '/' . $categoryItemInfo['RfunctionPath'],
                         ]
         );
         echo Html::a($image, $exampleUrl);
@@ -58,7 +51,7 @@ foreach ($dataProvider as $category => $categoryInfo) {
         echo Html::endTag("div");
         echo Html::endTag("div");
     }
-     echo Html::endTag("div");
+    echo Html::endTag("div");
 }
 
 echo Html::endTag("div");
