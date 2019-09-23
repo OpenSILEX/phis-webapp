@@ -99,13 +99,18 @@ class DataAnalysisController extends GenericController {
 
         $searchParams = Yii::$app->request->queryParams;
 
-        $searchResult = $searchModel->search(
-                Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams
-        );
-        $shinyServerStatus = $searchModel->shinyProxyServerStatus(
+         $shinyServerStatus = $searchModel->shinyProxyServerStatus(
                 Yii::$app->session[WSConstants::ACCESS_TOKEN]
         );
-      
+         
+        if($shinyServerStatus["message"] == "Not running"){
+            $searchResult = new \yii\data\ArrayDataProvider();
+        }else{
+            $searchResult = $searchModel->search(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams
+            );
+        }
+        
         if (is_string($searchResult)) {
             if ($searchResult === WSConstants::TOKEN_INVALID) {
                 return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
