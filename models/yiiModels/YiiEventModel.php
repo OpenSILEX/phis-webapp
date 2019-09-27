@@ -140,9 +140,10 @@ class YiiEventModel extends WSActiveRecord {
     public function getEvent($sessionToken, $uri) {
         $event = $this->wsModel->getEvent($sessionToken, $uri);
         if (!is_string($event)) {
-            if (isset($event[WSConstants::TOKEN_INVALID])) {
-                return $event;
-            } else {
+           if (isset($event->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
+                    && $event->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
+                    return \app\models\wsModels\WSConstants::TOKEN_INVALID;
+                    } else {
                 $this->arrayToAttributes($event);
                 $this->uri = $uri;
                 return $this;

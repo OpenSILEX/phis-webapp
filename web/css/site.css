@@ -1,20 +1,26 @@
 html,body {
     height: 100%;
 }
+
+#graphic{
+    width: 100%;
+    height: 1000px !important;
+    text-align: center;
+}
 /*SILEX:info*/
 /*use in views/scientific-object/date_visualization.php*/
 /*Vertical list of images*/
 ul.images {
-  margin: 0;
-  padding: 0;
-  white-space: nowrap;
-  max-width: 1140px;
-  overflow-x: auto;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    max-width: 1140px;
+    overflow-x: auto;
 }
 ul.images li {
-  display: inline-block;
-  width: 200px;
-  margin: 0 2px;
+    display: inline-block;
+    width: 200px;
+    margin: 0 2px;
 }
 /*//\SILEX:info*/
 
@@ -23,10 +29,10 @@ ul.images li {
 /* Fix position of the carousel in the modal*/
 /*//\SILEX:required*/
 .modal.and {
-  position: fixed; 
+    position: fixed; 
 }
- /*SILEX:info*/ 
- /*use in views/scientific-object/date_visualization.php*/
+/*SILEX:info*/ 
+/*use in views/scientific-object/date_visualization.php*/
 /*Override the default max-width of the tooltip*/
 /*//\SILEX:info*/
 .tooltip-inner {
@@ -37,38 +43,38 @@ ul.images li {
 /*use in views/scientific-object/date_visualization.php*/
 /*Gradient on the photo in the modal to see the text in white */
 .pickgradient{
-  position:relative;
-  display:inline-block;
+    position:relative;
+    display:inline-block;
 }
 .pickgradient:after {
-  content:'';
-  position:absolute;
-  left:0; bottom:0;
-  width:100%; height:40%;
-  display:inline-block;
-  background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* IE10+ */
-  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:100%; height:40%;
+    display:inline-block;
+    background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* IE10+ */
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
 }
 /*//\SILEX:info*/
 
 .btn:focus,.btn:active {
-   outline: none !important;
-   box-shadow: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 
- /*SILEX:info*/ 
- /*use in views/scientific-object/index.php*/
+/*SILEX:info*/ 
+/*use in views/scientific-object/index.php*/
 /*width of the cart button*/
 /*//\SILEX:info*/
 #cart-btn {
     width:88px; /* the size for a 5 digits number*/
-    
+
 }
 
 
@@ -125,7 +131,7 @@ ul.images li {
     margin: 0 auto;
     pointer-events: all;
 }
- 
+
 /*//\SILEX:info*/
 
 
@@ -302,7 +308,7 @@ table .form-group {
     list-style-type: none;
 }
 .li_tiret:before {
-   content: '- ';
+    content: '- ';
 }
 
 /*CSS Loader*/

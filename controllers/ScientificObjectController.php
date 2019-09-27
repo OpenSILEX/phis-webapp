@@ -20,6 +20,7 @@ use yii\filters\VerbFilter;
 use app\models\yiiModels\YiiScientificObjectModel;
 use app\models\yiiModels\ScientificObjectSearch;
 use app\models\yiiModels\YiiExperimentModel;
+use app\models\yiiModels\EventSearch;
 
 require_once '../config/config.php';
 
@@ -426,9 +427,9 @@ class ScientificObjectController extends Controller {
                     $cpt = 0;
 
                     $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
-                  
+
                     $forWebService = [];
-                    
+
                     if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
                         foreach ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES} as $scientificObjectUri) {
                             $return["objectUris"][] = $scientificObjectUri;
@@ -808,13 +809,13 @@ class ScientificObjectController extends Controller {
                 } else {
                     $wktGeometry = "";
                 }
- 
-                $stringToWrite .= $model->uri . Yii::$app->params['csvSeparator'] . 
-                                 $model->label . Yii::$app->params['csvSeparator'] .
-                                 $model->rdfType . Yii::$app->params['csvSeparator'] .
-                                 $model->experiment . Yii::$app->params['csvSeparator'] . 
-                                 '"' . $wktGeometry . '"' . Yii::$app->params['csvSeparator'] . 
-                                 "\n";
+
+                $stringToWrite .= $model->uri . Yii::$app->params['csvSeparator'] .
+                        $model->label . Yii::$app->params['csvSeparator'] .
+                        $model->rdfType . Yii::$app->params['csvSeparator'] .
+                        $model->experiment . Yii::$app->params['csvSeparator'] .
+                        '"' . $wktGeometry . '"' . Yii::$app->params['csvSeparator'] .
+                        "\n";
             }
 
             $totalPage = intval($searchModel->totalPages);
@@ -959,14 +960,14 @@ class ScientificObjectController extends Controller {
              * e.g : 
              * {
              *   "variable": "http:\/\/www.opensilex.org\/demo\/id\/variable\/v0000001",
-             *   "scientificObjectData": [
-             *          "label": "Scientific object label",
-             *          "dataFromProvenance": [
-             *                     "provenance":"Data provenance uri",
-             *                     "data": ["1,874809","2015-02-10"],
-             *                             ["2,313261","2015-03-15"],..
-             *    ]
-             *  ]
+             *   "scientificObjectData":{
+             *                             "label": "Scientific object label",
+             *                "dataFromProvenance":{
+             *                                        "ProvenanceUri1": [["1,874809","2015-02-10"],..],
+             *                                        "ProvenanceUri2": [["2,313261","2015-03-15"],..],
+             *                                        ...
+             *                                     }
+             *                           }
              * }
              */
 
@@ -995,10 +996,24 @@ class ScientificObjectController extends Controller {
             if (!empty($data)) {
                 $toReturn["variable"] = $searchModel->variable;
                 $scientificObjectData["dataFromProvenance"] = $dataByProvenance;
-                $toReturn["scientificObjectData"][] = $scientificObjectData;
+                $toReturn["scientificObjectData"] = $scientificObjectData;
             }
 
-
+            //Get the events associate to the sci. obj. to put on the Highcharts Graph
+            $searchModel = null;
+            $searchModel = new EventSearch();
+            $searchModel->pageSize = 800;
+            $searchModel->searchConcernedItemUri = $uri;
+            $searchResult = $searchModel->search($token, null);
+            $events = array();
+            
+            foreach ($searchResult->getModels() as $model) {
+                 $events[] = [
+                        'date' =>(strtotime($model->date)) * 1000,
+                        'title' =>  explode('#',$model->rdfType)[1],
+                        'text' => $model->uri
+                    ];
+            }
 
             //on FORM submitted:
             //check if image visualization is activated
@@ -1008,7 +1023,7 @@ class ScientificObjectController extends Controller {
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
             if (isset($_POST['filter']) && $_POST['filter'] !== "") {
                 $selectedPositionIndex = $_POST['filter'];
-                $attribut=explode(":",Yii::$app->params['image.filter']['metadata.position'][$selectedPositionIndex]);
+                $attribut = explode(":", Yii::$app->params['image.filter']['metadata.position'][$selectedPositionIndex]);
                 $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
             }
             return $this->render('data_visualization', [
@@ -1016,14 +1031,14 @@ class ScientificObjectController extends Controller {
                         'variables' => $variables,
                         'data' => $toReturn,
                         'show' => $show,
-                        'dateStart' => $searchModel->startDate,
-                        'dateEnd' => $searchModel->endDate,
+                        'dateStart' => $_POST['dateStart'],
+                        'dateEnd' => $_POST['dateEnd'],
                         'selectedVariable' => $selectedVariable,
                         'imageTypeSelected' => $imageTypeSelected,
                         'selectedProvenance' => $selectedProvenance,
                         'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
                         'filterToSend' => $filterToSend,
-                        'test' => $selectedPosition,
+                        'events' => $events,
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [
