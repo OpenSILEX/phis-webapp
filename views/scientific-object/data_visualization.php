@@ -10,7 +10,7 @@
 use Yii;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use miloschuman\highcharts\Highcharts;
+use miloschuman\highcharts\Highstock;
 use yii\web\JsExpression;
 use yii\helpers\Url;
 
@@ -27,7 +27,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="scientific-object-data-visualization">
-
     <a role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px;"><i class ="glyphicon glyphicon-search"></i> <?= Yii::t('app', 'Search Criteria') ?></a>
     <div class="collapse in" id="data-visualization-form" >
         <?php
@@ -201,17 +200,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
         </div>
-        <div id="visualization-images"   >
+        <div id="visualization-images" style='height:146px;'  >
 
             <?php
             if (isset($data) && isset($show) && $show == true && !empty($data)) {
-                echo "<div id='scientific-object-data-visualization-alert-div' style='height:146px;'><br><div class='alert alert-info' role='alert-info'>
-                    <p>".Yii::t('app/messages', 'You have to click a graphic point to see images on that date.')."</p></div></div>";
+                echo "<div id='scientific-object-data-visualization-alert-div' ><br><div class='alert alert-info' role='alert-info'>
+                    <p>" . Yii::t('app/messages', 'You have to click a graphic point to see images on that date.') . "</p></div></div>";
             }
             ?>
             <div id="imagesCount" style="display: none;" data-id=0 ></div>
             <ul id="visualization-images-list" class="images" >
-
+            
             </ul>
 
             <div class="modal carousel and slide " data-ride="carousel"  data-interval="false" id="lightbox">
@@ -248,19 +247,108 @@ $this->params['breadcrumbs'][] = $this->title;
             if (empty($data)) {
                 echo "  <div class='well '><p>" . Yii::t('app/messages', 'No result found.') . "</p></div>";
             } else {
+
+                /**
+                 * @var series (before)
+                 * @example 
+                 * [
+                 *   [
+                 *     'name'=>'provenance 1',
+                 *     'data'=>[[],[],[],...]
+                 *   ],
+                 *   [ 'name'=>'provenance 2',
+                 *     'data'=>[[],[],[],...]
+                 *   ],
+                 *       
+                 * ]
+                 */
+                /**
+                 * @var series (now)
+                 * @example 
+                 * [
+                 *   [
+                 *     'type'=> 'line',
+                 *     'name'=> 'provenance 1',
+                 *     'id'=> 'provenance 1',
+                 *     'data'=>[[1492139471018, 1569],[],[],...],
+                 *     'visible':true,
+                 *     'marker':[
+                 *                'enabled' :true,
+                 *                'radius' :3
+                 *              ] 
+                 *   ],
+                 *   [
+                 *     'type'=> 'line',
+                 *     'name'=> 'provenance 2',
+                 *     'id'=> 'provenance 2',
+                 *     'data'=>[[1492139471018, 2769],[],[],...],
+                 *     'visible':true,
+                 *     'marker':[
+                 *                'enabled' :true,
+                 *                'radius' :3
+                 *              ] 
+                 *   ],[....],
+                 *   [
+                 *     'type'=> 'flags',
+                 *     'name'=> 'event'
+                 *     'data'=>[
+                 *               [
+                 *                 'x'=>1492139471018,
+                 *                 'title'=>'irrigation',
+                 *                 'text'=>'http://www.opensilex.org/id/event/f45d3221-104d-4ff2-ad8e-917e99970e05'
+                 *               ],
+                 *               [
+                 *               ],..
+                 *             ],
+                 *     'lineWidth'=>1,
+                 *     'y'=>-50,
+                 *     'events'=> [
+                 *                  'click'=>new JsExpression("function(event) {}")
+                 *                ]
+                 *   ] 
+                 * ]
+                 */
                 $series = [];
-                foreach ($data["scientificObjectData"][0]["dataFromProvenance"]as $dataFromProvenanceKey => $dataFromProvenanceValue) {
-                    $series[] = ['name' => $dataFromProvenanceKey,
-                        'data' => $dataFromProvenanceValue];
+                foreach ($data["scientificObjectData"]["dataFromProvenance"]as $dataFromProvenanceKey => $dataFromProvenanceValue) {
+                    $series[] = [
+                        'type' => 'line',
+                        'name' => $dataFromProvenanceKey,
+                        'data' => $dataFromProvenanceValue,
+                        'visible' => true,
+                        'marker' => [
+                            'enabled' => true,
+                            'radius' => 3
+                        ]
+                    ];
                 }
+
+                foreach ($events as $event) {
+                    $Eventsdata[] = [
+                        'x' => $event['date'],
+                        'title' => $event['title'],
+                        'text' => $event['text']
+                    ];
+                }
+
+                $eventsTab[] = [
+                    'type' => 'flags',
+                    'name' => 'Events',
+                    'lineWidth' => 1,
+                    'y' => -50,
+                    'data' => $Eventsdata
+                ];
+
+                $series[] = $eventsTab[0];
+                //var_dump($series);
+
+
                 $url2 = Url::to(['image/search-from-scientific-object']);
                 $objectURI = $model->uri;
-                if ($show) {
-                    echo Highcharts::widget([
+                $options=[
                         'id' => 'graphic',
                         'options' => [
                             'chart' => [
-                                'zoomType' => 'x'
+                                'zoomType' => 'xy',
                             ],
                             'title' => [
                                 'text' => $variables[$data["variable"]]
@@ -268,11 +356,16 @@ $this->params['breadcrumbs'][] = $this->title;
                             'subtitle' => [
                                 'text' => Yii::t('app/messages', 'Click and drag in the plot area to zoom in!')
                             ],
+                            'legend' => [
+                                'enabled' => true],
                             'xAxis' => [
                                 'type' => 'datetime',
-                                'title' => 'Date'],
+                                'title' => 'Date',
+                            ],
                             'yAxis' => [
-                                'title' => null,
+                                'title' => [
+                                    'text'=>$variables[$data["variable"]]
+                                ],
                                 'labels' => [
                                     'format' => '{value:.2f}'
                                 ]
@@ -283,10 +376,26 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                             'plotOptions' => [
                                 'series' => [
+                                    'dataGrouping' => [
+                                        'enabled' => false
+                                    ],
                                     'cursor' => 'pointer',
-                                    'point' => [
-                                        'events' => [
-                                            'click' => new JsExpression(" function() {"
+                                    'marker' => [
+                                        'enabled' => true,
+                                        'states' => [
+                                            'hover' => [
+                                                'enabled' => true
+                                            ],
+                                            'radius' => 2
+                                        ]],
+                                  
+                                ]
+                            ]
+                        ]
+                    ];
+                
+                 if ($show) {
+                     $options['options']['plotOptions']['series']['point']['events']['click']=new JsExpression(" function() {"
                                                     . "var searchFormData = new FormData();"
                                                     . "console.log( Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', 1500768000000));"
                                                     . "searchFormData.append('concernedItems[]', \"$objectURI\");"
@@ -302,53 +411,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "   contentType: false,"
                                                     . "   data: searchFormData,"
                                                     . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
-                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}")
-                                        ]
-                                    ],
-                                ]
-                            ]
-                        ]
-                    ]);
-                } else {
-                    echo Highcharts::widget([
-                        'id' => 'graphic',
-                        'options' => [
-                            'time' => ['timezoneOffset' => -2 * 60],
-                            'chart' => [
-                                'zoomType' => 'x'
-                            ],
-                            'title' => ['text' => $variables[$data["variable"]]],
-                            'subtitle' => [
-                                'text' => 'Click and drag in the plot area to zoom in'
-                            ],
-                            'xAxis' => [
-                                'type' => 'datetime',
-                                'title' => 'Date',
-                            ],
-                            'yAxis' => [
-                                'title' => null,
-                                'labels' => [
-                                    'format' => '{value:.2f}'
-                                ]
-                            ],
-                            'series' => $series,
-                            'tooltip' => [
-                                'xDateFormat' => '%Y-%m-%d %H:%M',
-                            ],
-                            'plotOptions' => [
-                                'series' => [
-                                    'cursor' => 'pointer',
-                                    'point' => [
-                                        'events' => [
-                                            'click' => new JsExpression(" function() {"
-                                                    . "}")
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]);
-                }
+                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}");
+                 }
+                 echo Highstock::widget($options);
+                
+                
+                
             }
         }
         ?>
@@ -390,12 +458,12 @@ if (isset($data)) {
 
         var fragment = $(data);
         if ($.trim(fragment.find('#carousel-inner-fragment').html()) !== '') {
-            $('#scientific-object-data-visualization-alert-div').hide();
             $('#visualization-images-list').append(fragment.find('#image-visualization-list-fragment').html());
             $('#carousel-indicators').append(fragment.find('#carousel-indicators-fragment').html());
             $('#carousel-inner').append(fragment.find('#carousel-inner-fragment').html());
             $('[data-toggle="tooltip"]').tooltip();
             $('#imagesCount').attr('data-id', fragment.find('#counterFragment').attr('data-id'));
+            $('#scientific-object-data-visualization-alert-div').hide();
         }
     }
 
