@@ -210,7 +210,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ?>
             <div id="imagesCount" style="display: none;" data-id=0 ></div>
             <ul id="visualization-images-list" class="images" >
-            
+
             </ul>
 
             <div class="modal carousel and slide " data-ride="carousel"  data-interval="false" id="lightbox">
@@ -248,66 +248,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 echo "  <div class='well '><p>" . Yii::t('app/messages', 'No result found.') . "</p></div>";
             } else {
 
-                /**
-                 * @var series (before)
-                 * @example 
-                 * [
-                 *   [
-                 *     'name'=>'provenance 1',
-                 *     'data'=>[[],[],[],...]
-                 *   ],
-                 *   [ 'name'=>'provenance 2',
-                 *     'data'=>[[],[],[],...]
-                 *   ],
-                 *       
-                 * ]
-                 */
-                /**
-                 * @var series (now)
-                 * @example 
-                 * [
-                 *   [
-                 *     'type'=> 'line',
-                 *     'name'=> 'provenance 1',
-                 *     'id'=> 'provenance 1',
-                 *     'data'=>[[1492139471018, 1569],[],[],...],
-                 *     'visible':true,
-                 *     'marker':[
-                 *                'enabled' :true,
-                 *                'radius' :3
-                 *              ] 
-                 *   ],
-                 *   [
-                 *     'type'=> 'line',
-                 *     'name'=> 'provenance 2',
-                 *     'id'=> 'provenance 2',
-                 *     'data'=>[[1492139471018, 2769],[],[],...],
-                 *     'visible':true,
-                 *     'marker':[
-                 *                'enabled' :true,
-                 *                'radius' :3
-                 *              ] 
-                 *   ],[....],
-                 *   [
-                 *     'type'=> 'flags',
-                 *     'name'=> 'event'
-                 *     'data'=>[
-                 *               [
-                 *                 'x'=>1492139471018,
-                 *                 'title'=>'irrigation',
-                 *                 'text'=>'http://www.opensilex.org/id/event/f45d3221-104d-4ff2-ad8e-917e99970e05'
-                 *               ],
-                 *               [
-                 *               ],..
-                 *             ],
-                 *     'lineWidth'=>1,
-                 *     'y'=>-50,
-                 *     'events'=> [
-                 *                  'click'=>new JsExpression("function(event) {}")
-                 *                ]
-                 *   ] 
-                 * ]
-                 */
                 $series = [];
                 foreach ($data["scientificObjectData"]["dataFromProvenance"]as $dataFromProvenanceKey => $dataFromProvenanceValue) {
                     $series[] = [
@@ -344,79 +284,89 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 $url2 = Url::to(['image/search-from-scientific-object']);
                 $objectURI = $model->uri;
-                $options=[
-                        'id' => 'graphic',
-                        'options' => [
-                            'chart' => [
-                                'zoomType' => 'xy',
+                $options = [
+                    'id' => 'graphic',
+                    'options' => [
+                        'chart' => [
+                            'zoomType' => 'xy',
+                        ],
+                        'title' => [
+                            'text' => $variables[$data["variable"]]
+                        ],
+                        'subtitle' => [
+                            'text' => Yii::t('app/messages', 'Click and drag in the plot area to zoom in!')
+                        ],
+                        'rangeSelector' => [
+                            'selected' => 4
+                        ],
+                        'navigator' => [
+                            'enabled' => true,
+                            'margin' => 70,
+                            'y' => -4
+                        ],
+                        'legend' => [
+                            'enabled' => true
+                        ],
+                        'xAxis' => [
+                            'type' => 'datetime',
+                           
+                            'title' => [
+                                'text' => 'time'
                             ],
+                            'ordinal' => false,
+                            
+                        ],
+                        'yAxis' => [
                             'title' => [
                                 'text' => $variables[$data["variable"]]
                             ],
-                            'subtitle' => [
-                                'text' => Yii::t('app/messages', 'Click and drag in the plot area to zoom in!')
-                            ],
-                            'legend' => [
-                                'enabled' => true],
-                            'xAxis' => [
-                                'type' => 'datetime',
-                                'title' => 'Date',
-                            ],
-                            'yAxis' => [
-                                'title' => [
-                                    'text'=>$variables[$data["variable"]]
+                            'labels' => [
+                                'format' => '{value:.2f}'
+                            ]
+                        ],
+                        'series' => $series,
+                        'tooltip' => [
+                            'xDateFormat' => '%Y-%m-%d %H:%M',
+                        ],
+                        'plotOptions' => [
+                            'series' => [
+                                'dataGrouping' => [
+                                    'enabled' => false
                                 ],
-                                'labels' => [
-                                    'format' => '{value:.2f}'
-                                ]
-                            ],
-                            'series' => $series,
-                            'tooltip' => [
-                                'xDateFormat' => '%Y-%m-%d %H:%M',
-                            ],
-                            'plotOptions' => [
-                                'series' => [
-                                    'dataGrouping' => [
-                                        'enabled' => false
-                                    ],
-                                    'cursor' => 'pointer',
-                                    'marker' => [
-                                        'enabled' => true,
-                                        'states' => [
-                                            'hover' => [
-                                                'enabled' => true
-                                            ],
-                                            'radius' => 2
-                                        ]],
-                                  
-                                ]
+                                'cursor' => 'pointer',
+                                'marker' => [
+                                    'enabled' => true,
+                                    'states' => [
+                                        'hover' => [
+                                            'enabled' => true
+                                        ],
+                                        'radius' => 2
+                                    ]],
                             ]
                         ]
-                    ];
-                
-                 if ($show) {
-                     $options['options']['plotOptions']['series']['point']['events']['click']=new JsExpression(" function() {"
-                                                    . "var searchFormData = new FormData();"
-                                                    . "console.log( Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', 1500768000000));"
-                                                    . "searchFormData.append('concernedItems[]', \"$objectURI\");"
-                                                    . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
-                                                    . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
-                                                    . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
-                                                    . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
-                                                    . "searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
-                                                    . "$.ajax({url: \"$url2\","
-                                                    . "   type: 'POST',"
-                                                    . "   processData: false,"
-                                                    . "   datatype: 'json',"
-                                                    . "   contentType: false,"
-                                                    . "   data: searchFormData,"
-                                                    . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
+                    ]
+                ];
+
+                if ($show) {
+                    $options['options']['plotOptions']['series']['point']['events']['click'] = new JsExpression(" function() {"
+                            . "var searchFormData = new FormData();"
+                            . "console.log( Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', 1500768000000));"
+                            . "searchFormData.append('concernedItems[]', \"$objectURI\");"
+                            . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
+                            . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
+                            . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
+                            . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
+                            . "searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
+                            . "$.ajax({url: \"$url2\","
+                            . "   type: 'POST',"
+                            . "   processData: false,"
+                            . "   datatype: 'json',"
+                            . "   contentType: false,"
+                            . "   data: searchFormData,"
+                            . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
                                                     ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}");
-                 }
-                 echo Highstock::widget($options);
-                
-                
-                
+                }
+                echo Highstock::widget($options);
             }
         }
         ?>
