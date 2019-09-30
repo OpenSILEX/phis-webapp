@@ -200,17 +200,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
         </div>
-        <div id="visualization-images"   >
+        <div id="visualization-images" style='height:146px;'  >
 
             <?php
             if (isset($data) && isset($show) && $show == true && !empty($data)) {
-                echo "<div id='scientific-object-data-visualization-alert-div' style='height:146px;'><br><div class='alert alert-info' role='alert-info'>
+                echo "<div id='scientific-object-data-visualization-alert-div' ><br><div class='alert alert-info' role='alert-info'>
                     <p>" . Yii::t('app/messages', 'You have to click a graphic point to see images on that date.') . "</p></div></div>";
             }
             ?>
             <div id="imagesCount" style="display: none;" data-id=0 ></div>
             <ul id="visualization-images-list" class="images" >
-
+            
             </ul>
 
             <div class="modal carousel and slide " data-ride="carousel"  data-interval="false" id="lightbox">
@@ -458,12 +458,12 @@ if (isset($data)) {
 
         var fragment = $(data);
         if ($.trim(fragment.find('#carousel-inner-fragment').html()) !== '') {
-            $('#scientific-object-data-visualization-alert-div').hide();
             $('#visualization-images-list').append(fragment.find('#image-visualization-list-fragment').html());
             $('#carousel-indicators').append(fragment.find('#carousel-indicators-fragment').html());
             $('#carousel-inner').append(fragment.find('#carousel-inner-fragment').html());
             $('[data-toggle="tooltip"]').tooltip();
             $('#imagesCount').attr('data-id', fragment.find('#counterFragment').attr('data-id'));
+            $('#scientific-object-data-visualization-alert-div').hide();
         }
     }
 
