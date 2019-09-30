@@ -10,7 +10,6 @@
 use Yii;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use miloschuman\highcharts\Highcharts;
 use miloschuman\highcharts\Highstock;
 use yii\web\JsExpression;
 use yii\helpers\Url;
@@ -314,7 +313,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     $series[] = [
                         'type' => 'line',
                         'name' => $dataFromProvenanceKey,
-                        'data' => $dataFromProvenanceValue
+                        'data' => $dataFromProvenanceValue,
+                        'visible' => true,
+                        'marker' => [
+                            'enabled' => true,
+                            'radius' => 3
+                        ]
                     ];
                 }
 
@@ -340,12 +344,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 $url2 = Url::to(['image/search-from-scientific-object']);
                 $objectURI = $model->uri;
-                if ($show) {
-                    echo Highstock::widget([
+                $options=[
                         'id' => 'graphic',
                         'options' => [
                             'chart' => [
-                                'zoomType' => 'x'
+                                'zoomType' => 'xy',
                             ],
                             'title' => [
                                 'text' => $variables[$data["variable"]]
@@ -357,9 +360,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'enabled' => true],
                             'xAxis' => [
                                 'type' => 'datetime',
-                                'title' => 'Date'],
+                                'title' => 'Date',
+                            ],
                             'yAxis' => [
-                                'title' => null,
+                                'title' => [
+                                    'text'=>$variables[$data["variable"]]
+                                ],
                                 'labels' => [
                                     'format' => '{value:.2f}'
                                 ]
@@ -370,10 +376,26 @@ $this->params['breadcrumbs'][] = $this->title;
                             ],
                             'plotOptions' => [
                                 'series' => [
+                                    'dataGrouping' => [
+                                        'enabled' => false
+                                    ],
                                     'cursor' => 'pointer',
-                                    'point' => [
-                                        'events' => [
-                                            'click' => new JsExpression(" function() {"
+                                    'marker' => [
+                                        'enabled' => true,
+                                        'states' => [
+                                            'hover' => [
+                                                'enabled' => true
+                                            ],
+                                            'radius' => 2
+                                        ]],
+                                  
+                                ]
+                            ]
+                        ]
+                    ];
+                
+                 if ($show) {
+                     $options['options']['plotOptions']['series']['point']['events']['click']=new JsExpression(" function() {"
                                                     . "var searchFormData = new FormData();"
                                                     . "console.log( Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', 1500768000000));"
                                                     . "searchFormData.append('concernedItems[]', \"$objectURI\");"
@@ -389,55 +411,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     . "   contentType: false,"
                                                     . "   data: searchFormData,"
                                                     . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
-                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}")
-                                        ]
-                                    ],
-                                ]
-                            ]
-                        ]
-                    ]);
-                } else {
-                    echo Highstock::widget([
-                        'id' => 'graphic',
-                        'options' => [
-                            'time' => ['timezoneOffset' => -2 * 60],
-                            'chart' => [
-                                'zoomType' => 'x'
-                            ],
-                            'title' => ['text' => $variables[$data["variable"]]],
-                            'subtitle' => [
-                                'text' => 'Click and drag in the plot area to zoom in'
-                            ],
-                            'legend' => [
-                                'enabled' => true],
-                            'xAxis' => [
-                                'type' => 'datetime',
-                                'title' => 'Date',
-                            ],
-                            'yAxis' => [
-                                'title' => null,
-                                'labels' => [
-                                    'format' => '{value:.2f}'
-                                ]
-                            ],
-                            'series' => $series,
-                            'tooltip' => [
-                                'xDateFormat' => '%Y-%m-%d %H:%M',
-                            ],
-                            'plotOptions' => [
-                                'series' => [
-                                    'cursor' => 'pointer',
-                                    'point' => [
-                                        'events' => [
-                                            'click' => new JsExpression(" function() {"
-                                                    . "}")
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]);
-                }
+                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}");
+                 }
+                 echo Highstock::widget($options);
+                
+                
+                
             }
         }
         ?>
