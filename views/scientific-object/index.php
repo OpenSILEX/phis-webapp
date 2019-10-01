@@ -207,7 +207,7 @@ $this->params['breadcrumbs'][] = $this->title;
         });
         return result;
     }
-  
+
     //function to check is the all object from all page must be checked
     function areAllItemsFromAllPagesChecked() {
         return  +$('#cart-articles').text() === +$('#select-all-objects').val() ? true : false;
@@ -232,22 +232,21 @@ $this->params['breadcrumbs'][] = $this->title;
         });
         return items;
     }
-
     //Open the cart popup, get the cart and fill the popup
     $('#cart-btn').click(function () {
 
-        var ajaxUrl = '<?php echo Url::to(['scientific-object/get-cart']) ?>';
-        $.post(ajaxUrl).done(function (data) {
-            console.log(data.items);
-            var content = "";
-            for (const [key, value] of Object.entries(data.items)) {
-                content += '<tr><td ><p>' + key + '</p></td><td ><p>' + value + '</p></td></tr>';
-            }
-            $('#cart-table tbody').append(content);
-            $('#cartView').modal('show');
-        }).fail(function (jqXHR, textStatus) {
-            alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
-        });
+            var ajaxUrl = '<?php echo Url::to(['scientific-object/get-cart']) ?>';
+            $.post(ajaxUrl).done(function (data) {
+                var content = "";
+                for (const [key, value] of Object.entries(data.items)) {
+                    content += '<tr><td ><p>' + key + '</p></td><td ><p>' + value + '</p></td></tr>';
+                }
+                $('#cart-table tbody').html(content);
+                $('#cartView').modal('show');
+            }).fail(function (jqXHR, textStatus) {
+                alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
+            });
+
     });
 
     // show the eye-open in the car button on hover
