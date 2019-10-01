@@ -200,46 +200,46 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
         </div>
-        <div id="visualization-images" style='height:146px;'  >
+        <?php if (isset($data) && isset($show) && $show == true && !empty($data)) { ?>
+            <div id="visualization-images" style='height:146px;'  >
+                <div id='scientific-object-data-visualization-alert-div' >
+                    <br>
+                    <div class='alert alert-info' role='alert-info'>
+                        <p>
+                            <?php echo Yii::t('app/messages', 'You have to click a graphic point to see images on that date.'); ?>
+                        </p>
+                    </div>
+                </div>
+                <div id="imagesCount" style="display: none;" data-id=0 ></div>
+                <ul id="visualization-images-list" class="images" >
+                </ul>
 
-            <?php
-            if (isset($data) && isset($show) && $show == true && !empty($data)) {
-                echo "<div id='scientific-object-data-visualization-alert-div' ><br><div class='alert alert-info' role='alert-info'>
-                    <p>" . Yii::t('app/messages', 'You have to click a graphic point to see images on that date.') . "</p></div></div>";
-            }
-            ?>
-            <div id="imagesCount" style="display: none;" data-id=0 ></div>
-            <ul id="visualization-images-list" class="images" >
-
-            </ul>
-
-            <div class="modal carousel and slide " data-ride="carousel"  data-interval="false" id="lightbox">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-body">
-                            <div    >
-                                <ol id="carousel-indicators" class="carousel-indicators">
-
-                                </ol>
-                                <div id="carousel-inner" class="carousel-inner">
-
+                <div class="modal carousel and slide " data-ride="carousel"  data-interval="false" id="lightbox">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <div    >
+                                    <ol id="carousel-indicators" class="carousel-indicators">
+                                    </ol>
+                                    <div id="carousel-inner" class="carousel-inner">
+                                    </div>
+                                    <!-- Controls -->
+                                    <a class="left carousel-control" href="#lightbox" role="button" data-slide="prev">
+                                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="right carousel-control" href="#lightbox" role="button" data-slide="next">
+                                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>                   
                                 </div>
-                                <!-- Controls -->
-                                <a class="left carousel-control" href="#lightbox" role="button" data-slide="prev">
-                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                                <a class="right carousel-control" href="#lightbox" role="button" data-slide="next">
-                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                                    <span class="sr-only">Next</span>
-                                </a>                   
                             </div>
                         </div>
                     </div>
                 </div>
+                
             </div>
-        </div>
-
+        <?php } ?>
         <div class="data-visualization-chart ">
             <?php
         }
@@ -279,7 +279,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 ];
 
                 $series[] = $eventsTab[0];
-                //var_dump($series);
 
 
                 $url2 = Url::to(['image/search-from-scientific-object']);
@@ -296,9 +295,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'subtitle' => [
                             'text' => Yii::t('app/messages', 'Click and drag in the plot area to zoom in!')
                         ],
-                        'rangeSelector' => [
-                            'selected' => 4
-                        ],
                         'navigator' => [
                             'enabled' => true,
                             'margin' => 70,
@@ -309,12 +305,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'xAxis' => [
                             'type' => 'datetime',
-                           
                             'title' => [
                                 'text' => 'time'
                             ],
                             'ordinal' => false,
-                            
                         ],
                         'yAxis' => [
                             'title' => [
