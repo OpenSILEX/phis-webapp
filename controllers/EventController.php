@@ -26,6 +26,7 @@ use app\components\helpers\SiteMessages;
  * Controller for the events.
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiEventModel
+ * @update [Bonnefont Julien] 1 octobre, 2019: correction bug token on actionView
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class EventController extends GenericController {

@@ -17,7 +17,9 @@ use app\models\yiiModels\YiiEventModel;
 
 /**
  * Search action for the events
+ * @update [Bonnefont Julien] 1 octobre, 2019: return exception on search action
  * @author Andréas Garcia <andreas.garcia@inra.fr>
+ * 
  */
 class EventSearch extends YiiEventModel {
     
@@ -124,15 +126,17 @@ class EventSearch extends YiiEventModel {
      * @return request result
      */
     private function getEventProvider($sessionToken, $searchParams) {
-        $results = $this->find($sessionToken, array_merge($this->attributesToArray(), $searchParams));
         
+        $results = $this->find($sessionToken, $this->attributesToArray());
+        // var_dump($results);exit;
         if (is_string($results)) {
             return $results;
-        }  else if (isset($results->{WSConstants::DATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS}) 
-            && $results->{WSConstants::METADATA}->{WSConstants::STATUS}[0]->{WSConstants::EXCEPTION}->{WSConstants::DETAILS} === WSConstants::TOKEN_INVALID) {
-            return WSConstants::TOKEN_INVALID;
+        }  else if (isset($results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
+                    && $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
+            return \app\models\wsModels\WSConstants::TOKEN_INVALID;
+        } else if (isset($results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'})) {
+            return $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'};
         } else {
-            
             $events = $this->jsonListOfArraysToArray($results);
             return new ArrayDataProvider([
                 'models' => $events,

@@ -21,6 +21,8 @@ use app\models\yiiModels\YiiScientificObjectModel;
 use app\models\yiiModels\ScientificObjectSearch;
 use app\models\yiiModels\YiiExperimentModel;
 use app\models\yiiModels\EventSearch;
+use app\models\wsModels\WSConstants;
+use app\components\helpers\SiteMessages;
 
 require_once '../config/config.php';
 
@@ -1007,16 +1009,27 @@ class ScientificObjectController extends Controller {
             $searchModel = new EventSearch();
             $searchModel->pageSize = 800;
             $searchModel->searchConcernedItemUri = $uri;
+            $searchModel->searchDateRangeStart = $_POST['dateStart'];
+            $searchModel->searchDateRangeEnd = $_POST['dateEnd'];
             $searchResult = $searchModel->search($token, null);
-            $events = array();
-            
-            foreach ($searchResult->getModels() as $model) {
-                 $events[] = [
-                        'date' =>(strtotime($model->date)) * 1000,
-                        'title' =>  explode('#',$model->rdfType)[1],
+            if (is_string($searchResult)) {
+                if ($searchResult === WSConstants::TOKEN_INVALID) {
+                    return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+                } else {
+                    return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                                SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
+                                SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
+                }
+            } else {
+                foreach ($searchResult->getModels() as $model) {
+                    $events[] = [
+                        'date' => (strtotime($model->date)) * 1000,
+                        'title' => explode('#', $model->rdfType)[1],
                         'text' => $model->uri
                     ];
+                }
             }
+
 
             //on FORM submitted:
             //check if image visualization is activated
