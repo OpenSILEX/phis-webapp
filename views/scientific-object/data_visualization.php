@@ -36,16 +36,15 @@ $this->params['breadcrumbs'][] = $this->title;
         } else {
             ?>
             <div class="form-row">
-
                 <fieldset style="border: 1px solid #5A9016; padding: 10px;" >
                     <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
                         <?= Yii::t('app', 'Data Search') ?>
                     </legend>
-
                     <div class="form-row">
+                        
                         <div class="form-group required col-md-6">
-                            <label class="control-label" ><?= Yii::t('app', 'Variable') ?></label>
-
+                            <label class="control-label" ><?= Yii::t('app', 'Variable') ?>
+                            </label>
                             <?php
                             echo \kartik\select2\Select2::widget([
                                 'name' => 'variable',
@@ -92,6 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                             ?>
                         </div>
+                        
                     </div>
 
                     <div class="form-row">
@@ -134,9 +134,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
 
             <div class="form-group" style="margin-bottom: 0px;">
-
                 <?= Html::checkbox("show", isset($show) ? $show : false, ['id' => 'showWidget', 'label' => Yii::t('app', 'Show Images'), 'onchange' => 'onShow(this);']) ?>
-
             </div>
 
             <div class="form-row">
@@ -145,11 +143,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
                             <?= Yii::t('app', 'Image Search') ?>
                         </legend>
-
                         <div class="form-row">
+                            
                             <div class="form-group required col-md-12">
 
-                                <label class="control-label" ><?= Yii::t('app', 'Type') ?></label>
+                                <label class="control-label" ><?= Yii::t('app', 'Type') ?>
+                                </label>
                                 <?php
                                 echo \kartik\select2\Select2::widget([
                                     'name' => 'imageType',
@@ -168,10 +167,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ]);
                                 ?>
                             </div>
+                            
                             <div class="form-group col-md-12">
-
-                                <label class="control-label" ><?= Yii::t('app', 'Camera position') ?></label>
-
+                                <label class="control-label" ><?= Yii::t('app', 'Camera position') ?>
+                                </label>
                                 <?php
                                 echo \kartik\select2\Select2::widget([
                                     'name' => 'filter',
@@ -237,7 +236,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div>
                     </div>
                 </div>
-                
+
             </div>
         <?php } ?>
         <div class="data-visualization-chart ">

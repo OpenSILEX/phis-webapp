@@ -1026,8 +1026,6 @@ class ScientificObjectController extends Controller {
                     ];
                 }
             }
-
-
             //on FORM submitted:
             //check if image visualization is activated
             $show = isset($_POST['show']) ? $_POST['show'] : null;
