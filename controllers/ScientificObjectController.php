@@ -934,7 +934,18 @@ class ScientificObjectController extends Controller {
             $variables = $variableModel->getInstancesDefinitionsUrisAndLabel($token);
         } else { //There is an experiment. Get the variables linked to the experiment.
             $experimentModel = new YiiExperimentModel();
-            $variables = $experimentModel->getMeasuredVariables($token, $scientificObject->experiment);
+            $variablesSearch = $experimentModel->getMeasuredVariables($token, $scientificObject->experiment);
+            
+            if (is_string($variablesSearch)) {
+                if ($variablesSearch === WSConstants::TOKEN_INVALID) {
+                    return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+                } else {
+                    return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                                SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
+                                SiteMessages::SITE_PAGE_MESSAGE => $variablesSearch]);
+                }
+            }
+            $variables=$experimentModel->variables;
         }
 
         // Load existing provenances
@@ -1018,6 +1029,7 @@ class ScientificObjectController extends Controller {
                                 SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
                 }
             } else {
+               
                 foreach ($searchResult->getModels() as $model) {
                     $events[] = [
                         'date' => (strtotime($model->date)) * 1000,
@@ -1025,6 +1037,7 @@ class ScientificObjectController extends Controller {
                         'text' => $model->uri
                     ];
                 }
+               
             }
             //on FORM submitted:
             //check if image visualization is activated

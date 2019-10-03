@@ -13,6 +13,8 @@ use yii\helpers\Html;
 use miloschuman\highcharts\Highstock;
 use yii\web\JsExpression;
 use yii\helpers\Url;
+use app\components\widgets\AnnotationButtonWidget;
+use app\components\widgets\event\EventButtonWidget;
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]), 'url' => ['index']];
@@ -41,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= Yii::t('app', 'Data Search') ?>
                     </legend>
                     <div class="form-row">
-                        
+
                         <div class="form-group required col-md-6">
                             <label class="control-label" ><?= Yii::t('app', 'Variable') ?>
                             </label>
@@ -91,7 +93,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                             ?>
                         </div>
-                        
+
                     </div>
 
                     <div class="form-row">
@@ -144,7 +146,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= Yii::t('app', 'Image Search') ?>
                         </legend>
                         <div class="form-row">
-                            
+
                             <div class="form-group required col-md-12">
 
                                 <label class="control-label" ><?= Yii::t('app', 'Type') ?>
@@ -167,7 +169,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ]);
                                 ?>
                             </div>
-                            
+
                             <div class="form-group col-md-12">
                                 <label class="control-label" ><?= Yii::t('app', 'Camera position') ?>
                                 </label>
@@ -271,9 +273,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 $eventsTab[] = [
                     'type' => 'flags',
+                    'allowOverlapX'=> true,
                     'name' => 'Events',
                     'lineWidth' => 1,
-                    'y' => -50,
+                    'y' => -40,
                     'data' => $Eventsdata
                 ];
 
@@ -286,7 +289,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'id' => 'graphic',
                     'options' => [
                         'chart' => [
-                            'zoomType' => 'xy',
+                            'zoomType' => 'x',
                         ],
                         'title' => [
                             'text' => $variables[$data["variable"]]
@@ -300,7 +303,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'y' => -4
                         ],
                         'legend' => [
-                            'enabled' => true
+                            'enabled' => true,
                         ],
                         'xAxis' => [
                             'type' => 'datetime',
@@ -308,6 +311,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'text' => 'time'
                             ],
                             'ordinal' => false,
+                            'crosshair' => [
+                                'enabled' => false,
+                            ]
                         ],
                         'yAxis' => [
                             'title' => [
@@ -334,7 +340,26 @@ $this->params['breadcrumbs'][] = $this->title;
                                             'enabled' => true
                                         ],
                                         'radius' => 2
-                                    ]],
+                                    ]
+                                ],
+                                'events' => [
+                                    'click' => new JsExpression('
+                                        function (event) {  
+                                        
+                                                 console.log("dates");
+                                                 var dates=this.data;
+                                                 var tab=[];
+                                                 console.log(this);
+                                                 dates.forEach(function(date) {tab.push(Highcharts.dateFormat("%Y-%m-%dT%H:%M:%S+0200", date.x));});
+                                                 console.log(tab.sort());
+                                                 var real=this.xAxis.toValue(event.chartX, false);
+                                                 console.log(Highcharts.dateFormat("%Y-%m-%dT%H:%M:%S+0200", real));
+                                                 if(this.name!=="Events"){
+                                                       $("#events-lightbox").modal("show") ;}
+                                                 console.log(event.point.x);
+                                                 var time=Highcharts.dateFormat("%Y-%m-%dT%H:%M:%S+0200", event.point.x);
+                                                 console.log(time)}')
+                                ]
                             ]
                         ]
                     ]
@@ -363,6 +388,45 @@ $this->params['breadcrumbs'][] = $this->title;
             }
         }
         ?>
+
+
+        <div class="modal" id="events-lightbox">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title">Add annotation or event</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 text-center">
+                                <?=
+                                EventButtonWidget::widget([
+                                    EventButtonWidget::TYPE => "one",
+                                    EventButtonWidget::CONCERNED_ITEMS_URIS => [$objectURI],
+                                    EventButtonWidget::AS_LINK => false,
+                                    EventButtonWidget::SIZE => "fa-4x"
+                                ]);
+                                ?>
+
+                            </div>
+                            <div class="col-md-6 text-center">
+                                <a class="btn btn-default">
+                                    <span class="fa fa-comment fa-4x"></span>
+                                    <p>Add annotation</p>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row" id="add-event" >
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 
@@ -391,6 +455,8 @@ if (isset($data)) {
         });
 
     });
+
+
 
     /**
      * This function is call on the response of the ajax call when a user click on a point on the graphic to get images

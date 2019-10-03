@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 EventButtonWidget::widget([
                     EventButtonWidget::TYPE => "scientific-objects",
                     EventButtonWidget::CONCERNED_ITEMS_URIS => null,
-                    EventButtonWidget::AS_LINK => false
+                    EventButtonWidget::AS_LINK => false,
                 ]);
                 ?>
             </li>
