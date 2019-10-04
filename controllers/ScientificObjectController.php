@@ -935,7 +935,7 @@ class ScientificObjectController extends Controller {
         } else { //There is an experiment. Get the variables linked to the experiment.
             $experimentModel = new YiiExperimentModel();
             $variablesSearch = $experimentModel->getMeasuredVariables($token, $scientificObject->experiment);
-            
+
             if (is_string($variablesSearch)) {
                 if ($variablesSearch === WSConstants::TOKEN_INVALID) {
                     return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
@@ -1005,7 +1005,7 @@ class ScientificObjectController extends Controller {
                 $dataByProvenanceToSave[] = $dataEl['value'];
                 $dataByProvenance[$dataEl['provenanceUri']][] = $dataByProvenanceToSave;
             }
-
+            
             if (!empty($data)) {
                 $toReturn["variable"] = $searchModel->variable;
                 $scientificObjectData["dataFromProvenance"] = $dataByProvenance;
@@ -1029,7 +1029,7 @@ class ScientificObjectController extends Controller {
                                 SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
                 }
             } else {
-               
+
                 foreach ($searchResult->getModels() as $model) {
                     $events[] = [
                         'date' => (strtotime($model->date)) * 1000,

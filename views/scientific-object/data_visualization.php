@@ -256,10 +256,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'name' => $dataFromProvenanceKey,
                         'data' => $dataFromProvenanceValue,
                         'visible' => true,
-                        'marker' => [
-                            'enabled' => true,
-                            'radius' => 3
-                        ]
                     ];
                 }
 
@@ -273,7 +269,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 $eventsTab[] = [
                     'type' => 'flags',
-                    'allowOverlapX'=> true,
+                    'allowOverlapX' => true,
                     'name' => 'Events',
                     'lineWidth' => 1,
                     'y' => -40,
@@ -311,9 +307,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'text' => 'time'
                             ],
                             'ordinal' => false,
-                            'crosshair' => [
-                                'enabled' => false,
-                            ]
+                            'crosshair' => false,
                         ],
                         'yAxis' => [
                             'title' => [
@@ -326,6 +320,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'series' => $series,
                         'tooltip' => [
                             'xDateFormat' => '%Y-%m-%d %H:%M',
+                           
                         ],
                         'plotOptions' => [
                             'series' => [
@@ -334,7 +329,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 'cursor' => 'pointer',
                                 'marker' => [
-                                    'enabled' => true,
+                                    'enabled' => false,
                                     'states' => [
                                         'hover' => [
                                             'enabled' => true
@@ -346,17 +341,19 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'click' => new JsExpression('
                                         function (event) {  
                                         
-                                                 console.log("dates");
-                                                 var dates=this.data;
-                                                 var tab=[];
-                                                 console.log(this);
-                                                 dates.forEach(function(date) {tab.push(Highcharts.dateFormat("%Y-%m-%dT%H:%M:%S+0200", date.x));});
-                                                 console.log(tab.sort());
+                                                 //console.log(event);
+                                                // var dates=this.data;
+                                               //  var tab=[];
+                                                 console.log("COMPARE");
+                                                // dates.forEach(function(date) {tab.push(Highcharts.dateFormat("%Y-%m-%dT%H:%M:%S+0200", date.x));});
+                                                 //console.log(tab.sort());
                                                  var real=this.xAxis.toValue(event.chartX, false);
+                                                 console.log(real);
+                                                 console.log(event.point.x);
                                                  console.log(Highcharts.dateFormat("%Y-%m-%dT%H:%M:%S+0200", real));
                                                  if(this.name!=="Events"){
                                                        $("#events-lightbox").modal("show") ;}
-                                                 console.log(event.point.x);
+                                                 
                                                  var time=Highcharts.dateFormat("%Y-%m-%dT%H:%M:%S+0200", event.point.x);
                                                  console.log(time)}')
                                 ]
