@@ -28,6 +28,9 @@ class ProjectSearch extends YiiProjectModel {
     //each class ElementNameSearch
     //\SILEX:refactor
     
+    public $financialFundingLang;
+    const FINANCIAL_FUNDING_LANG = 'financialFundingLang';
+
     /**
      * @inheritdoc
      */
@@ -57,7 +60,9 @@ class ProjectSearch extends YiiProjectModel {
         }
         
         //3. Request to the web service and return result
-        $findResult = $this->find($sessionToken, $this->attributesToArray());
+        $attributes = $this->attributesToArray();
+        $attributes[self::FINANCIAL_FUNDING_LANG] = $this->financialFundingLang;
+        $findResult = $this->find($sessionToken, $attributes);
         
         if (is_string($findResult)) {
             return $findResult;
