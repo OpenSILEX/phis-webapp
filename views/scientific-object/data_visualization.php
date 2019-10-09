@@ -33,6 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="collapse in" id="data-visualization-form" >
         <?php
         $form = ActiveForm::begin();
+
         if (empty($variables)) {
             echo "<p>" . Yii::t('app/messages', 'No variables linked to the experiment of the scientific object.') . "</p>";
         } else {
@@ -249,16 +250,72 @@ $this->params['breadcrumbs'][] = $this->title;
                 echo "  <div class='well '><p>" . Yii::t('app/messages', 'No result found.') . "</p></div>";
             } else {
 
+
+
+                $url2 = Url::to(['image/search-from-scientific-object']);
+                $objectURI = $model->uri;
+                
                 $series = [];
-                foreach ($data["scientificObjectData"]["dataFromProvenance"]as $dataFromProvenanceKey => $dataFromProvenanceValue) {
+                foreach ($data as $dataFromProvenanceKey => $dataFromProvenanceValue) {
+
                     $series[] = [
-                        'type' => 'line',
-                        'name' => $dataFromProvenanceKey,
-                        'data' => $dataFromProvenanceValue,
+                        'name' => $provenancesArray[$dataFromProvenanceKey],
+                        'data' => $dataFromProvenanceValue["data"],
+                        'id' => $dataFromProvenanceKey,
                         'visible' => true,
                     ];
-                }
 
+                    if (!empty($dataFromProvenanceValue["photosSerie"])) {
+
+                        foreach ($dataFromProvenanceValue["photosSerie"] as $photoKey => $photoValue) {
+                            $info = "";
+                            foreach ($photoValue as $photoValueEl) {
+                                $info = $info . "<br>" . $photoValueEl[0] . "<br>" . $photoValueEl[1];
+                            }
+                            $photoSerie[] = [
+                                'x' => $photoKey,
+                                'title' => 'I',
+                            ];
+                        }
+                        $series[] = [
+                            'type' => 'flags',
+                            'name' => 'images',
+                            'data' => $photoSerie,
+                            // 'allowOverlapX'=> true,
+                            'onSeries' => $dataFromProvenanceKey,
+                            //   'width' => 16,
+                            'shape' => 'circlepin',
+                            'lineWidth' => 1,
+                            //  'y' => -15,
+                            'events' => [
+                                'click' => new JsExpression("
+                                        function (event) { 
+                                                           console.log( \"$model->uri\");"
+                                        . "                console.log(event.point.x);"
+                                        . "                console.log(\"$dataFromProvenanceKey\");"
+                                        . "                var searchFormData = new FormData();"
+                                        . "                searchFormData.append('concernedItems[]', \"$objectURI\");"
+                                        . "                searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
+                                        . "                searchFormData.append('jsonValueFilter', \"$filterToSend\");"
+                                        . "                searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
+                                        . "                searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
+                                        . "                searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
+                                        . "                $.ajax({"
+                                        . "                           url: \"$url2\","
+                                        . "                          type: 'POST',"
+                                        . "                   processData: false,"
+                                        . "                      datatype: 'json',"
+                                        . "                   contentType: false,"
+                                        . "                          data: searchFormData,"
+                                        . "                                                    }"
+                                        . "                        ).done(function (data) {onDayImageListHTMLFragmentReception(data);}"
+                                        . "                        ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}"
+                                        . "")
+                                        ]
+                        ];
+                    }
+                }
+                //var_dump($series);exit;
                 foreach ($events as $event) {
                     $Eventsdata[] = [
                         'x' => $event['date'],
@@ -277,18 +334,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 ];
 
                 $series[] = $eventsTab[0];
-
-
-                $url2 = Url::to(['image/search-from-scientific-object']);
-                $objectURI = $model->uri;
                 $options = [
                     'id' => 'graphic',
                     'options' => [
                         'chart' => [
                             'zoomType' => 'x',
+                            'type' => 'line'
                         ],
+                      
                         'title' => [
-                            'text' => $variables[$data["variable"]]
+                            'text' => $this->title
                         ],
                         'subtitle' => [
                             'text' => Yii::t('app/messages', 'Click and drag in the plot area to zoom in!')
@@ -307,11 +362,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'text' => 'time'
                             ],
                             'ordinal' => false,
-                            'crosshair' => false,
+                            'crosshair' => true,
                         ],
                         'yAxis' => [
                             'title' => [
-                                'text' => $variables[$data["variable"]]
+                                'text' => $this->title
                             ],
                             'labels' => [
                                 'format' => '{value:.2f}'
@@ -320,16 +375,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         'series' => $series,
                         'tooltip' => [
                             'xDateFormat' => '%Y-%m-%d %H:%M',
-                           
                         ],
                         'plotOptions' => [
                             'series' => [
                                 'dataGrouping' => [
                                     'enabled' => false
                                 ],
-                                'cursor' => 'pointer',
+                                //   'cursor' => 'pointer',
                                 'marker' => [
-                                    'enabled' => false,
+                                    // 'enabled' => false,
                                     'states' => [
                                         'hover' => [
                                             'enabled' => true
@@ -362,25 +416,25 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ];
 
-                if ($show) {
-                    $options['options']['plotOptions']['series']['point']['events']['click'] = new JsExpression(" function() {"
-                            . "var searchFormData = new FormData();"
-                            . "console.log( Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', 1500768000000));"
-                            . "searchFormData.append('concernedItems[]', \"$objectURI\");"
-                            . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
-                            . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
-                            . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
-                            . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
-                            . "searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
-                            . "$.ajax({url: \"$url2\","
-                            . "   type: 'POST',"
-                            . "   processData: false,"
-                            . "   datatype: 'json',"
-                            . "   contentType: false,"
-                            . "   data: searchFormData,"
-                            . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
-                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}");
-                }
+//                if ($show) {
+//                    $options['options']['plotOptions']['series']['point']['events']['click'] = new JsExpression(" function() {"
+//                            . "var searchFormData = new FormData();"
+//                            . "console.log( Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', 1500768000000));"
+//                            . "searchFormData.append('concernedItems[]', \"$objectURI\");"
+//                            . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
+//                            . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
+//                            . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
+//                            . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
+//                            . "searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
+//                            . "$.ajax({url: \"$url2\","
+//                            . "   type: 'POST',"
+//                            . "   processData: false,"
+//                            . "   datatype: 'json',"
+//                            . "   contentType: false,"
+//                            . "   data: searchFormData,"
+//                            . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
+//                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}");
+//                }
                 echo Highstock::widget($options);
             }
         }
@@ -428,6 +482,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 </div>
+<a href="#" id="highC">test</a> 
 <script>
     $(document).ready(function () {
 
@@ -452,8 +507,15 @@ if (isset($data)) {
         });
 
     });
+    $(window).on('load', function () { // to put the script at the end of the page
+        $('#highC').hover(function () {
+            var chart = $('#graphic').highcharts();
+            console.log(chart);
+        }, function () {
+            console.log(chart);
+        });
 
-
+    });
 
     /**
      * This function is call on the response of the ajax call when a user click on a point on the graphic to get images

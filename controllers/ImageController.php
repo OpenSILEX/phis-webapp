@@ -69,7 +69,7 @@ class ImageController extends \yii\web\Controller {
      * @throws Exception
      */
     public function actionSearchFromScientificObject() {
-        $searchModel = new DataFileSearch($pageSize = 100);
+        $searchModel = new DataFileSearch($pageSize = 8000);
         if ($searchModel->load(Yii::$app->request->post())) {
             $searchModel->startDate = Yii::$app->request->post()["startDate"];
             $searchModel->endDate = Yii::$app->request->post()["endDate"];

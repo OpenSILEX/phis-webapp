@@ -18,7 +18,7 @@ use yii\data\ArrayDataProvider;
  * @author Vincent Migot
  */
 class DataFileSearch extends YiiDataFileModel {
-    
+
     /**
      * @param string $pageSize number of elements per page
      *                               (limited to 150 000)
@@ -27,18 +27,18 @@ class DataFileSearch extends YiiDataFileModel {
     public function __construct($pageSize = null, $page = null) {
         parent::__construct($pageSize, $page);
     }
-    
+
     /**
      * 
      * @return array the rules of the attributes
      */
     public function rules() {
         return [
-          [['rdfType'], 'required'],
-          [['concernedItems','jsonValueFilter'], 'safe']  
+            [['rdfType'], 'required'],
+            [['concernedItems', 'jsonValueFilter'], 'safe']
         ];
     }
-    
+
     /**
      * 
      * @param array $sessionToken used for the data access
@@ -47,12 +47,14 @@ class DataFileSearch extends YiiDataFileModel {
      *               or string \app\models\wsModels\WSConstants::TOKEN if the user needs to log in
      */
     public function search($sessionToken, $params) {
-         //1. this load the searched data 
-        $this->load($params);
+        //1. this load the searched data 
+        if (isset($params)) {
+            $this->load($params);
+        }
         if (isset($params[YiiModelsConstants::PAGE])) {
             $this->page = $params[YiiModelsConstants::PAGE];
         }
-        
+
         //2. Check validity of search data
         if (!$this->validate()) {
             return new ArrayDataProvider();
@@ -62,13 +64,13 @@ class DataFileSearch extends YiiDataFileModel {
         $params = $this->attributesToArray();
         unset($params['uri']);
         $findResult = $this->find($sessionToken, $params);
-        
         if (is_string($findResult)) {
             return $findResult;
-        } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN_INVALID) {
+        } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === WSConstants::TOKEN_INVALID) {
             return WSConstants::TOKEN_INVALID;
         } else {
+            
+            
             return new ArrayDataProvider([
                 'models' => $findResult,
                 'pagination' => [
@@ -78,8 +80,9 @@ class DataFileSearch extends YiiDataFileModel {
                 //SILEX:info
                 //totalCount must be there too to get the pagination in GridView
                 'totalCount' => $this->totalCount
-                //\SILEX:info
+                    //\SILEX:info
             ]);
         }
     }
+
 }
