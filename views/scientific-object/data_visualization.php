@@ -254,7 +254,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 $url2 = Url::to(['image/search-from-scientific-object']);
                 $objectURI = $model->uri;
-                
+
                 $series = [];
                 foreach ($data as $dataFromProvenanceKey => $dataFromProvenanceValue) {
 
@@ -283,18 +283,18 @@ $this->params['breadcrumbs'][] = $this->title;
                             'data' => $photoSerie,
                             // 'allowOverlapX'=> true,
                             'onSeries' => $dataFromProvenanceKey,
-                            //   'width' => 16,
+                            'width' => 6,
                             'shape' => 'circlepin',
                             'lineWidth' => 1,
                             //  'y' => -15,
                             'events' => [
                                 'click' => new JsExpression("
                                         function (event) { 
-                                                           console.log( \"$model->uri\");"
-                                        . "                console.log(event.point.x);"
-                                        . "                console.log(\"$dataFromProvenanceKey\");"
+                                                           console.log(this);"
                                         . "                var searchFormData = new FormData();"
                                         . "                searchFormData.append('concernedItems[]', \"$objectURI\");"
+                                        . "                searchFormData.append('serieIndex', this.index);"
+                                        . "                searchFormData.append('pointIndex', event.point.index);"
                                         . "                searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
                                         . "                searchFormData.append('jsonValueFilter', \"$filterToSend\");"
                                         . "                searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
@@ -311,7 +311,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         . "                        ).done(function (data) {onDayImageListHTMLFragmentReception(data);}"
                                         . "                        ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}"
                                         . "")
-                                        ]
+                            ]
                         ];
                     }
                 }
@@ -341,7 +341,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             'zoomType' => 'x',
                             'type' => 'line'
                         ],
-                      
                         'title' => [
                             'text' => $this->title
                         ],
@@ -395,7 +394,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'click' => new JsExpression('
                                         function (event) {  
                                         
-                                                 //console.log(event);
+                                                 console.log(event);
                                                 // var dates=this.data;
                                                //  var tab=[];
                                                  console.log("COMPARE");
@@ -508,8 +507,9 @@ if (isset($data)) {
 
     });
     $(window).on('load', function () { // to put the script at the end of the page
+
+        var chart = $('#graphic').highcharts();
         $('#highC').hover(function () {
-            var chart = $('#graphic').highcharts();
             console.log(chart);
         }, function () {
             console.log(chart);
@@ -533,6 +533,23 @@ if (isset($data)) {
             $('#imagesCount').attr('data-id', fragment.find('#counterFragment').attr('data-id'));
             $('#scientific-object-data-visualization-alert-div').hide();
         }
+        var chart = $('#graphic').highcharts();
+        $('#visualization-images-list li a img').each(function (index, value) {
+
+            $(this).hover(function () {
+                const point = $(this).attr('data-point');
+                const serie = $(this).attr('data-serie');
+                chart.series[serie].data[point].setState('hover');
+                chart.tooltip.refresh(chart.series[serie].data[point]);
+            }, function () {
+                 const point = $(this).attr('data-point');
+                 const serie = $(this).attr('data-serie');
+                 chart.series[serie].data[point].setState();
+                 chart.tooltip.hide();
+
+            });
+
+        });
     }
 
     var checked = $('#showWidget').is(':checked');

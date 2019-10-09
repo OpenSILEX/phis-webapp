@@ -77,11 +77,13 @@ class ImageController extends \yii\web\Controller {
             $searchModel->jsonValueFilter = Yii::$app->request->post()["jsonValueFilter"];
             $searchModel->provenance = Yii::$app->request->post()["provenance"];
             $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->post());
-            $imagesCount =  Yii::$app->request->post()["imagesCount"];
+            $imagesCount = Yii::$app->request->post()["imagesCount"];
             return $this->renderAjax('_simple_images_visualization', [
                         'model' => $searchModel,
                         'data' => $searchResult,
-                   'imagesCount' => $imagesCount
+                        'serieIndex' => Yii::$app->request->post()["serieIndex"],
+                        'pointIndex' => Yii::$app->request->post()["pointIndex"],
+                        'imagesCount' => $imagesCount
             ]);
         }
         return $this->renderAjax('_simple_images_visualization', [
