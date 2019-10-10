@@ -958,7 +958,7 @@ class ScientificObjectController extends Controller {
 
 
         //Search data for the scientific object and the given variable.
-        if (isset($_POST['variable'])) {
+        if (isset($_GET['variable'])) {
 
             $toReturn = [];
             /* Build array for highChart with data and photos by provenances
@@ -1008,10 +1008,10 @@ class ScientificObjectController extends Controller {
             $searchModel->pageSize = 80000;
             $searchModel->object = $scientificObject->uri;
 
-            $searchModel->variable = $_POST['variable'];
-            $searchModel->startDate = $_POST['dateStart'];
-            $searchModel->endDate = $_POST['dateEnd'];
-            $searchModel->provenance = $_POST['provenances'];
+            $searchModel->variable = $_GET['variable'];
+            $searchModel->startDate = $_GET['dateStart'];
+            $searchModel->endDate = $_GET['dateEnd'];
+            $searchModel->provenance = $_GET['provenances'];
             $searchModel->dateSortAsc='true'; //FIX HIGHCHARTS WHEN FLAGS IS ATTACHED TO A SERIE
             $searchResult = $searchModel->search($token, null);
             foreach ($searchResult->getModels() as $model) {
@@ -1057,10 +1057,10 @@ class ScientificObjectController extends Controller {
              *                      "photosSerie": null
              * }
              */
-            if (isset($_POST['show']) && isset($_POST['imageType'])) {
+            if (isset($_GET['show']) && isset($_GET['imageType'])) {
 
-                if (isset($_POST['filter']) && $_POST['filter'] !== "") {
-                    $selectedPositionIndex = $_POST['filter'];
+                if (isset($_GET['filter']) && $_GET['filter'] !== "") {
+                    $selectedPositionIndex = $_GET['filter'];
                     $attribut = explode(":", Yii::$app->params['image.filter']['metadata.position'][$selectedPositionIndex]);
                     $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
                 }
@@ -1069,7 +1069,7 @@ class ScientificObjectController extends Controller {
                     //functions to search photo for each provenances with good parameters: return the good array / we will buid the images serie
                     //attach to the provenance
                     $photosArray = null;
-                    $photosArray = $this->searchImagesByProvenance($dataFromProvenanceKey, $scientificObject->uri, $_POST['imageType'], $filterToSend ? $filterToSend : null, $_POST['dateStart'], $_POST['dateEnd']);
+                    $photosArray = $this->searchImagesByProvenance($dataFromProvenanceKey, $scientificObject->uri, $_GET['imageType'], $filterToSend ? $filterToSend : null, $_GET['dateStart'], $_GET['dateEnd']);
                     $toReturn[$dataFromProvenanceKey] = [
                         'data' => $dataFromProvenanceValue,
                         'photosSerie' => $photosArray,
@@ -1090,8 +1090,8 @@ class ScientificObjectController extends Controller {
             $searchModel = new EventSearch();
             $searchModel->pageSize = 800;
             $searchModel->searchConcernedItemUri = $uri;
-            $searchModel->searchDateRangeStart = $_POST['dateStart'];
-            $searchModel->searchDateRangeEnd = $_POST['dateEnd'];
+            $searchModel->searchDateRangeStart = $_GET['dateStart'];
+            $searchModel->searchDateRangeEnd = $_GET['dateEnd'];
             $searchResult = $searchModel->search($token, null);
             if (is_string($searchResult)) {
                 if ($searchResult === WSConstants::TOKEN_INVALID) {
@@ -1113,17 +1113,17 @@ class ScientificObjectController extends Controller {
             }
             //on FORM submitted:
             //check if image visualization is activated
-            $show = isset($_POST['show']) ? $_POST['show'] : null;
-            $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
-            $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
-            $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
+            $show = isset($_GET['show']) ? $_GET['show'] : null;
+            $selectedVariable = isset($_GET['variable']) ? $_GET['variable'] : null;
+            $imageTypeSelected = isset($_GET['imageType']) ? $_GET['imageType'] : null;
+            $selectedProvenance = isset($_GET['provenances']) ? $_GET['provenances'] : null;
             return $this->render('data_visualization', [
                         'model' => $scientificObject,
                         'variables' => $variables,
                         'data' => $toReturn,
                         'show' => $show,
-                        'dateStart' => $_POST['dateStart'],
-                        'dateEnd' => $_POST['dateEnd'],
+                        'dateStart' => $_GET['dateStart'],
+                        'dateEnd' => $_GET['dateEnd'],
                         'selectedVariable' => $selectedVariable,
                         'imageTypeSelected' => $imageTypeSelected,
                         'selectedProvenance' => $selectedProvenance,

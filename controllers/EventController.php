@@ -244,6 +244,7 @@ class EventController extends GenericController {
             if (Yii::$app->request->get()['type'] === "scientific-objects") {
                 $event->load(array(self::PARAM_CONCERNED_ITEMS_URIS => array_keys(Yii::$app->session['scientific-object'])), '');
             }
+            //$event->load(array('dateWithoutTimezone'=>$app->request->get()['dateWithoutTimezone']));
             $event->creator = $this->getCreatorUri($sessionToken);
             $this->loadFormParams();
             return $this->render('create', ['model' => $event]);

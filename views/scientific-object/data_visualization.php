@@ -13,6 +13,7 @@ use yii\helpers\Html;
 use miloschuman\highcharts\Highstock;
 use yii\web\JsExpression;
 use yii\helpers\Url;
+use app\controllers\EventController;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\event\EventButtonWidget;
 
@@ -32,7 +33,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <a role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px;"><i class ="glyphicon glyphicon-search"></i> <?= Yii::t('app', 'Search Criteria') ?></a>
     <div class="collapse in" id="data-visualization-form" >
         <?php
-        $form = ActiveForm::begin();
+        
+        $form = ActiveForm::begin([
+                    'method' => 'get',
+                    'action' => Url::to(['data-visualization', 'uri' => $model->uri, 'label' => $model->label, 'experimentUri' => $model->experiment]), //ensure you don't repeat get parameters
+        ]);
 
         if (empty($variables)) {
             echo "<p>" . Yii::t('app/messages', 'No variables linked to the experiment of the scientific object.') . "</p>";
@@ -330,8 +335,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     'name' => 'Events',
                     'lineWidth' => 1,
                     'y' => -40,
-                    'data' => $Eventsdata
+                    'data' => $Eventsdata,
+                    'events' => [
+                        'click' => new JsExpression("
+                                        function (event) {
+                                               console.log(this);
+                                               console.log(event);
+                                        }")
+                    ]
                 ];
+                //var_dump($Eventsdata);exit;
+                $eventCreateUrl = Url::to(['event/create',
+                            EventController::PARAM_CONCERNED_ITEMS_URIS => [$objectURI],
+                            EventController::PARAM_RETURN_URL => Url::current()]);
 
                 $series[] = $eventsTab[0];
                 $options = [
@@ -391,55 +407,36 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ]
                                 ],
                                 'events' => [
-                                    'click' => new JsExpression('
+                                    'click' => new JsExpression("
                                         function (event) {  
                                         
                                                  console.log(event);
                                                 // var dates=this.data;
                                                //  var tab=[];
-                                                 console.log("COMPARE");
-                                                // dates.forEach(function(date) {tab.push(Highcharts.dateFormat("%Y-%m-%dT%H:%M:%S+0200", date.x));});
+                                                 console.log('COMPARE');
+                                                // dates.forEach(function(date) {tab.push(Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', date.x));});
                                                  //console.log(tab.sort());
                                                  var real=this.xAxis.toValue(event.chartX, false);
                                                  console.log(real);
                                                  console.log(event.point.x);
-                                                 console.log(Highcharts.dateFormat("%Y-%m-%dT%H:%M:%S+0200", real));
-                                                 if(this.name!=="Events"){
-                                                       $("#events-lightbox").modal("show") ;}
+                                                 console.log(Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', real));
+                                                 if(this.name!=='Events'){
+                                                       var dateParams = '&dateWithoutTimezone='+Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S', event.point.x);
+                                                       $('#createEventLink').attr('href',\"$eventCreateUrl\"+dateParams);
+                                                       $('#events-lightbox').modal('show') ;}
                                                  
-                                                 var time=Highcharts.dateFormat("%Y-%m-%dT%H:%M:%S+0200", event.point.x);
-                                                 console.log(time)}')
+                                                 var time=Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', event.point.x);
+                                                 console.log(time)}")
                                 ]
                             ]
                         ]
                     ]
                 ];
 
-//                if ($show) {
-//                    $options['options']['plotOptions']['series']['point']['events']['click'] = new JsExpression(" function() {"
-//                            . "var searchFormData = new FormData();"
-//                            . "console.log( Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', 1500768000000));"
-//                            . "searchFormData.append('concernedItems[]', \"$objectURI\");"
-//                            . "searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
-//                            . "searchFormData.append('jsonValueFilter', \"$filterToSend\");"
-//                            . "searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
-//                            . "searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', this.x));"
-//                            . "searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
-//                            . "$.ajax({url: \"$url2\","
-//                            . "   type: 'POST',"
-//                            . "   processData: false,"
-//                            . "   datatype: 'json',"
-//                            . "   contentType: false,"
-//                            . "   data: searchFormData,"
-//                            . "}).done(function (data) {onDayImageListHTMLFragmentReception(data);}
-//                                                    ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}");
-//                }
                 echo Highstock::widget($options);
             }
         }
         ?>
-
-
         <div class="modal" id="events-lightbox">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -447,17 +444,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         <h4 class="modal-title">Add annotation or event</h4>
                     </div>
                     <div class="modal-body">
+
                         <div class="row">
                             <div class="col-md-6 text-center">
-                                <?=
-                                EventButtonWidget::widget([
-                                    EventButtonWidget::TYPE => "one",
-                                    EventButtonWidget::CONCERNED_ITEMS_URIS => [$objectURI],
-                                    EventButtonWidget::AS_LINK => false,
-                                    EventButtonWidget::SIZE => "fa-4x"
-                                ]);
-                                ?>
-
+                                <a class="btn btn-default" id="createEventLink">
+                                    <span class="fa fa-flag fa-4x"></span>
+                                    <p>Add Event</p>
+                                </a>
                             </div>
                             <div class="col-md-6 text-center">
                                 <a class="btn btn-default">
@@ -481,7 +474,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 </div>
-<a href="#" id="highC">test</a> 
 <script>
     $(document).ready(function () {
 
@@ -506,15 +498,7 @@ if (isset($data)) {
         });
 
     });
-    $(window).on('load', function () { // to put the script at the end of the page
-
-        var chart = $('#graphic').highcharts();
-        $('#highC').hover(function () {
-            console.log(chart);
-        }, function () {
-            console.log(chart);
-        });
-
+    $(window).on('load', function () { // to put the script at the end of the page to 
     });
 
     /**
@@ -542,10 +526,10 @@ if (isset($data)) {
                 chart.series[serie].data[point].setState('hover');
                 chart.tooltip.refresh(chart.series[serie].data[point]);
             }, function () {
-                 const point = $(this).attr('data-point');
-                 const serie = $(this).attr('data-serie');
-                 chart.series[serie].data[point].setState();
-                 chart.tooltip.hide();
+                const point = $(this).attr('data-point');
+                const serie = $(this).attr('data-serie');
+                chart.series[serie].data[point].setState();
+                chart.tooltip.hide();
 
             });
 
