@@ -33,7 +33,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <a role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px;"><i class ="glyphicon glyphicon-search"></i> <?= Yii::t('app', 'Search Criteria') ?></a>
     <div class="collapse in" id="data-visualization-form" >
         <?php
-        
         $form = ActiveForm::begin([
                     'method' => 'get',
                     'action' => Url::to(['data-visualization', 'uri' => $model->uri, 'label' => $model->label, 'experimentUri' => $model->experiment]), //ensure you don't repeat get parameters
@@ -255,14 +254,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 echo "  <div class='well '><p>" . Yii::t('app/messages', 'No result found.') . "</p></div>";
             } else {
 
-
-
                 $url2 = Url::to(['image/search-from-scientific-object']);
                 $objectURI = $model->uri;
 
                 $series = [];
                 foreach ($data as $dataFromProvenanceKey => $dataFromProvenanceValue) {
-
                     $series[] = [
                         'name' => $provenancesArray[$dataFromProvenanceKey],
                         'data' => $dataFromProvenanceValue["data"],
@@ -279,48 +275,68 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                             $photoSerie[] = [
                                 'x' => $photoKey,
-                                'title' => 'I',
+                                'title' => 'P',
                             ];
                         }
                         $series[] = [
                             'type' => 'flags',
                             'name' => 'images',
                             'data' => $photoSerie,
-                            // 'allowOverlapX'=> true,
                             'onSeries' => $dataFromProvenanceKey,
-                            'width' => 6,
+                            'width' => 4,
                             'shape' => 'circlepin',
                             'lineWidth' => 1,
                             //  'y' => -15,
+                            'point' => [
+                                'events' => [
+                                    'stickyTracking' => false,
+                                    'mouseOver' => new JsExpression("
+                                        function () {
+                                            const pointIndex=this.index;
+                                            const serieIndex=this.series.index;
+                                            $('#visualization-images-list li a img').each(function (index, value) {
+                                                  $(this).css('border-bottom', '');
+                                                  const point = Number($(this).attr('data-point'));
+                                                  const serie = Number($(this).attr('data-serie'));
+                                                  if(pointIndex===point&&serieIndex===serie){
+                                                       $(this).css('border', 'solid 2px orange');
+                                                  }
+                                            });
+                                    }"),
+                                    'mouseOut' => new JsExpression("function () {
+                                                   $('#visualization-images-list li a img').each(function (index, value) {
+                                                           $(this).css('border', ''); 
+                                                           });
+                                                                        }")
+                                ]
+                            ],
                             'events' => [
                                 'click' => new JsExpression("
                                         function (event) { 
-                                                           console.log(this);"
-                                        . "                var searchFormData = new FormData();"
-                                        . "                searchFormData.append('concernedItems[]', \"$objectURI\");"
-                                        . "                searchFormData.append('serieIndex', this.index);"
-                                        . "                searchFormData.append('pointIndex', event.point.index);"
-                                        . "                searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
-                                        . "                searchFormData.append('jsonValueFilter', \"$filterToSend\");"
-                                        . "                searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
-                                        . "                searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
-                                        . "                searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
-                                        . "                $.ajax({"
-                                        . "                           url: \"$url2\","
-                                        . "                          type: 'POST',"
-                                        . "                   processData: false,"
-                                        . "                      datatype: 'json',"
-                                        . "                   contentType: false,"
-                                        . "                          data: searchFormData,"
-                                        . "                                                    }"
-                                        . "                        ).done(function (data) {onDayImageListHTMLFragmentReception(data);}"
-                                        . "                        ).fail(function (jqXHR, textStatus) {alert('ERROR : ' + jqXHR);});}"
-                                        . "")
+                                            var searchFormData = new FormData();
+                                            searchFormData.append('concernedItems[]', \"$objectURI\"); "
+                                        . " searchFormData.append('serieIndex', this.index);"
+                                        . " searchFormData.append('pointIndex', event.point.index);"
+                                        . " searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
+                                        . " searchFormData.append('jsonValueFilter', \"$filterToSend\");"
+                                        . " searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
+                                        . " searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
+                                        . " searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
+                                        . " $.ajax({"
+                                        . "          url: \"$url2\","
+                                        . "         type: 'POST',"
+                                        . "  processData: false,"
+                                        . "     datatype: 'json',"
+                                        . "  contentType: false,"
+                                        . "         data: searchFormData,"
+                                        . "                                }).done(function (data) {"
+                                        . "                                          onDayImageListHTMLFragmentReception(data);}"
+                                        . "                                 ).fail(function (jqXHR, textStatus) {"
+                                        . "                                           alert('ERROR : ' + jqXHR);});}")
                             ]
                         ];
                     }
                 }
-                //var_dump($series);exit;
                 foreach ($events as $event) {
                     $Eventsdata[] = [
                         'x' => $event['date'],
@@ -328,7 +344,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'text' => $event['text']
                     ];
                 }
-
                 $eventsTab[] = [
                     'type' => 'flags',
                     'allowOverlapX' => true,
@@ -344,7 +359,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                         }")
                     ]
                 ];
-                //var_dump($Eventsdata);exit;
                 $eventCreateUrl = Url::to(['event/create',
                             EventController::PARAM_CONCERNED_ITEMS_URIS => [$objectURI],
                             EventController::PARAM_RETURN_URL => Url::current()]);
@@ -353,9 +367,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 $options = [
                     'id' => 'graphic',
                     'options' => [
+                        'time' => ['timezoneOffset' => -2 * 60],
                         'chart' => [
                             'zoomType' => 'x',
-                            'type' => 'line'
+                            'type' => 'line',
+                            'events' => [
+                                'load' => new JsExpression("function() {
+                                              var legend = this.legend.group;
+                                              Highcharts.each(this.legend.allItems, function(item) {
+                                                        console.log(item);
+                                                        if(item.name==='Events'){
+                                                                var x = legend.translateX + item.legendGroup.translateX,
+                                                                y = this.legend.contentGroup.getBBox().y + legend.translateY + item.legendGroup.translateY + item.itemHeight;
+                                                                this.renderer.button('button',x,y,function() {
+                                                                                      console.log('click');
+                                                                                                              }).add();
+                                                        }
+                                                                                                                        }, this);
+                                            }")
+                            ]
                         ],
                         'title' => [
                             'text' => $this->title
@@ -365,10 +395,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'navigator' => [
                             'enabled' => true,
-                            'margin' => 70,
+                            'margin' => 5,
                             'y' => -4
                         ],
                         'legend' => [
+                            'layout' => 'vertical',
                             'enabled' => true,
                         ],
                         'xAxis' => [
@@ -396,9 +427,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'dataGrouping' => [
                                     'enabled' => false
                                 ],
-                                //   'cursor' => 'pointer',
                                 'marker' => [
-                                    // 'enabled' => false,
                                     'states' => [
                                         'hover' => [
                                             'enabled' => true
@@ -408,25 +437,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 'events' => [
                                     'click' => new JsExpression("
-                                        function (event) {  
-                                        
-                                                 console.log(event);
-                                                // var dates=this.data;
-                                               //  var tab=[];
-                                                 console.log('COMPARE');
-                                                // dates.forEach(function(date) {tab.push(Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', date.x));});
-                                                 //console.log(tab.sort());
+                                              function (event) {  
+                                              console.log(this);
                                                  var real=this.xAxis.toValue(event.chartX, false);
-                                                 console.log(real);
-                                                 console.log(event.point.x);
-                                                 console.log(Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', real));
+                                                 console.log(Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000',real));
                                                  if(this.name!=='Events'){
-                                                       var dateParams = '&dateWithoutTimezone='+Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S', event.point.x);
+                                                       var dateParams = '&dateWithoutTimezone='+Highcharts.dateFormat('%Y-%m-%dT%H:%M:00+0000',real);
                                                        $('#createEventLink').attr('href',\"$eventCreateUrl\"+dateParams);
-                                                       $('#events-lightbox').modal('show') ;}
-                                                 
-                                                 var time=Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0200', event.point.x);
-                                                 console.log(time)}")
+                                                       $('#events-lightbox').modal('show') ;
+                                                 }}")
                                 ]
                             ]
                         ]
@@ -459,12 +478,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                 </a>
                             </div>
                         </div>
-
                         <div class="row" id="add-event" >
-
-
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -476,11 +491,9 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <script>
     $(document).ready(function () {
-
         $("#filterSelect").on("change", function (e) {
             var id = $("#filterSelect").select2("data")[0].id;
             console.log(id);
-
         });
 
 <?php
@@ -530,9 +543,7 @@ if (isset($data)) {
                 const serie = $(this).attr('data-serie');
                 chart.series[serie].data[point].setState();
                 chart.tooltip.hide();
-
             });
-
         });
     }
 
