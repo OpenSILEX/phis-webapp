@@ -276,7 +276,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                             $photoSerie[] = [
                                 'x' => $photoKey,
-                                'title' => 'P',
+                                'title' => 'o',
                             ];
                         }
                         $series[] = [
@@ -287,6 +287,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             'width' => 4,
                             'shape' => 'circlepin',
                             'lineWidth' => 1,
+                            'color' => '#5F86B3',
+                            'fillColor' => '#5F86B3',
+                            'style' => [
+                                'color' => 'white'
+                            ],
                             //  'y' => -15,
                             'point' => [
                                 'events' => [
@@ -351,11 +356,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     'name' => 'Events',
                     'lineWidth' => 1,
                     'y' => -40,
+                    'color' => '#f7a35c',
+                    'fillColor' => '#f7a35c',
+                    'style' => [
+                        'color' => 'white'
+                    ],
                     'data' => $Eventsdata,
                     'events' => [
                         'click' => new JsExpression("
                                         function (event) {
                                         const eventId=event.point.text;
+                                        
                                          $.ajax({"
                                 . "          url: \"$viewDetailUrl\","
                                 . "         type: 'GET',"
@@ -418,6 +429,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         'series' => $series,
                         'tooltip' => [
                             'xDateFormat' => '%Y-%m-%d %H:%M',
+                            'formatter' => new JsExpression("function(tooltip) {
+                                 console.log(this);
+                                 if(this.points){
+                                     return tooltip.defaultFormatter.call(this, tooltip);;
+                                 } else {
+                                    return '';
+                                 }
+                               
+                                           
+                                            }")
                         ],
                         'plotOptions' => [
                             'series' => [
@@ -478,15 +499,22 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="modal-content">
                     <div class="modal-header text-center">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Event Detail</h4>
                     </div>
                     <div class="modal-body">
-                        ho
+                        <div  class="table-responsive">
+                            <div class=container-fluid>
+
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
+
+</div>
 
 
 </div>
@@ -551,7 +579,8 @@ if (isset($data)) {
     function renderEventDetailModal(data) {
 
         var fragment = $(data);
-        $('#show-event-lightbox .modal-body').html(fragment);
+        $('#show-event-lightbox .modal-body .table-responsive .container-fluid').html(fragment);
+        $('#show-event-lightbox').modal();
         $('#show-event-lightbox').modal('show');
     }
     var checked = $('#showWidget').is(':checked');
