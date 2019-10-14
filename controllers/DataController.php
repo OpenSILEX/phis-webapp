@@ -165,8 +165,8 @@ class DataController extends Controller {
             $searchModel->provenance = isset($searchParams["provenance"]) ? $searchParams["provenance"] : null;
         }
         
-        // Set page size to 200 for better performances
-        $searchModel->pageSize = 200;
+        // Set page size to 400000 for better performances
+        $searchModel->pageSize = 400000;
         
         //get all the data (if multiple pages) and write them in a file
         $serverFilePath = \config::path()['documentsUrl'] . "AOFiles/exportedData/" . time() . ".csv";
@@ -181,7 +181,8 @@ class DataController extends Controller {
                       "provenance" . Yii::$app->params['csvSeparator'] . 
                       "\n";
         file_put_contents($serverFilePath, $headerFile);
-        
+
+        $allLinesStringToWrite = "";        
         $totalPage = 1;
         for ($i = 0; $i < $totalPage; $i++) {
             //1. call service for each page
@@ -195,8 +196,9 @@ class DataController extends Controller {
                 $stringToWrite = $model->variable->uri . Yii::$app->params['csvSeparator'] . 
                                  $model->variable->label . Yii::$app->params['csvSeparator'] . 
                                  $model->date . Yii::$app->params['csvSeparator'] .
-                                 $model->value . Yii::$app->params['csvSeparator'] .
-                                 $model->object->uri . Yii::$app->params['csvSeparator'] ;
+                                 $model->value . Yii::$app->params['csvSeparator'];
+                $stringToWrite .= isset($model->object) ? $model->object->uri . Yii::$app->params['csvSeparator'] : "" . Yii::$app->params['csvSeparator'];
+
                 $objectLabels = "";
                 if (isset($model->object)) {
                     foreach ($model->object->labels as $label) {
@@ -208,11 +210,13 @@ class DataController extends Controller {
                                   $model->provenance->uri . Yii::$app->params['csvSeparator'] .
                                   $model->provenance->label . Yii::$app->params['csvSeparator'] . 
                                  "\n";
-                file_put_contents($serverFilePath, $stringToWrite, FILE_APPEND);
+                $allLinesStringToWrite .= $stringToWrite;
+                
             }
             
             $totalPage = intval($searchModel->totalPages);
         }
+        file_put_contents($serverFilePath, $allLinesStringToWrite, FILE_APPEND);
         Yii::$app->response->sendFile($serverFilePath); 
     }
 }
