@@ -78,7 +78,7 @@ class YiiDataFileModel extends WSActiveRecord {
 
     const PROVENANCE = "provenance";
    
-
+    
 
     /**
      * Initialize wsModel. In this class, wsModel is a WSImageModel
@@ -159,7 +159,6 @@ class YiiDataFileModel extends WSActiveRecord {
          if ($this->provenance != null) {
             $attributesArray[self::PROVENANCE] = $this->provenance;
         }
-       
 
         return $attributesArray;
     }

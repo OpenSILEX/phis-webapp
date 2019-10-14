@@ -29,10 +29,11 @@ class DataSearchLayers extends \app\models\yiiModels\YiiDataModel {
     /**
      * @inheritdoc
      */
+    
     public function rules()
     {
         return [
-            [['variable', 'startDate', 'endDate', 'provenance', 'object'], 'safe']
+            [['variable', 'startDate', 'endDate', 'provenance', 'object','dateSortAsc'], 'safe']
         ];
     }
     
@@ -89,6 +90,7 @@ class DataSearchLayers extends \app\models\yiiModels\YiiDataModel {
         $toReturn["endDate"] = $this->endDate;
         $toReturn["provenance"] = $this->provenance;
         $toReturn["pageSize"] = $this->pageSize;
+         $toReturn["dateSortAsc"] = $this->dateSortAsc;
                 
         return $toReturn;
     }

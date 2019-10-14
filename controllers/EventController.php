@@ -126,6 +126,48 @@ class EventController extends GenericController {
         }
     }
 
+    /**
+     * Return the detail of an event from an Ajax call.
+     * @param $id URI of the event
+     * @return mixed redirect in case of error otherwise return the "view" view
+     */
+    public function actionAjaxView($id) {
+        // Get request parameters
+        $searchParams = Yii::$app->request->queryParams;
+
+        // Get event
+        $event = (new YiiEventModel())->getEvent(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);
+        if (is_string($event)) {
+            if ($event === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->renderAjax('/site/error', [
+                            'name' => Yii::t('app/messages', 'Internal error'),
+                            'message' => $event]);
+            }
+        } else {
+
+            // Get documents
+            $searchDocumentModel = new DocumentSearch();
+            $searchDocumentModel->concernedItemFilter = $id;
+            $documentProvider = $searchDocumentModel->search(
+                    Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
+
+            // Get annotations
+            $annotationProvider = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+            $annotationProvider->pagination->pageParam = self::ANNOTATIONS_PAGE;
+
+            // Render the view of the event
+
+            return $this->renderAjax('view', [
+                        'model' => $event,
+                        'dataDocumentsProvider' => $documentProvider,
+                        self::PARAM_ANNOTATIONS_DATA_PROVIDER => $annotationProvider,
+                        self::PARAM_UPDATABLE => !$this->hasUnupdatableProperties($event)
+            ]);
+        }
+    }
+
     private function hasUnupdatableProperties($eventAction): bool {
         foreach ($eventAction->properties as $property) {
             if ($property->relation !== Yii::$app->params['from'] && $property->relation !== Yii::$app->params['to']) {
@@ -193,9 +235,9 @@ class EventController extends GenericController {
         } else {
             foreach ($infrastructures->models as $infrastructure) {
                 $infrastructuresUrisTypesLabels[] = [
-                            self::INFRASTRUCTURES_DATA_URI => $infrastructure->uri,
-                            self::INFRASTRUCTURES_DATA_LABEL => $infrastructure->label,
-                            self::INFRASTRUCTURES_DATA_TYPE => $infrastructure->rdfType
+                    self::INFRASTRUCTURES_DATA_URI => $infrastructure->uri,
+                    self::INFRASTRUCTURES_DATA_LABEL => $infrastructure->label,
+                    self::INFRASTRUCTURES_DATA_TYPE => $infrastructure->rdfType
                 ];
             }
         }
@@ -218,9 +260,9 @@ class EventController extends GenericController {
         } else {
             foreach ($sensors->models as $sensor) {
                 $sensorsUrisTypesLabels[] = [
-                            self::SENSOR_DATA_URI => $sensor->uri,
-                            self::SENSOR_DATA_LABEL => $sensor->label,
-                            self::SENSOR_DATA_TYPE => $sensor->rdfType
+                    self::SENSOR_DATA_URI => $sensor->uri,
+                    self::SENSOR_DATA_LABEL => $sensor->label,
+                    self::SENSOR_DATA_TYPE => $sensor->rdfType
                 ];
             }
         }
@@ -237,12 +279,15 @@ class EventController extends GenericController {
         $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
         $event = new EventCreation();
         $event->isNewRecord = true;
-
         // Display form
         if (!$event->load(Yii::$app->request->post())) {
             $event->load(Yii::$app->request->get(), '');
             if (Yii::$app->request->get()['type'] === "scientific-objects") {
                 $event->load(array(self::PARAM_CONCERNED_ITEMS_URIS => array_keys(Yii::$app->session['scientific-object'])), '');
+            }
+            if (isset(Yii::$app->request->get()['dateWithoutTimezone'])) {
+                $validDate = explode(' ', Yii::$app->request->get()['dateWithoutTimezone'])[0];
+                $event->dateWithoutTimezone = $validDate;
             }
             $event->creator = $this->getCreatorUri($sessionToken);
             $this->loadFormParams();

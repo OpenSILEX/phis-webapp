@@ -69,7 +69,7 @@ class ImageController extends \yii\web\Controller {
      * @throws Exception
      */
     public function actionSearchFromScientificObject() {
-        $searchModel = new DataFileSearch($pageSize = 100);
+        $searchModel = new DataFileSearch($pageSize = 8000);
         if ($searchModel->load(Yii::$app->request->post())) {
             $searchModel->startDate = Yii::$app->request->post()["startDate"];
             $searchModel->endDate = Yii::$app->request->post()["endDate"];
@@ -77,11 +77,13 @@ class ImageController extends \yii\web\Controller {
             $searchModel->jsonValueFilter = Yii::$app->request->post()["jsonValueFilter"];
             $searchModel->provenance = Yii::$app->request->post()["provenance"];
             $searchResult = $searchModel->search(Yii::$app->session['access_token'], Yii::$app->request->post());
-            $imagesCount =  Yii::$app->request->post()["imagesCount"];
+            $imagesCount = Yii::$app->request->post()["imagesCount"];
             return $this->renderAjax('_simple_images_visualization', [
                         'model' => $searchModel,
                         'data' => $searchResult,
-                   'imagesCount' => $imagesCount
+                        'serieIndex' => Yii::$app->request->post()["serieIndex"],
+                        'pointIndex' => Yii::$app->request->post()["pointIndex"],
+                        'imagesCount' => $imagesCount
             ]);
         }
         return $this->renderAjax('_simple_images_visualization', [
