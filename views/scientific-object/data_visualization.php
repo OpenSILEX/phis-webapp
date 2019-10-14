@@ -255,6 +255,7 @@ $this->params['breadcrumbs'][] = $this->title;
             } else {
 
                 $url2 = Url::to(['image/search-from-scientific-object']);
+                $viewDetailUrl = Url::to(['event/ajax-view']);
                 $objectURI = $model->uri;
 
                 $series = [];
@@ -354,8 +355,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     'events' => [
                         'click' => new JsExpression("
                                         function (event) {
-                                               console.log(this);
-                                               console.log(event);
+                                        const eventId=event.point.text;
+                                         $.ajax({"
+                                . "          url: \"$viewDetailUrl\","
+                                . "         type: 'GET',"
+                                . "     datatype: 'json',"
+                                . "         data: { 
+                                                             id: eventId},"
+                                . "                                }).done(function (data) {"
+                                . "                                            renderEventDetailModal(data);"
+                                . "                                           console.log('ok');}"
+                                . "                                 ).fail(function (jqXHR, textStatus) {"
+                                . "                                           alert('ERROR : ' + jqXHR);});
                                         }")
                     ]
                 ];
@@ -364,6 +375,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             EventController::PARAM_RETURN_URL => Url::current()]);
 
                 $series[] = $eventsTab[0];
+
                 $options = [
                     'id' => 'graphic',
                     'options' => [
@@ -371,21 +383,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'chart' => [
                             'zoomType' => 'x',
                             'type' => 'line',
-                            'events' => [
-                                'load' => new JsExpression("function() {
-                                              var legend = this.legend.group;
-                                              Highcharts.each(this.legend.allItems, function(item) {
-                                                        console.log(item);
-                                                        if(item.name==='Events'){
-                                                                var x = legend.translateX + item.legendGroup.translateX,
-                                                                y = this.legend.contentGroup.getBBox().y + legend.translateY + item.legendGroup.translateY + item.itemHeight;
-                                                                this.renderer.button('button',x,y,function() {
-                                                                                      console.log('click');
-                                                                                                              }).add();
-                                                        }
-                                                                                                                        }, this);
-                                            }")
-                            ]
                         ],
                         'title' => [
                             'text' => $this->title
@@ -438,14 +435,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'events' => [
                                     'click' => new JsExpression("
                                               function (event) {  
-                                              console.log(this);
                                                  var real=this.xAxis.toValue(event.chartX, false);
-                                                 console.log(Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000',real));
                                                  if(this.name!=='Events'){
-                                                       var dateParams = '&dateWithoutTimezone='+Highcharts.dateFormat('%Y-%m-%dT%H:%M:00+0000',real);
+                                                       var dateParams = '&dateWithoutTimezone='+Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000',real);
                                                        $('#createEventLink').attr('href',\"$eventCreateUrl\"+dateParams);
-                                                       $('#events-lightbox').modal('show') ;
-                                                 }}")
+                                                       $('#add-events-lightbox').modal('show') ;
+                                                 } 
+                                                 }")
                                 ]
                             ]
                         ]
@@ -456,30 +452,35 @@ $this->params['breadcrumbs'][] = $this->title;
             }
         }
         ?>
-        <div class="modal" id="events-lightbox">
+        <div class="modal" id="add-events-lightbox">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header text-center">
-                        <h4 class="modal-title">Add annotation or event</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Add an event</h4>
                     </div>
                     <div class="modal-body">
 
                         <div class="row">
-                            <div class="col-md-6 text-center">
+                            <div class="col-md-12 text-center">
                                 <a class="btn btn-default" id="createEventLink">
                                     <span class="fa fa-flag fa-4x"></span>
-                                    <p>Add Event</p>
-                                </a>
-                            </div>
-                            <div class="col-md-6 text-center">
-                                <a class="btn btn-default">
-                                    <span class="fa fa-comment fa-4x"></span>
-                                    <p>Add annotation</p>
                                 </a>
                             </div>
                         </div>
-                        <div class="row" id="add-event" >
-                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="show-event-lightbox">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        ho
                     </div>
                 </div>
             </div>
@@ -547,6 +548,12 @@ if (isset($data)) {
         });
     }
 
+    function renderEventDetailModal(data) {
+
+        var fragment = $(data);
+        $('#show-event-lightbox .modal-body').html(fragment);
+        $('#show-event-lightbox').modal('show');
+    }
     var checked = $('#showWidget').is(':checked');
     if (checked) {
         $('#photoFilter').show();
