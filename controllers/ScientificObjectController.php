@@ -1103,12 +1103,10 @@ class ScientificObjectController extends Controller {
                                 SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
                 }
             } else {
-
                 foreach ($searchResult->getModels() as $model) {
                     $events[] = [
                         'date' => (strtotime($model->date)) * 1000,
-                        'title' => explode('#', $model->rdfType)[1],
-                        'text' => $model->uri
+                        'title' => explode('#', $model->rdfType)[1]
                     ];
                 }
             }
