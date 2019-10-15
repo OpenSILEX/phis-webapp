@@ -346,7 +346,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
                 $eventsTab[] = [
                     'type' => 'flags',
-                    'allowOverlapX' => true,
+                    'allowOverlapX' => false,
                     'name' => 'Events',
                     'lineWidth' => 1,
                     'y' => -40,
@@ -364,7 +364,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'options' => [
                         'time' => ['timezoneOffset' => -2 * 60],
                         'chart' => [
-                            'zoomType' => 'x',
+                            'zoomType' => 'xy',
                             'type' => 'line',
                         ],
                         'title' => [
