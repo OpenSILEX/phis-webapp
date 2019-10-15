@@ -1023,6 +1023,7 @@ class ScientificObjectController extends Controller {
                     $data[] = $dataToSave;
                 }
             }
+            
             $dataByProvenance = array();
             /* Step 2: Transformed Raw data 
              * e.g : 

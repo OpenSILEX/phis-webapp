@@ -255,7 +255,6 @@ $this->params['breadcrumbs'][] = $this->title;
             } else {
 
                 $url2 = Url::to(['image/search-from-scientific-object']);
-                $viewDetailUrl = Url::to(['event/ajax-view']);
                 $objectURI = $model->uri;
 
                 $series = [];
@@ -276,7 +275,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                             $photoSerie[] = [
                                 'x' => $photoKey,
-                                'title' => 'o',
+                                'title' => ' ',
                             ];
                         }
                         $series[] = [
@@ -284,15 +283,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             'name' => 'images',
                             'data' => $photoSerie,
                             'onSeries' => $dataFromProvenanceKey,
-                            'width' => 4,
+                            'width' => 8,
+                            'height'=>8,
                             'shape' => 'circlepin',
                             'lineWidth' => 1,
-                            'color' => '#5F86B3',
-                            'fillColor' => '#5F86B3',
-                            'style' => [
-                                'color' => 'white'
-                            ],
-                            //  'y' => -15,
                             'point' => [
                                 'events' => [
                                     'stickyTracking' => false,
@@ -356,30 +350,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'name' => 'Events',
                     'lineWidth' => 1,
                     'y' => -40,
-                    'color' => '#f7a35c',
-                    'fillColor' => '#f7a35c',
-                    'style' => [
-                        'color' => 'white'
-                    ],
                     'data' => $Eventsdata,
-                    'events' => [
-                        'click' => new JsExpression("
-                                        function (event) {
-                                        const eventId=event.point.text;
-                                        
-                                         $.ajax({"
-                                . "          url: \"$viewDetailUrl\","
-                                . "         type: 'GET',"
-                                . "     datatype: 'json',"
-                                . "         data: { 
-                                                             id: eventId},"
-                                . "                                }).done(function (data) {"
-                                . "                                            renderEventDetailModal(data);"
-                                . "                                           console.log('ok');}"
-                                . "                                 ).fail(function (jqXHR, textStatus) {"
-                                . "                                           alert('ERROR : ' + jqXHR);});
-                                        }")
-                    ]
+                 
                 ];
                 $eventCreateUrl = Url::to(['event/create',
                             EventController::PARAM_CONCERNED_ITEMS_URIS => [$objectURI],
@@ -494,24 +466,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
-        <div class="modal" id="show-event-lightbox">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header text-center">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Event Detail</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div  class="table-responsive">
-                            <div class=container-fluid>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            
     </div>
 
 </div>
@@ -574,21 +529,6 @@ if (isset($data)) {
                 chart.tooltip.hide();
             });
         });
-    }
-
-    function renderEventDetailModal(data) {
-
-        var fragment = $(data);
-        $('#show-event-lightbox .modal-body .table-responsive .container-fluid').html(fragment);
-        $('#show-event-lightbox').modal();
-        $('#show-event-lightbox').modal('show');
-    }
-    var checked = $('#showWidget').is(':checked');
-    if (checked) {
-        $('#photoFilter').show();
-    } else {
-        // reset values
-        $('#photoFilter').hide();
     }
 
     /**
