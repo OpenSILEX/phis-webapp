@@ -284,7 +284,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'data' => $photoSerie,
                             'onSeries' => $dataFromProvenanceKey,
                             'width' => 8,
-                            'height'=>8,
+                            'height' => 8,
                             'shape' => 'circlepin',
                             'lineWidth' => 1,
                             'point' => [
@@ -341,17 +341,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     $Eventsdata[] = [
                         'x' => $event['date'],
                         'title' => $event['title'],
-                        'text' => $event['text']
+                        'text' => $event['title']
                     ];
                 }
                 $eventsTab[] = [
                     'type' => 'flags',
-                    'allowOverlapX' => false,
+                    'allowOverlapX' => true,
                     'name' => 'Events',
                     'lineWidth' => 1,
                     'y' => -40,
+                    'clip'=> false,
                     'data' => $Eventsdata,
-                 
                 ];
                 $eventCreateUrl = Url::to(['event/create',
                             EventController::PARAM_CONCERNED_ITEMS_URIS => [$objectURI],
@@ -402,14 +402,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         'tooltip' => [
                             'xDateFormat' => '%Y-%m-%d %H:%M',
                             'formatter' => new JsExpression("function(tooltip) {
-                                 console.log(this);
                                  if(this.points){
-                                     return tooltip.defaultFormatter.call(this, tooltip);;
+                                     return tooltip.defaultFormatter.call(this, tooltip);
+                                 } else if(this.series.name=='Events'){
+                                     return tooltip.defaultFormatter.call(this, tooltip);
                                  } else {
-                                    return '';
-                                 }
-                               
-                                           
+                                     return '';
+                                 } 
                                             }")
                         ],
                         'plotOptions' => [
@@ -466,7 +465,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
-            
+
     </div>
 
 </div>
@@ -530,7 +529,14 @@ if (isset($data)) {
             });
         });
     }
+    var checked = $('#showWidget').is(':checked');
 
+    if (checked) {
+        $('#photoFilter').show();
+    } else {
+        // reset values
+        $('#photoFilter').hide();
+    }
     /**
      * Function apply when checkbox is clicked to show or not images.
      * @param String HTML The checkbox content
