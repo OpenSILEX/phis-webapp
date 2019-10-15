@@ -463,7 +463,7 @@ class ScientificObjectController extends Controller {
     private function getObjectTypeCompleteUri($objectType) {
         $objectTypesList = $this->getObjectsTypesUris();
         foreach ($objectTypesList as $objectTypeUri) {
-            if (strpos($objectTypeUri, $objectType)) {
+            if (preg_match("/". $objectType . "\b/", $objectTypeUri)) {
                 return $objectTypeUri;
             }
         }
