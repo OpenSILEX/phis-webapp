@@ -85,6 +85,48 @@ class EventController extends GenericController {
     }
 
     /**
+     * Return the detail of an event from an Ajax call.
+     * @param $id URI of the event
+     * @return mixed redirect in case of error otherwise return the "view" view
+     */
+    public function actionAjaxView($id) {
+        // Get request parameters
+        $searchParams = Yii::$app->request->queryParams;
+
+        // Get event
+        $event = (new YiiEventModel())->getEvent(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);
+        if (is_string($event)) {
+            if ($event === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
+                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+            } else {
+                return $this->renderAjax('/site/error', [
+                            'name' => Yii::t('app/messages', 'Internal error'),
+                            'message' => $event]);
+            }
+        } else {
+
+            // Get documents
+            $searchDocumentModel = new DocumentSearch();
+            $searchDocumentModel->concernedItemFilter = $id;
+            $documentProvider = $searchDocumentModel->search(
+                    Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
+
+            // Get annotations
+            $annotationProvider = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
+            $annotationProvider->pagination->pageParam = self::ANNOTATIONS_PAGE;
+
+            // Render the view of the event
+
+            return $this->renderAjax('view', [
+                        'model' => $event,
+                        'dataDocumentsProvider' => $documentProvider,
+                        self::PARAM_ANNOTATIONS_DATA_PROVIDER => $annotationProvider,
+                        self::PARAM_UPDATABLE => !$this->hasUnupdatableProperties($event)
+            ]);
+        }
+    }
+
+    /**
      * Displays the detail of an event.
      * @param $id URI of the event
      * @return mixed redirect in case of error otherwise return the "view" view
@@ -125,7 +167,7 @@ class EventController extends GenericController {
             ]);
         }
     }
-    
+
     private function hasUnupdatableProperties($eventAction): bool {
         foreach ($eventAction->properties as $property) {
             if ($property->relation !== Yii::$app->params['from'] && $property->relation !== Yii::$app->params['to']) {

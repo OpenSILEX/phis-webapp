@@ -341,21 +341,41 @@ $this->params['breadcrumbs'][] = $this->title;
                     $Eventsdata[] = [
                         'x' => $event['date'],
                         'title' => $event['title'],
-                        'text' => $event['title']
+                        'text' => $event['id']
                     ];
                 }
 
                 usort($Eventsdata, function ($item1, $item2) {
                     return $item1['x'] <=> $item2['x'];
                 });
+
+                $viewDetailUrl = Url::to(['event/ajax-view']);
                 $eventsTab[] = [
                     'type' => 'flags',
                     'allowOverlapX' => true,
                     'name' => 'Events',
                     'lineWidth' => 1,
                     'y' => -40,
-                    'clip'=> false,
+                    'clip' => false,
                     'data' => $Eventsdata,
+                    'events' => [
+                        'click' => new JsExpression("
+                                        function (event) {
+                                        const eventId=event.point.text;
+                                        
+                                         $.ajax({"
+                                . "          url: \"$viewDetailUrl\","
+                                . "         type: 'GET',"
+                                . "     datatype: 'json',"
+                                . "         data: { 
+                                                             id: eventId},"
+                                . "                                }).done(function (data) {"
+                                . "                                            renderEventDetailModal(data);"
+                                . "                                           console.log('ok');}"
+                                . "                                 ).fail(function (jqXHR, textStatus) {"
+                                . "                                           alert('ERROR : ' + jqXHR);});
+                                        }")
+                    ]
                 ];
                 $eventCreateUrl = Url::to(['event/create',
                             EventController::PARAM_CONCERNED_ITEMS_URIS => [$objectURI],
@@ -409,7 +429,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                  if(this.points){
                                      return tooltip.defaultFormatter.call(this, tooltip);
                                  } else if(this.series.name=='Events'){
-                                     return tooltip.defaultFormatter.call(this, tooltip);
+                                     const content = '<br><span style=\"color:' + this.point.color + '\">' + this.point.title + '</span>';
+                                     return content;
                                  } else {
                                      return '';
                                  } 
@@ -469,7 +490,33 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
+        <div class="modal" id="show-event-lightbox">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Event Detail</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div  class="table-responsive">
+                            <div class=container-fluid>
 
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+    <div>
+        <button type="button" id="all-events-view" class="btn btn-warning">
+            <span  class="glyphicon glyphicon-eye-open "></span>
+            See All Events
+        </button>
     </div>
 
 </div>
@@ -533,6 +580,17 @@ if (isset($data)) {
             });
         });
     }
+
+
+    function renderEventDetailModal(data) {
+
+        var fragment = $(data);
+        $('#show-event-lightbox .modal-body .table-responsive .container-fluid').html(fragment);
+        $('#show-event-lightbox').modal();
+        $('#show-event-lightbox').modal('show');
+    }
+
+
     var checked = $('#showWidget').is(':checked');
 
     if (checked) {

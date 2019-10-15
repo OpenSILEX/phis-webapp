@@ -1106,7 +1106,8 @@ class ScientificObjectController extends Controller {
                 foreach ($searchResult->getModels() as $model) {
                     $events[] = [
                         'date' => (strtotime($model->date)) * 1000,
-                        'title' => explode('#', $model->rdfType)[1]
+                        'title' => explode('#', $model->rdfType)[1],
+                        'id'=> $model->uri
                     ];
                 }
             }
