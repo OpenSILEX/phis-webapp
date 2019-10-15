@@ -255,7 +255,6 @@ $this->params['breadcrumbs'][] = $this->title;
             } else {
 
                 $url2 = Url::to(['image/search-from-scientific-object']);
-                $viewDetailUrl = Url::to(['event/ajax-view']);
                 $objectURI = $model->uri;
 
                 $series = [];
@@ -276,7 +275,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                             $photoSerie[] = [
                                 'x' => $photoKey,
-                                'title' => 'P',
+                                'title' => ' ',
                             ];
                         }
                         $series[] = [
@@ -284,10 +283,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             'name' => 'images',
                             'data' => $photoSerie,
                             'onSeries' => $dataFromProvenanceKey,
-                            'width' => 4,
+                            'width' => 8,
+                            'height'=>8,
                             'shape' => 'circlepin',
                             'lineWidth' => 1,
-                            //  'y' => -15,
                             'point' => [
                                 'events' => [
                                     'stickyTracking' => false,
@@ -352,23 +351,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'lineWidth' => 1,
                     'y' => -40,
                     'data' => $Eventsdata,
-                    'events' => [
-                        'click' => new JsExpression("
-                                        function (event) {
-                                        const eventId=event.point.text;
-                                         $.ajax({"
-                                . "          url: \"$viewDetailUrl\","
-                                . "         type: 'GET',"
-                                . "     datatype: 'json',"
-                                . "         data: { 
-                                                             id: eventId},"
-                                . "                                }).done(function (data) {"
-                                . "                                            renderEventDetailModal(data);"
-                                . "                                           console.log('ok');}"
-                                . "                                 ).fail(function (jqXHR, textStatus) {"
-                                . "                                           alert('ERROR : ' + jqXHR);});
-                                        }")
-                    ]
+                 
                 ];
                 $eventCreateUrl = Url::to(['event/create',
                             EventController::PARAM_CONCERNED_ITEMS_URIS => [$objectURI],
@@ -418,6 +401,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         'series' => $series,
                         'tooltip' => [
                             'xDateFormat' => '%Y-%m-%d %H:%M',
+                            'formatter' => new JsExpression("function(tooltip) {
+                                 console.log(this);
+                                 if(this.points){
+                                     return tooltip.defaultFormatter.call(this, tooltip);;
+                                 } else {
+                                    return '';
+                                 }
+                               
+                                           
+                                            }")
                         ],
                         'plotOptions' => [
                             'series' => [
@@ -473,20 +466,10 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
-        <div class="modal" id="show-event-lightbox">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header text-center">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        ho
-                    </div>
-                </div>
-            </div>
-        </div>
-
+            
     </div>
+
+</div>
 
 
 </div>
@@ -546,20 +529,6 @@ if (isset($data)) {
                 chart.tooltip.hide();
             });
         });
-    }
-
-    function renderEventDetailModal(data) {
-
-        var fragment = $(data);
-        $('#show-event-lightbox .modal-body').html(fragment);
-        $('#show-event-lightbox').modal('show');
-    }
-    var checked = $('#showWidget').is(':checked');
-    if (checked) {
-        $('#photoFilter').show();
-    } else {
-        // reset values
-        $('#photoFilter').hide();
     }
 
     /**
