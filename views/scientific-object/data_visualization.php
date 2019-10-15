@@ -344,6 +344,10 @@ $this->params['breadcrumbs'][] = $this->title;
                         'text' => $event['title']
                     ];
                 }
+
+                usort($Eventsdata, function ($item1, $item2) {
+                    return $item1['x'] <=> $item2['x'];
+                });
                 $eventsTab[] = [
                     'type' => 'flags',
                     'allowOverlapX' => true,
