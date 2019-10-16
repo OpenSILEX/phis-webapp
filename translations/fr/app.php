@@ -46,6 +46,7 @@ return [
 
     // A
     'Acquisition session template' => 'Gabarit de session d\'aquisition',
+    'Add an event'=>'Ajouter un événement',
     'Add Dataset' => 'Importer un jeu de données',
     'Add Document' => 'Ajouter un document',
     'Add Document Script' => 'Ajouter un script',

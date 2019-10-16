@@ -208,7 +208,14 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <?php if (isset($data) && isset($isPhotos) && $isPhotos && !empty($data)) { ?>
             <div id="visualization-images" style='height:146px;'  >
-
+                <div id='scientific-object-data-visualization-alert-div' >
+                    <br>
+                    <div class='alert alert-info' role='alert-info'>
+                        <p>
+                            <?php echo Yii::t('app/messages', 'Click on the circle up to the serie to see images.'); ?>
+                        </p>
+                    </div>
+                </div>
                 <div id="imagesCount" style="display: none;" data-id=0 ></div>
                 <ul id="visualization-images-list" class="images" >
                 </ul>
@@ -330,14 +337,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         ];
                     }
                 }
+
                 foreach ($events as $event) {
                     $Eventsdata[] = [
                         'x' => $event['date'],
                         'title' => $event['title'],
-                        'text' => $event['id']
+                        'text' => $event['id'],
+                        'color'=>$colorByEventCategorie[$event['title']]
                     ];
                 }
-
                 usort($Eventsdata, function ($item1, $item2) {
                     return $item1['x'] <=> $item2['x'];
                 });
@@ -370,11 +378,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                         }")
                     ]
                 ];
+                $series[] = $eventsTab[0];
+
                 $eventCreateUrl = Url::to(['event/create',
                             EventController::PARAM_CONCERNED_ITEMS_URIS => [$objectURI],
                             EventController::PARAM_RETURN_URL => Url::current()]);
-
-                $series[] = $eventsTab[0];
 
                 $options = [
                     'id' => 'graphic',
@@ -467,7 +475,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="modal-content">
                     <div class="modal-header text-center">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Add an event</h4>
+                        <h4 class="modal-title"><?= Yii::t('app', 'Add an event') ?></h4>
                     </div>
                     <div class="modal-body">
 
@@ -488,7 +496,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="modal-content">
                     <div class="modal-header text-center">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Event Detail</h4>
+                        <h4 class="modal-title"><?= Yii::t('app', 'Description') ?></h4>
                     </div>
                     <div class="modal-body">
                         <div  class="table-responsive">
@@ -503,16 +511,6 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
     </div>
-    <?php if (isset($events) && isset($data)) {
-        if (!empty($events) && !empty($data)) { ?>
-            <div>
-                <button type="button" id="all-events-view" class="btn btn-warning">
-                    <span  class="glyphicon glyphicon-eye-open "></span>
-                    See All Events
-                </button>
-            </div>
-        <?php }
-    } ?>
 </div>
 
 
@@ -521,8 +519,9 @@ $this->params['breadcrumbs'][] = $this->title;
     $(document).ready(function () {
         $("#filterSelect").on("change", function (e) {
             var id = $("#filterSelect").select2("data")[0].id;
-            console.log(id);
         });
+
+
 
 <?php
 if (isset($data)) {
@@ -542,6 +541,7 @@ if (isset($data)) {
 
     });
     $(window).on('load', function () { // to put the script at the end of the page to 
+
     });
 
     /**
@@ -589,7 +589,6 @@ if (isset($data)) {
         $('#show-event-lightbox').modal();
         $('#show-event-lightbox').modal('show');
     }
-
 
     var checked = $('#showWidget').is(':checked');
 

@@ -1114,14 +1114,22 @@ class ScientificObjectController extends Controller {
                     ];
                 }
             }
-
+            $eventsByTitle = $this->group_by('title', $events);
+            $eventCategories= array_keys($eventsByTitle);
+            $colorArray = ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f",
+                "#f45b5b", "#91e8e1","#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"];
+            $i=0;
+            foreach ($eventCategories as $categorie){
+                $colorByEventCategorie[$categorie] = $colorArray[$i];
+                $i++;
+            }
             //info of the variable
 
             if (!empty($experimentUri)) {
                 $variableModel = new \app\models\yiiModels\YiiVariableModel();
             }
             $variableModel->findByURI($token, $_GET['variable']);
-           
+
             $variableInfo = [
                 'label' => $variableModel->label,
                 'comment' => $variableModel->comment
@@ -1147,6 +1155,7 @@ class ScientificObjectController extends Controller {
                         'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
                         'filterToSend' => $filterToSend,
                         'events' => $events,
+                        'colorByEventCategorie' => $colorByEventCategorie,
                         'variableInfo' => $variableInfo
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
@@ -1207,6 +1216,26 @@ class ScientificObjectController extends Controller {
 
 
         return $imagesByDate;
+    }
+
+    /**
+     * Function that groups an array of associative arrays by some key.
+     * 
+     * @param {String} $key Property to sort by.
+     * @param {Array} $data Array that stores multiple associative arrays.
+     */
+    function group_by($key, $array) {
+        $result = array();
+
+        foreach ($array as $val) {
+            if (array_key_exists($key, $val)) {
+                $result[$val[$key]][] = $val;
+            } else {
+                $result[""][] = $val;
+            }
+        }
+
+        return $result;
     }
 
     /**

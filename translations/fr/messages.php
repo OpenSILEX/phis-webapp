@@ -37,6 +37,7 @@ return [
 
     // C
     'Click on a serie to add an event!' =>'Cliquer sur une série pour ajouter un évenement!',
+    'Click on the circle up to the serie to see images.' =>'Cliquer sur le cercle au dessus de la serie pour voir l\'image.',
     'CSV file headers does not match selected variables' => 'Les en-têtes du fichier CSV ne correspondent pas aux variables sélectionnées',
     'CSV separator must be' => 'Le séparateur de champs CSV doit être',
 
@@ -139,7 +140,6 @@ return [
     'You <b>cannot modify already existing</b> traits, methods and units.' => 'Vous ne pouvez pas modifier de traits, méthodes et unités déjà existantes.','Your session has expired' => 'Votre session a expirée',
     'You are on PHIS, the Hybrid Information System about Phenotyping!' => 'Bienvenue dans PHIS, le Système d\'Information Hybride pour le Phénotypage !',
     'You are on OpenSILEX, the Hybrid Information System about Life Science!' => 'Bienvenue dans OpenSILEX, le Système d\'Information Hybride pour les Sciences de la Vie !',
-    'You have to click a graphic point to see images on that date.' => 'Vous devez clicker sur un point du graphique pour voir les images à cette date.',
     'You wish to get notified when new developments are available ? You can follow us on' => 'Vous souhaitez vous tenir informé des derniers développements disponibles ? Vous pouvez nous suivre sur',
     'You wish to report a bug or to get help ? OpenSILEX development team can be contacted through the email address' => 'Vous souhaitez nous signaler une erreur ou bien nous demander de l\'aide ? L\'équipe de développement d\'OpenSILEX peut être contactée via l\'adresse'
 ];
