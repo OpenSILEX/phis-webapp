@@ -206,16 +206,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
         </div>
-        <?php if (isset($data) && isset($show) && $show == true && !empty($data)) { ?>
+        <?php if (isset($data) && isset($isPhotos) && $isPhotos && !empty($data)) { ?>
             <div id="visualization-images" style='height:146px;'  >
-                <div id='scientific-object-data-visualization-alert-div' >
-                    <br>
-                    <div class='alert alert-info' role='alert-info'>
-                        <p>
-                            <?php echo Yii::t('app/messages', 'You have to click a graphic point to see images on that date.'); ?>
-                        </p>
-                    </div>
-                </div>
+
                 <div id="imagesCount" style="display: none;" data-id=0 ></div>
                 <ul id="visualization-images-list" class="images" >
                 </ul>
@@ -392,10 +385,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             'type' => 'line',
                         ],
                         'title' => [
-                            'text' => $this->title
+                            'text' => $variableInfo['label']
                         ],
                         'subtitle' => [
-                            'text' => Yii::t('app/messages', 'Click and drag in the plot area to zoom in!')
+                            'text' => Yii::t('app/messages', 'Click on a serie to add an event!')
                         ],
                         'navigator' => [
                             'enabled' => true,
@@ -416,7 +409,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'yAxis' => [
                             'title' => [
-                                'text' => $this->title
+                                'text' => $variableInfo['label']
                             ],
                             'labels' => [
                                 'format' => '{value:.2f}'
@@ -509,16 +502,17 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
-
-
     </div>
-    <div>
-        <button type="button" id="all-events-view" class="btn btn-warning">
-            <span  class="glyphicon glyphicon-eye-open "></span>
-            See All Events
-        </button>
-    </div>
-
+    <?php if (isset($events) && isset($data)) {
+        if (!empty($events) && !empty($data)) { ?>
+            <div>
+                <button type="button" id="all-events-view" class="btn btn-warning">
+                    <span  class="glyphicon glyphicon-eye-open "></span>
+                    See All Events
+                </button>
+            </div>
+        <?php }
+    } ?>
 </div>
 
 
@@ -538,10 +532,12 @@ if (isset($data)) {
         $('#data-visualization-form').on('hidden.bs.collapse', function () {
             $('#graphic').show();
             $('#visualization-images').show();
+            $('#all-events-view').show();
         });
         $('#data-visualization-form').on('show.bs.collapse', function () {
             $('#graphic').hide();
             $('#visualization-images').hide();
+            $('#all-events-view').hide();
         });
 
     });
@@ -549,7 +545,7 @@ if (isset($data)) {
     });
 
     /**
-     * This function is call on the response of the ajax call when a user click on a point on the graphic to get images
+     * This function is call on the response of the ajax call when a user click on a flag associated to a serie to get images
      *  to be used with a carousel bootstrap widget and a vertical list up to the graphic.
      * @param String :Html content of views/image_simple_images_visualization.php 
      **/
@@ -581,7 +577,11 @@ if (isset($data)) {
         });
     }
 
-
+    /**
+     * This function is call on the response of the ajax call when a user click on a point on the graphic to get images
+     *  to be used with a carousel bootstrap widget and a vertical list up to the graphic.
+     * @param String :Html content of event/view.php 
+     **/
     function renderEventDetailModal(data) {
 
         var fragment = $(data);

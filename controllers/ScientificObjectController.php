@@ -958,8 +958,7 @@ class ScientificObjectController extends Controller {
 
 
         //Search data for the scientific object and the given variable.
-        if (isset($_GET['variable'])) {
-
+        if (isset($_GET['variable']) && !empty($_GET['variable'])) {
             $toReturn = [];
             /* Build array for highChart with data and photos by provenances
              * e.g : 
@@ -1012,7 +1011,7 @@ class ScientificObjectController extends Controller {
             $searchModel->startDate = $_GET['dateStart'];
             $searchModel->endDate = $_GET['dateEnd'];
             $searchModel->provenance = $_GET['provenances'];
-            $searchModel->dateSortAsc='true'; //FIX HIGHCHARTS WHEN FLAGS IS ATTACHED TO A SERIE
+            $searchModel->dateSortAsc = 'true'; //FIX HIGHCHARTS WHEN FLAGS IS ATTACHED TO A SERIE
             $searchResult = $searchModel->search($token, null);
             foreach ($searchResult->getModels() as $model) {
                 if (!empty($model->value)) {
@@ -1023,7 +1022,7 @@ class ScientificObjectController extends Controller {
                     $data[] = $dataToSave;
                 }
             }
-            
+
             $dataByProvenance = array();
             /* Step 2: Transformed Raw data 
              * e.g : 
@@ -1038,7 +1037,7 @@ class ScientificObjectController extends Controller {
                 $dataByProvenanceToSave[] = $dataEl['value'];
                 $dataByProvenance[$dataEl['provenanceUri']][] = $dataByProvenanceToSave;
             }
-            
+
 
             /* Step 3: Add photos serie to each provenance or null
              * e.g :
@@ -1058,6 +1057,7 @@ class ScientificObjectController extends Controller {
              *                      "photosSerie": null
              * }
              */
+            $isPhotos = false;
             if (isset($_GET['show']) && isset($_GET['imageType'])) {
 
                 if (isset($_GET['filter']) && $_GET['filter'] !== "") {
@@ -1071,6 +1071,9 @@ class ScientificObjectController extends Controller {
                     //attach to the provenance
                     $photosArray = null;
                     $photosArray = $this->searchImagesByProvenance($dataFromProvenanceKey, $scientificObject->uri, $_GET['imageType'], $filterToSend ? $filterToSend : null, $_GET['dateStart'], $_GET['dateEnd']);
+                    if (isset($photosArray) && !$isPhotos) {
+                        $isPhotos = true;
+                    }
                     $toReturn[$dataFromProvenanceKey] = [
                         'data' => $dataFromProvenanceValue,
                         'photosSerie' => $photosArray,
@@ -1107,10 +1110,23 @@ class ScientificObjectController extends Controller {
                     $events[] = [
                         'date' => (strtotime($model->date)) * 1000,
                         'title' => explode('#', $model->rdfType)[1],
-                        'id'=> $model->uri
+                        'id' => $model->uri
                     ];
                 }
             }
+
+            //info of the variable
+
+            if (!empty($experimentUri)) {
+                $variableModel = new \app\models\yiiModels\YiiVariableModel();
+            }
+            $variableModel->findByURI($token, $_GET['variable']);
+           
+            $variableInfo = [
+                'label' => $variableModel->label,
+                'comment' => $variableModel->comment
+            ];
+
             //on FORM submitted:
             //check if image visualization is activated
             $show = isset($_GET['show']) ? $_GET['show'] : null;
@@ -1122,6 +1138,7 @@ class ScientificObjectController extends Controller {
                         'variables' => $variables,
                         'data' => $toReturn,
                         'show' => $show,
+                        'isPhotos' => $isPhotos,
                         'dateStart' => $_GET['dateStart'],
                         'dateEnd' => $_GET['dateEnd'],
                         'selectedVariable' => $selectedVariable,
@@ -1130,6 +1147,7 @@ class ScientificObjectController extends Controller {
                         'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
                         'filterToSend' => $filterToSend,
                         'events' => $events,
+                        'variableInfo' => $variableInfo
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [
@@ -1173,7 +1191,7 @@ class ScientificObjectController extends Controller {
                 'position' => $image->metadata->position
             ];
         }
-       /* Transformed Raw data 
+        /* Transformed Raw data 
          * e.g : 
          * {
          *   "Date1":[["url1","1"],["url2","2"],..]

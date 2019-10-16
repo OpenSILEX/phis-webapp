@@ -36,7 +36,7 @@ return [
     'Be carefull to write all the new and the former properties of the updated object.' => 'Attention, veillez à écrire toutes les nouvelles et les anciennes propriétés de l\'objet mis à jour.',
 
     // C
-    'Click and drag in the plot area to zoom in!' =>'Cliquer et faire glisser pour zoomer sur le graphique!',
+    'Click on a serie to add an event!' =>'Cliquer sur une série pour ajouter un évenement!',
     'CSV file headers does not match selected variables' => 'Les en-têtes du fichier CSV ne correspondent pas aux variables sélectionnées',
     'CSV separator must be' => 'Le séparateur de champs CSV doit être',
 
