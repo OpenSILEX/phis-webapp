@@ -206,13 +206,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
         </div>
-        <?php if (isset($data) && isset($show) && $show == true && !empty($data)) { ?>
+        <?php if (isset($data) && isset($isPhotos) && $isPhotos && !empty($data)) { ?>
             <div id="visualization-images" style='height:146px;'  >
                 <div id='scientific-object-data-visualization-alert-div' >
                     <br>
                     <div class='alert alert-info' role='alert-info'>
                         <p>
-                            <?php echo Yii::t('app/messages', 'You have to click a graphic point to see images on that date.'); ?>
+                            <?php echo Yii::t('app/messages', 'Click on the circle up to the serie to see images.'); ?>
                         </p>
                     </div>
                 </div>
@@ -337,31 +337,52 @@ $this->params['breadcrumbs'][] = $this->title;
                         ];
                     }
                 }
+
                 foreach ($events as $event) {
                     $Eventsdata[] = [
                         'x' => $event['date'],
                         'title' => $event['title'],
-                        'text' => $event['title']
+                        'text' => $event['id'],
+                        'color'=>$colorByEventCategorie[$event['title']]
                     ];
                 }
-
                 usort($Eventsdata, function ($item1, $item2) {
                     return $item1['x'] <=> $item2['x'];
                 });
+
+                $viewDetailUrl = Url::to(['event/ajax-view']);
                 $eventsTab[] = [
                     'type' => 'flags',
                     'allowOverlapX' => true,
                     'name' => 'Events',
                     'lineWidth' => 1,
                     'y' => -40,
-                    'clip'=> false,
+                    'clip' => false,
                     'data' => $Eventsdata,
+                    'events' => [
+                        'click' => new JsExpression("
+                                        function (event) {
+                                        const eventId=event.point.text;
+                                        
+                                         $.ajax({"
+                                . "          url: \"$viewDetailUrl\","
+                                . "         type: 'GET',"
+                                . "     datatype: 'json',"
+                                . "         data: { 
+                                                             id: eventId},"
+                                . "                                }).done(function (data) {"
+                                . "                                            renderEventDetailModal(data);"
+                                . "                                           console.log('ok');}"
+                                . "                                 ).fail(function (jqXHR, textStatus) {"
+                                . "                                           alert('ERROR : ' + jqXHR);});
+                                        }")
+                    ]
                 ];
+                $series[] = $eventsTab[0];
+
                 $eventCreateUrl = Url::to(['event/create',
                             EventController::PARAM_CONCERNED_ITEMS_URIS => [$objectURI],
                             EventController::PARAM_RETURN_URL => Url::current()]);
-
-                $series[] = $eventsTab[0];
 
                 $options = [
                     'id' => 'graphic',
@@ -372,10 +393,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             'type' => 'line',
                         ],
                         'title' => [
-                            'text' => $this->title
+                            'text' => $variableInfo['label']
                         ],
                         'subtitle' => [
-                            'text' => Yii::t('app/messages', 'Click and drag in the plot area to zoom in!')
+                            'text' => Yii::t('app/messages', 'Click on a serie to add an event!')
                         ],
                         'navigator' => [
                             'enabled' => true,
@@ -396,7 +417,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'yAxis' => [
                             'title' => [
-                                'text' => $this->title
+                                'text' => $variableInfo['label']
                             ],
                             'labels' => [
                                 'format' => '{value:.2f}'
@@ -409,7 +430,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                  if(this.points){
                                      return tooltip.defaultFormatter.call(this, tooltip);
                                  } else if(this.series.name=='Events'){
-                                     return tooltip.defaultFormatter.call(this, tooltip);
+                                     const content = '<br><span style=\"color:' + this.point.color + '\">' + this.point.title + '</span>';
+                                     return content;
                                  } else {
                                      return '';
                                  } 
@@ -453,7 +475,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="modal-content">
                     <div class="modal-header text-center">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Add an event</h4>
+                        <h4 class="modal-title"><?= Yii::t('app', 'Add an event') ?></h4>
                     </div>
                     <div class="modal-body">
 
@@ -469,9 +491,26 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
+        <div class="modal" id="show-event-lightbox">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header text-center">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"><?= Yii::t('app', 'Description') ?></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div  class="table-responsive">
+                            <div class=container-fluid>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
-
 </div>
 
 
@@ -480,8 +519,9 @@ $this->params['breadcrumbs'][] = $this->title;
     $(document).ready(function () {
         $("#filterSelect").on("change", function (e) {
             var id = $("#filterSelect").select2("data")[0].id;
-            console.log(id);
         });
+
+
 
 <?php
 if (isset($data)) {
@@ -491,18 +531,21 @@ if (isset($data)) {
         $('#data-visualization-form').on('hidden.bs.collapse', function () {
             $('#graphic').show();
             $('#visualization-images').show();
+            $('#all-events-view').show();
         });
         $('#data-visualization-form').on('show.bs.collapse', function () {
             $('#graphic').hide();
             $('#visualization-images').hide();
+            $('#all-events-view').hide();
         });
 
     });
     $(window).on('load', function () { // to put the script at the end of the page to 
+
     });
 
     /**
-     * This function is call on the response of the ajax call when a user click on a point on the graphic to get images
+     * This function is call on the response of the ajax call when a user click on a flag associated to a serie to get images
      *  to be used with a carousel bootstrap widget and a vertical list up to the graphic.
      * @param String :Html content of views/image_simple_images_visualization.php 
      **/
@@ -533,6 +576,20 @@ if (isset($data)) {
             });
         });
     }
+
+    /**
+     * This function is call on the response of the ajax call when a user click on a point on the graphic to get images
+     *  to be used with a carousel bootstrap widget and a vertical list up to the graphic.
+     * @param String :Html content of event/view.php 
+     **/
+    function renderEventDetailModal(data) {
+
+        var fragment = $(data);
+        $('#show-event-lightbox .modal-body .table-responsive .container-fluid').html(fragment);
+        $('#show-event-lightbox').modal();
+        $('#show-event-lightbox').modal('show');
+    }
+
     var checked = $('#showWidget').is(':checked');
 
     if (checked) {

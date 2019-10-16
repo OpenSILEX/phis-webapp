@@ -130,7 +130,7 @@ class YiiVariableModel extends YiiInstanceDefinitionModel {
             $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
         }
         $requestRes = $this->wsModel->getVariableByURI($sessionToken, $uri, $params);
-
+ 
         if (!is_string($requestRes)) {
             if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
                 return $requestRes;
