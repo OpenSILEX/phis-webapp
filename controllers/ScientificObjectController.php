@@ -1069,14 +1069,14 @@ class ScientificObjectController extends Controller {
                     $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
                 }
 
+                $photosArray = null;
+                $photosArray = $this->searchImagesByObject($scientificObject->uri, $_GET['imageType'], $filterToSend ? $filterToSend : null, $_GET['dateStart'], $_GET['dateEnd']);
+                if (isset($photosArray) && !$isPhotos) {
+                    $isPhotos = true;
+                }
+                
                 foreach ($dataByProvenance as $dataFromProvenanceKey => $dataFromProvenanceValue) {
-                    //functions to search photo for each provenances with good parameters: return the good array / we will buid the images serie
-                    //attach to the provenance
-                    $photosArray = null;
-                    $photosArray = $this->searchImagesByProvenance($dataFromProvenanceKey, $scientificObject->uri, $_GET['imageType'], $filterToSend ? $filterToSend : null, $_GET['dateStart'], $_GET['dateEnd']);
-                    if (isset($photosArray) && !$isPhotos) {
-                        $isPhotos = true;
-                    }
+
                     $toReturn[$dataFromProvenanceKey] = [
                         'data' => $dataFromProvenanceValue,
                         'photosSerie' => $photosArray,
@@ -1118,16 +1118,15 @@ class ScientificObjectController extends Controller {
                 }
             }
             $eventsByTitle = $this->group_by('title', $events);
-            $eventCategories= array_keys($eventsByTitle);
-            $colorArray = ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f",
-                "#f45b5b", "#91e8e1","#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"];
-            $i=0;
-            foreach ($eventCategories as $categorie){
-                $colorByEventCategorie[$categorie] = $colorArray[$i];
+            $eventCategories = array_keys($eventsByTitle);
+            $highchartsColorArray = Yii::$app->params['highchartsColor'];
+            $i = 0;
+            foreach ($eventCategories as $categorie) {
+                $colorByEventCategorie[$categorie] = $highchartsColorArray[$i];
                 $i++;
             }
+            
             //info of the variable
-
             if (!empty($experimentUri)) {
                 $variableModel = new \app\models\yiiModels\YiiVariableModel();
             }
@@ -1170,7 +1169,7 @@ class ScientificObjectController extends Controller {
     }
 
     /**
-     * Create an associative array of imagesUri[]/date from an scientific object for a specified provenanceUri
+     * Create an associative array of imagesUri[]/date from an scientific object for a specified object
      * [
       {
       "date":"1500768000000",
@@ -1179,14 +1178,13 @@ class ScientificObjectController extends Controller {
       "date":"1404896300000",
       "photos": [[url,filtre],[],[],....] },..,
      * ]
-     * @param type $provenanceUri 
      * @param type $objectUri 
      * @param type $rdfType 
      * @param type $filter 
      * @param type $date 
      * @return associative array
      */
-    private function searchImagesByProvenance($provenanceUri, $objectUri, $rdfType, $filter, $startDate, $endDate) {
+    private function searchImagesByObject($objectUri, $rdfType, $filter, $startDate, $endDate) {
 
         $searchImagesModel = new DataFileSearch($pageSize = 8000);
         $searchImagesModel->rdfType = $rdfType;
@@ -1194,7 +1192,6 @@ class ScientificObjectController extends Controller {
         $searchImagesModel->endDate = $endDate;
         $searchImagesModel->concernedItems = [$objectUri];
         $searchImagesModel->jsonValueFilter = $filter;
-        $searchImagesModel->provenance = $provenanceUri;
         $searchResult = $searchImagesModel->search(Yii::$app->session['access_token'], null);
         foreach ($searchResult->getModels() as $image) {
             $images[] = [

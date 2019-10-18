@@ -265,22 +265,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         'id' => $dataFromProvenanceKey,
                         'visible' => true,
                     ];
-
+                    $photoSerie=null;
                     if (!empty($dataFromProvenanceValue["photosSerie"])) {
 
                         foreach ($dataFromProvenanceValue["photosSerie"] as $photoKey => $photoValue) {
-                            $info = "";
-                            foreach ($photoValue as $photoValueEl) {
-                                $info = $info . "<br>" . $photoValueEl[0] . "<br>" . $photoValueEl[1];
-                            }
                             $photoSerie[] = [
                                 'x' => $photoKey,
                                 'title' => ' ',
                             ];
                         }
+                        $imageSerieName='images/'.$provenancesArray[$dataFromProvenanceKey];
                         $series[] = [
                             'type' => 'flags',
-                            'name' => 'images',
+                            'name' => $imageSerieName,
                             'data' => $photoSerie,
                             'onSeries' => $dataFromProvenanceKey,
                             'width' => 8,
