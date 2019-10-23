@@ -16,6 +16,9 @@ use yii\helpers\Url;
 use app\controllers\EventController;
 use app\components\widgets\AnnotationButtonWidget;
 use app\components\widgets\event\EventButtonWidget;
+use app\models\yiiModels\YiiAnnotationModel;
+use app\components\widgets\AnnotationGridViewWidget;
+use app\components\widgets\event\EventGridViewWidget;
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]), 'url' => ['index']];
@@ -30,7 +33,9 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="scientific-object-data-visualization">
-    <a role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px;"><i class ="glyphicon glyphicon-search"></i> <?= Yii::t('app', 'Search Criteria') ?></a>
+    <a role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px;">
+        <i class="fa fa-line-chart"></i> <?= Yii::t('app', 'Visualization') ?>
+    </a>
     <div class="collapse in" id="data-visualization-form" >
         <?php
         $form = ActiveForm::begin([
@@ -45,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="form-row">
                 <fieldset style="border: 1px solid #5A9016; padding: 10px;" >
                     <legend style="width: auto; border: 0; padding: 10px; margin: 0; font-size: 16px; text-align: center; font-style: italic" >
-                        <?= Yii::t('app', 'Data Search') ?>
+                        <?= Yii::t('app', 'Data search') ?>
                     </legend>
                     <div class="form-row">
 
@@ -206,6 +211,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
         </div>
+
         <?php if (isset($data) && isset($isPhotos) && $isPhotos && !empty($data)) { ?>
             <div id="visualization-images" style='height:146px;'  >
                 <div id='scientific-object-data-visualization-alert-div' >
@@ -265,7 +271,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'id' => $dataFromProvenanceKey,
                         'visible' => true,
                     ];
-                    $photoSerie=null;
+                    $photoSerie = null;
                     if (!empty($dataFromProvenanceValue["photosSerie"])) {
 
                         foreach ($dataFromProvenanceValue["photosSerie"] as $photoKey => $photoValue) {
@@ -274,7 +280,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'title' => ' ',
                             ];
                         }
-                        $imageSerieName='images/'.$provenancesArray[$dataFromProvenanceKey];
+                        $imageSerieName = 'images/' . $provenancesArray[$dataFromProvenanceKey];
                         $series[] = [
                             'type' => 'flags',
                             'name' => $imageSerieName,
@@ -340,7 +346,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'x' => $event['date'],
                         'title' => $event['title'],
                         'text' => $event['id'],
-                        'color'=>$colorByEventCategorie[$event['title']]
+                        'color' => $colorByEventCategorie[$event['title']]
                     ];
                 }
                 usort($Eventsdata, function ($item1, $item2) {
@@ -380,6 +386,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 $eventCreateUrl = Url::to(['event/create',
                             EventController::PARAM_CONCERNED_ITEMS_URIS => [$objectURI],
                             EventController::PARAM_RETURN_URL => Url::current()]);
+
+                $annotationCreateUrl = Url::to(['annotation/create',
+                            YiiAnnotationModel::TARGETS => [$objectURI],
+                            YiiAnnotationModel::RETURN_URL => Url::current()]);
+
 
                 $options = [
                     'id' => 'graphic',
@@ -454,7 +465,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                  if(this.name!=='Events'){
                                                        var dateParams = '&dateWithoutTimezone='+Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000',real);
                                                        $('#createEventLink').attr('href',\"$eventCreateUrl\"+dateParams);
-                                                       $('#add-events-lightbox').modal('show') ;
+                                                       $('#createAnnotationLink').attr('href',\"$annotationCreateUrl\");
+                                                       $('#add-event-annotation-lightbox').modal('show') ;
                                                  } 
                                                  }")
                                 ]
@@ -464,23 +476,40 @@ $this->params['breadcrumbs'][] = $this->title;
                 ];
 
                 echo Highstock::widget($options);
+
+
+                echo AnnotationGridViewWidget::widget(
+                        [
+                            AnnotationGridViewWidget::ANNOTATIONS => $annotationsProvider
+                ]);
+
             }
         }
         ?>
-        <div class="modal" id="add-events-lightbox">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header text-center">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title"><?= Yii::t('app', 'Add an event') ?></h4>
-                    </div>
-                    <div class="modal-body">
+        <div class="modal" id="add-event-annotation-lightbox" tabindex="-1" role="dialog" aria-labelledby="modalLabelLarge" aria-hidden="true">
+            <div class="vertical-alignment-helper">
+                <div class="modal-dialog modal-lg vertical-align-center">
 
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                <a class="btn btn-default" id="createEventLink">
-                                    <span class="fa fa-flag fa-4x"></span>
-                                </a>
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-md-6 text-center">
+                                    <a class="btn btn-default" id="createEventLink">
+                                        <span class="fa fa-flag fa-4x"></span><br>
+                                        <?= Yii::t('app', 'Add an event') ?>
+                                    </a>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <a class="btn btn-default" id="createAnnotationLink">
+                                        <span class="fa fa-comment fa-4x"></span><br>
+                                        <?= Yii::t('app', 'Add an annotation on the object ') ?>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -488,19 +517,21 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
-        <div class="modal" id="show-event-lightbox">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header text-center">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title"><?= Yii::t('app', 'Description') ?></h4>
-                    </div>
-                    <div class="modal-body">
-                        <div  class="table-responsive">
-                            <div class=container-fluid>
+        <div class="modal" id="show-event-lightbox" tabindex="-1" role="dialog" aria-labelledby="modalLabelLarge" aria-hidden="true">
+            <div class="vertical-alignment-helper">
+                <div class="modal-dialog modal-lg vertical-align-center">
+                    <div class="modal-content">
+                        <div class="modal-header text-center">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title"><?= Yii::t('app', 'Description') ?></h4>
+                        </div>
+                        <div class="modal-body">
+                            <div  class="table-responsive">
+                                <div class=container-fluid>
+
+                                </div>
 
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -508,6 +539,9 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
     </div>
+
+
+
 </div>
 
 

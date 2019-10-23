@@ -43,10 +43,16 @@ class AnnotationSearch extends YiiAnnotationModel {
      */
     public function search($sessionToken, $params) {
         //1. load the searched params 
+        
         $this->load($params);
         if (isset($params[YiiModelsConstants::PAGE])) {
             $this->page = $params[YiiModelsConstants::PAGE];
         }
+        
+        if (isset($params[YiiModelsConstants::PAGE_SIZE])) {
+            $this->pageSize = $params[YiiModelsConstants::PAGE_SIZE];
+        }
+        
         
         //2. Check validity of search data
         if (!$this->validate()) {
@@ -63,6 +69,7 @@ class AnnotationSearch extends YiiAnnotationModel {
             return \app\models\wsModels\WSConstants::TOKEN_INVALID;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
+          
             return new \yii\data\ArrayDataProvider([
                 'models' => $resultSet,
                 'pagination' => [
@@ -83,6 +90,8 @@ class AnnotationSearch extends YiiAnnotationModel {
      * @return array
      */
     public function attributesToArray() {
+        
+        $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiAnnotationModel::CREATOR] = $this->creator;
         $elementForWebService[YiiAnnotationModel::MOTIVATED_BY] = $this->motivatedBy;
         $elementForWebService[YiiAnnotationModel::CREATION_DATE] = $this->creationDate;

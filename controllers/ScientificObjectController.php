@@ -23,6 +23,7 @@ use app\models\yiiModels\ScientificObjectSearch;
 use app\models\yiiModels\YiiExperimentModel;
 use app\models\yiiModels\DataFileSearch;
 use app\models\yiiModels\EventSearch;
+use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
 use app\components\helpers\SiteMessages;
 
@@ -1071,7 +1072,7 @@ class ScientificObjectController extends Controller {
                 if (isset($photosArray) && !$isPhotos) {
                     $isPhotos = true;
                 }
-                
+
                 foreach ($dataByProvenance as $dataFromProvenanceKey => $dataFromProvenanceValue) {
 
                     $toReturn[$dataFromProvenanceKey] = [
@@ -1122,7 +1123,7 @@ class ScientificObjectController extends Controller {
                 $colorByEventCategorie[$categorie] = $highchartsColorArray[$i];
                 $i++;
             }
-            
+
             //info of the variable
             if (!empty($experimentUri)) {
                 $variableModel = new \app\models\yiiModels\YiiVariableModel();
@@ -1133,6 +1134,21 @@ class ScientificObjectController extends Controller {
                 'label' => $variableModel->label,
                 'comment' => $variableModel->comment
             ];
+
+
+            // Get annotations
+            $searchAnnotationModel = new AnnotationSearch();
+            $annotationSearchParameters = [];
+            //0. Get request parameters
+            $searchParams = Yii::$app->request->queryParams;
+            if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+                $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+            }
+            $annotationSearchParameters[AnnotationSearch::TARGET_SEARCH_LABEL] = $uri;
+            $searchAnnotationModel->targets[0] = $uri;
+            $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
+            $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
+         
 
             //on FORM submitted:
             //check if image visualization is activated
@@ -1155,7 +1171,8 @@ class ScientificObjectController extends Controller {
                         'filterToSend' => $filterToSend,
                         'events' => $events,
                         'colorByEventCategorie' => $colorByEventCategorie,
-                        'variableInfo' => $variableInfo
+                        'variableInfo' => $variableInfo,
+                        'annotationsProvider' => $annotationsProvider,
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [
