@@ -261,7 +261,6 @@ return [
     'Scientific Contacts' => 'Contacts scientifiques',
     'scientific objects' =>'objets scientifiques',
     'Scientific Supervisors' => 'Superviseurs scientifiques',
-    'Search Criteria' =>'Critères de recherche',
     'See' => 'Voir',
     'Select all the' =>'Sélectionnez l\'ensemble des',
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
