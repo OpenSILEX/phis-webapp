@@ -127,8 +127,16 @@ class EventSearch extends YiiEventModel {
      */
     private function getEventProvider($sessionToken, $searchParams) {
         
+        
+        if (isset($searchParams[YiiModelsConstants::PAGE])) {
+            $this->page = $searchParams[YiiModelsConstants::PAGE];
+        }
+        
+        if (isset($searchParams[YiiModelsConstants::PAGE_SIZE])) {
+            $this->pageSize = $searchParams[YiiModelsConstants::PAGE_SIZE];
+        }
+        
         $results = $this->find($sessionToken, $this->attributesToArray());
-        // var_dump($results);exit;
         if (is_string($results)) {
             return $results;
         }  else if (isset($results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
@@ -141,7 +149,7 @@ class EventSearch extends YiiEventModel {
             return new ArrayDataProvider([
                 'models' => $events,
                 'pagination' => [
-                    'pageSize' => $searchParams[WSConstants::PAGE_SIZE],
+                    'pageSize' => $this->pageSize,
                     'totalCount' => $this->totalCount
                 ],
                 'totalCount' => $this->totalCount

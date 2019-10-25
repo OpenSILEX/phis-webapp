@@ -17,8 +17,8 @@ use app\components\helpers\Vocabulary;
 use kartik\icons\Icon;
 
 /**
- * Event GridView widget.
- * @author Andréas Garcia <andreas.garcia@inra.fr>
+ * Detail Event GridView widget.
+ * @author Julien Bonnefont <julien.bonnefont@inra.fr>
  */
 class EventGridViewWidget extends Widget {
 

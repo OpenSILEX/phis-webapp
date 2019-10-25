@@ -134,7 +134,6 @@ class EventController extends GenericController {
     public function actionView($id) {
         // Get request parameters
         $searchParams = Yii::$app->request->queryParams;
-        var_dump($searchParams);exit;
 
         // Get event
         $event = (new YiiEventModel())->getEvent(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);

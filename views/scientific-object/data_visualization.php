@@ -10,6 +10,8 @@
 use Yii;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
 use miloschuman\highcharts\Highstock;
 use yii\web\JsExpression;
 use yii\helpers\Url;
@@ -477,12 +479,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 echo Highstock::widget($options);
 
-
+                Pjax::begin(['timeout' => 5000]);
                 echo AnnotationGridViewWidget::widget(
                         [
                             AnnotationGridViewWidget::ANNOTATIONS => $annotationsProvider
                 ]);
-
+                Pjax::end();
+                Pjax::begin(['timeout' => 5000]);
+                echo EventGridViewWidget::widget(
+                        [
+                            EventGridViewWidget::DATA_PROVIDER => $eventsProvider,
+                        ]
+                );
+                Pjax::end();
             }
         }
         ?>

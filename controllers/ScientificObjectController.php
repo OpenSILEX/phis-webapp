@@ -23,6 +23,7 @@ use app\models\yiiModels\ScientificObjectSearch;
 use app\models\yiiModels\YiiExperimentModel;
 use app\models\yiiModels\DataFileSearch;
 use app\models\yiiModels\EventSearch;
+use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
 use app\components\helpers\SiteMessages;
@@ -1135,12 +1136,11 @@ class ScientificObjectController extends Controller {
                 'comment' => $variableModel->comment
             ];
 
-
+            $searchParams = Yii::$app->request->queryParams;
+            
             // Get annotations
             $searchAnnotationModel = new AnnotationSearch();
             $annotationSearchParameters = [];
-            //0. Get request parameters
-            $searchParams = Yii::$app->request->queryParams;
             if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
                 $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
             }
@@ -1148,14 +1148,28 @@ class ScientificObjectController extends Controller {
             $searchAnnotationModel->targets[0] = $uri;
             $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
             $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
-         
+            $annotationsProvider->pagination->pageParam = 'annotations-page'; // multiple gridview pagination
+            //
+            // Get events
+            $searchEventModel = new EventSearch();
+            $searchEventModel->searchConcernedItemUri = $uri;
+            $eventSearchParameters = [];
+            if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+                $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+            }
+            $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+            $eventsProvider = $searchEventModel->search($token, $eventSearchParameters);
+            $eventsProvider->pagination->pageParam = 'events-page';// multiple gridview pagination
 
-            //on FORM submitted:
+            
+            //on FORM submitted: //
             //check if image visualization is activated
             $show = isset($_GET['show']) ? $_GET['show'] : null;
             $selectedVariable = isset($_GET['variable']) ? $_GET['variable'] : null;
             $imageTypeSelected = isset($_GET['imageType']) ? $_GET['imageType'] : null;
             $selectedProvenance = isset($_GET['provenances']) ? $_GET['provenances'] : null;
+            
+            
             return $this->render('data_visualization', [
                         'model' => $scientificObject,
                         'variables' => $variables,
@@ -1173,6 +1187,7 @@ class ScientificObjectController extends Controller {
                         'colorByEventCategorie' => $colorByEventCategorie,
                         'variableInfo' => $variableInfo,
                         'annotationsProvider' => $annotationsProvider,
+                        'eventsProvider' => $eventsProvider,
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [
