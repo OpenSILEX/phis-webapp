@@ -43,7 +43,6 @@ class YiiDataModel extends WSActiveRecord {
      */
     public $provenance;
     
-    public $dateSortAsc;
     
     /**
      * 

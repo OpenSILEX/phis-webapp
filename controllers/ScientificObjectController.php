@@ -1055,8 +1055,8 @@ class ScientificObjectController extends Controller {
              *                                       ]
              *                     },
              * "ProvenanceUri2": {
-             *                      "data" :[["1496793600000","2,313261"],..],
-             *                      "photosSerie": null
+             *                      "data" :[["1500768000000","2,313261"],..],
+             *                      "photosSerie": ......
              * }
              */
             $isPhotos = false;
@@ -1098,6 +1098,7 @@ class ScientificObjectController extends Controller {
             $searchModel->searchConcernedItemUri = $uri;
             $searchModel->searchDateRangeStart = $_GET['dateStart'];
             $searchModel->searchDateRangeEnd = $_GET['dateEnd'];
+            $searchModel->dateSortAsc = 'true';
             $searchResult = $searchModel->search($token, null);
             if (is_string($searchResult)) {
                 if ($searchResult === WSConstants::TOKEN_INVALID) {
@@ -1149,19 +1150,20 @@ class ScientificObjectController extends Controller {
             $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
             $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
             $annotationsProvider->pagination->pageParam = 'annotations-page'; // multiple gridview pagination
-            //
+            
+            
             // Get events
             $searchEventModel = new EventSearch();
             $searchEventModel->searchConcernedItemUri = $uri;
+            $searchEventModel->dateSortAsc = 'true';
             $eventSearchParameters = [];
             if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
                 $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
             }
             $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
-            $eventsProvider = $searchEventModel->search($token, $eventSearchParameters);
+            $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
             $eventsProvider->pagination->pageParam = 'events-page';// multiple gridview pagination
-
-            
+        
             //on FORM submitted: //
             //check if image visualization is activated
             $show = isset($_GET['show']) ? $_GET['show'] : null;

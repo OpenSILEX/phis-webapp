@@ -10,17 +10,14 @@
 use Yii;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\widgets\Pjax;
 use miloschuman\highcharts\Highstock;
 use yii\web\JsExpression;
 use yii\helpers\Url;
 use app\controllers\EventController;
-use app\components\widgets\AnnotationButtonWidget;
-use app\components\widgets\event\EventButtonWidget;
 use app\models\yiiModels\YiiAnnotationModel;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\event\EventGridViewWidget;
+use app\components\widgets\event\DetailEventGridViewWidget;
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]), 'url' => ['index']];
@@ -351,9 +348,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         'color' => $colorByEventCategorie[$event['title']]
                     ];
                 }
-                usort($Eventsdata, function ($item1, $item2) {
-                    return $item1['x'] <=> $item2['x'];
-                });
+//                usort($Eventsdata, function ($item1, $item2) { //sort by date -> highcharts
+//                    return $item1['x'] <=> $item2['x'];
+//                });
 
                 $viewDetailUrl = Url::to(['event/ajax-view']);
                 $eventsTab[] = [
@@ -486,9 +483,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]);
                 Pjax::end();
                 Pjax::begin(['timeout' => 5000]);
-                echo EventGridViewWidget::widget(
+                echo DetailEventGridViewWidget::widget(
                         [
-                            EventGridViewWidget::DATA_PROVIDER => $eventsProvider,
+                            DetailEventGridViewWidget::DATA_PROVIDER => $eventsProvider,
                         ]
                 );
                 Pjax::end();

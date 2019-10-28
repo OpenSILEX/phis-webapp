@@ -27,6 +27,12 @@ class DataSearchLayers extends \app\models\yiiModels\YiiDataModel {
     public $endDate;
     
     /**
+     * Parameter to sort result by date.
+     * @var string expected values: true or false
+     */
+    public $dateSortAsc;
+    
+    /**
      * @inheritdoc
      */
     
@@ -90,7 +96,7 @@ class DataSearchLayers extends \app\models\yiiModels\YiiDataModel {
         $toReturn["endDate"] = $this->endDate;
         $toReturn["provenance"] = $this->provenance;
         $toReturn["pageSize"] = $this->pageSize;
-         $toReturn["dateSortAsc"] = $this->dateSortAsc;
+        $toReturn["dateSortAsc"] = $this->dateSortAsc;
                 
         return $toReturn;
     }

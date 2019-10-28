@@ -67,6 +67,14 @@ class YiiEventModel extends WSActiveRecord {
     public $properties;
     const PROPERTIES = "properties";
     
+     /**
+     * Annotations of the event
+     * @var array 
+     */
+    public $annotations;
+    const ANNOTATIONS = "annotations";
+    
+    
     public function __construct($pageSize = null, $page = null) {
         $this->wsModel = new WSEventModel();
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize 
@@ -152,7 +160,8 @@ class YiiEventModel extends WSActiveRecord {
             return $event;
         }
     }
-
+    
+    
     /**
      * Get the event's annotations
      * @param type $sessionToken
