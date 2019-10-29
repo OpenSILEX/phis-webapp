@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="scientific-object-data-visualization">
     <a role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px;">
-        <i class="fa fa-line-chart"></i> <?= Yii::t('app', 'Visualization') ?>
+        <i class="fa fa-sliders"></i> <?= Yii::t('app', 'Visualization') ?>
     </a>
     <div class="collapse in" id="data-visualization-form" >
         <?php
@@ -348,10 +348,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'color' => $colorByEventCategorie[$event['title']]
                     ];
                 }
-//                usort($Eventsdata, function ($item1, $item2) { //sort by date -> highcharts
-//                    return $item1['x'] <=> $item2['x'];
-//                });
-
                 $viewDetailUrl = Url::to(['event/ajax-view']);
                 $eventsTab[] = [
                     'type' => 'flags',
@@ -403,7 +399,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'text' => $variableInfo['label']
                         ],
                         'subtitle' => [
-                            'text' => Yii::t('app/messages', 'Click on a serie to add an event!')
+                            'text' => Yii::t('app/messages', 'Click on a serie to add an event or annotate the scientific object.')
                         ],
                         'navigator' => [
                             'enabled' => true,
@@ -475,19 +471,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 ];
 
                 echo Highstock::widget($options);
+                echo "<h3>" . Yii::t('app', 'Scientific object metadata') . "</h3>";
+                
+                Pjax::begin(['timeout' => 5000,'linkSelector' => 'a:not(.target-blank)']);
+                echo DetailEventGridViewWidget::widget(
+                        [
+                            DetailEventGridViewWidget::DATA_PROVIDER => $eventsProvider,
+                        ]
+                );
+                Pjax::end();
 
                 Pjax::begin(['timeout' => 5000]);
                 echo AnnotationGridViewWidget::widget(
                         [
                             AnnotationGridViewWidget::ANNOTATIONS => $annotationsProvider
                 ]);
-                Pjax::end();
-                Pjax::begin(['timeout' => 5000]);
-                echo DetailEventGridViewWidget::widget(
-                        [
-                            DetailEventGridViewWidget::DATA_PROVIDER => $eventsProvider,
-                        ]
-                );
                 Pjax::end();
             }
         }

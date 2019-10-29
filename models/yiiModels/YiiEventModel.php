@@ -41,7 +41,7 @@ class YiiEventModel extends WSActiveRecord {
      * @var string
      */
     public $rdfType;
-    const TYPE = "rdfType";
+    const TYPE = "Type";
     const TYPE_LABEL = "Type";
     
     /**
@@ -72,7 +72,7 @@ class YiiEventModel extends WSActiveRecord {
      * @var array 
      */
     public $annotations;
-    const ANNOTATIONS = "annotations";
+    const ANNOTATIONS = "Annotations";
     
     
     public function __construct($pageSize = null, $page = null) {

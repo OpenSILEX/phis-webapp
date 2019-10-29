@@ -1138,40 +1138,36 @@ class ScientificObjectController extends Controller {
             ];
 
             $searchParams = Yii::$app->request->queryParams;
-            
             // Get annotations
             $searchAnnotationModel = new AnnotationSearch();
             $annotationSearchParameters = [];
-            if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
-                $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+            if (isset($searchParams[WSConstants::ANNOTATION_WIDGET_PAGE])) {
+                $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::ANNOTATION_WIDGET_PAGE] - 1;
             }
             $annotationSearchParameters[AnnotationSearch::TARGET_SEARCH_LABEL] = $uri;
             $searchAnnotationModel->targets[0] = $uri;
             $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
             $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
-            $annotationsProvider->pagination->pageParam = 'annotations-page'; // multiple gridview pagination
-            
+            $annotationsProvider->pagination->pageParam = WSConstants::ANNOTATION_WIDGET_PAGE; // multiple gridview pagination
             
             // Get events
             $searchEventModel = new EventSearch();
             $searchEventModel->searchConcernedItemUri = $uri;
-            $searchEventModel->dateSortAsc = 'true';
             $eventSearchParameters = [];
             if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
                 $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
             }
             $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
             $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
-            $eventsProvider->pagination->pageParam = 'events-page';// multiple gridview pagination
-        
+             $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE; // multiple gridview pagination
             //on FORM submitted: //
             //check if image visualization is activated
             $show = isset($_GET['show']) ? $_GET['show'] : null;
             $selectedVariable = isset($_GET['variable']) ? $_GET['variable'] : null;
             $imageTypeSelected = isset($_GET['imageType']) ? $_GET['imageType'] : null;
             $selectedProvenance = isset($_GET['provenances']) ? $_GET['provenances'] : null;
-            
-            
+
+
             return $this->render('data_visualization', [
                         'model' => $scientificObject,
                         'variables' => $variables,

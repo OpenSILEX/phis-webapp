@@ -70,19 +70,8 @@ class DetailEventGridViewWidget extends Widget {
                                 'format' => 'html',
                                 'value' => function ($model) {
 
-                                    $annotationObjects = $model->annotations;
-                                    //object to array to sort annotations
-                                    $annotations=array();
-                                    foreach ($annotationObjects as $annotationObject) {
-                                        $annotations[]=[
-                                            "creationDate"=>$annotationObject->creationDate,
-                                            "bodyValues"=>$annotationObject->bodyValues
-                                        ];
-                                        
-                                    }
-                                    usort($annotations, function ($item1, $item2) { //sort by date -> highcharts
-                                                return strcmp($item1["creationDate"], $item2["creationDate"]);
-                                            });
+                                    $annotations = $model->annotations;
+                                   
                                     $toReturn = '';
                                     $marginLeft = 0;
                                     foreach ($annotations as $annotation) {
@@ -92,14 +81,15 @@ class DetailEventGridViewWidget extends Widget {
                                             $toReturn .= $value . ' ';
                                         }
                                         $marginLeft += 10;
-                                        $toReturn .= '<div class="pull-right"> Date: ';
-                                        $toReturn .= $annotation['creationDate'];
+                                        $toReturn .= '<div class="pull-right">';
+                                        $toReturn .= date('d/m/Y H:i', strtotime($annotation['creationDate']));
                                         $toReturn .= '</div></div>';
                                     }
                                     return $toReturn;
                                 }
                             ],
                             [
+                                'format' => ['date', 'php:d/m/Y H:i'],
                                 'attribute' => YiiEventModel::DATE
                             ],
                             ['class' => 'yii\grid\ActionColumn',
@@ -107,7 +97,7 @@ class DetailEventGridViewWidget extends Widget {
                                 'buttons' => [
                                     'view' => function($url, $model, $key) {
                                         return Html::a(
-                                                        Icon::show('eye-open', [], Icon::BSG), ['event/view', 'id' => $model->uri]);
+                                                        Icon::show('eye-open', [], Icon::BSG), ['event/view', 'id' => $model->uri],['target'=>'_blank','class' => 'target-blank']);
                                     },
                                 ]
                             ],

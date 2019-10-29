@@ -48,7 +48,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $creationDate;
 
     const CREATION_DATE = "creationDate";
-    const CREATION_DATE_LABEL = "Annotation Date";
+    const CREATION_DATE_LABEL = "Date";
 
     /**
      * The creator of the annotation

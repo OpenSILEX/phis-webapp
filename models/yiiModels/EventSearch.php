@@ -13,6 +13,7 @@ namespace app\models\yiiModels;
 use Yii;
 use DateTime;
 use yii\data\ArrayDataProvider;
+use yii\data\Sort;
 use app\models\yiiModels\YiiEventModel;
 
 /**
@@ -136,11 +137,10 @@ class EventSearch extends YiiEventModel {
             return $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'};
         } else {
             $events = $this->jsonListOfArraysToArray($results);
-            usort($Eventsdata, function ($item1, $item2) { //sort by date -> highcharts
-                return strcmp($item1["date"], $item2["date"]);
-            });
             $eventsWithAnnotations = $this->linkAnnotationsToEvents($sessionToken, $events);
-
+            uasort($eventsWithAnnotations, function($item1, $item2) {
+                return strtotime($item1->date) < strtotime($item2->date);
+            });
             return new ArrayDataProvider([
                 'models' => $eventsWithAnnotations,
                 'pagination' => [
@@ -156,18 +156,20 @@ class EventSearch extends YiiEventModel {
         $toReturn = [];
         foreach ($events as $event) {
             $eventURI = $event->uri;
-            $annotations = $this->wsModel->getEventAnnotations($sessionToken, [YiiEventModel::URI => $eventURI]);
-            $eventItemToReturn = new YiiEventModel();
-            $eventItemToReturn->uri = $event->uri;
-            $eventItemToReturn->rdfType = $event->rdfType;
-            ;
-            $eventItemToReturn->date = $event->date;
-
-            $eventItemToReturn->annotations = $annotations;
-
-
-
-            $toReturn[] = $eventItemToReturn;
+            $annotationObjects = $this->wsModel->getEventAnnotations($sessionToken, [YiiEventModel::URI => $eventURI]);
+            $annotations = array();
+            foreach ($annotationObjects as $annotationObject) {
+                $annotations[] = [
+                    "creationDate" => $annotationObject->creationDate,
+                    "bodyValues" => $annotationObject->bodyValues
+                ];
+            }
+            uasort($annotations, function($item1, $item2) {
+                return strtotime($item1['creationDate']) > strtotime($item2['creationDate']);
+            });
+            
+            $event->annotations = $annotations;
+            $toReturn[] = $event;
         }
 
         return $toReturn;
@@ -213,6 +215,7 @@ class EventSearch extends YiiEventModel {
             return $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'};
         } else {
             $events = $this->jsonListOfArraysToArray($results);
+            
             return new ArrayDataProvider([
                 'models' => $events,
                 'pagination' => [

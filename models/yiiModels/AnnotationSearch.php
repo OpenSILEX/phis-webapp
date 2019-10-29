@@ -1,4 +1,5 @@
 <?php
+
 //******************************************************************************
 //                         AnnotationSearch.php
 // SILEX-PHIS
@@ -19,10 +20,10 @@ use app\models\yiiModels\YiiAnnotationModel;
 class AnnotationSearch extends YiiAnnotationModel {
 
     const DESCRIPTION = "description";
-    
+
     public function __construct($pageSize = null, $page = null) {
-        parent::__construct($pageSize,$page);
-         $this->creationDate = null;
+        parent::__construct($pageSize, $page);
+        $this->creationDate = null;
     }
 
     /**
@@ -43,17 +44,17 @@ class AnnotationSearch extends YiiAnnotationModel {
      */
     public function search($sessionToken, $params) {
         //1. load the searched params 
-        
+
         $this->load($params);
         if (isset($params[YiiModelsConstants::PAGE])) {
             $this->page = $params[YiiModelsConstants::PAGE];
         }
-        
+
         if (isset($params[YiiModelsConstants::PAGE_SIZE])) {
             $this->pageSize = $params[YiiModelsConstants::PAGE_SIZE];
         }
-        
-        
+
+
         //2. Check validity of search data
         if (!$this->validate()) {
             return new \yii\data\ArrayDataProvider();
@@ -64,12 +65,13 @@ class AnnotationSearch extends YiiAnnotationModel {
 
         if (is_string($findResult)) {
             return $findResult;
-        } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
-                    && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
+        } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
             return \app\models\wsModels\WSConstants::TOKEN_INVALID;
         } else {
             $resultSet = $this->jsonListOfArraysToArray($findResult);
-          
+            uasort($resultSet, function($item1, $item2) {
+                return strtotime($item1->creationDate) < strtotime($item2->creationDate);
+            });
             return new \yii\data\ArrayDataProvider([
                 'models' => $resultSet,
                 'pagination' => [
@@ -79,7 +81,7 @@ class AnnotationSearch extends YiiAnnotationModel {
                 //SILEX:info
                 //totalCount must be there too to get the pagination in GridView
                 'totalCount' => $this->totalCount
-                //\SILEX:info
+                    //\SILEX:info
             ]);
         }
     }
@@ -90,7 +92,7 @@ class AnnotationSearch extends YiiAnnotationModel {
      * @return array
      */
     public function attributesToArray() {
-        
+
         $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiAnnotationModel::CREATOR] = $this->creator;
         $elementForWebService[YiiAnnotationModel::MOTIVATED_BY] = $this->motivatedBy;
@@ -104,4 +106,5 @@ class AnnotationSearch extends YiiAnnotationModel {
         }
         return $elementForWebService;
     }
+
 }
