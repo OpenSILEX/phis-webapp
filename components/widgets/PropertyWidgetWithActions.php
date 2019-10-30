@@ -19,4 +19,12 @@ use app\components\helpers\Vocabulary;
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  */
 class PropertyWidgetWithActions extends PropertyWidget {
+    protected function renderValue($value): string {
+        
+    }
+
+    protected function renderValues($values): string {
+        
+    }
+
 }

@@ -110,7 +110,7 @@ class EventController extends GenericController {
             $searchDocumentModel->concernedItemFilter = $id;
             $documentProvider = $searchDocumentModel->search(
                     Yii::$app->session[WSConstants::ACCESS_TOKEN], [YiiEventModel::CONCERNED_ITEMS => $id]);
-
+           
             // Get annotations
             $annotationProvider = $event->getEventAnnotations(Yii::$app->session[WSConstants::ACCESS_TOKEN], $searchParams);
             $annotationProvider->pagination->pageParam = self::ANNOTATIONS_PAGE;
@@ -134,7 +134,6 @@ class EventController extends GenericController {
     public function actionView($id) {
         // Get request parameters
         $searchParams = Yii::$app->request->queryParams;
-        var_dump($searchParams);exit;
 
         // Get event
         $event = (new YiiEventModel())->getEvent(Yii::$app->session[WSConstants::ACCESS_TOKEN], $id);

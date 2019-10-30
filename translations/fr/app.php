@@ -260,6 +260,7 @@ return [
     // S
     'Scientific Contacts' => 'Contacts scientifiques',
     'scientific objects' =>'objets scientifiques',
+    'Scientific object metadata'=>'Métadonnées de l\'objet scientifique',
     'Scientific Supervisors' => 'Superviseurs scientifiques',
     'See' => 'Voir',
     'Select all the' =>'Sélectionnez l\'ensemble des',

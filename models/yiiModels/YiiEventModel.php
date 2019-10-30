@@ -41,7 +41,7 @@ class YiiEventModel extends WSActiveRecord {
      * @var string
      */
     public $rdfType;
-    const TYPE = "rdfType";
+    const TYPE = "Type";
     const TYPE_LABEL = "Type";
     
     /**
@@ -66,6 +66,14 @@ class YiiEventModel extends WSActiveRecord {
      */
     public $properties;
     const PROPERTIES = "properties";
+    
+     /**
+     * Annotations of the event
+     * @var array 
+     */
+    public $annotations;
+    const ANNOTATIONS = "Annotations";
+    
     
     public function __construct($pageSize = null, $page = null) {
         $this->wsModel = new WSEventModel();
@@ -152,7 +160,8 @@ class YiiEventModel extends WSActiveRecord {
             return $event;
         }
     }
-
+    
+    
     /**
      * Get the event's annotations
      * @param type $sessionToken
@@ -178,6 +187,8 @@ class YiiEventModel extends WSActiveRecord {
             return $response;
         }
     }
+    
+  
 
     /**
      * Calls the web service and returns the list of events types

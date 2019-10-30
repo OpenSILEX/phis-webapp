@@ -1057,8 +1057,8 @@ class ScientificObjectController extends Controller {
              *                                       ]
              *                     },
              * "ProvenanceUri2": {
-             *                      "data" :[["1496793600000","2,313261"],..],
-             *                      "photosSerie": null
+             *                      "data" :[["1500768000000","2,313261"],..],
+             *                      "photosSerie": ......
              * }
              */
             $isPhotos = false;
@@ -1100,6 +1100,7 @@ class ScientificObjectController extends Controller {
             $searchModel->searchConcernedItemUri = $uri;
             $searchModel->searchDateRangeStart = $_GET['dateStart'];
             $searchModel->searchDateRangeEnd = $_GET['dateEnd'];
+            $searchModel->dateSortAsc = 'true';
             $searchResult = $searchModel->search($token, null);
             if (is_string($searchResult)) {
                 if ($searchResult === WSConstants::TOKEN_INVALID) {
@@ -1111,10 +1112,22 @@ class ScientificObjectController extends Controller {
                 }
             } else {
                 foreach ($searchResult->getModels() as $model) {
+
+                    $annotationObjects = $searchModel->getAnnotations($token, ["uri" => $model->uri]);
+                    $annotations = array();
+                    foreach ($annotationObjects as $annotationObject) {
+                        $annotations[] = [
+                            "creationDate" => $annotationObject->creationDate,
+                            "bodyValues" => $annotationObject->bodyValues
+                        ];
+                    }
+                    uasort($annotations, function($item1, $item2) {
+                        return strtotime($item1['creationDate']) > strtotime($item2['creationDate']);
+                    });
                     $events[] = [
                         'date' => (strtotime($model->date)) * 1000,
                         'title' => explode('#', $model->rdfType)[1],
-                        'id' => $model->uri
+                        'annotations' => $annotations
                     ];
                 }
             }
@@ -1138,27 +1151,37 @@ class ScientificObjectController extends Controller {
                 'comment' => $variableModel->comment
             ];
 
-
+            $searchParams = Yii::$app->request->queryParams;
+            // Get events
+            $searchEventModel = new EventSearch();
+            $searchEventModel->searchConcernedItemUri = $uri;
+            $eventSearchParameters = [];
+            if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+                $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+            }
+            $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+            $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
+            $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE; // multiple gridview pagination
             // Get annotations
             $searchAnnotationModel = new AnnotationSearch();
             $annotationSearchParameters = [];
-            //0. Get request parameters
-            $searchParams = Yii::$app->request->queryParams;
-            if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
-                $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+            if (isset($searchParams[WSConstants::ANNOTATION_WIDGET_PAGE])) {
+                $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::ANNOTATION_WIDGET_PAGE] - 1;
             }
             $annotationSearchParameters[AnnotationSearch::TARGET_SEARCH_LABEL] = $uri;
             $searchAnnotationModel->targets[0] = $uri;
             $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
             $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
-         
-
-            //on FORM submitted:
+            $annotationsProvider->pagination->pageParam = WSConstants::ANNOTATION_WIDGET_PAGE; // multiple gridview pagination
+            //
+            //on FORM submitted: //
             //check if image visualization is activated
             $show = isset($_GET['show']) ? $_GET['show'] : null;
             $selectedVariable = isset($_GET['variable']) ? $_GET['variable'] : null;
             $imageTypeSelected = isset($_GET['imageType']) ? $_GET['imageType'] : null;
             $selectedProvenance = isset($_GET['provenances']) ? $_GET['provenances'] : null;
+
+
             return $this->render('data_visualization', [
                         'model' => $scientificObject,
                         'variables' => $variables,
@@ -1176,6 +1199,7 @@ class ScientificObjectController extends Controller {
                         'colorByEventCategorie' => $colorByEventCategorie,
                         'variableInfo' => $variableInfo,
                         'annotationsProvider' => $annotationsProvider,
+                        'eventsProvider' => $eventsProvider,
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [
@@ -1183,6 +1207,31 @@ class ScientificObjectController extends Controller {
                         'variables' => $variables
             ]);
         }
+    }
+
+    public function splitLongueSentence($longString) {
+
+        $words = explode(' ', $longString);
+
+        $maxLineLength = 58;
+
+        $currentLength = 0;
+        $index = 0;
+
+        foreach ($words as $word) {
+            // +1 because the word will receive back the space in the end that it loses in explode()
+            $wordLength = strlen($word) + 1;
+
+            if (($currentLength + $wordLength) <= $maxLineLength) {
+                $output[$index] .= $word . ' ';
+                $currentLength += $wordLength;
+            } else {
+                $index += 1;
+                $currentLength = $wordLength;
+                $output[$index] = $word;
+            }
+        }
+        return $output;
     }
 
     /**

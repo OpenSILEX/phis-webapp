@@ -10,15 +10,14 @@
 use Yii;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use yii\widgets\Pjax;
 use miloschuman\highcharts\Highstock;
 use yii\web\JsExpression;
 use yii\helpers\Url;
 use app\controllers\EventController;
-use app\components\widgets\AnnotationButtonWidget;
-use app\components\widgets\event\EventButtonWidget;
 use app\models\yiiModels\YiiAnnotationModel;
 use app\components\widgets\AnnotationGridViewWidget;
-use app\components\widgets\event\EventGridViewWidget;
+use app\components\widgets\event\DetailEventGridViewWidget;
 
 $this->title = $model->label;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]), 'url' => ['index']];
@@ -34,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="scientific-object-data-visualization">
     <a role="button" data-toggle="collapse" href="#data-visualization-form" aria-expanded="true" aria-controls="data-visualization-form" style="font-size: 24px;">
-        <i class="fa fa-line-chart"></i> <?= Yii::t('app', 'Visualization') ?>
+        <i class="fa fa-sliders"></i> <?= Yii::t('app', 'Visualization') ?>
     </a>
     <div class="collapse in" id="data-visualization-form" >
         <?php
@@ -342,17 +341,32 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
 
                 foreach ($events as $event) {
+                    $toReturn = '<div>' . $event['title'] . '<span class="pull-right">' . date('d/m/Y H:i', strtotime($event['date'])) . '</span></div>';
+                    $marginLeft = 0;
+                    foreach ($event['annotations'] as $annotation) {
+                       
+                        $toReturn .= '<div class="well" style="margin:0px 0px 5px ' . $marginLeft . 'px;">';
+                        foreach ($annotation['bodyValues'] as $i => $value) {
+                            $splitSentence = $this->context->splitLongueSentence($value);
+                          
+                            $newSentence = '';
+                            foreach ($splitSentence as $word) {
+                                $newSentence .= '' . $word . '<br>';
+                            }
+                            $toReturn .= $newSentence;
+                        }
+                        $marginLeft += 10;
+                        $toReturn .= '<div class="pull-right">';
+                        $toReturn .= date('d/m/Y H:i', strtotime($annotation['creationDate']));
+                        $toReturn .= '</div></div>';
+                    }
                     $Eventsdata[] = [
                         'x' => $event['date'],
                         'title' => $event['title'],
-                        'text' => $event['id'],
+                        'text' => $toReturn,
                         'color' => $colorByEventCategorie[$event['title']]
                     ];
                 }
-                usort($Eventsdata, function ($item1, $item2) {
-                    return $item1['x'] <=> $item2['x'];
-                });
-
                 $viewDetailUrl = Url::to(['event/ajax-view']);
                 $eventsTab[] = [
                     'type' => 'flags',
@@ -404,7 +418,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'text' => $variableInfo['label']
                         ],
                         'subtitle' => [
-                            'text' => Yii::t('app/messages', 'Click on a serie to add an event!')
+                            'text' => Yii::t('app/messages', 'Click on a serie to add an event or annotate the scientific object.')
                         ],
                         'navigator' => [
                             'enabled' => true,
@@ -433,12 +447,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'series' => $series,
                         'tooltip' => [
+                            'useHTML' => true,
                             'xDateFormat' => '%Y-%m-%d %H:%M',
                             'formatter' => new JsExpression("function(tooltip) {
                                  if(this.points){
                                      return tooltip.defaultFormatter.call(this, tooltip);
                                  } else if(this.series.name=='Events'){
-                                     const content = '<br><span style=\"color:' + this.point.color + '\">' + this.point.title + '</span>';
+                                     const content = '<div>' + this.point.text + '</div>';
                                      return content;
                                  } else {
                                      return '';
@@ -476,13 +491,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 ];
 
                 echo Highstock::widget($options);
+                echo "<h3>" . Yii::t('app', 'Scientific object metadata') . "</h3>";
+                Pjax::begin(['timeout' => 5000, 'linkSelector' => 'a:not(.target-blank)']);
+                echo DetailEventGridViewWidget::widget(
+                        [
+                            DetailEventGridViewWidget::DATA_PROVIDER => $eventsProvider,
+                        ]
+                );
+                Pjax::end();
 
-
+                Pjax::begin(['timeout' => 5000]);
                 echo AnnotationGridViewWidget::widget(
                         [
                             AnnotationGridViewWidget::ANNOTATIONS => $annotationsProvider
                 ]);
-
+                Pjax::end();
             }
         }
         ?>
@@ -501,13 +524,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div class="col-md-6 text-center">
                                     <a class="btn btn-default" id="createEventLink">
                                         <span class="fa fa-flag fa-4x"></span><br>
-                                        <?= Yii::t('app', 'Add an event') ?>
+<?= Yii::t('app', 'Add an event') ?>
                                     </a>
                                 </div>
                                 <div class="col-md-6 text-center">
                                     <a class="btn btn-default" id="createAnnotationLink">
                                         <span class="fa fa-comment fa-4x"></span><br>
-                                        <?= Yii::t('app', 'Add an annotation on the object ') ?>
+<?= Yii::t('app', 'Add an annotation on the object ') ?>
                                     </a>
                                 </div>
                             </div>
