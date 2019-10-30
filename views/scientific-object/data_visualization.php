@@ -344,11 +344,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     $toReturn = '<div>' . $event['title'] . '<span class="pull-right">' . date('d/m/Y H:i', strtotime($event['date'])) . '</span></div>';
                     $marginLeft = 0;
                     foreach ($event['annotations'] as $annotation) {
-                       
+
                         $toReturn .= '<div class="well" style="margin:0px 0px 5px ' . $marginLeft . 'px;">';
                         foreach ($annotation['bodyValues'] as $i => $value) {
                             $splitSentence = $this->context->splitLongueSentence($value);
-                          
+
                             $newSentence = '';
                             foreach ($splitSentence as $word) {
                                 $newSentence .= '' . $word . '<br>';
@@ -367,7 +367,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'color' => $colorByEventCategorie[$event['title']]
                     ];
                 }
-                
+
                 $eventsTab[] = [
                     'type' => 'flags',
                     'allowOverlapX' => true,
@@ -376,7 +376,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     'y' => -40,
                     'clip' => false,
                     'data' => $Eventsdata,
-                  
                 ];
                 $series[] = $eventsTab[0];
 
@@ -507,13 +506,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div class="col-md-6 text-center">
                                     <a class="btn btn-default" id="createEventLink">
                                         <span class="fa fa-flag fa-4x"></span><br>
-<?= Yii::t('app', 'Add an event') ?>
+                                        <?= Yii::t('app', 'Add an event') ?>
                                     </a>
                                 </div>
                                 <div class="col-md-6 text-center">
                                     <a class="btn btn-default" id="createAnnotationLink">
                                         <span class="fa fa-comment fa-4x"></span><br>
-<?= Yii::t('app', 'Add an annotation on the object ') ?>
+                                        <?= Yii::t('app', 'Add an annotation on the object ') ?>
                                     </a>
                                 </div>
                             </div>
@@ -614,6 +613,14 @@ if (isset($data)) {
         });
     }
 
+    var checked = $('#showWidget').is(':checked');
+
+    if (checked) {
+        $('#photoFilter').show();
+    } else {
+        // reset values
+        $('#photoFilter').hide();
+    }
     /**
      * Function apply when checkbox is clicked to show or not images.
      * @param String HTML The checkbox content
