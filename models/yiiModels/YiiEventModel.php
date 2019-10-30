@@ -41,7 +41,7 @@ class YiiEventModel extends WSActiveRecord {
      * @var string
      */
     public $rdfType;
-    const TYPE = "Type";
+    const TYPE = "rdfType";
     const TYPE_LABEL = "Type";
     
     /**
