@@ -341,17 +341,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
 
                 foreach ($events as $event) {
-                    $toReturn = '<div>' . $event['title'] . '<span class="pull-right">' . date('d/m/Y H:i', strtotime($event['date'])) . '</span></div>';
+                    $toReturn = '';
                     $marginLeft = 0;
                     foreach ($event['annotations'] as $annotation) {
 
-                        $toReturn .= '<div class="well" style="margin:0px 0px 5px ' . $marginLeft . 'px;">';
+                        $toReturn .= '<div class="well clearfix" style="margin:0px 0px 5px ' . $marginLeft . 'px; padding:14px;">';
                         foreach ($annotation['bodyValues'] as $i => $value) {
                             $splitSentence = $this->context->splitLongueSentence($value);
 
                             $newSentence = '';
-                            foreach ($splitSentence as $word) {
-                                $newSentence .= '' . $word . '<br>';
+                            $size = sizeof($splitSentence);
+
+                            foreach ($splitSentence as $i => $word) {
+                                if (strlen($word) > 1) {
+                                    if ($i < $size - 1) {
+                                        $newSentence .= '' . $word . '<br>';
+                                    } else {
+                                        $newSentence .= '' . $word;
+                                    }
+                                }
                             }
                             $toReturn .= $newSentence;
                         }
@@ -360,6 +368,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         $toReturn .= date('d/m/Y H:i', strtotime($annotation['creationDate']));
                         $toReturn .= '</div></div>';
                     }
+
                     $Eventsdata[] = [
                         'x' => $event['date'],
                         'title' => $event['title'],
