@@ -57,7 +57,7 @@ class DetailEventGridViewWidget extends Widget {
                     'dataProvider' => $this->dataProvider,
                     'columns' => [
                         [
-                            'label' => Yii::t('app', YiiEventModel::TYPE),
+                            'label' => Yii::t('app', 'Type'),
                             'attribute' => YiiEventModel::TYPE,
                             'value' => function ($model) {
                                 return explode("#", $model->rdfType)[1];
