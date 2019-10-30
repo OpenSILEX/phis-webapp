@@ -341,10 +341,29 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
 
                 foreach ($events as $event) {
+                    $toReturn = '<div>' . $event['title'] . '<span class="pull-right">' . date('d/m/Y H:i', strtotime($event['date'])) . '</span></div>';
+                    $marginLeft = 0;
+                    foreach ($event['annotations'] as $annotation) {
+                       
+                        $toReturn .= '<div class="well" style="margin:0px 0px 5px ' . $marginLeft . 'px;">';
+                        foreach ($annotation['bodyValues'] as $i => $value) {
+                            $splitSentence = $this->context->splitLongueSentence($value);
+                          
+                            $newSentence = '';
+                            foreach ($splitSentence as $word) {
+                                $newSentence .= '' . $word . '<br>';
+                            }
+                            $toReturn .= $newSentence;
+                        }
+                        $marginLeft += 10;
+                        $toReturn .= '<div class="pull-right">';
+                        $toReturn .= date('d/m/Y H:i', strtotime($annotation['creationDate']));
+                        $toReturn .= '</div></div>';
+                    }
                     $Eventsdata[] = [
                         'x' => $event['date'],
                         'title' => $event['title'],
-                        'text' => $event['id'],
+                        'text' => $toReturn,
                         'color' => $colorByEventCategorie[$event['title']]
                     ];
                 }
@@ -428,12 +447,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'series' => $series,
                         'tooltip' => [
+                            'useHTML' => true,
                             'xDateFormat' => '%Y-%m-%d %H:%M',
                             'formatter' => new JsExpression("function(tooltip) {
                                  if(this.points){
                                      return tooltip.defaultFormatter.call(this, tooltip);
                                  } else if(this.series.name=='Events'){
-                                     const content = '<br><span style=\"color:' + this.point.color + '\">' + this.point.title + '</span>';
+                                     const content = '<div>' + this.point.text + '</div>';
                                      return content;
                                  } else {
                                      return '';
@@ -472,8 +492,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 echo Highstock::widget($options);
                 echo "<h3>" . Yii::t('app', 'Scientific object metadata') . "</h3>";
-                
-                Pjax::begin(['timeout' => 5000,'linkSelector' => 'a:not(.target-blank)']);
+                Pjax::begin(['timeout' => 5000, 'linkSelector' => 'a:not(.target-blank)']);
                 echo DetailEventGridViewWidget::widget(
                         [
                             DetailEventGridViewWidget::DATA_PROVIDER => $eventsProvider,
@@ -505,13 +524,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <div class="col-md-6 text-center">
                                     <a class="btn btn-default" id="createEventLink">
                                         <span class="fa fa-flag fa-4x"></span><br>
-                                        <?= Yii::t('app', 'Add an event') ?>
+<?= Yii::t('app', 'Add an event') ?>
                                     </a>
                                 </div>
                                 <div class="col-md-6 text-center">
                                     <a class="btn btn-default" id="createAnnotationLink">
                                         <span class="fa fa-comment fa-4x"></span><br>
-                                        <?= Yii::t('app', 'Add an annotation on the object ') ?>
+<?= Yii::t('app', 'Add an annotation on the object ') ?>
                                     </a>
                                 </div>
                             </div>

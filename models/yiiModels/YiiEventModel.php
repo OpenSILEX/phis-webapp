@@ -187,6 +187,8 @@ class YiiEventModel extends WSActiveRecord {
             return $response;
         }
     }
+    
+  
 
     /**
      * Calls the web service and returns the list of events types

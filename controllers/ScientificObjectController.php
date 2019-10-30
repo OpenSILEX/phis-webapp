@@ -23,7 +23,6 @@ use app\models\yiiModels\ScientificObjectSearch;
 use app\models\yiiModels\YiiExperimentModel;
 use app\models\yiiModels\DataFileSearch;
 use app\models\yiiModels\EventSearch;
-use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\AnnotationSearch;
 use app\models\wsModels\WSConstants;
 use app\components\helpers\SiteMessages;
@@ -1110,10 +1109,22 @@ class ScientificObjectController extends Controller {
                 }
             } else {
                 foreach ($searchResult->getModels() as $model) {
+
+                    $annotationObjects = $searchModel->getAnnotations($token, ["uri" => $model->uri]);
+                    $annotations = array();
+                    foreach ($annotationObjects as $annotationObject) {
+                        $annotations[] = [
+                            "creationDate" => $annotationObject->creationDate,
+                            "bodyValues" => $annotationObject->bodyValues
+                        ];
+                    }
+                    uasort($annotations, function($item1, $item2) {
+                        return strtotime($item1['creationDate']) > strtotime($item2['creationDate']);
+                    });
                     $events[] = [
                         'date' => (strtotime($model->date)) * 1000,
                         'title' => explode('#', $model->rdfType)[1],
-                        'id' => $model->uri
+                        'annotations' => $annotations
                     ];
                 }
             }
@@ -1138,6 +1149,16 @@ class ScientificObjectController extends Controller {
             ];
 
             $searchParams = Yii::$app->request->queryParams;
+            // Get events
+            $searchEventModel = new EventSearch();
+            $searchEventModel->searchConcernedItemUri = $uri;
+            $eventSearchParameters = [];
+            if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+                $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+            }
+            $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+            $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
+            $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE; // multiple gridview pagination
             // Get annotations
             $searchAnnotationModel = new AnnotationSearch();
             $annotationSearchParameters = [];
@@ -1149,17 +1170,7 @@ class ScientificObjectController extends Controller {
             $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
             $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
             $annotationsProvider->pagination->pageParam = WSConstants::ANNOTATION_WIDGET_PAGE; // multiple gridview pagination
-            
-            // Get events
-            $searchEventModel = new EventSearch();
-            $searchEventModel->searchConcernedItemUri = $uri;
-            $eventSearchParameters = [];
-            if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
-                $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
-            }
-            $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
-            $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
-             $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE; // multiple gridview pagination
+            //
             //on FORM submitted: //
             //check if image visualization is activated
             $show = isset($_GET['show']) ? $_GET['show'] : null;
@@ -1193,6 +1204,31 @@ class ScientificObjectController extends Controller {
                         'variables' => $variables
             ]);
         }
+    }
+
+    public function splitLongueSentence($longString) {
+
+        $words = explode(' ', $longString);
+
+        $maxLineLength = 58;
+
+        $currentLength = 0;
+        $index = 0;
+
+        foreach ($words as $word) {
+            // +1 because the word will receive back the space in the end that it loses in explode()
+            $wordLength = strlen($word) + 1;
+
+            if (($currentLength + $wordLength) <= $maxLineLength) {
+                $output[$index] .= $word . ' ';
+                $currentLength += $wordLength;
+            } else {
+                $index += 1;
+                $currentLength = $wordLength;
+                $output[$index] = $word;
+            }
+        }
+        return $output;
     }
 
     /**

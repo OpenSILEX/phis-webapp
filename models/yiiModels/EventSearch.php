@@ -15,6 +15,7 @@ use DateTime;
 use yii\data\ArrayDataProvider;
 use yii\data\Sort;
 use app\models\yiiModels\YiiEventModel;
+use app\models\wsModels\WSConstants;
 
 /**
  * Search action for the events
@@ -121,13 +122,19 @@ class EventSearch extends YiiEventModel {
     }
 
     public function searchWithAnnotationsDescription($sessionToken, $searchParams) {
+
         $this->load($searchParams);
+       
         if (isset($searchParams[YiiModelsConstants::PAGE])) {
             $this->page = $searchParams[YiiModelsConstants::PAGE];
         }
         if (isset($searchParams[YiiModelsConstants::PAGE_SIZE])) {
             $this->pageSize = $searchParams[YiiModelsConstants::PAGE_SIZE];
         }
+        if (isset($searchParams[EventSearch::SEARCH_DATE_RANGE])) {
+            $this->pageSize = $searchParams[YiiModelsConstants::PAGE_SIZE];
+        }
+
         $results = $this->find($sessionToken, $this->attributesToArray());
         if (is_string($results)) {
             return $results;
@@ -141,6 +148,7 @@ class EventSearch extends YiiEventModel {
             uasort($eventsWithAnnotations, function($item1, $item2) {
                 return strtotime($item1->date) < strtotime($item2->date);
             });
+          
             return new ArrayDataProvider([
                 'models' => $eventsWithAnnotations,
                 'pagination' => [
@@ -167,7 +175,7 @@ class EventSearch extends YiiEventModel {
             uasort($annotations, function($item1, $item2) {
                 return strtotime($item1['creationDate']) > strtotime($item2['creationDate']);
             });
-            
+
             $event->annotations = $annotations;
             $toReturn[] = $event;
         }
@@ -215,7 +223,6 @@ class EventSearch extends YiiEventModel {
             return $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'};
         } else {
             $events = $this->jsonListOfArraysToArray($results);
-            
             return new ArrayDataProvider([
                 'models' => $events,
                 'pagination' => [
@@ -224,6 +231,26 @@ class EventSearch extends YiiEventModel {
                 ],
                 'totalCount' => $this->totalCount
             ]);
+        }
+    }
+    
+      /**
+     * Get the event's annotations
+     * @param type $sessionToken
+     * @param type $searchParams
+     * @return the event's annotations array
+     */
+    public function getAnnotations($sessionToken, $searchParams) {
+        $response = $this->wsModel->getEventAnnotations($sessionToken, $searchParams);
+        if (!is_string($response)) {
+            if (isset($response[WSConstants::TOKEN_INVALID])) {
+                return $response;
+            } else {              
+                $annotationWidgetPageSize = Yii::$app->params['annotationWidgetPageSize'];  
+                return $response;
+            }
+        } else {
+            return $response;
         }
     }
 
