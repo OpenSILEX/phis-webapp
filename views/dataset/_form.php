@@ -111,11 +111,16 @@ use yii\helpers\Url;
                 echo 'var documentsLoadUri = "' . Url::to(['document/get-documents-widget']) . '";';
                 // Inject provenances list indexed by URI
                 echo 'var provenances = ' . json_encode($this->params['provenances']) . ';';
+                 // Inject sensingDevices list indexed by URI
+                echo 'var sensingDevices = ' . json_encode($this->params['sensingDevices']) . ';';
+                 // Inject agents list indexed by URI
+                echo 'var agents = ' . json_encode($this->params['agents']) . ';';
             ?>
                 
             // Function to update provenance comment field depending of selected URI
             var updateProvenanceFields = function(uri) {
                 if (provenances.hasOwnProperty(uri)) {
+//                    console.log(provenances[uri]);
                     // If selected provenance is known get its comment
                     var comment = provenances[uri]["comment"];
                     
@@ -125,12 +130,54 @@ use yii\helpers\Url;
                         .removeClass("has-error")
                         .removeClass("has-success");
                     $(".field-yiidatasetmodel-provenancecomment .help-block").empty();
-
+                    
+                    // Set provenance provenanceSensingDevices, disable input and remove validation messages 
+                    try {
+                        var provenanceSensingDevices = provenances[uri]["metadata"]["prov:Agent"]["oeso:SensingDevice"];
+                        $("#yiidatasetmodel-provenancesensingdevices").val(provenanceSensingDevices);
+                        $("#yiidatasetmodel-provenancesensingdevices").trigger("change");
+//                        console.log(provenanceSensingDevices);
+                    }
+                    catch(error) {
+                        $("#yiidatasetmodel-provenancesensingdevices").val([]);
+                        $("#yiidatasetmodel-provenancesensingdevices").trigger("change");
+                        console.log("No sensing device set");
+                    }finally {
+                        $("#yiidatasetmodel-provenancesensingdevices").val(provenanceSensingDevices).attr("disabled", "disabled");
+                        $(".field-yiidatasetmodel-provenancesensingdevices, .field-yiidatasetmodel-provenancesensingdevices *")
+                            .removeClass("has-error")
+                            .removeClass("has-success");
+                        $(".field-yiidatasetmodel-provenancesensingdevices .help-block").empty();
+                    }
+                    // Set provenance provenanceSensingDevices, disable input and remove validation messages 
+                    try {
+                        var provenanceAgents = provenances[uri]["metadata"]["prov:Agent"]["oeso:Operator"];
+                        $("#yiidatasetmodel-provenanceagents").val(provenanceAgents);
+                        $("#yiidatasetmodel-provenanceagents").trigger("change");
+//                        console.log(provenanceAgents);
+                    }
+                    catch(error) {
+                         $("#yiidatasetmodel-provenanceagents").val([]);
+                         $("#yiidatasetmodel-provenanceagents").trigger("change");
+                         console.log("No agents set");
+                    }finally {
+                        $("#yiidatasetmodel-provenanceagents").val(agents).attr("disabled", "disabled");
+                        $(".field-yiidatasetmodel-provenanceagents, .field-yiidatasetmodel-provenanceagents *")
+                            .removeClass("has-error")
+                            .removeClass("has-success");
+                        $(".field-yiidatasetmodel-provenanceagents .help-block").empty();
+                    }
                     // Load linked documents
                     $("#already-linked-documents").load(documentsLoadUri, {
                         "uri": uri
                     })
                 } else {
+                    // Otherwise clear provenance comment and enable input
+                    $("#yiidatasetmodel-provenancesensingdevices").val(sensingDevices).removeAttr("disabled").trigger("change");
+                    
+                    // Otherwise clear provenance comment and enable input
+                    $("#yiidatasetmodel-provenanceagents").val(agents).removeAttr("disabled").trigger("change");
+                    
                     // Otherwise clear provenance comment and enable input
                     $("#yiidatasetmodel-provenancecomment").val("").removeAttr("disabled");
                     
@@ -160,9 +207,32 @@ use yii\helpers\Url;
                     'tags' => true
                 ],
             ]); ?>
-    
-    <?= $form->field($model, 'provenanceComment')->textarea(['rows' => 6]) ?>
 
+      <?= $form->field($model, 'provenanceSensingDevices')->widget(\kartik\select2\Select2::classname(),[
+                'data' => $this->params['sensingDevices'],
+                'options' => [
+                    'placeholder' => Yii::t('app/messages', 'Select existing device') . ' ...',
+                    'multiple' => true
+                ],
+                'pluginOptions' => [
+                    'allowClear' => false,
+                    'tags' => true
+                ],
+            ]); ?>
+    
+    <?= $form->field($model, 'provenanceAgents')->widget(\kartik\select2\Select2::classname(),[
+                'data' => $this->params['agents'],
+                'options' => [
+                    'placeholder' => 'Select operator ...',
+                    'multiple' => true
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]); ?>
+
+    <?= $form->field($model, 'provenanceComment')->textarea(['rows' => 6]) ?>
+    
     <h3><?= Yii::t('app', 'Linked Document(s)') ?></h3>
     <div id="already-linked-documents"></div>
    <?=  $form->field($model, 'documentsURIs')->widget(MultipleInput::className(), [

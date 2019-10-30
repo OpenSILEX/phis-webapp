@@ -19,14 +19,14 @@ use Yii;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
-use Exception;
 use app\models\yiiModels\YiiDocumentModel;
 use app\models\wsModels\WSProvenanceModel;
-use app\models\yiiModels\VariableSearch;
 use app\models\wsModels\WSDataModel;
 use app\models\yiiModels\YiiConcernedItemModel;
 use openSILEX\handsontablePHP\adapter\HandsontableSimple;
 use openSILEX\handsontablePHP\classes\ColumnConfig;
+use app\models\wsModels\WSConstants;
+use app\components\helpers\Vocabulary;
 
 require_once '../config/config.php';
 
@@ -50,7 +50,13 @@ class DatasetController extends Controller {
     const ERRORS_LINE = "Line";
     const ERRORS_COLUMN = "Column";
     const ERRORS_MESSAGE = "Message";
+    
+    const SENSORS_DATA = "sensors";
+    const SENSOR_DATA_URI = "sensorUri";
+    const SENSOR_DATA_LABEL = "sensorLabel";
+    const SENSOR_DATA_TYPE = "sensorType";
 
+    const PROVENANCE_PARAMS_VALUES = "provenanceNamespaces";
     /**
      * define the behaviors
      * @return array
@@ -311,7 +317,7 @@ class DatasetController extends Controller {
         $datasetModel = new \app\models\yiiModels\YiiDatasetModel();
         $variablesModel = new \app\models\yiiModels\YiiVariableModel();
 
-        $token = Yii::$app->session['access_token'];
+        $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
 
         // Load existing variables
         $variables = $variablesModel->getInstancesDefinitionsUrisAndLabel($token);
@@ -321,7 +327,15 @@ class DatasetController extends Controller {
         $provenanceService = new WSProvenanceModel();
         $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
         $this->view->params["provenances"] = $provenances;
+        
+        // Load existing sensors
+        $sensors = $this->getSensorsUrisTypesLabels($token);
+        $this->view->params["sensingDevices"] = $this->getSensorListToShowFromSensorList($sensors);
 
+         // Load existing agents
+        $userModel = new \app\models\yiiModels\YiiUserModel();
+        $users = $userModel->getPersonsMailsAndName($token);
+        $this->view->params['agents'] = $users;
         //If the form is complete, register data
         if ($datasetModel->load(Yii::$app->request->post())) {
             //Store uploaded CSV file
@@ -339,12 +353,13 @@ class DatasetController extends Controller {
 
             // Check CSV header with variables
             if (array_slice($csvHeaders, 2) === $givenVariables) {
-
                 // Get selected or create Provenance URI
                 if (!array_key_exists($datasetModel->provenanceUri, $provenances)) {
                     $provenanceUri = $this->createProvenance(
                             $datasetModel->provenanceUri,
-                            $datasetModel->provenanceComment
+                            $datasetModel->provenanceComment,
+                            $datasetModel->provenanceSensingDevices,
+                            $datasetModel->provenanceAgents
                     );
                     $datasetModel->provenanceUri = $provenanceUri;
                     $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
@@ -435,20 +450,36 @@ class DatasetController extends Controller {
 
     /**
      * Create provenance from an alias and a comment
-     * @param type $alias
-     * @param type $comment
+     * @param type $alias label of the provenance
+     * @param type $comment comment linked to the provenance
+     * @param type $sensingDevice uri of the sensor
+     * @param String $agent uri of the agent
      * @return boolean
      */
-    private function createProvenance($alias, $comment) {
+    private function createProvenance($alias, $comment,$sensingDevice = null, $agent =null) {
         $provenanceService = new WSProvenanceModel();
         $date = new \DateTime();
+        $metadata = [
+            "namespaces" => Yii::$app->params[self::PROVENANCE_PARAMS_VALUES],
+            "creationDate" => $date->format("Y-m-d\TH:i:sO"),
+            "prov:Agent" =>[
+                "oeso:SensingDevice" => [
+                ],
+                "oeso:Operator" => [
+                ]
+              ],
+            ];
+        if($sensingDevice != null){
+            $metadata["prov:Agent"]["oeso:SensingDevice"] = $sensingDevice;
+        }
+        if($sensingDevice != null){
+            $metadata["prov:Agent"]["oeso:Operator"] = $agent;
+        }
         $provenanceUri = $provenanceService->createProvenance(
                 Yii::$app->session['access_token'],
                 $alias,
                 $comment,
-                [
-                    "creationDate" => $date->format("Y-m-d\TH:i:sO")
-                ]
+                $metadata
         );
 
         if (is_string($provenanceUri) && $provenanceUri != "token") {
@@ -492,5 +523,49 @@ class DatasetController extends Controller {
             return true;
         }
     }
-
+    
+    /**
+     * Gets all sensors.
+     * @return sensors 
+     */
+    public function getSensorsUrisTypesLabels() {
+        $model = new \app\models\yiiModels\SensorSearch();
+        $model->page = 0;
+        $model->pageSize = 10000;
+        $sensorsUrisTypesLabels = [];
+        $sensors = $model->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], null);
+        if ($sensors === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
+        } else {
+            foreach ($sensors->models as $sensor) {
+                $sensorsUrisTypesLabels[] =
+                    [
+                        self::SENSOR_DATA_URI => $sensor->uri,
+                        self::SENSOR_DATA_LABEL => $sensor->label,
+                        self::SENSOR_DATA_TYPE => $sensor->rdfType
+                    ];
+            }
+        }
+        return $sensorsUrisTypesLabels;
+    }
+    
+    /**
+     * 
+     * @param type $sensorsUriTypesLabel
+     * @return array
+     */
+    public function getSensorListToShowFromSensorList($sensorsUriTypesLabel) {
+        $sensorLabelListToShow = [];
+        foreach ($sensorsUriTypesLabel as $sensorUriTypesLabel) {
+            $sensorType = Vocabulary::prettyUri($sensorUriTypesLabel[self::SENSOR_DATA_TYPE]);
+            if (isset($sensorLabelListToShow[$sensorType])) {
+                $sensorLabelListToShow[$sensorType][$sensorUriTypesLabel[self::SENSOR_DATA_URI]] = $sensorUriTypesLabel[self::SENSOR_DATA_LABEL];
+            } else {
+                $sensorLabelListToShow[$sensorType] = [
+                $sensorUriTypesLabel[self::SENSOR_DATA_URI] => $sensorUriTypesLabel[self::SENSOR_DATA_LABEL]
+                ];
+            }
+        }
+        return $sensorLabelListToShow;
+    }
 }
