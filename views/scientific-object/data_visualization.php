@@ -367,7 +367,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'color' => $colorByEventCategorie[$event['title']]
                     ];
                 }
-                $viewDetailUrl = Url::to(['event/ajax-view']);
+                
                 $eventsTab[] = [
                     'type' => 'flags',
                     'allowOverlapX' => true,
@@ -376,24 +376,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'y' => -40,
                     'clip' => false,
                     'data' => $Eventsdata,
-                    'events' => [
-                        'click' => new JsExpression("
-                                        function (event) {
-                                        const eventId=event.point.text;
-                                        
-                                         $.ajax({"
-                                . "          url: \"$viewDetailUrl\","
-                                . "         type: 'GET',"
-                                . "     datatype: 'json',"
-                                . "         data: { 
-                                                             id: eventId},"
-                                . "                                }).done(function (data) {"
-                                . "                                            renderEventDetailModal(data);"
-                                . "                                           console.log('ok');}"
-                                . "                                 ).fail(function (jqXHR, textStatus) {"
-                                . "                                           alert('ERROR : ' + jqXHR);});
-                                        }")
-                    ]
+                  
                 ];
                 $series[] = $eventsTab[0];
 
@@ -631,27 +614,6 @@ if (isset($data)) {
         });
     }
 
-    /**
-     * This function is call on the response of the ajax call when a user click on a point on the graphic to get images
-     *  to be used with a carousel bootstrap widget and a vertical list up to the graphic.
-     * @param String :Html content of event/view.php 
-     **/
-    function renderEventDetailModal(data) {
-
-        var fragment = $(data);
-        $('#show-event-lightbox .modal-body .table-responsive .container-fluid').html(fragment);
-        $('#show-event-lightbox').modal();
-        $('#show-event-lightbox').modal('show');
-    }
-
-    var checked = $('#showWidget').is(':checked');
-
-    if (checked) {
-        $('#photoFilter').show();
-    } else {
-        // reset values
-        $('#photoFilter').hide();
-    }
     /**
      * Function apply when checkbox is clicked to show or not images.
      * @param String HTML The checkbox content
