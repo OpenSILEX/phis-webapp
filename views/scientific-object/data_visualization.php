@@ -339,36 +339,35 @@ $this->params['breadcrumbs'][] = $this->title;
                         ];
                     }
                 }
-
                 foreach ($events as $event) {
                     $toReturn = '';
                     $marginLeft = 0;
                     foreach ($event['annotations'] as $annotation) {
 
-                        $toReturn .= '<div class="well clearfix" style="margin:0px 0px 5px ' . $marginLeft . 'px; padding:14px;">';
+                        $toReturn .= '<div class="well" style="margin:0px 0px 5px ' . $marginLeft . 'px;">';
+                        $bodyValue='';
                         foreach ($annotation['bodyValues'] as $i => $value) {
                             $splitSentence = $this->context->splitLongueSentence($value);
 
                             $newSentence = '';
                             $size = sizeof($splitSentence);
+                            
+                            foreach ($splitSentence as $j => $word) {
 
-                            foreach ($splitSentence as $i => $word) {
-                                if (strlen($word) > 1) {
-                                    if ($i < $size - 1) {
-                                        $newSentence .= '' . $word . '<br>';
-                                    } else {
-                                        $newSentence .= '' . $word;
-                                    }
+                                if ($j < $size - 1) {
+                                    $newSentence .= '' . $word . '<br>';
+                                } else {
+                                    $newSentence .= '' . $word;
                                 }
                             }
-                            $toReturn .= $newSentence;
+                            $bodyValue .= $newSentence;
                         }
+                        $toReturn.=$bodyValue;
                         $marginLeft += 10;
-                        $toReturn .= '<div class="pull-right">';
+                        $toReturn .= '<span class="pull-right">';
                         $toReturn .= date('d/m/Y H:i', strtotime($annotation['creationDate']));
-                        $toReturn .= '</div></div>';
+                        $toReturn .= '</span></div>';
                     }
-
                     $Eventsdata[] = [
                         'x' => $event['date'],
                         'title' => $event['title'],
@@ -502,7 +501,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
         <div class="modal" id="add-event-annotation-lightbox" tabindex="-1" role="dialog" aria-labelledby="modalLabelLarge" aria-hidden="true">
             <div class="vertical-alignment-helper">
-                <div class="modal-dialog modal-lg vertical-align-center">
+                <div class="modal-dialog vertical-align-center">
 
                     <div class="modal-content">
                         <div class="modal-header text-center">

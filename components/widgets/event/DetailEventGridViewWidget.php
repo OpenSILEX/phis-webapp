@@ -52,57 +52,58 @@ class DetailEventGridViewWidget extends Widget {
         if ($this->dataProvider->getCount() == 0) {
             $htmlRendered = "<h3>" . Yii::t('app', self::NO_EVENT_LABEL) . "</h3>";
         } else {
-        $htmlRendered = "<h3>" . Yii::t('app', self::EVENTS_LABEL) . "</h3>";
-        $htmlRendered .= GridView::widget([
-                    'dataProvider' => $this->dataProvider,
-                    'columns' => [
-                        [
-                            'label' => Yii::t('app', 'Type'),
-                            'attribute' => YiiEventModel::TYPE,
-                            'value' => function ($model) {
-                                return explode("#", $model->rdfType)[1];
+            $htmlRendered = "<h3>" . Yii::t('app', self::EVENTS_LABEL) . "</h3>";
+            $htmlRendered .= GridView::widget([
+                        'dataProvider' => $this->dataProvider,
+                        'columns' => [
+                            [
+                                'label' => Yii::t('app', 'Type'),
+                                'attribute' => YiiEventModel::TYPE,
+                                'value' => function ($model) {
+                                    return explode("#", $model->rdfType)[1];
                                 }
-                        ],
-                        [
-                            'label' => Yii::t('app', YiiEventModel::ANNOTATIONS),
-                            'attribute' => YiiEventModel::ANNOTATIONS,
-                            'format' => 'html',
-                            'value' => function ($model) {
+                            ],
+                            [
+                                'label' => Yii::t('app', YiiEventModel::ANNOTATIONS),
+                                'attribute' => YiiEventModel::ANNOTATIONS,
+                                'format' => 'html',
+                                'value' => function ($model) {
 
-                                $annotations = $model->annotations;
+                                    $annotations = $model->annotations;
 
-                                $toReturn = '';
-                                $marginLeft = 0;
-                                foreach ($annotations as $annotation) {
+                                    $toReturn = '';
+                                    $marginLeft = 0;
+                                    foreach ($annotations as $annotation) {
 
-                                    $toReturn .= '<div class="well well-lg" style="margin:0px 0px 5px ' . $marginLeft . 'px;">';
-                                    foreach ($annotation['bodyValues'] as $i => $value) {
-                                        $toReturn .= $value . ' ';
+                                        $toReturn .= '<div class="well well-lg" style="margin:0px 0px 5px ' . $marginLeft . 'px;">';
+                                        foreach ($annotation['bodyValues'] as $i => $value) {
+                                            $toReturn .= $value . ' ';
+                                        }
+                                        $marginLeft += 10;
+                                        $toReturn .= '<div class="pull-right">';
+                                        $toReturn .= date('d/m/Y H:i', strtotime($annotation['creationDate']));
+                                        $toReturn .= '</div></div>';
                                     }
-                                    $marginLeft += 10;
-                                    $toReturn .= '<div class="pull-right">';
-                                    $toReturn .= date('d/m/Y H:i', strtotime($annotation['creationDate']));
-                                    $toReturn .= '</div></div>';
+                                    return $toReturn;
                                 }
-                                return $toReturn;
-                            }
-                        ],
-                        [
+                            ],
+                            [
                                 'format' => ['date', 'php:d/m/Y H:i'],
                                 'attribute' => YiiEventModel::DATE
+                            ],
+                            [
+                                'class' => 'yii\grid\ActionColumn',
+                                'template' => '{view}',
+                                'buttons' => [
+                                    'view' => function($url, $model, $key) {
+                                        return Html::a(
+                                                        Icon::show('eye-open', [], Icon::BSG), ['event/view', 'id' => $model->uri], ['target' => '_blank', 'class' => 'target-blank']);
+                                    },
+                                ]
+                            ],
                         ],
-                        ['class' => 'yii\grid\ActionColumn',
-                            'template' => '{view}',
-                            'buttons' => [
-                                'view' => function($url, $model, $key) {
-                                    return Html::a(
-                                                    Icon::show('eye-open', [], Icon::BSG), ['event/view', 'id' => $model->uri], ['target' => '_blank', 'class' => 'target-blank']);
-                                },
-                            ]
-                        ],
-                    ],
-                    'options' => ['class' => self::HTML_CLASS]
-        ]);
+                        'options' => ['class' => self::HTML_CLASS]
+            ]);
         }
         return $htmlRendered;
     }

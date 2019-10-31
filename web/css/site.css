@@ -106,7 +106,7 @@ ul.images li {
 /*use in views/scientific-object/index.php*/
 /*modal of the cart  */
 .modal.fade:not(.in).right .modal-dialog {
-    -webkit-transform: translate3d(25%, 0, 0);
+    /*-webkit-transform: translate3d(25%, 0, 0);*/
     transform: translate3d(25%, 0, 0);
     top: 50%
 }
@@ -133,7 +133,13 @@ ul.images li {
 }
 
 /*//\SILEX:info*/
-
+.grid-view td {
+    word-wrap: break-word;
+    white-space: pre-wrap; 
+    white-space: -o-pre-wrap; 
+    white-space: -moz-pre-wrap; 
+    white-space: -pre-wrap; 
+}
 
 
 
