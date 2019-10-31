@@ -463,7 +463,7 @@ class ScientificObjectController extends Controller {
     private function getObjectTypeCompleteUri($objectType) {
         $objectTypesList = $this->getObjectsTypesUris();
         foreach ($objectTypesList as $objectTypeUri) {
-            if (preg_match("/". $objectType . "\b/", $objectTypeUri)) {
+            if (preg_match("/" . $objectType . "\b/", $objectTypeUri)) {
                 return $objectTypeUri;
             }
         }
@@ -1097,7 +1097,7 @@ class ScientificObjectController extends Controller {
             $searchModel->searchConcernedItemUri = $uri;
             $searchModel->searchDateRangeStart = $_GET['dateStart'];
             $searchModel->searchDateRangeEnd = $_GET['dateEnd'];
-            $searchModel->dateSortAsc = 'true';
+            //$searchModel->dateSortAsc = 'true';
             $searchResult = $searchModel->search($token, null);
             if (is_string($searchResult)) {
                 if ($searchResult === WSConstants::TOKEN_INVALID) {
@@ -1121,6 +1121,7 @@ class ScientificObjectController extends Controller {
                     uasort($annotations, function($item1, $item2) {
                         return strtotime($item1['creationDate']) > strtotime($item2['creationDate']);
                     });
+                    
                     $events[] = [
                         'date' => (strtotime($model->date)) * 1000,
                         'title' => explode('#', $model->rdfType)[1],
