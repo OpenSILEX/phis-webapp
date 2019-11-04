@@ -1163,6 +1163,7 @@ class ScientificObjectController extends Controller {
             $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
             $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
             $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE; // multiple gridview pagination
+          
             // Get annotations
             $searchAnnotationModel = new AnnotationSearch();
             $annotationSearchParameters = [];
@@ -1174,7 +1175,7 @@ class ScientificObjectController extends Controller {
             $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
             $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
             $annotationsProvider->pagination->pageParam = WSConstants::ANNOTATION_WIDGET_PAGE; // multiple gridview pagination
-            //
+            //var_dump($annotationsProvider)   ;exit;       
             //on FORM submitted: //
             //check if image visualization is activated
             $show = isset($_GET['show']) ? $_GET['show'] : null;

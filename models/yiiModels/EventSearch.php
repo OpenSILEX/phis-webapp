@@ -124,7 +124,6 @@ class EventSearch extends YiiEventModel {
     public function searchWithAnnotationsDescription($sessionToken, $searchParams) {
 
         $this->load($searchParams);
-       
         if (isset($searchParams[YiiModelsConstants::PAGE])) {
             $this->page = $searchParams[YiiModelsConstants::PAGE];
         }
@@ -132,7 +131,7 @@ class EventSearch extends YiiEventModel {
             $this->pageSize = $searchParams[YiiModelsConstants::PAGE_SIZE];
         }
         if (isset($searchParams[EventSearch::SEARCH_DATE_RANGE])) {
-            $this->pageSize = $searchParams[YiiModelsConstants::PAGE_SIZE];
+            $this->searchDateRange = $searchParams[EventSearch::SEARCH_DATE_RANGE];
         }
 
         $results = $this->find($sessionToken, $this->attributesToArray());
@@ -143,6 +142,7 @@ class EventSearch extends YiiEventModel {
         } else if (isset($results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'})) {
             return $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'};
         } else {
+            
             $events = $this->jsonListOfArraysToArray($results);
             $eventsWithAnnotations = $this->linkAnnotationsToEvents($sessionToken, $events);
             uasort($eventsWithAnnotations, function($item1, $item2) {

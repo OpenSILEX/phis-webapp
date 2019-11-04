@@ -443,7 +443,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                  if(this.points){
                                      return tooltip.defaultFormatter.call(this, tooltip);
                                  } else if(this.series.name=='Events'){
-                                     const content = '<div>' + this.point.text + '</div>';
+                                     const content = '<span>'+this.point.title+'</span><div>' + this.point.text + '</div>';
                                      return content;
                                  } else {
                                      return '';
@@ -482,7 +482,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 echo Highstock::widget($options);
                 echo "<h3>" . Yii::t('app', 'Scientific object metadata') . "</h3>";
-                Pjax::begin(['timeout' => 5000, 'linkSelector' => 'a:not(.target-blank)']);
+                Pjax::begin(['timeout' => 5000,'id' => 'a']);
                 echo DetailEventGridViewWidget::widget(
                         [
                             DetailEventGridViewWidget::DATA_PROVIDER => $eventsProvider,
@@ -490,7 +490,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 );
                 Pjax::end();
 
-                Pjax::begin(['timeout' => 5000]);
+                Pjax::begin(['timeout' => 5000,'id' => 'b']);
                 echo AnnotationGridViewWidget::widget(
                         [
                             AnnotationGridViewWidget::ANNOTATIONS => $annotationsProvider
