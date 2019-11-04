@@ -97,7 +97,7 @@ class DetailEventGridViewWidget extends Widget {
                                 'buttons' => [
                                     'view' => function($url, $model, $key) {
                                         return Html::a(
-                                                        Icon::show('eye-open', [], Icon::BSG), ['event/view', 'id' => $model->uri], ['target' => '_blank', 'class' => 'target-blank']);
+                                                        Icon::show('eye-open', [], Icon::BSG), ['event/view', 'id' => $model->uri]);
                                     },
                                 ]
                             ],
