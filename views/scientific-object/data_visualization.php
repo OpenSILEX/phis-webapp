@@ -482,7 +482,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 echo Highstock::widget($options);
                 echo "<h3>" . Yii::t('app', 'Scientific object metadata') . "</h3>";
-                Pjax::begin(['timeout' => 5000,'id' => 'a']);
+                Pjax::begin(['timeout' => 15000,'id' => 'a']);
                 echo DetailEventGridViewWidget::widget(
                         [
                             DetailEventGridViewWidget::DATA_PROVIDER => $eventsProvider,
@@ -490,7 +490,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 );
                 Pjax::end();
 
-                Pjax::begin(['timeout' => 5000,'id' => 'b']);
+                Pjax::begin(['timeout' => 15000,'id' => 'b']);
                 echo AnnotationGridViewWidget::widget(
                         [
                             AnnotationGridViewWidget::ANNOTATIONS => $annotationsProvider
