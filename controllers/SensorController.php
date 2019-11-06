@@ -33,6 +33,7 @@ use app\models\wsModels\WSConstants;
  * @update [Vincent Migot] 7 November, 2018: Add sensor/variables link
  * @update [Vincent Migot] 19 November, 2018: Add visualization of environmental data
  * @update [Andréas Garcia] 11 March, 2019: Add event widget
+ * @update [Arnaud Charleroy] 30 October, 2019: Add sensor data by data service
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
@@ -312,7 +313,7 @@ class SensorController extends Controller {
         //get sensor's linked documents
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
-        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
+        $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], ["concernedItem" => $id]);
         
         //3. get sensor annotations
         $searchAnnotationModel = new AnnotationSearch();
@@ -541,8 +542,7 @@ class SensorController extends Controller {
             
             // Get data
             $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
-            $sensorGraphData = $searchModel->getEnvironmentData($sessionToken);
-            
+            $sensorGraphData = $searchModel->getSensorData($sessionToken);
             // Render data
             return $this->renderAjax('_view_sensor_graph', [
                 'sensorGraphData' => $sensorGraphData

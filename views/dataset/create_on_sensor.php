@@ -19,14 +19,14 @@ use yii\helpers\Html;
 /* @var $handsontable openSILEX\handsontablePHP\adapter\HandsontableSimple */
 /* @var $handsontableErrorsCellsSettings string */
 
-$this->title = Yii::t('app', 'Add Dataset');
+$this->title = Yii::t('app', 'Add Data on sensor');
 //$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Dataset', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="dataset-create">
+<div class="dataset-create_on_sensor">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?= $this->render('_form', [
+    <?= $this->render('_form_on_sensor', [
         'model' => $model,
         'errors' => $errors,
         'handsontable' => isset($handsontable) ? $handsontable : null,
