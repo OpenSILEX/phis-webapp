@@ -83,7 +83,19 @@ use yii\helpers\Url;
 
         <h3 class="alert alert-info" style="margin:3%;">Add dataset form</h3>
     <?php endif; ?>
-    
+    <?= $form->field($model, 'experiment')->widget(\kartik\select2\Select2::classname(),[
+                'data' => $this->params['experiments'],
+                'options' => [
+                    'placeholder' => Yii::t('app/messages', 'Select one experiment') . ' ...',
+                    'id' => 'experiment-selector',
+                    'multiple' => false
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true,
+                    'tags' => true
+                ],
+            ]); ?>
+        
     <?= $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(),[
                 'data' => $this->params['variables'],
                 'options' => [
@@ -269,8 +281,8 @@ use yii\helpers\Url;
         <b><?= Yii::t('app', 'Columns')?> : </b>
         <table class="table table-hover" id="dataset-csv-columns-desc">
             <tr>
-                <th style="color:red">ScientificObjectURI *</th>
-                <td><?= Yii::t('app/messages', 'The URI of the scientific object (e.g http://www.phenome-fppn.fr/phenovia/2017/o1028649)')?></td>
+                <th style="color:red">ScientificObjectAlias *</th>
+                <td><?= Yii::t('app/messages', 'The ALIAS of the scientific object for the choosen experiment (e.g MTP_WW_2019_P050_SH1_2018_LF14)')?></td>
             </tr>
             <tr>
                 <th style="color:red">Date *</th>
