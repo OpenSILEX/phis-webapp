@@ -5,7 +5,7 @@
 // PHIS-SILEX
 // Copyright © INRA 2019
 // Creation date: 24 mai 2019
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Contact: julien.bonnefont@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 use Yii;
 use yii\widgets\ActiveForm;
@@ -263,11 +263,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 $objectURI = $model->uri;
 
                 $series = [];
+
+                // build Highcharts data series linked to photos series .
+                // one for each provenances
                 foreach ($data as $dataFromProvenanceKey => $dataFromProvenanceValue) {
                     $series[] = [
                         'name' => $provenancesArray[$dataFromProvenanceKey],
                         'data' => $dataFromProvenanceValue["data"],
-                        'id' => $dataFromProvenanceKey,
+                        'id' => $dataFromProvenanceKey, // id to link photo serie
                         'visible' => true,
                     ];
                     $photoSerie = null;
@@ -339,21 +342,20 @@ $this->params['breadcrumbs'][] = $this->title;
                         ];
                     }
                 }
+
+                // build Highcharts events flag serie
                 foreach ($events as $event) {
                     $toReturn = '';
                     $marginLeft = 0;
+
                     foreach ($event['annotations'] as $annotation) {
-
                         $toReturn .= '<div class="well" style="margin:0px 0px 5px ' . $marginLeft . 'px;">';
-                        $bodyValue='';
+                        $bodyValue = '';
                         foreach ($annotation['bodyValues'] as $i => $value) {
-                            $splitSentence = $this->context->splitLongueSentence($value);
-
+                            $splitSentence = $this->context->splitLongueSentence($value, 58);
                             $newSentence = '';
                             $size = sizeof($splitSentence);
-                            
                             foreach ($splitSentence as $j => $word) {
-
                                 if ($j < $size - 1) {
                                     $newSentence .= '' . $word . '<br>';
                                 } else {
@@ -362,7 +364,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                             $bodyValue .= $newSentence;
                         }
-                        $toReturn.=$bodyValue;
+                        $toReturn .= $bodyValue;
                         $marginLeft += 10;
                         $toReturn .= '<span class="pull-right">';
                         $toReturn .= date('d/m/Y H:i', strtotime($annotation['creationDate']));
@@ -375,7 +377,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'color' => $colorByEventCategorie[$event['title']]
                     ];
                 }
-
                 $eventsTab[] = [
                     'type' => 'flags',
                     'allowOverlapX' => true,
@@ -385,6 +386,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'clip' => false,
                     'data' => $Eventsdata,
                 ];
+
                 $series[] = $eventsTab[0];
 
                 $eventCreateUrl = Url::to(['event/create',
@@ -395,7 +397,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             YiiAnnotationModel::TARGETS => [$objectURI],
                             YiiAnnotationModel::RETURN_URL => Url::current()]);
 
-
+                // the Highcharts json to build the graphic
                 $options = [
                     'id' => 'graphic',
                     'options' => [
@@ -481,8 +483,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 ];
 
                 echo Highstock::widget($options);
+
+                // INFO OF THE SCIENTIFIC OBJECT ( EVENTS TABLE + ANNOTATIONS TABLE )
                 echo "<h3>" . Yii::t('app', 'Scientific object metadata') . "</h3>";
-                Pjax::begin(['timeout' => 15000,'id' => 'a']);
+                Pjax::begin(['timeout' => 15000, 'id' => 'a']);
                 echo DetailEventGridViewWidget::widget(
                         [
                             DetailEventGridViewWidget::DATA_PROVIDER => $eventsProvider,
@@ -490,7 +494,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 );
                 Pjax::end();
 
-                Pjax::begin(['timeout' => 15000,'id' => 'b']);
+                Pjax::begin(['timeout' => 15000, 'id' => 'b']);
                 echo AnnotationGridViewWidget::widget(
                         [
                             AnnotationGridViewWidget::ANNOTATIONS => $annotationsProvider
@@ -499,7 +503,9 @@ $this->params['breadcrumbs'][] = $this->title;
             }
         }
         ?>
-        <div class="modal" id="add-event-annotation-lightbox" tabindex="-1" role="dialog" aria-labelledby="modalLabelLarge" aria-hidden="true">
+
+        <!-- MODAL OPEN: CLICK ON THE DATA SERIES CURVE -->
+        <div class="modal" id="add-event-annotation-lightbox" tabindex="-1" role="dialog" aria-labelledby="modalLabelLarge" aria-hidden="true">-->
             <div class="vertical-alignment-helper">
                 <div class="modal-dialog vertical-align-center">
 
@@ -529,31 +535,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
         </div>
-
-        <div class="modal" id="show-event-lightbox" tabindex="-1" role="dialog" aria-labelledby="modalLabelLarge" aria-hidden="true">
-            <div class="vertical-alignment-helper">
-                <div class="modal-dialog modal-lg vertical-align-center">
-                    <div class="modal-content">
-                        <div class="modal-header text-center">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title"><?= Yii::t('app', 'Description') ?></h4>
-                        </div>
-                        <div class="modal-body">
-                            <div  class="table-responsive">
-                                <div class=container-fluid>
-
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- END OF MODAL  -->
 
     </div>
-
-
 
 </div>
 
@@ -561,17 +545,16 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <script>
     $(document).ready(function () {
+        
         $("#filterSelect").on("change", function (e) {
             var id = $("#filterSelect").select2("data")[0].id;
         });
 
-
-
-<?php
-if (isset($data)) {
-    echo "$('#data-visualization-form').collapse('hide');";
-}
-?>
+        <?php
+        if (isset($data)) {
+            echo "$('#data-visualization-form').collapse('hide');";
+        }
+        ?>
         $('#data-visualization-form').on('hidden.bs.collapse', function () {
             $('#graphic').show();
             $('#visualization-images').show();
@@ -584,8 +567,8 @@ if (isset($data)) {
         });
 
     });
-    $(window).on('load', function () { // to put the script at the end of the page to 
-
+    
+    $(window).on('load', function () { // to put the script at the end of the page 
     });
 
     /**

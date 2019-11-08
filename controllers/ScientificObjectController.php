@@ -1094,7 +1094,6 @@ class ScientificObjectController extends Controller {
             }
 
             //Get the events associate to the sci. obj. to put on the Highcharts Graph
-            $searchModel = null;
             $searchModel = new EventSearch();
             $searchModel->pageSize = 800;
             $searchModel->searchConcernedItemUri = $uri;
@@ -1124,7 +1123,7 @@ class ScientificObjectController extends Controller {
                     uasort($annotations, function($item1, $item2) {
                         return strtotime($item1['creationDate']) > strtotime($item2['creationDate']);
                     });
-                    
+
                     $events[] = [
                         'date' => (strtotime($model->date)) * 1000,
                         'title' => explode('#', $model->rdfType)[1],
@@ -1153,7 +1152,9 @@ class ScientificObjectController extends Controller {
             ];
 
             $searchParams = Yii::$app->request->queryParams;
-            // Get events
+            
+            
+            // Get events associated to the table widget
             $searchEventModel = new EventSearch();
             $searchEventModel->searchConcernedItemUri = $uri;
             $eventSearchParameters = [];
@@ -1163,8 +1164,9 @@ class ScientificObjectController extends Controller {
             $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
             $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
             $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE; // multiple gridview pagination
-          
-            // Get annotations
+           
+            
+            // Get annotations associated to the table widget
             $searchAnnotationModel = new AnnotationSearch();
             $annotationSearchParameters = [];
             if (isset($searchParams[WSConstants::ANNOTATION_WIDGET_PAGE])) {
@@ -1175,26 +1177,18 @@ class ScientificObjectController extends Controller {
             $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
             $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
             $annotationsProvider->pagination->pageParam = WSConstants::ANNOTATION_WIDGET_PAGE; // multiple gridview pagination
-            //var_dump($annotationsProvider)   ;exit;       
-            //on FORM submitted: //
-            //check if image visualization is activated
-            $show = isset($_GET['show']) ? $_GET['show'] : null;
-            $selectedVariable = isset($_GET['variable']) ? $_GET['variable'] : null;
-            $imageTypeSelected = isset($_GET['imageType']) ? $_GET['imageType'] : null;
-            $selectedProvenance = isset($_GET['provenances']) ? $_GET['provenances'] : null;
-
 
             return $this->render('data_visualization', [
                         'model' => $scientificObject,
                         'variables' => $variables,
                         'data' => $toReturn,
-                        'show' => $show,
+                        'show' => $_GET['show'],
                         'isPhotos' => $isPhotos,
                         'dateStart' => $_GET['dateStart'],
                         'dateEnd' => $_GET['dateEnd'],
-                        'selectedVariable' => $selectedVariable,
-                        'imageTypeSelected' => $imageTypeSelected,
-                        'selectedProvenance' => $selectedProvenance,
+                        'selectedVariable' => $_GET['variable'],
+                        'imageTypeSelected' => $_GET['imageType'],
+                        'selectedProvenance' => $_GET['provenances'],
                         'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
                         'filterToSend' => $filterToSend,
                         'events' => $events,
@@ -1211,19 +1205,21 @@ class ScientificObjectController extends Controller {
         }
     }
 
-    public function splitLongueSentence($longString) {
+    /**
+     * Function that split the sentence from the annotation body to show, on the highcharts serie, on hover in the tooltip.
+     * 
+     * @param {String} $longString the sentence to split
+     * @param {String} $maxLineLength the length of the cut
+     * @return {Array} array of short sentences
+     */
+    public function splitLongueSentence($longString, $maxLineLength) {
 
         $words = explode(' ', $longString);
-
-        $maxLineLength = 58;
-
         $currentLength = 0;
         $index = 0;
-
         foreach ($words as $word) {
             // +1 because the word will receive back the space in the end that it loses in explode()
             $wordLength = strlen($word) + 1;
-
             if (($currentLength + $wordLength) <= $maxLineLength) {
                 $output[$index] .= $word . ' ';
                 $currentLength += $wordLength;
@@ -1281,8 +1277,6 @@ class ScientificObjectController extends Controller {
             $imagesByDateToSave[] = $imagesEl['position'];
             $imagesByDate[$imagesEl['date']][] = $imagesByDateToSave;
         }
-
-
         return $imagesByDate;
     }
 
@@ -1293,8 +1287,8 @@ class ScientificObjectController extends Controller {
      * @param {Array} $data Array that stores multiple associative arrays.
      */
     function group_by($key, $array) {
+        
         $result = array();
-
         foreach ($array as $val) {
             if (array_key_exists($key, $val)) {
                 $result[$val[$key]][] = $val;
@@ -1302,7 +1296,6 @@ class ScientificObjectController extends Controller {
                 $result[""][] = $val;
             }
         }
-
         return $result;
     }
 

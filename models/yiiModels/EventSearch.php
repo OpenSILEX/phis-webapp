@@ -19,7 +19,8 @@ use app\models\wsModels\WSConstants;
 
 /**
  * Search action for the events
- * @update [Bonnefont Julien] 1 octobre, 2019: return exception on search action
+ * @update [Bonnefont Julien] 1 octobre, 2019: Return exception on search action
+ * @update [Bonnefont Julien] 8 novembre, 2019: Search with annotations 
  * @author Andréas Garcia <andreas.garcia@inra.fr>
  * 
  */
@@ -142,13 +143,13 @@ class EventSearch extends YiiEventModel {
         } else if (isset($results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'})) {
             return $results->{'metadata'}->{'status'}[0]->{'exception'}->{'details'};
         } else {
-            
+
             $events = $this->jsonListOfArraysToArray($results);
             $eventsWithAnnotations = $this->linkAnnotationsToEvents($sessionToken, $events);
             uasort($eventsWithAnnotations, function($item1, $item2) {
                 return strtotime($item1->date) < strtotime($item2->date);
             });
-          
+
             return new ArrayDataProvider([
                 'models' => $eventsWithAnnotations,
                 'pagination' => [
@@ -233,8 +234,8 @@ class EventSearch extends YiiEventModel {
             ]);
         }
     }
-    
-      /**
+
+    /**
      * Get the event's annotations
      * @param type $sessionToken
      * @param type $searchParams
@@ -245,8 +246,8 @@ class EventSearch extends YiiEventModel {
         if (!is_string($response)) {
             if (isset($response[WSConstants::TOKEN_INVALID])) {
                 return $response;
-            } else {              
-                $annotationWidgetPageSize = Yii::$app->params['annotationWidgetPageSize'];  
+            } else {
+                $annotationWidgetPageSize = Yii::$app->params['annotationWidgetPageSize'];
                 return $response;
             }
         } else {
