@@ -27,6 +27,7 @@ use openSILEX\handsontablePHP\adapter\HandsontableSimple;
 use openSILEX\handsontablePHP\classes\ColumnConfig;
 use app\models\wsModels\WSConstants;
 use app\components\helpers\Vocabulary;
+use app\models\yiiModels\YiiExperimentModel;
 
 require_once '../config/config.php';
 
@@ -42,7 +43,7 @@ class DatasetController extends Controller {
     //create a global configuration file for the csv files
     //\SILEX:TODO
 
-    const AGRONOMICAL_OBJECT_URI = "ScientificObjectURI";
+    const AGRONOMICAL_OBJECT_URI = "ScientificObjectAlias";
     const DATE = "Date";
     const VALUE = "Value";
     const ERRORS_MISSING_COLUMN = "Missing Columns";
@@ -360,6 +361,12 @@ class DatasetController extends Controller {
         $userModel = new \app\models\yiiModels\YiiUserModel();
         $users = $userModel->getPersonsMailsAndName($token);
         $this->view->params['agents'] = $users;
+        
+        // Load experiments
+        $experimentModel = new YiiExperimentModel();
+        $experiments =  $experimentModel->getExperimentsURIAndLabelList($token);
+        $this->view->params['experiments'] = $experiments;
+        
         //If the form is complete, register data
         if ($datasetModel->load(Yii::$app->request->post())) {
             //Store uploaded CSV file
@@ -402,15 +409,32 @@ class DatasetController extends Controller {
                                 $datasetModel->documentsURIs["documentURI"]
                         );
                     }
-
+                    // Load all objectsl inked to an experiment
+                    
+                    $SciencitificObjectSearch = new \app\models\yiiModels\ScientificObjectSearch();
+                    $SciencitificObjectSearch->experiment = $datasetModel->experiment;
+                    $result = $SciencitificObjectSearch->search($token, [WSConstants::PAGE_SIZE => 50000]);
+                   
+                    $objectUris = [];
+                    foreach ($result->getModels() as $object){
+                        $objectUris[$object->uri]=$object->label;
+                    }
                     $datasetModel->documentsURIs = null;
 
                     if ($linkDocuments === true) {
+                        $objectsErrors = [];
                         // Save CSV data linked to provenance URI
                         $values = [];
                         foreach ($fileContent as $rowStr) {
                             $row = str_getcsv($rowStr, Yii::$app->params['csvSeparator']);
-                            $scientifObjectUri = $row[0];
+                            $scientifObjectAlias = $row[0];
+                            if(!array_search($scientifObjectAlias, $objectUris)){
+                                $objectsErrors[] = $scientifObjectAlias .  Yii::t("app/messages", " Object doesn't not exists in this experiment");
+                                $scientifObjectUri = null;
+                            }else{
+                                $scientifObjectUri = array_search($scientifObjectAlias, $objectUris);
+                            }
+                              var_dump($datasetModel->experiment,$scientifObjectAlias,$scientifObjectUri);
                             $date = $row[1];
                             for ($i = 2; $i < count($row); $i++) {
                                 $values[] = [
@@ -422,7 +446,16 @@ class DatasetController extends Controller {
                                 ];
                             }
                         }
-
+                        
+                        if(!empty($objectsErrors)){
+                            return $this->render('create', [
+                                'model' => $datasetModel,
+                                'errors' => $objectsErrors
+                                    ]
+                            );
+                        }
+                       
+                        
                         $dataService = new WSDataModel();
                         $result = $dataService->post($token, "/", $values);
 

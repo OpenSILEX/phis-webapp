@@ -74,17 +74,23 @@ class YiiDatasetModel extends WSActiveRecord {
      */
     public $file;
     
-     /**
+    /**
      * Sensor uris
      * @var array 
      */
     public $provenanceSensingDevices;
     
-      /**
+    /**
      * Agent uris
      * @var array 
      */
     public $provenanceAgents;
+    
+    /**
+     * Experiment uri
+     * @var string 
+     */
+    public $experiment;
 
     const PROVENANCE = "provenance";
     const DATA = "data";
@@ -106,10 +112,11 @@ class YiiDatasetModel extends WSActiveRecord {
      */
     public function rules() {
         return [
-            [['variables', 'provenanceAlias', 'file', 'provenanceUri'], 'required'],
+            [['variables', 'provenanceAlias', 'file', 'provenanceUri','experiment'], 'required'],
             [['provenanceSensingDevices'], 'safe'],
             [['provenanceAgents'], 'safe'],
             [['provenanceComment'], 'string'],
+            [['experiment'], 'string'],
             [['provenanceUri', 'provenanceComment', 'documentsURIs', 'data', 'file'], 'safe'],
             [['file'], 'file', 'extensions' => 'csv']
         ];
@@ -127,7 +134,8 @@ class YiiDatasetModel extends WSActiveRecord {
             'provenanceAgents' => Yii::t('app', 'Agent'),
             'variables' => Yii::t('app', 'Variable(s)'),
             'file' => Yii::t('app', 'Data file'),
-            'documentsUris' => Yii::t('app', 'Documents')
+            'documentsUris' => Yii::t('app', 'Documents'),
+            'experiment' => Yii::t('app', 'Experiment')
         ];
     }
 
