@@ -25,8 +25,8 @@ use app\models\wsModels\WSDatasetModel;
 class YiiDatasetModel extends WSActiveRecord {
 
     /**
-     * Uri de la provenance
-     * @var type 
+     * Provenance uri
+     * @var string 
      */
     public $provenanceUri;
     
@@ -73,6 +73,18 @@ class YiiDatasetModel extends WSActiveRecord {
      * @var file
      */
     public $file;
+    
+     /**
+     * Sensor uris
+     * @var array 
+     */
+    public $provenanceSensingDevices;
+    
+      /**
+     * Agent uris
+     * @var array 
+     */
+    public $provenanceAgents;
 
     const PROVENANCE = "provenance";
     const DATA = "data";
@@ -95,6 +107,8 @@ class YiiDatasetModel extends WSActiveRecord {
     public function rules() {
         return [
             [['variables', 'provenanceAlias', 'file', 'provenanceUri'], 'required'],
+            [['provenanceSensingDevices'], 'safe'],
+            [['provenanceAgents'], 'safe'],
             [['provenanceComment'], 'string'],
             [['provenanceUri', 'provenanceComment', 'documentsURIs', 'data', 'file'], 'safe'],
             [['file'], 'file', 'extensions' => 'csv']
@@ -109,6 +123,8 @@ class YiiDatasetModel extends WSActiveRecord {
         return [
             'provenanceUri' => Yii::t('app', 'Provenance (URI)'),
             'provenanceComment' => Yii::t('app', 'Provenance comment'),
+            'provenanceSensingDevices' => Yii::t('app', 'Sensor'),
+            'provenanceAgents' => Yii::t('app', 'Agent'),
             'variables' => Yii::t('app', 'Variable(s)'),
             'file' => Yii::t('app', 'Data file'),
             'documentsUris' => Yii::t('app', 'Documents')

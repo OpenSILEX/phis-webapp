@@ -10,7 +10,6 @@
 
 namespace app\models\yiiModels;
 use Yii;
-use \app\models\wsModels\WSEnvironmentModel;
 
 /**
  * implements the search action for the sensor data
@@ -46,6 +45,11 @@ class DeviceDataSearch extends \yii\base\Model {
      * @var string
      */
     public $graphName;
+    
+    /**
+     * Store provenance data to prevent multiple calls to WS
+     */
+    const SESSION_PROVENANCES = 'store_provenances_infos';
     
     /**
      * @inheritdoc
@@ -90,18 +94,25 @@ class DeviceDataSearch extends \yii\base\Model {
      *      ]
      *  ]
      */
-    public function getEnvironmentData($sessionToken) {
+    public function getSensorData($sessionToken) {
+        // Session provenance
+        $sessionProvenances = Yii::$app->session[self::SESSION_PROVENANCES];
+        if(!isset($sessionProvenances)){
+            $sessionProvenances = [];
+        }
         // Create webservice instance
-        $ws = new WSEnvironmentModel();
+        $wsData = new \app\models\wsModels\WSSensorModel();
+        $wsProv = new \app\models\wsModels\WSProvenanceModel();
         
         // Define start and end time period
         $dateTimeStart = null;
         $dateTimeEnd = null;
         
         if ($this->dateStart == null && $this->dateEnd == null) {
+            $date = null;
+            $lastData = $wsData->getLastSensorVariableData($sessionToken, $this->variableURI, $this->sensorURI);
             // If no dates are defined get the last data for this sensor and variable
-            $lastData = $ws->getLastSensorVariableData($sessionToken, $this->sensorURI, $this->variableURI);
-        
+            
             // Get the last date if exists
             $lastDate = null;
             if ($lastData['date']) {
@@ -121,6 +132,7 @@ class DeviceDataSearch extends \yii\base\Model {
             } else {
                 return null;
             }
+
         } else if ($this->dateStart == null) {
             // If only dateEnd is defined
             $dateTimeEnd = new \DateTime($this->dateEnd);
@@ -132,10 +144,17 @@ class DeviceDataSearch extends \yii\base\Model {
             $dateTimeStart = new \DateTime($this->dateStart);
             $dateTimeEnd = new \DateTime($this->dateEnd);
         }
-        
+
         // Get all data
-        $data = $ws->getAllSensorData($sessionToken, $this->sensorURI, $this->variableURI, $dateTimeStart, $dateTimeEnd);
-                
+        $data = $wsData->getAllSensorData($sessionToken, $this->sensorURI, $this->variableURI, $dateTimeStart, $dateTimeEnd);
+        // Get specific associated provenance
+        foreach ($data as $d){
+            if(!isset($sessionProvenances[$d->provenanceUri])){
+                $specificProvenancesData = $wsProv->getSpecificProvenancesByCriteria($sessionToken,['uri' => $d->provenanceUri] );
+                $sessionProvenances[$d->provenanceUri] = $specificProvenancesData[0];
+                $d->provenanceLabel = $specificProvenancesData[0]->label;
+            }
+        }
         // Construct result
         $result = [
             "graphName" => $this->graphName,
@@ -143,7 +162,8 @@ class DeviceDataSearch extends \yii\base\Model {
             "sensorUri" => $this->sensorURI,
             "dateStart" => $dateTimeStart,
             "dateEnd" => $dateTimeEnd,
-            "data" => $data
+            "data" => $data,
+            "provenances" => $sessionProvenances
         ];
         
         return $result;

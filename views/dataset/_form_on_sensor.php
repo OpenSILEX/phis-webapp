@@ -269,10 +269,6 @@ use yii\helpers\Url;
         <b><?= Yii::t('app', 'Columns')?> : </b>
         <table class="table table-hover" id="dataset-csv-columns-desc">
             <tr>
-                <th style="color:red">ScientificObjectURI *</th>
-                <td><?= Yii::t('app/messages', 'The URI of the scientific object (e.g http://www.phenome-fppn.fr/phenovia/2017/o1028649)')?></td>
-            </tr>
-            <tr>
                 <th style="color:red">Date *</th>
                 <td><p><?= Yii::t('app/messages', 'Acquisition date of the data') ?> (format ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ) </p> </td>
             </tr>
@@ -290,8 +286,8 @@ use yii\helpers\Url;
                 $csvPath = "semicolon";
             }
         ?>
-        <i><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv', ['id' => 'downloadDatasetTemplate']) ?></i>
-        <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetExemple.csv') ?></i>
+        <i><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetSensorTemplate.csv', ['id' => 'datasetSensorTemplate']) ?></i>
+        <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetSensorExemple.csv') ?></i>
     </p>
     <?= $form->field($model, 'file')->widget(FileInput::classname(), [
         'options' => [
@@ -413,7 +409,7 @@ use yii\helpers\Url;
                 variablesLabels.push($(sel).text());
               });
             $.ajax({
-                url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-creation-file',
+                url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-sensor-creation-file',
                 type: 'POST',
                 datatype: 'json',
                 data: {variables: variablesLabels}
