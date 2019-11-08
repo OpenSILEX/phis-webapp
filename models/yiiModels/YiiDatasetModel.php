@@ -131,7 +131,7 @@ class YiiDatasetModel extends WSActiveRecord {
             'provenanceUri' => Yii::t('app', 'Provenance (URI)'),
             'provenanceComment' => Yii::t('app', 'Provenance comment'),
             'provenanceSensingDevices' => Yii::t('app', 'Sensor'),
-            'provenanceAgents' => Yii::t('app', 'Agent'),
+            'provenanceAgents' => Yii::t('app', 'Operator'),
             'variables' => Yii::t('app', 'Variable(s)'),
             'file' => Yii::t('app', 'Data file'),
             'documentsUris' => Yii::t('app', 'Documents'),

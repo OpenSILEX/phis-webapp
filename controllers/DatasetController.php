@@ -359,7 +359,7 @@ class DatasetController extends Controller {
 
          // Load existing agents
         $userModel = new \app\models\yiiModels\YiiUserModel();
-        $users = $userModel->getPersonsMailsAndName($token);
+        $users = $userModel->getPersonsURIAndName($token);
         $this->view->params['agents'] = $users;
         
         // Load experiments
