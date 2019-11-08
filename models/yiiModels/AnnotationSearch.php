@@ -15,6 +15,7 @@ use app\models\yiiModels\YiiAnnotationModel;
 /**
  * AnnotationSearch represents the model behind the search form about
  * \app\models\Annotation based ont he Yii2 search basic classes
+ * @update [Bonnefont Julien] 8 Novembre, 2019: fix heritage stuff on attributesToArray
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class AnnotationSearch extends YiiAnnotationModel {
@@ -59,7 +60,7 @@ class AnnotationSearch extends YiiAnnotationModel {
         if (!$this->validate()) {
             return new \yii\data\ArrayDataProvider();
         }
-
+ 
         //3. Request to the web service and return result
         $findResult = $this->find($sessionToken, $this->attributesToArray());
 

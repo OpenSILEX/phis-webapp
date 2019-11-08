@@ -20,6 +20,7 @@ use kartik\icons\Icon;
 
 /**
  * Annotation grid view widget.
+ * @update [Bonnefont Julien] 8 Novembre, 2019: add an easy reading format to the date and type
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
 class AnnotationGridViewWidget extends Widget {

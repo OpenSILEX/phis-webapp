@@ -5,7 +5,7 @@
 // SILEX-PHIS
 // Copyright © INRA 2019
 // Creation date: 5 Mar. 2019
-// Contact: andreas.garcia@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Contact: julien.bonnefont@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
 //******************************************************************************
 
 namespace app\components\widgets\event;
