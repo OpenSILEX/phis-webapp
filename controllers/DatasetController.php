@@ -510,7 +510,7 @@ class DatasetController extends Controller {
      * @return mixed
      */
     public function actionCreateOnSensor() {
-        $datasetModel = new \app\models\yiiModels\YiiDatasetModel();
+        $datasetModel = new \app\models\yiiModels\YiiDataSensorModel();
         $variablesModel = new \app\models\yiiModels\YiiVariableModel();
 
         $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
