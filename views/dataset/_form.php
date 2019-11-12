@@ -143,25 +143,7 @@ use yii\helpers\Url;
                         .removeClass("has-success");
                     $(".field-yiidatasetmodel-provenancecomment .help-block").empty();
                     
-                    // Set provenance provenanceSensingDevices, disable input and remove validation messages 
-                    try {
-                        var provenanceSensingDevices = provenances[uri]["metadata"]["prov:Agent"]["oeso:SensingDevice"];
-                        $("#yiidatasetmodel-provenancesensingdevices").val(provenanceSensingDevices);
-                        $("#yiidatasetmodel-provenancesensingdevices").trigger("change");
-//                        console.log(provenanceSensingDevices);
-                    }
-                    catch(error) {
-                        $("#yiidatasetmodel-provenancesensingdevices").val([]);
-                        $("#yiidatasetmodel-provenancesensingdevices").trigger("change");
-                        console.log("No sensing device set");
-                    }finally {
-                        $("#yiidatasetmodel-provenancesensingdevices").val(provenanceSensingDevices).attr("disabled", "disabled");
-                        $(".field-yiidatasetmodel-provenancesensingdevices, .field-yiidatasetmodel-provenancesensingdevices *")
-                            .removeClass("has-error")
-                            .removeClass("has-success");
-                        $(".field-yiidatasetmodel-provenancesensingdevices .help-block").empty();
-                    }
-                    // Set provenance provenanceSensingDevices, disable input and remove validation messages 
+                    // Set provenance provenanceAgents, disable input and remove validation messages 
                     try {
                         var provenanceAgents = provenances[uri]["metadata"]["prov:Agent"]["oeso:Operator"];
                         $("#yiidatasetmodel-provenanceagents").val(provenanceAgents);
@@ -184,10 +166,7 @@ use yii\helpers\Url;
                         "uri": uri
                     })
                 } else {
-                    // Otherwise clear provenance comment and enable input
-                    $("#yiidatasetmodel-provenancesensingdevices").val(sensingDevices).removeAttr("disabled").trigger("change");
-                    
-                    // Otherwise clear provenance comment and enable input
+                    // Otherwise clear provenance agents and enable input
                     $("#yiidatasetmodel-provenanceagents").val(agents).removeAttr("disabled").trigger("change");
                     
                     // Otherwise clear provenance comment and enable input
@@ -216,18 +195,6 @@ use yii\helpers\Url;
                 ],
                 'pluginOptions' => [
                     'allowClear' => true,
-                    'tags' => true
-                ],
-            ]); ?>
-
-      <?= $form->field($model, 'provenanceSensingDevices')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['sensingDevices'],
-                'options' => [
-                    'placeholder' => Yii::t('app/messages', 'Select existing device') . ' ...',
-                    'multiple' => true
-                ],
-                'pluginOptions' => [
-                    'allowClear' => false,
                     'tags' => true
                 ],
             ]); ?>

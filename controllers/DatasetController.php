@@ -668,7 +668,7 @@ class DatasetController extends Controller {
         if($sensingDevice != null){
             $metadata["prov:Agent"]["oeso:SensingDevice"] = $sensingDevice;
         }
-        if($sensingDevice != null){
+        if($agent != null){
             $metadata["prov:Agent"]["oeso:Operator"] = $agent;
         }
         $provenanceUri = $provenanceService->createProvenance(
