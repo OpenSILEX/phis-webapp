@@ -434,7 +434,6 @@ class DatasetController extends Controller {
                             }else{
                                 $scientifObjectUri = array_search($scientifObjectAlias, $objectUris);
                             }
-                              var_dump($datasetModel->experiment,$scientifObjectAlias,$scientifObjectUri);
                             $date = $row[1];
                             for ($i = 2; $i < count($row); $i++) {
                                 $values[] = [
