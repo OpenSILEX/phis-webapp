@@ -434,7 +434,6 @@ class DatasetController extends Controller {
                             }else{
                                 $scientifObjectUri = array_search($scientifObjectAlias, $objectUris);
                             }
-                              var_dump($datasetModel->experiment,$scientifObjectAlias,$scientifObjectUri);
                             $date = $row[1];
                             for ($i = 2; $i < count($row); $i++) {
                                 $values[] = [
@@ -510,7 +509,7 @@ class DatasetController extends Controller {
      * @return mixed
      */
     public function actionCreateOnSensor() {
-        $datasetModel = new \app\models\yiiModels\YiiDatasetModel();
+        $datasetModel = new \app\models\yiiModels\YiiDataSensorModel();
         $variablesModel = new \app\models\yiiModels\YiiVariableModel();
 
         $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
@@ -668,7 +667,7 @@ class DatasetController extends Controller {
         if($sensingDevice != null){
             $metadata["prov:Agent"]["oeso:SensingDevice"] = $sensingDevice;
         }
-        if($sensingDevice != null){
+        if($agent != null){
             $metadata["prov:Agent"]["oeso:Operator"] = $agent;
         }
         $provenanceUri = $provenanceService->createProvenance(
