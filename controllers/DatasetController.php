@@ -413,8 +413,9 @@ class DatasetController extends Controller {
                     
                     $SciencitificObjectSearch = new \app\models\yiiModels\ScientificObjectSearch();
                     $SciencitificObjectSearch->experiment = $datasetModel->experiment;
-                    $result = $SciencitificObjectSearch->search($token, [WSConstants::PAGE_SIZE => 50000]);
-                   
+                    $SciencitificObjectSearch->pageSize = 30000;
+                    $result = $SciencitificObjectSearch->search($token);
+
                     $objectUris = [];
                     foreach ($result->getModels() as $object){
                         $objectUris[$object->uri]=$object->label;
