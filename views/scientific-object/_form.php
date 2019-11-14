@@ -208,7 +208,7 @@
                 "<b><?= Yii::t('app', 'Insertion status') ?></b>"
             ],
             manualRowMove: true,
-            manualColumnMove: true,
+            manualColumnMove: false,
             contextMenu: true,
             filters: true,
             dropdownMenu: true,
