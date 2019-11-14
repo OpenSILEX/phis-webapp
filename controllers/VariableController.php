@@ -79,7 +79,7 @@ class VariableController extends Controller {
         //Models used to get the lists of traits, methods and unit for the search
         $traitModel = new YiiTraitModel();
         $methodModel = new YiiMethodModel();
-        $unitModel = new YiiUnitModel();
+        $unitModel = new YiiUnitModel($pageSize = 5000);
         
         //Get the search params and update pagination
         $searchParams = Yii::$app->request->queryParams;        
