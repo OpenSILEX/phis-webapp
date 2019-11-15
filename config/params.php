@@ -70,6 +70,11 @@ return [
     'Installation' => 'http://www.opensilex.org/vocabulary/oeso#Installation',
     
     'FinancialFunding' => 'http://www.opensilex.org/vocabulary/oeso#FinancialFunding',
+    
+    'Genus' => 'http://www.opensilex.org/vocabulary/oeso#Genus',
+    'Species' => 'http://www.opensilex.org/vocabulary/oeso#Species',
+    'Variety' => 'http://www.opensilex.org/vocabulary/oeso#Variety',
+    'Accession' => 'http://www.opensilex.org/vocabulary/oeso#Accession',
 
     // Event
     'event' => 'http://www.opensilex.org/vocabulary/oeev#Event',
@@ -89,6 +94,10 @@ return [
     'dateOfLastCalibration' => 'http://www.opensilex.org/vocabulary/oeso#dateOfLastCalibration',
     'dateOfPurchase' => 'http://www.opensilex.org/vocabulary/oeso#dateOfPurchase',
     'focalLength' => 'http://www.opensilex.org/vocabulary/oeso#focalLength',
+    'fromAccession' => 'http://www.opensilex.org/vocabulary/oeso#fromAccession',
+    'fromGenus' => 'http://www.opensilex.org/vocabulary/oeso#fromGenus',
+    'fromSpecies' => 'http://www.opensilex.org/vocabulary/oeso#fromSpecies',
+    'fromVariety' => 'http://www.opensilex.org/vocabulary/oeso#fromVariety',
     'hasSpecies' => 'http://www.opensilex.org/vocabulary/oeso#hasSpecies',
     'hasVariety' => 'http://www.opensilex.org/vocabulary/oeso#hasVariety',
     'halfFieldOfView' => 'http://www.opensilex.org/vocabulary/oeso#halfFieldOfView',
