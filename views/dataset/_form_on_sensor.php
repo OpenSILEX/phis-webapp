@@ -8,8 +8,8 @@
 // Copyright © - INRA - 2017
 // Creation date: October 2017
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  January, 15 2018 (multiple variables dataset)
-// Subject: creation of dataset via CSV
+// Last modification date:  January, 15 2018 (multiple variables datasensor)
+// Subject: creation of datasensor via CSV
 //***********************************************************************************************
 
 use Yii;
@@ -32,7 +32,7 @@ use yii\helpers\Url;
 
 ?>
 
-<div class="dataset-form well">
+<div class="datasensor-form well">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <?= Yii::$app->session->getFlash('renderArray'); ?>
@@ -41,7 +41,7 @@ use yii\helpers\Url;
         if (isset($errors) && $errors !== null):
     ?>
     <div class="alert alert-danger" >
-        <h3 style="margin:3%;">Errors found in dataset :</h3>
+        <h3 style="margin:3%;">Errors found in datasensor :</h3>
         <ul>
         <?php 
             // Display error messages
@@ -70,7 +70,7 @@ use yii\helpers\Url;
     ?>
         <div id="errors">
 
-            <h3 class="alert alert-danger" style="margin:3%;">Errors found in dataset </h3>
+            <h3 class="alert alert-danger" style="margin:3%;">Errors found in datasensor </h3>
 
                 <div id="<?= $handsontable->getContainerName() ?>">
                 </div>
@@ -81,7 +81,7 @@ use yii\helpers\Url;
 
         </div>
 
-        <h3 class="alert alert-info" style="margin:3%;">Add dataset form</h3>
+        <h3 class="alert alert-info" style="margin:3%;">Add datasensor form</h3>
     <?php endif; ?>
     
     <?= $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(),[
@@ -119,53 +119,59 @@ use yii\helpers\Url;
                 
             // Function to update provenance comment field depending of selected URI
             var updateProvenanceFields = function(uri) {
+                 $("#data-save").prop("disabled",false);
                 if (provenances.hasOwnProperty(uri)) {
 //                    console.log(provenances[uri]);
                     // If selected provenance is known get its comment
                     var comment = provenances[uri]["comment"];
                     
                     // Set provenance comment, disable input and remove validation messages 
-                    $("#yiidatasetmodel-provenancecomment").val(comment).attr("disabled", "disabled");
-                    $(".field-yiidatasetmodel-provenancecomment, .field-yiidatasetmodel-provenancecomment *")
+                    $("#yiidatasensormodel-provenancecomment").val(comment).attr("disabled", "disabled");
+                    $(".field-yiidatasensormodel-provenancecomment, .field-yiidatasensormodel-provenancecomment *")
                         .removeClass("has-error")
                         .removeClass("has-success");
-                    $(".field-yiidatasetmodel-provenancecomment .help-block").empty();
+                    $(".field-yiidatasensormodel-provenancecomment .help-block").empty();
                     
                     // Set provenance provenanceSensingDevices, disable input and remove validation messages 
                     try {
                         var provenanceSensingDevices = provenances[uri]["metadata"]["prov:Agent"]["oeso:SensingDevice"];
-                        $("#yiidatasetmodel-provenancesensingdevices").val(provenanceSensingDevices);
-                        $("#yiidatasetmodel-provenancesensingdevices").trigger("change");
-//                        console.log(provenanceSensingDevices);
+                        $("#yiidatasensormodel-provenancesensingdevices").val(provenanceSensingDevices);
+                        $("#yiidatasensormodel-provenancesensingdevices").trigger("change");
+                        if(provenanceSensingDevices.length === 0){
+                            toastr.error('<?= Yii::t('app/messages', 'You must select a provenance with a sensor'); ?>');
+                            $("#data-save").prop("disabled",true);
+                        }
                     }
                     catch(error) {
-                        $("#yiidatasetmodel-provenancesensingdevices").val([]);
-                        $("#yiidatasetmodel-provenancesensingdevices").trigger("change");
+                        $("#yiidatasensormodel-provenancesensingdevices").val([]);
+                        $("#yiidatasensormodel-provenancesensingdevices").trigger("change");
+                        toastr.error('<?= Yii::t('app/messages', 'You must select a provenance with a sensor'); ?>');
+                        $("#data-save").prop("disabled",true);
                         console.log("No sensing device set");
                     }finally {
-                        $("#yiidatasetmodel-provenancesensingdevices").val(provenanceSensingDevices).attr("disabled", "disabled");
-                        $(".field-yiidatasetmodel-provenancesensingdevices, .field-yiidatasetmodel-provenancesensingdevices *")
+                        $("#yiidatasensormodel-provenancesensingdevices").val(provenanceSensingDevices).attr("disabled", "disabled");
+                        $(".field-yiidatasensormodel-provenancesensingdevices, .field-yiidatasensormodel-provenancesensingdevices *")
                             .removeClass("has-error")
                             .removeClass("has-success");
-                        $(".field-yiidatasetmodel-provenancesensingdevices .help-block").empty();
+                        $(".field-yiidatasensormodel-provenancesensingdevices .help-block").empty();
                     }
                     // Set provenance provenanceSensingDevices, disable input and remove validation messages 
                     try {
                         var provenanceAgents = provenances[uri]["metadata"]["prov:Agent"]["oeso:Operator"];
-                        $("#yiidatasetmodel-provenanceagents").val(provenanceAgents);
-                        $("#yiidatasetmodel-provenanceagents").trigger("change");
+                        $("#yiidatasensormodel-provenanceagents").val(provenanceAgents);
+                        $("#yiidatasensormodel-provenanceagents").trigger("change");
 //                        console.log(provenanceAgents);
                     }
                     catch(error) {
-                         $("#yiidatasetmodel-provenanceagents").val([]);
-                         $("#yiidatasetmodel-provenanceagents").trigger("change");
+                         $("#yiidatasensormodel-provenanceagents").val([]);
+                         $("#yiidatasensormodel-provenanceagents").trigger("change");
                          console.log("No agents set");
                     }finally {
-                        $("#yiidatasetmodel-provenanceagents").val(agents).attr("disabled", "disabled");
-                        $(".field-yiidatasetmodel-provenanceagents, .field-yiidatasetmodel-provenanceagents *")
+                        $("#yiidatasensormodel-provenanceagents").val(agents).attr("disabled", "disabled");
+                        $(".field-yiidatasensormodel-provenanceagents, .field-yiidatasensormodel-provenanceagents *")
                             .removeClass("has-error")
                             .removeClass("has-success");
-                        $(".field-yiidatasetmodel-provenanceagents .help-block").empty();
+                        $(".field-yiidatasensormodel-provenanceagents .help-block").empty();
                     }
                     // Load linked documents
                     $("#already-linked-documents").load(documentsLoadUri, {
@@ -173,13 +179,13 @@ use yii\helpers\Url;
                     })
                 } else {
                     // Otherwise clear provenance comment and enable input
-                    $("#yiidatasetmodel-provenancesensingdevices").val(sensingDevices).removeAttr("disabled").trigger("change");
+                    $("#yiidatasensormodel-provenancesensingdevices").val(sensingDevices).removeAttr("disabled").trigger("change");
                     
                     // Otherwise clear provenance comment and enable input
-                    $("#yiidatasetmodel-provenanceagents").val(agents).removeAttr("disabled").trigger("change");
+                    $("#yiidatasensormodel-provenanceagents").val(agents).removeAttr("disabled").trigger("change");
                     
                     // Otherwise clear provenance comment and enable input
-                    $("#yiidatasetmodel-provenancecomment").val("").removeAttr("disabled");
+                    $("#yiidatasensormodel-provenancecomment").val("").removeAttr("disabled");
                     
                     // Clear linked documents list
                     $("#already-linked-documents").empty();
@@ -267,12 +273,12 @@ use yii\helpers\Url;
         </ul>
         <br/>
         <b><?= Yii::t('app', 'Columns')?> : </b>
-        <table class="table table-hover" id="dataset-csv-columns-desc">
+        <table class="table table-hover" id="datasensor-csv-columns-desc">
             <tr>
                 <th style="color:red">Date *</th>
                 <td><p><?= Yii::t('app/messages', 'Acquisition date of the data') ?> (format ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ) </p> </td>
             </tr>
-             <tr class="dataset-variables">
+             <tr class="datasensor-variables">
                 <th style="color:red">Value *</th>
                 <td ><?= Yii::t('app', 'Value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)</td>
             </tr>
@@ -297,8 +303,8 @@ use yii\helpers\Url;
     ]);
     ?>
 
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('yii' , 'Create') , ['class' => 'btn btn-success']) ?>
+    <div class="form-group" >
+        <?= Html::submitButton(Yii::t('yii' , 'Create') , ['class' => 'btn btn-success','id' => 'data-save']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
@@ -315,7 +321,7 @@ use yii\helpers\Url;
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-success" id="document-save"><?php echo Html::encode(Yii::t('yii', 'Create')) ?></button>
-                     <button type="button" class="btn btn-default modal-close" data-dismiss="modal"><?php echo Html::encode(Yii::t('yii', 'Close')) ?></button>
+                    <button type="button" class="btn btn-default modal-close" data-dismiss="modal"><?php echo Html::encode(Yii::t('yii', 'Close')) ?></button>
                 </div>
             </div>
         </div>
@@ -324,7 +330,7 @@ use yii\helpers\Url;
     <script>
     $(document).ready(function(){
         // Load document add form popin
-        $('#document-content').load('<?php echo Url::to(['document/create-from-dataset']) ?>');
+        $('#document-content').load('<?php echo Url::to(['document/create-from-datasensor']) ?>');
         
         var documentUploaded = false;
         // Clear last uploaded document line if document add form is canceled
@@ -342,10 +348,10 @@ use yii\helpers\Url;
         });
 
         $(document).on('change', '#uriVariable-selector', function() {
-            $(".dataset-variables").remove();
+            $(".datasensor-variables").remove();
               $("#uriVariable-selector :selected").each(function (i,sel) {
-                    $('#dataset-csv-columns-desc').append(
-                            '<tr class="dataset-variables">'
+                    $('#datasensor-csv-columns-desc').append(
+                            '<tr class="datasensor-variables">'
                                 + '<th style="color:red" >'
                                     + $(sel).text() + ' *'
                                 + '</th>'
@@ -380,7 +386,7 @@ use yii\helpers\Url;
                 })
                 .done(function (data) {
                     // Add document URI and close document add form
-                    $('#yiidatasetmodel-documentsuris-documenturi-' + nbDocuments).val(data);
+                    $('#yiidatasensormodel-documentsuris-documenturi-' + nbDocuments).val(data);
                     documentUploaded = true;
                     $('#document-modal').modal('toggle');
 
@@ -409,7 +415,7 @@ use yii\helpers\Url;
                 variablesLabels.push($(sel).text());
               });
             $.ajax({
-                url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-sensor-creation-file',
+                url: 'index.php?r=datasensor%2Fgenerate-and-download-data-sensor-creation-file',
                 type: 'POST',
                 datatype: 'json',
                 data: {variables: variablesLabels}

@@ -150,7 +150,7 @@ class DatasetController extends Controller {
      *                                file uri => alias
      * @return mixed
      */
-    public function actionGenerateAndDownloadDatasetSensorCreationFile() {
+    public function actionGenerateAndDownloadDataSensorCreationFile() {
         $fileColumns[] = DatasetController::DATE;
         $variables = Yii::$app->request->post('variables');
         foreach ($variables as $variableAlias) {
