@@ -24,6 +24,9 @@ use app\models\wsModels\WSUriModel;
 class YiiGermplasmModel extends WSActiveRecord {
     public $file;
     
+    public $germplasmLabel;
+    const GERMPLASM_LABEL = "germplasmLabel";
+    
     public $germplasmType;
     const GERMPLASM_TYPE = "germplasmType";
     
@@ -92,6 +95,7 @@ class YiiGermplasmModel extends WSActiveRecord {
     public function attributesToArray() {
         $elementForWebService = parent::attributesToArray();
         $elementForWebService[YiiGermplasmModel::URI] = $this->uri;
+        $elementForWebService[YiiGermplasmModel::GERMPLASM_LABEL] = $this->germplasmLabel;
         $elementForWebService[YiiGermplasmModel::GERMPLASM_TYPE] = $this->germplasmType;
         $elementForWebService[YiiGermplasmModel::GENUS] = $this->genus;
         $elementForWebService[YiiGermplasmModel::SPECIES] = $this->speciesEN;
@@ -195,7 +199,8 @@ class YiiGermplasmModel extends WSActiveRecord {
      * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
      * @return list of the sensors types
      */
-    public function getGermplasmURIAndLabelList($sessionToken, $germplasmType, $fromGenus, $fromSpecies, $fromVariety, $fromAccession) {
+    public function getGermplasmURIAndLabelList($sessionToken, $germplasmLabel, $germplasmType, $fromGenus, $fromSpecies, $fromVariety, $fromAccession) {
+        $this->germplasmLabel = $germplasmLabel;
         $this->germplasmType = $germplasmType;
         $this->genus = $fromGenus;
         $this->species = $fromSpecies;
@@ -212,7 +217,7 @@ class YiiGermplasmModel extends WSActiveRecord {
             //2. if there are other pages, get the other genus
             if ($this->totalPages > $this->page) {
                 $this->page++; //next page
-                $nextGermplasms = $this->getGermplasmURIAndLabelList($sessionToken, $germplasmType, $fromGenus, $fromSpecies, $fromVariety, $fromAccession);
+                $nextGermplasms = $this->getGermplasmURIAndLabelList($sessionToken, $germplasmLabel, $germplasmType, $fromGenus, $fromSpecies, $fromVariety, $fromAccession);
                 
                 $germplasmsToReturn = array_merge($germplasmsToReturn, $nextGermplasms);
             }
