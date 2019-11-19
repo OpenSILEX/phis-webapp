@@ -1,25 +1,23 @@
 <?php
 
 //**********************************************************************************************
-//                                       ScientificObjectController.php 
+//                                       GermplasmController.php 
 //
-// Author(s): Morgane VIDAL
+// Author(s): Alice BOIZET
 // PHIS-SILEX version 1.0
 // Copyright © - INRA - 2017
-// Creation date: August 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  August, 30 2017
-// Subject: implements the CRUD actions for YiiScientificObjectModel
+// Creation date: November 2019
+// Contact: alice.boizet@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Last modification date:  November, 08 2019
+// Subject: implements the CRUD actions for YiiGermplasmModel
 //***********************************************************************************************
 
 namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
-use yii\filters\VerbFilter;
 use app\models\yiiModels\YiiGermplasmModel;
 use app\models\wsModels\WSConstants;
-use yii\web\UploadedFile;
 
 require_once '../config/config.php';
 
@@ -35,100 +33,43 @@ class GermplasmController extends Controller {
     const GERMPLASM_TYPES = "germplasmTypes";
     
     /**
-     * the Genus column for the csv files
+     * the Genus column
      * @var GENUS
      */
     const GENUS = "Genus";
 
-
     /**
-     * the species column for the csv files
+     * the species column
      * @var SPECIES
      */
     const SPECIES = "Species";
 
     /**
-     * the variety column for the csv files
+     * the variety column
      * @var VARIETY
      */
     const VARIETY = "Variety";
     
     /**
-     * the Accession column for the csv files
+     * the Accession column
      * @var ACCESSION
      */
     const ACCESSION = "Accession";
     
     /**
-     * the Lot column for the csv files
+     * the Lot column
      * @var LOT
      */
     const LOT = "Lot";
     
     /**
-     * the LotType column for the csv files
+     * the LotType column
      * @var LOT_TYPE
      */
     const LOT_TYPE = "LotType";
-
-
-    
-
+ 
     /**
-     * define the behaviors
-     * @return array
-     */
-    public function behaviors() {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * 
-     * @param string $species
-     * @return boolean true if the specie uri is in the species list
-     */
-    private function existSpecies($species) {
-        $aoModel = new YiiScientificObjectModel();
-        return in_array($species, $aoModel->getSpeciesUriList());
-    }
-
-
-    /**
-     * get a message html error to show with the errors founded in the csv file
-     * @param array $arrayError errors. Expected format :
-     *                                     ["L.85"]["Geometry"]["Error message"]
-     * @return string the message to show to the user 
-     */
-    private function getErrorMessageToPrint($arrayError) {
-        if (isset($arrayError["header"])) {
-            $errorMessage = "<div class=\"alert alert-danger\" role=\"alert\"><b>" . $arrayError["header"][0] . "</b></div>";
-        } else {
-            $errorMessage = "<div class=\"alert alert-danger\" role=\"alert\"><b>" . Yii::t('app/messages', 'Errors in file') . "</b>"
-                    . "<table class=\"table table-hover\">"
-                    . "<thead><tr><th>" . Yii::t('app', 'Line') . "</th><th>" . Yii::t('app', 'Column') . "</th><th>" . Yii::t('app', 'Error') . "</th></tr></thead><tbody>";
-
-            foreach ($arrayError as $errorLine) {
-                $errorMessage .= "<tr>";
-                $errorMessage .= "<th scope=\"row\"><p>" . $errorLine["line"] . "</p></th>";
-                $errorMessage .= "<td>" . $errorLine["column"] . "</td>";
-                $errorMessage .= "<td>" . $errorLine["message"] . "</td>";
-                $errorMessage .= "</tr>";
-            }
-            $errorMessage .= "</tbody></table></div>";
-        }
-
-        return $errorMessage;
-    }
-
-    /**
-     * generated the scientific object creation page
+     * generates the germplasm creation page
      * @return mixed
      */
     public function actionCreate() {
@@ -158,6 +99,11 @@ class GermplasmController extends Controller {
             return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
         }
         
+        $lotTypesList = $this->getPlantMaterialLotTypes();
+        if ($lotTypesList === "token") {
+            return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
+        }
+        
         $selectedGermplasmType = isset($_POST['germplasmType']) ? $_POST['germplasmType'] : null;
 
         return $this->render('create', [
@@ -167,11 +113,13 @@ class GermplasmController extends Controller {
             'speciesList' => json_encode(array_values($speciesList), JSON_UNESCAPED_SLASHES),
             'varietiesList' => json_encode(array_values($varietiesList), JSON_UNESCAPED_SLASHES),
             'accessionsList' => json_encode(array_values($accessionsList), JSON_UNESCAPED_SLASHES),
+            'lotTypesList' =>json_encode(array_values($lotTypesList), JSON_UNESCAPED_SLASHES),
             'selectedGermplasmType' => $selectedGermplasmType
         ]);
     }
+    
     /**
-     * Creates the given sensors
+     * Creates the germplasms
      * @return string of the creation JSON 
      */
     public function actionCreateMultipleGermplasm() {
@@ -185,15 +133,20 @@ class GermplasmController extends Controller {
             $species = $this->getSpecies();
         } else if ($germplasmType === Yii::$app->params['Accession']) {
             $species = $this->getSpecies();
-            $varieties = $this->getVarietiesFromSpecies();
+            $varieties = $this->getVarieties();
         } else if ($germplasmType === Yii::$app->params['PlantMaterialLot']) {
             $species = $this->getSpecies();
-            $varieties = $this->getVarietiesFromSpecies();       
-            $accessions = $this->getAccessionFromSpecies();
+            $varieties = $this->getVarieties();       
+            $accessions = $this->getAccessions();
         }
         
+        $return = [
+            "germplasmUris" => [],
+            "messages" => []
+        ];
+        
         if (count($germplasms) > 0) {
-            $germplasmUris = null;
+              
             foreach ($germplasms as $germplasm) {
                 $forWebService = null;
                 $germplasmModel = new YiiGermplasmModel();
@@ -235,43 +188,46 @@ class GermplasmController extends Controller {
                     
                 } else if ($germplasmModel->germplasmType === Yii::$app->params['PlantMaterialLot']) {
                     if ($germplasm[4] !== "") {
-                        $germplasmModel->accession = array_search($germplasm[4], $accessions);
+                        $germplasmModel->accessionURI = array_search($germplasm[4], $accessions);
                     } else if ($germplasm[3] !== ""){
-                        $germplasmModel->variety = array_search($germplasm[3], $varieties);
+                        $germplasmModel->varietyURI = array_search($germplasm[3], $varieties);
                     } else {
-                        $germplasmModel->species = array_search($germplasm[2], $species);
+                        $germplasmModel->speciesURI = array_search($germplasm[2], $species);
                     }
                     $germplasmModel->lot = $germplasm[6];
-                    $germplasmModel->lotType = $germplasm[5];
+                    $germplasmModel->lotType = $this->getlotTypeCompleteUri($germplasm[5]);
                 }
               
-              $forWebService[] = $this->getArrayForWebServiceCreate($germplasmModel);
-              $insertionResult = $germplasmModel->insert($sessionToken, $forWebService);
+                $forWebService[] = $this->getArrayForWebServiceCreate($germplasmModel);
+                $insertionResult = $germplasmModel->insert($sessionToken, $forWebService);
+
+                if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
+                      $return["germplasmUris"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{WSConstants::DATA_FILES}[0];
+                      $return["messages"][] = "germplasm saved";
+                } else {
+                      $return["germplasmUris"][] = null;
+                      $return["messages"][] = $insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->details;
+                }             
               
-              $germplasmUris[] = $insertionResult->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0];
+                
             }
-            return json_encode($germplasmUris, JSON_UNESCAPED_SLASHES); 
+            return json_encode($return, JSON_UNESCAPED_SLASHES); 
         }
         return true;
     }
     
     /**
-     * @update Dec. 2018 : the geometry becomes facultative and it is required to define the rdfType
-     * @param array $fileContent the csv file content
-     * @param array $correspondances the columns numbers corresponding to the 
-     *                               expected columns (if the file columns are 
-     *                               not in the good order) 
-     * @return array data of the attribute $fileContent 
-     *               in the web service expected format
+     * Creates array with germplasm in WS expected format
+     * @return array
      */
     private function getArrayForWebServiceCreate($germplasmModel) {        
         
-        if ($germplasmModel->germplasmType === "http://www.opensilex.org/vocabulary/oeso#Genus") {
+        if ($germplasmModel->germplasmType === Yii::$app->params['Genus']) {
             $p["rdfType"] = $germplasmModel->germplasmType;
             $p["label"] = $germplasmModel->genus;
             $p["URI"] = $germplasmModel->genusURI;
             
-        } else if ($germplasmModel->germplasmType === "http://www.opensilex.org/vocabulary/oeso#Species") {
+        } else if ($germplasmModel->germplasmType === Yii::$app->params['Species']) {
             $p["rdfType"] = $germplasmModel->germplasmType;
             $p["label"] = $germplasmModel->speciesEN;
             $p["URI"] = $germplasmModel->speciesURI;
@@ -298,7 +254,7 @@ class GermplasmController extends Controller {
                 $p["properties"][] = $labelLA;  
             }            
             
-        } else if ($germplasmModel->germplasmType === "http://www.opensilex.org/vocabulary/oeso#Variety") {
+        } else if ($germplasmModel->germplasmType === Yii::$app->params['Variety']) {
             $p["rdfType"] = $germplasmModel->germplasmType;
             $p["label"] = $germplasmModel->variety;
             $p["URI"] = $germplasmModel->varietyURI;
@@ -307,7 +263,7 @@ class GermplasmController extends Controller {
             $property["value"] = $germplasmModel->speciesURI;
             $p["properties"][] = $property;
             
-        } else if ($germplasmModel->germplasmType === "http://www.opensilex.org/vocabulary/oeso#Accession") {
+        } else if ($germplasmModel->germplasmType === Yii::$app->params['Accession']) {
             $p["rdfType"] = $germplasmModel->germplasmType;
             $p["label"] = $germplasmModel->accession;
             $p["URI"] = $germplasmModel->accessionURI;
@@ -323,7 +279,7 @@ class GermplasmController extends Controller {
                 $p["properties"][] = $property;
             }
             
-        } else if ($germplasmModel->germplasmType === "http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot") {
+        } else if ($germplasmModel->germplasmType === Yii::$app->params['PlantMaterialLot']) {
             $p["rdfType"] = $germplasmModel->lotType;
             $p["label"] = $germplasmModel->lot;
             $p["URI"] = $germplasmModel->accessionURI;
@@ -346,15 +302,14 @@ class GermplasmController extends Controller {
                 }
             }
             
-        }                    
+        }                  
 
         return $p;
-    }
-    
+    }    
     
     /**
-     * Gets the germplasm types URIs.
-     * @return germplasm types URIs 
+     * Gets the germplasm types
+     * @return array of germplasm types URIs and labels 
      */
     public function getGermplasmTypes() {
         $model = new YiiGermplasmModel();
@@ -369,90 +324,156 @@ class GermplasmController extends Controller {
             foreach ($germplasmTypesConcepts[WSConstants::DATA] as $germplasmType) {
                 $germplasmTypes[$germplasmType->uri] = $germplasmType->uri;
             }
-        }
-        
+        }        
         return $germplasmTypes;
     }
     
     /**
-     * Gets the germplasm types URIs.
-     * @return germplasm types URIs 
+     * Gets the plantMaterialLot types
+     * @return array of plantMaterialLot  
+     */
+    public function getPlantMaterialLotTypes() {
+        $model = new YiiGermplasmModel();
+        
+        $lotTypes = [];
+        $model->page = 0;
+        $model->pageSize = Yii::$app->params['webServicePageSizeMax'];
+        $lotTypesConcepts = $model->getLotTypes(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+        if ($lotTypesConcepts === WSConstants::TOKEN_INVALID) {
+            return WSConstants::TOKEN_INVALID;
+        } else {
+            foreach ($lotTypesConcepts[WSConstants::DATA] as $lotType) {
+                $lotTypes[$lotType->uri] = explode("#", $lotType->uri)[1];
+            }
+        }        
+        return $lotTypes;
+    }
+    
+    /**
+     * Gets the germplasm types
+     * @return array of germplasm types URIs and labels 
+     */
+    public function getLotTypesLabel() {
+        $lotTypes = this.getPlantMaterialLotTypes();
+        $lotTypesLabels = [];
+        foreach ($lotTypes as $lotType) {
+                $lotTypesLabels[] = explode("#", $lotType->uri)[1];
+            }
+        
+    }
+    
+    /**
+     * 
+     * @param string $lotTypeLabel
+     * @return string the complete lot type uri corresponding to the given 
+     *                lot type
+     *                e.g. http://www.opensilex.org/vocabulary/oeso#SeedLot
+     */
+    private function getLotTypeCompleteUri($lotTypeLabel) {
+        $lotTypesList = $this->getPlantMaterialLotTypes();
+        $lotTypeUri = array_search($lotTypeLabel, $lotTypesList);
+        return $lotTypeUri;
+    }
+    
+    
+    /**
+     * Gets the list of all genus
+     * @return list of genus label 
      */
     public function getGenus() {
         $model = new YiiGermplasmModel();
-
-        $model->page = 0;
-        $model->pageSize = Yii::$app->params['webServicePageSizeMax'];
-        $genusList = $model->getGenusURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN]);
+        $genusList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, Yii::$app->params['Genus'], null, null, null, null);
 
         return $genusList;
     }
     
     /**
-     * Gets the germplasm types URIs.
-     * @return germplasm types URIs 
+     * Gets the list of all species
+     * @return list of species label 
      */
     public function getSpecies() {
         $model = new YiiGermplasmModel();
-        $speciesList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, "http://www.opensilex.org/vocabulary/oeso#Species", null, null, null, null);
+        $speciesList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, Yii::$app->params['Species'], null, null, null, null);
 
         return $speciesList;
-    }
-    
+    }    
         
     /**
-     * Gets the germplasm types URIs.
-     * @return germplasm types URIs 
+     * Gets the list of all varieties
+     * @return list of varieties label 
      */
     public function getVarieties() {
         $model = new YiiGermplasmModel();
-        $varietiesList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN], null, "http://www.opensilex.org/vocabulary/oeso#Variety", null, null, null, null);
+        $varietiesList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN], null, Yii::$app->params['Variety'], null, null, null, null);
 
         return $varietiesList;
     }
     
     /**
-     * Gets the germplasm types URIs.
-     * @return germplasm types URIs 
+     * Gets the list of all accessions
+     * @return list of accessions label 
      */
     public function getAccessions() {
         $model = new YiiGermplasmModel();
-        $accessionsList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],"http://www.opensilex.org/vocabulary/oeso#Variety", null, null, null, null);
+        $accessionsList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN], null, Yii::$app->params['Accession'], null, null, null, null);
 
         return $accessionsList;
-    }
+    }  
     
-
-    
+    /**
+     * Method used to update the list of species when a genus is selected
+     * @return list of species label
+     */
     public function actionGetSpecies() {
         $fromGenus = Yii::$app->request->post()["fromGenus"];
         $model = new YiiGermplasmModel();
-        $genus = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromGenus, "http://www.opensilex.org/vocabulary/oeso#Genus", null, null, null, null);
-        $genusURI = array_search($fromGenus, $genus);      
-        $speciesList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, "http://www.opensilex.org/vocabulary/oeso#Species", $genusURI, null, null, null);
+        if ($fromGenus === "") {
+            $genusURI = null;
+        } else { 
+            $genus = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromGenus, Yii::$app->params['Genus'], null, null, null, null);
+            $genusURI = array_search($fromGenus, $genus);   
+        }
+        $speciesList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, Yii::$app->params['Species'], $genusURI, null, null, null);
        //$speciesList = this.getSpecies($fromGenus);
         return json_encode(array_values($speciesList), JSON_UNESCAPED_SLASHES); 
     }
     
+    /**
+     * Method used to update the list of varieties when a genus or a species is selected
+     * @return list of variety label 
+     */
     public function actionGetVarieties() {
         $fromGenus = Yii::$app->request->post()["fromGenus"];
         $fromSpecies = Yii::$app->request->post()["fromSpecies"];
-        $model = new YiiGermplasmModel();
+        $model = new YiiGermplasmModel();        
+        
         if ($fromGenus !== null) {
-            $genus = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromGenus, "http://www.opensilex.org/vocabulary/oeso#Genus", null, null, null, null);              
-            $genusURI = array_search($fromGenus, $genus);
-            $varietiesList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, "http://www.opensilex.org/vocabulary/oeso#Variety", $genusURI, null, null, null);
+            if ($fromGenus === "") {
+            $genusURI = null;
+            } else { 
+                $genus = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromGenus, Yii::$app->params['Genus'], null, null, null, null);              
+                $genusURI = array_search($fromGenus, $genus);
+            }
+            $varietiesList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, Yii::$app->params['Variety'], $genusURI, null, null, null);
         }
         
         if ($fromSpecies !== null) {
-            $species = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromSpecies, "http://www.opensilex.org/vocabulary/oeso#Species", null, null, null, null);              
-            $speciesURI = array_search($fromSpecies, $species);
-            $varietiesList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, "http://www.opensilex.org/vocabulary/oeso#Variety", null, $speciesURI, null, null);
+            if ($fromSpecies === "") {
+                $speciesURI = null;
+            } else { 
+                $species = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromSpecies, Yii::$app->params['Species'], null, null, null, null);              
+                $speciesURI = array_search($fromSpecies, $species);
+            }
+            $varietiesList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, Yii::$app->params['Variety'], null, $speciesURI, null, null);
         }
         
         return json_encode(array_values($varietiesList), JSON_UNESCAPED_SLASHES); 
     }
     
+    /**
+     * Method used to update the list of varieties when a genus or a species is selected
+     * @return list of accessions label 
+     */
     public function actionGetAccessions() {
         $fromGenus = Yii::$app->request->post()["fromGenus"];
         $fromSpecies = Yii::$app->request->post()["fromSpecies"];
@@ -460,58 +481,36 @@ class GermplasmController extends Controller {
         
         $model = new YiiGermplasmModel();
         if ($fromGenus !== null) {
-            $genus = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromGenus, "http://www.opensilex.org/vocabulary/oeso#Genus", null, null, null, null);              
-            $genusURI = array_search($fromGenus, $genus);
-            $accessionsList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, "http://www.opensilex.org/vocabulary/oeso#Accession", $genusURI, null, null, null);
+            if ($fromGenus === "") {
+            $genusURI = null;
+            } else { 
+                $genus = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromGenus, Yii::$app->params['Genus'], null, null, null, null);              
+                $genusURI = array_search($fromGenus, $genus);
+            }
+            $accessionsList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, Yii::$app->params['Accession'], $genusURI, null, null, null);
         }
         
         if ($fromSpecies !== null) {
-            $species = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromSpecies, "http://www.opensilex.org/vocabulary/oeso#Species", null, null, null, null);              
-            $speciesURI = array_search($fromSpecies, $species);
-            $accessionsList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, "http://www.opensilex.org/vocabulary/oeso#Accession", null, $speciesURI, null, null);
+            if ($fromSpecies === "") {
+                $speciesURI = null;
+            } else { 
+                $species = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromSpecies, Yii::$app->params['Species'], null, null, null, null);              
+                $speciesURI = array_search($fromSpecies, $species);
+            }
+            $accessionsList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, Yii::$app->params['Accession'], null, $speciesURI, null, null);
         }
         
         if ($fromVariety !== null) {
-            $variety = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromVariety, "http://www.opensilex.org/vocabulary/oeso#Variety", null, null, null, null);              
-            $varietyURI = array_search($fromVariety, $variety);
-            $accessionsList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, "http://www.opensilex.org/vocabulary/oeso#Accession", null, null, $varietyURI, null);
+            if ($fromVariety === "") {
+                $varietyURI = null;
+            } else { 
+                $variety = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],$fromVariety, Yii::$app->params['Variety'], null, null, null, null);              
+                $varietyURI = array_search($fromVariety, $variety);
+            }
+            $accessionsList = $model->getGermplasmURIAndLabelList(Yii::$app->session[WSConstants::ACCESS_TOKEN],null, Yii::$app->params['Accession'], null, null, $varietyURI, null);
         }
         
         return json_encode(array_values($accessionsList), JSON_UNESCAPED_SLASHES); 
     }
-    
- 
-//    public function actionImportFile() {
-//        $germplasmModel = new YiiGermplasmModel();
-//        if ($germplasmModel->load(Yii::$app->request->post())) {
-//            $data[] = null;
-//            $selectedGermplasmType = isset($_POST['germplasmType']) ? $_POST['germplasmType'] : null;
-//            //Store uploaded CSV file
-//            $document = UploadedFile::getInstance($germplasmModel, 'file');
-//            $serverFilePath = \config::path()['documentsUrl'] . "GermplasmFiles/" . $document->name;
-//            $document->saveAs($serverFilePath);
-//                //Read CSV file content
-//            $fileContent = str_getcsv(file_get_contents($serverFilePath), "\n");
-//            $csvHeaders = str_getcsv(array_shift($fileContent), Yii::$app->params['csvSeparator']);
-//            unlink($serverFilePath);
-//
-//            if ($selectedGermplasmType === Yii::$app->params['Species']) {
-//                foreach ($fileContent as $rowStr) {
-//                    $row = str_getcsv($rowStr, Yii::$app->params['csvSeparator']);
-//                    $data[] = $row;
-//                }
-//            }
-//
-//            return $this->render('_form', [
-//                'model'=> $germplasmModel,
-//                'germplasmType' => $selectedGermplasmType,
-//                'data' => $data
-//            ]);
-//        } else {
-//            return $this->render('create', [
-//                        'model' => $germplasmModel,
-//            ]);
-//        }
-//    }
 
 }

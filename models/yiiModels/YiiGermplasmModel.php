@@ -3,13 +3,13 @@
 //******************************************************************************
 //                                       YiiGermplasmModel.php
 //
-// Author(s): Morgane Vidal <morgane.vidal@inra.fr>
+// Author(s): Alice BOIZET
 // PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 13 mars 2018
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  13 mars 2018
-// Subject: The Yii model for the sensors. Used with web services
+// Copyright © - INRA - 2017
+// Creation date: November 2019
+// Contact: alice.boizet@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Last modification date:  November, 08 2019
+// Subject: The Yii model for the germplasms. Used with web services
 //******************************************************************************
 
 namespace app\models\yiiModels;
@@ -58,37 +58,20 @@ class YiiGermplasmModel extends WSActiveRecord {
     const LOT_TYPE = "lotType";
     public $lotType; 
     const LOT = "plantMaterialLot";
-    public $lot;
-    
+    public $lot;    
     
     public function __construct($pageSize = null, $page = null) {
         $this->wsModel = new WSGermplasmModel();
         $this->pageSize = ($pageSize !== null || $pageSize === "") ? $pageSize : null;
         $this->page = ($page !== null || $page != "") ? $page : null;
-    }
-    
-//    /**
-//     * @return array the labels of the attributes
-//     */
-//    public function attributeLabels() {
-//        return [
-//            'germplasmType' => Yii::t('app', 'Type'),
-//            'label' => Yii::t('app', 'Alias'),
-//            'brand' => Yii::t('app', 'Brand'),
-//            'serialNumber' => Yii::t('app', 'Serial Number'),
-//            'inServiceDate' => Yii::t('app', 'In Service Date'),
-//            'dateOfPurchase' => Yii::t('app', 'Date Of Purchase'),
-//            'personInCharge' => Yii::t('app', 'Person In Charge')
-//        ];
-//    }
-    
+    }   
     
     protected function arrayToAttributes($array) {
         $this->germplasmType = $array[YiiVectorModel::GERMPLASM_TYPE];
     }
     
     /**
-     * Create an array representing the experiment
+     * Create an array representing the germplasm
      * Used for the web service for example
      * @return array with the attributes. 
      */
@@ -111,23 +94,23 @@ class YiiGermplasmModel extends WSActiveRecord {
      /**
      * calls web service and return the list of object types of the ontology
      * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
-     * @return list of the sensors types
+     * @return list of the germplasm types
      */
     public function getGermplasmTypes($sessionToken) {
         $germplasmConceptUri = "http://www.opensilex.org/vocabulary/oeso#Germplasm";
         $params = [];
         if ($this->pageSize !== null) {
-           $params[\app\models\wsModels\WSConstants::PAGE_SIZE] = $this->pageSize; 
+           $params[WSConstants::PAGE_SIZE] = $this->pageSize; 
         }
         if ($this->page !== null) {
-            $params[\app\models\wsModels\WSConstants::PAGE] = $this->page;
+            $params[WSConstants::PAGE] = $this->page;
         }
         
         $wsUriModel = new WSUriModel();
         $requestRes = $wsUriModel->getDescendants($sessionToken, $germplasmConceptUri, $params);
         
         if (!is_string($requestRes)) {
-            if (isset($requestRes[\app\models\wsModels\WSConstants::TOKEN_INVALID])) {
+            if (isset($requestRes[WSConstants::TOKEN_INVALID])) {
                 return "token";
             } else {
                 return $requestRes;
@@ -140,70 +123,48 @@ class YiiGermplasmModel extends WSActiveRecord {
     /**
      * calls web service and return the list of object types of the ontology
      * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
-     * @return list of the sensors types
+     * @return list of the germplasm types
      */
-    public function getGenusURIAndLabelList($sessionToken) {
-        $this->germplasmType = "http://www.opensilex.org/vocabulary/oeso#Genus";
-        $genusList = $this->find($sessionToken, $this->attributesToArray());
-        $genusToReturn = [];
+    public function getLotTypes($sessionToken) {
+        $lotConceptUri = "http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot";
+        $params = [];
+        if ($this->pageSize !== null) {
+           $params[WSConstants::PAGE_SIZE] = $this->pageSize; 
+        }
+        if ($this->page !== null) {
+            $params[WSConstants::PAGE] = $this->page;
+        }
         
-        if ($genusList !== null) {
-            //1. get the URIs
-            foreach($genusList as $genus) {
-                $genusToReturn[$genus->uri] = $genus->genus;
+        $wsUriModel = new WSUriModel();
+        $requestRes = $wsUriModel->getDescendants($sessionToken, $lotConceptUri, $params);
+        
+        if (!is_string($requestRes)) {
+            if (isset($requestRes[WSConstants::TOKEN_INVALID])) {
+                return "token";
+            } else {
+                return $requestRes;
             }
-            
-            //2. if there are other pages, get the other genus
-            if ($this->totalPages > $this->page) {
-                $this->page++; //next page
-                $nextGenus = $this->getGenusURIAndLabelList($sessionToken);
-                
-                $genusToReturn = array_merge($genusToReturn, $nextGenus);
-            }
-            
-            return $genusToReturn;
+        } else {
+            return $requestRes;
         }
-
     }
     
-        /**
-     * calls web service and return the list of object types of the ontology
-     * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
-     * @return list of the sensors types
-     */
-    public function getSpeciesURIAndLabelList($sessionToken) {
-        $this->germplasmType = "http://www.opensilex.org/vocabulary/oeso#Species";
-        $speciesList = $this->find($sessionToken, $this->attributesToArray());
-        $speciesToReturn = [];
-        if ($speciesList !== null) {
-            //1. get the URIs
-            foreach($speciesList as $species) {
-                $speciesToReturn[$species->uri] = $species->species;
-            }
-            
-            //2. if there are other pages, get the other genus
-            if ($this->totalPages > $this->page) {
-                $this->page++; //next page
-                $nextSpecies = $this->getSpeciesURIAndLabelList($sessionToken);
-                
-                $speciesToReturn = array_merge($speciesToReturn, $nextSpecies);
-            }
-            
-            return $speciesToReturn;
-        }
-
-    }
-    
-            /**
-     * calls web service and return the list of object types of the ontology
-     * @see app\models\wsModels\WSUriModel::getDescendants($sessionToken, $uri, $params)
-     * @return list of the sensors types
+    /**
+     * calls web service and return the list of germplasm label and URI
+     * @param $sessionToken
+     * @param $germplasmLabel
+     * @param $germplasmType
+     * @param $fromGenus
+     * @param $fromSpecies
+     * @param $fromVariety
+     * @param $fromAccession
+     * @return array with germplasms URIs and Labels
      */
     public function getGermplasmURIAndLabelList($sessionToken, $germplasmLabel, $germplasmType, $fromGenus, $fromSpecies, $fromVariety, $fromAccession) {
         $this->germplasmLabel = $germplasmLabel;
         $this->germplasmType = $germplasmType;
         $this->genus = $fromGenus;
-        $this->species = $fromSpecies;
+        $this->speciesEN = $fromSpecies;
         $this->variety = $fromVariety;
         $this->accession = $fromAccession;
         $germplasms = $this->find($sessionToken, $this->attributesToArray());

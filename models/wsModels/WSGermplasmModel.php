@@ -3,13 +3,13 @@
 //******************************************************************************
 //                                       WSGermplasmModel.php
 //
-// Author(s): Alice Boizet
+// Author(s): Alice BOIZET
 // PHIS-SILEX version 1.0
-// Copyright © - INRA - 2018
-// Creation date: 29 mars 2018
+// Copyright © - INRA - 2017
+// Creation date: November 2019
 // Contact: alice.boizet@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  29 mars 2018
-// Subject: Corresponds to the sensors service - extends WSModel
+// Last modification date:  November, 08 2019
+// Subject: Corresponds to the germplasm service - extends WSModel
 //******************************************************************************
 
 namespace app\models\wsModels;
@@ -17,7 +17,7 @@ namespace app\models\wsModels;
 include_once '../config/web_services.php';
 
 /**
- * Encapsulate the access to the sensors service
+ * Encapsulate the access to the germplasm service
  * @see \openSILEX\guzzleClientPHP\WSModel
  * @author Alice Boizet <alice.boizet@inra.fr>
  */

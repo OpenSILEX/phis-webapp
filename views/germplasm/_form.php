@@ -3,13 +3,13 @@
 //**********************************************************************************************
 //                                       _form.php
 //
-// Author(s): Morgane VIDAL
+// Author(s): Alice BOIZET
 // PHIS-SILEX version 1.0
 // Copyright © - INRA - 2017
-// Creation date: August 2017
-// Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  August, 31 2017
-// Subject: creation of scientific objects via CSV
+// Creation date: November 2019
+// Contact: alice.boizet@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
+// Last modification date:  November, 08 2019
+// Subject: creation of germplasms with handsontable
 //***********************************************************************************************
 
 use yii\widgets\ActiveForm;
@@ -24,72 +24,66 @@ require_once '../config/config.php';
 
 ?>
 
-
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/0.37.0/handsontable.full.min.css">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/0.37.0/handsontable.full.min.js"></script>
 <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"></script>
 
 <div class="germplasm-form well">
-    <div class="form-row">
-        <div class="form-group col-md-6">
-        <?php $form = ActiveForm::begin(); ?>   
-            <div class="form-row">
-                <label class="control-label" ><?= Yii::t('app', 'Select germplasm Type') ?></label>
-                <?php
-                echo Select2::widget([
-                    'name' => 'germplasmType',
-                    'data' => $germplasmTypes,
-                    'value' => $selectedGermplasmType ? $selectedGermplasmType : null,
-                    'options' => [
-                        'placeholder' => Yii::t('app/messages', 'Select the type of Germplasm...'),
-                        'multiple' => false
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                    'pluginEvents' => [
-                        "select2:select" => "function() {  $('#germplasmType-creation-selection').text(\"" . Yii::t('app', 'Validate') . "\"); }",
-                    ]
-                ]);
-                ?>
-            </div>
-            <div class="form-group">
-                <?= Html::submitButton(Yii::t('yii' , 'Validate') , ['class' => 'btn btn-success', 'id' => 'germplasmType-creation-selection']) ?>
-            </div>
-
-            <?php ActiveForm::end(); ?>
-
-            <?php 
-            $selectedGermplasmType = $_POST['germplasmType'];
-            //echo $selectedGermplasmType;
-            ?>        
-        </div>        
-        <div class="form-group col-md-6">
-            <?php $form2 = ActiveForm::begin(['action' => ['import-file'],'options' => ['enctype' => 'multipart/form-data']]); ?>
-
-            <?= Yii::$app->session->getFlash('renderArray'); ?>    
-
-            <div class="alert alert-info" role="alert">
-                <b><?= Yii::t('app/messages', 'You can import directly a csv file to fill the table')?> : </b>
-                <ul>
-                    <li><?= Yii::t('app/messages', 'CSV separator must be')?> "<b><?= Yii::$app->params['csvSeparator']?></b>"</li>              
-                </ul>
-                <input type="file" id="files"  class="form-control" accept=".csv" required onchange="fillTheTable(this.files)"/>
-
-            </div>    
-        </div>         
-    </div>
     
-    <div id="germplasmTable">
-        <p><i>
-            <?= Yii::t('app', 'See') ?>
-            <a href="https://opensilex.github.io/phis-docs-community/experimental-organization/#importing-scientific-objects" target="_blank"><?= Yii::t('app', 'the documentation') ?></a>
-            <?= Yii::t('app/messages', 'to get more information about the columns content') ?>.
-        </i></p>  
+    <div id="germplasm-selection" class="form-group col-md-6">
+    <?php $form = ActiveForm::begin(); ?>   
+        <div class="form-row">
+            <label class="control-label" ><?= Yii::t('app', 'Select germplasm Type') ?></label>
+            <?php
+            echo Select2::widget([
+                'name' => 'germplasmType',
+                'data' => $germplasmTypes,
+                'value' => $selectedGermplasmType ? $selectedGermplasmType : null,
+                'options' => [
+                    'placeholder' => Yii::t('app/messages', 'Select the type of Germplasm...'),
+                    'multiple' => false
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+                'pluginEvents' => [
+                    "select2:select" => "function() {  $('#germplasmType-creation-selection').text(\"" . Yii::t('app', 'Validate') . "\"); }",
+                ]
+            ]);
+            ?>
+        </div>
+        <div class="form-group">
+            <?= Html::submitButton(Yii::t('yii' , 'Validate') , ['class' => 'btn btn-success', 'id' => 'germplasmType-creation-selection']) ?>
+        </div>
 
-        <div id="germplasms-created" hidden class="alert alert-success"><?= Yii::t('app', 'Germplasms Created') ?></div>
-        <!--<button type = "button" id="export" id="exportButton">Export</button>-->
+        <?php ActiveForm::end(); ?>
+
+        <?php 
+        $selectedGermplasmType = $_POST['germplasmType'];
+        //echo $selectedGermplasmType;
+        ?>        
+    </div>        
+    <div class="form-group col-md-6">
+        <div id="import-csv"class="alert alert-info" role="alert">
+            <b><?= Yii::t('app/messages', 'You can import directly a csv file to fill the table')?> : </b>
+            <ul>
+                <li><?= Yii::t('app/messages', 'CSV separator must be')?> "<b><?= Yii::$app->params['csvSeparator']?></b>"</li>              
+            </ul>
+            <input type="file" id="files"  class="form-control" accept=".csv" required onchange="fillTheTable(this.files)"/>
+
+        </div>    
+    </div>         
+    
+    
+    <div id="germplasm-table">
+        <div id="documentation-info">
+            <p><i>
+                <?= Yii::t('app', 'See') ?>
+                <a href="https://opensilex.github.io/phis-docs-community/" target="_blank"><?= Yii::t('app', 'the documentation') ?></a>
+                <?= Yii::t('app/messages', 'to get more information about the columns content') ?>.
+            </i></p>  
+        </div>
+
         <div id="germplasms-creation">
             <div id="germplasms-multiple-insert-table"></div>
             <div id="germplasms-multiple-insert-button" style="margin-top : 1%">
@@ -102,9 +96,11 @@ require_once '../config/config.php';
             var speciesList = JSON.parse('<?php echo addslashes($speciesList); ?>');
             var varietiesList = JSON.parse('<?php echo addslashes($varietiesList); ?>');
             var accessionsList = JSON.parse('<?php echo addslashes($accessionsList); ?>');
+            var lotTypesList = JSON.parse('<?php echo addslashes($lotTypesList); ?>');
 
-            $('#germplasms-created').hide();
-
+            $('#germplasms-multiple-insert-button').hide();
+            $('#import-csv').hide();
+            $('#documentation-info').hide();
 
             //creates renderer to color in red required column names
             function firstRowRequiedRenderer(instance, td, row, col, prop, value, cellProperties) {
@@ -121,39 +117,61 @@ require_once '../config/config.php';
             }
 
 
-            //generate handsontable
-            var hotElement = document.querySelector('#germplasms-multiple-insert-table');
-
+            //Generate handsontable    
             var germplasmType = '<?php echo $selectedGermplasmType; ?>';
 
+            var uriColumn = {
+                            data: 'uri',
+                            type: 'text',
+                            required: false,
+                            readOnly: true
+                        };
+                        
+            var insertionStatusColumn = {
+                                        data: 'insertion status',
+                                        type: 'text',
+                                        required: false,
+                                        readOnly: true
+                                        };
+            var genusListColumn = {
+                            data: 'genus',
+                            type: 'dropdown',
+                            source: genusList,
+                            strict: true,
+                            required: false
+                        };
+            var speciesListColumn = {
+                            data: 'species',
+                            type: 'dropdown',
+                            source: speciesList,
+                            required: false
+                        };
+            
+            var varietiesListColumn = {
+                            data: 'variety',
+                            type: 'dropdown',
+                            source: varietiesList,
+                            required: false
+                        };   
+            var externalURI = {
+                            data: 'externalURI',
+                            type: 'text',
+                            required: false
+                        };
 
+            //table configuration for genus insertion
             if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Genus") {
                 var table = {
-                startRows: 1,
+                startRows: 3,
                 columns: [    
-                    {
-                        data: 'uri',
-                        type: 'text',
-                        required: false,
-                        readOnly: true
-                    },
+                    uriColumn,
                     {
                         data: 'genus',
                         type: 'text',
                         required: true
                     }, 
-                    {
-                        data: 'genusURI',
-                        type: 'text',
-                        required: false,
-                        readOnly: true
-                    },
-                    {
-                        data: 'insertion status',
-                        type: 'text',
-                        required: false,
-                        readOnly: true
-                    }
+                    externalURI,
+                    insertionStatusColumn
 
                 ],
                 rowHeaders: true,
@@ -172,7 +190,7 @@ require_once '../config/config.php';
                 cells: function(row, col, prop) {
                     var cellProperties = {};
 
-                    if (col === 0 || col === 10) {
+                    if (col === 0 || col === 4) {
                         cellProperties.renderer = readOnlyColumnRenderer;
                     }
 
@@ -184,60 +202,31 @@ require_once '../config/config.php';
                     }
                 }
              };
-
+             
+            //table configuration for species insertion
             } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Species") {
                 var table = {
-                    startRows: 1,
+                    startRows: 3,                    
                     columns: [
-                        {
-                            data: 'uri',
-                            type: 'text',
-                            required: false,
-                            readOnly: true
-                        },
-                        {
-                            data: 'genus',
-                            type: 'dropdown',
-                            source: genusList,
-                            strict: true,
-                            required: false
-                            //readOnly: true
-                        },
-
+                        uriColumn,
+                        genusListColumn,
                         {                            
                             data: 'speciesLabelEn',
                             type: 'text',
-                            //source: species,
                             required: true
-                            //validator: speciesValidator
                         },
                         {
                             data: 'speciesLabelFr',
                             type: 'text',
-                            //source: species,
                             required: false
-                            //validator: speciesValidator
                         },
                         {
                             data: 'speciesLabelLa',
                             type: 'text',
-                            //source: species,
                             required: false
-                            //validator: speciesValidator
                         },
-                        {
-                            data: 'speciesURI',
-                            type: 'text',
-                            //source: species,
-                            required: false
-                            //validator: speciesValidator
-                        },
-                        {
-                            data: 'insertion status',
-                            type: 'text',
-                            required: false,
-                            readOnly: true
-                        }      
+                        externalURI,
+                        insertionStatusColumn      
                     ],
                     rowHeaders: true,
                     colHeaders: [
@@ -247,7 +236,6 @@ require_once '../config/config.php';
                         "<b><?= Yii::t('app', 'Species Label (Fr)') ?></b>",
                         "<b><?= Yii::t('app', 'Species Label (La)') ?></b>",
                         "<b><?= Yii::t('app', 'Species URI') ?></b>",
-
                         "<b><?= Yii::t('app', 'Insertion status') ?></b>"
                     ],
                     manualRowMove: true,
@@ -258,7 +246,7 @@ require_once '../config/config.php';
                     cells: function(row, col, prop) {
                         var cellProperties = {};
 
-                        if (col === 0 || col === 10) {
+                        if (col === 0 || col === 6) {
                             cellProperties.renderer = readOnlyColumnRenderer;
                         }
 
@@ -270,42 +258,22 @@ require_once '../config/config.php';
                         }
                     }
                 };
+            
+            //table configuration for variety insertion
             } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Variety") {
                 var table = {
-                    startRows: 1,
+                    startRows: 3,
                     columns: [
-                        {
-                            data: 'uri',
-                            type: 'text',
-                            required: false,
-                            readOnly: true
-                        },
-                        {
-                            data: 'genus',
-                            type: 'dropdown',
-                            required: false,
-                            source: genusList
-                        },
-                        {
-                            data: 'species',
-                            type: 'dropdown',
-                            source: speciesList,
-                            required: false
-                            //validator: speciesValidator
-                        },
+                        uriColumn,
+                        genusListColumn,
+                        speciesListColumn,
                         {
                             data: 'variety',
                             type: 'text',
-                            required: false
+                            required: true
                         },
-                        {
-                            data: 'insertion status',
-                            type: 'text',
-                            required: false,
-                            readOnly: true
-                        }
-
-
+                        externalURI,
+                        insertionStatusColumn
                     ],
                     rowHeaders: true,
                     colHeaders: [
@@ -313,7 +281,7 @@ require_once '../config/config.php';
                         "<b><?= Yii::t('app', 'Genus') ?></b>",
                         "<b><?= Yii::t('app', 'Species') ?></b>",
                         "<b><?= Yii::t('app', 'Variety') ?></b>",
-
+                        "<b><?= Yii::t('app', 'Variety URI') ?></b>",
                         "<b><?= Yii::t('app', 'Insertion status') ?></b>"
                     ],
                     manualRowMove: true,
@@ -324,60 +292,35 @@ require_once '../config/config.php';
                     cells: function(row, col, prop) {
                         var cellProperties = {};
 
-                        if (col === 0 || col === 10) {
+                        if (col === 0 || col === 5) {
                             cellProperties.renderer = readOnlyColumnRenderer;
                         }
 
                         return cellProperties;
+                    },
+                    afterGetColHeader: function (col, th) {
+                        if (col === 3) {
+                            th.style.color = "red";
+                        }
                     }
-    //                afterGetColHeader: function (col, th) {
-    //                    if (col === 2 | col === 3 | col === 3 ) {
-    //                        th.style.color = "red";
-    //                    }
-    //                }
                 };
+            
+            //table configuration for accession insertion
             } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Accession") {
                 var table = {
-                    startRows: 1,
+                    startRows: 3,
                     columns: [
-                        {
-                            data: 'uri',
-                            type: 'text',
-                            required: false,
-                            readOnly: true
-                        },
-                        {
-                            data: 'genus',
-                            type: 'dropdown',
-                            required: false,
-                            source: genusList
-                        },
-                        {
-                            data: 'species',
-                            type: 'dropdown',
-                            source: speciesList,
-                            required: false
-                            //validator: speciesValidator
-                        },
-                        {
-                            data: 'variety',
-                            type: 'dropdown',
-                            source: varietiesList,
-                            required: false
-                        },
+                        uriColumn,
+                        genusListColumn,
+                        speciesListColumn,
+                        varietiesListColumn,
                         {
                             data: 'accession',
                             type: 'text',
-                            required: false
+                            required: true
                         },
-                        {
-                            data: 'insertion status',
-                            type: 'text',
-                            required: false,
-                            readOnly: true
-                        }
-
-
+                        externalURI,        
+                        insertionStatusColumn
                     ],
                     rowHeaders: true,
                     colHeaders: [
@@ -386,7 +329,7 @@ require_once '../config/config.php';
                         "<b><?= Yii::t('app', 'Species') ?></b>",
                         "<b><?= Yii::t('app', 'Variety') ?></b>",
                         "<b><?= Yii::t('app', 'Accession') ?></b>",
-
+                        "<b><?= Yii::t('app', 'Accession URI') ?></b>",
                         "<b><?= Yii::t('app', 'Insertion status') ?></b>"
                     ],
                     manualRowMove: true,
@@ -397,49 +340,29 @@ require_once '../config/config.php';
                     cells: function(row, col, prop) {
                         var cellProperties = {};
 
-                        if (col === 0 || col === 10) {
+                        if (col === 0 || col === 6) {
                             cellProperties.renderer = readOnlyColumnRenderer;
                         }
 
                         return cellProperties;
+                    },
+                    afterGetColHeader: function (col, th) {
+                        if (col === 4 ) {
+                            th.style.color = "red";
+                        }
                     }
-    //                afterGetColHeader: function (col, th) {
-    //                    if (col === 2 | col === 3 | col === 3 ) {
-    //                        th.style.color = "red";
-    //                    }
-    //                }
                 };
-
+                
+            //table configuration for lot insertion
             } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot") {
                 var table = {
                     startRows: 3,
                     columns: [
+                        uriColumn,
+                        genusListColumn,
+                        speciesListColumn,
+                        varietiesListColumn,
                         {
-                            data: 'uri',
-                            type: 'text',
-                            required: false,
-                            readOnly: true
-                        },
-                        {
-                            data: 'genus',
-                            type: 'dropdown',
-                            required: false,
-                            source: genusList
-                        },
-                        {
-                            data: 'species',
-                            type: 'dropdown',
-                            source: speciesList,
-                            required: false
-                            //validator: speciesValidator
-                        },
-                        {
-                            data: 'variety',
-                            type: 'dropdown',
-                            source: varietiesList,
-                            required: false
-                        },
-                                        {
                             data: 'accession',
                             type: 'dropdown',
                             source: accessionsList,
@@ -447,22 +370,17 @@ require_once '../config/config.php';
                         },
                                         {
                             data: 'lotType',
-                            type: 'text',
-                            required: false
-                        },
-                                        {
-                            data: 'lot',
-                            type: 'text',
-                            required: false
+                            type: 'dropdown',
+                            source: lotTypesList,
+                            required: true
                         },
                         {
-                            data: 'insertion status',
+                            data: 'lot',
                             type: 'text',
-                            required: false,
-                            readOnly: true
-                        }
-
-
+                            required: true
+                        },
+                        externalURI,      
+                        insertionStatusColumn
                     ],
                     rowHeaders: true,
                     colHeaders: [
@@ -473,7 +391,7 @@ require_once '../config/config.php';
                         "<b><?= Yii::t('app', 'Accession') ?></b>",
                         "<b><?= Yii::t('app', 'LotType') ?></b>",
                         "<b><?= Yii::t('app', 'Lot') ?></b>",
-
+                        "<b><?= Yii::t('app', 'Lot URI') ?></b>",
                         "<b><?= Yii::t('app', 'Insertion status') ?></b>"
                     ],
                     manualRowMove: true,
@@ -483,27 +401,37 @@ require_once '../config/config.php';
                     dropdownMenu: true,
                     cells: function(row, col, prop) {
                         var cellProperties = {};
-
-                        if (col === 0 || col === 10) {
+                        if (col === 0 || col === 8) {
                             cellProperties.renderer = readOnlyColumnRenderer;
                         }
-
                         return cellProperties;
+                    },
+                    afterGetColHeader: function (col, th) {
+                        if (col === 5 | col === 6 ) {
+                            th.style.color = "red";
+                        }
                     }
                 };
-            }      
-
-            var handsontable = new Handsontable(hotElement, table);  
+            } 
             
-            var value = handsontable.getDataAtCell(1,1);
-            
+            //Generates the handsontable 
+            //it is displayed only if a germplasmType has been selected
+            if (germplasmType !== "") { 
+                var hotElement = document.querySelector('#germplasms-multiple-insert-table');
+                var handsontable = new Handsontable(hotElement, table);  
+                $('#germplasms-multiple-insert-button').show();
+                $('#import-csv').show();
+                $('#documentation-info').show();
+            }
+      
+            //Updates the dropdown lists depending on others lists selection
             handsontable.updateSettings({
                 afterChange: function(changes) {
                     changes.forEach(([row, prop, oldVal, newVal]) => {
                         if (prop === 'genus' ) {
+                            //if a genus is selected and the germplasm type is not a genus or a species, then we filter the list of species
                             if (germplasmType !== "http://www.opensilex.org/vocabulary/oeso#Genus" && germplasmType !== "http://www.opensilex.org/vocabulary/oeso#Species") {
-                                var cell = {};
-                                cell.type = 'dropdown';
+                                var cell = {};                                
                                 $.ajax({
                                     url: 'index.php?r=germplasm%2Fget-species',
                                     type: 'POST',
@@ -511,9 +439,10 @@ require_once '../config/config.php';
                                     data: {fromGenus: newVal}
                                 }).done(function (data) {
                                     cell.source = data;
+                                    cell.type = 'dropdown';
                                     handsontable.setCellMetaObject(row,2,cell);
                                 });
-                                
+                                //if a genus is selected and the germplasm type is not a variety, species or genus, then we filter the list of varieties
                                 if (germplasmType !== "http://www.opensilex.org/vocabulary/oeso#Variety") {
                                     var cell = {};
                                     cell.type = 'dropdown';
@@ -525,8 +454,8 @@ require_once '../config/config.php';
                                     }).done(function (data) {
                                         cell.source = data;
                                         handsontable.setCellMetaObject(row,3,cell);
-                                    });
-                                    
+                                    });                                    
+                                    //if a genus is selected and the germplasm type is a plantMaterialLot, then we filter the list of accessions
                                     if (germplasmType !== "http://www.opensilex.org/vocabulary/oeso#Accession") {
                                         var cell = {};
                                         cell.type = 'dropdown';
@@ -545,6 +474,7 @@ require_once '../config/config.php';
                         }
                         
                         if (prop === 'species' ) {
+                            //if a species is selected and the germplasm type is accession or lot, then we filter the list of varieties
                             if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Accession" || germplasmType === "http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot") {                                
                                 var cell = {};
                                 cell.type = 'dropdown';
@@ -557,7 +487,7 @@ require_once '../config/config.php';
                                     cell.source = data;
                                     handsontable.setCellMetaObject(row,3,cell);
                                 });
-
+                                //if a species is selected and the germplasm type is a lot, then we filter the list of accessions
                                 if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot") {
                                     var cell = {};
                                     cell.type = 'dropdown';
@@ -574,8 +504,8 @@ require_once '../config/config.php';
                             }
                         }
                         
-                        if (prop === 'variety' ) {
-                           
+                        if (prop === 'variety' ) {     
+                            //if a variety is selected and the germplasm type is a lot, then we filter the list of accessions
                             if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot") {
                                 var cell = {};
                                 cell.type = 'dropdown';
@@ -589,52 +519,16 @@ require_once '../config/config.php';
                                     handsontable.setCellMetaObject(row,4,cell);
                                 });
                             }
-                        }
-                        
-                        
-                        
+                        }           
                     });
                   handsontable.render();
                 }
             });
 
             /**
-             * if the data is valid, calls the insert action
-             * @param {boolean} callback
-             * @returns
+             * fill the table with the csv files data             * 
+             * @param the imported file
              */
-            function add(callback) {
-                if (callback) {
-                    document.getElementById("loader").style.display = "block";
-                    document.getElementById("germplasms-creation").style.display = "none";
-
-                    germplasmsArray = handsontable.getData();
-                    germplasmsString = JSON.stringify(germplasmsArray);
-
-                    $.ajax({
-                        url: 'index.php?r=germplasm%2Fcreate-multiple-germplasm',
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {germplasms: germplasmsString,
-                                germplasmType: germplasmType}
-                    }).done(function (data) {
-                        document.getElementById("germplasms-creation").style.display = "block";
-                        document.getElementById("loader").style.display = "none";
-                        for (var i = 0; i < data.length; i++) {                        
-                            handsontable.setDataAtCell(i, 0, data[i]);
-                        }
-                        $('#germplasms-save').hide();
-                        $('#germplasms-created').show();
-                    })
-                    .fail(function (jqXHR, textStatus) {
-                        toastr["error"]("The germplasms creation has failed");
-                        document.getElementById("germplasms-creation").style.display = "block";
-                        document.getElementById("loader").style.display = "none";
-                    });
-                }
-            }
-
-            //fill the table with the csv files data
             function fillTheTable(files) {
                 //const selectedFile = document.getElementById('input').files[0];
                 if (files && files[0]) {
@@ -653,11 +547,50 @@ require_once '../config/config.php';
                 }    
 
             }
+            /**
+             * if the data is valid, calls the insert action
+             * @param {boolean} callback
+             * @returns
+             */
+            function add(callback) {
+                if (callback) {
+                    document.getElementById("loader").style.display = "block";
+                    document.getElementById("germplasms-creation").style.display = "none";
 
-             //save objects
-             $(document).on('click', '#germplasms-save', function() {
-                 handsontable.validateCells(add);
-             });
+                    germplasmsArray = handsontable.getData();
+                    germplasmsString = JSON.stringify(germplasmsArray);
+                    lastColumnNumber = handsontable.countCols()-1;
+                    
+                    $.ajax({
+                        url: 'index.php?r=germplasm%2Fcreate-multiple-germplasm',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {germplasms: germplasmsString,
+                                germplasmType: germplasmType}
+                    }).done(function (data) {
+                        document.getElementById("germplasms-creation").style.display = "block";
+                        document.getElementById("loader").style.display = "none";
+                        for (var i = 0; i < data["messages"].length; i++) {   
+                            if (data["germplasmUris"][i] !== null) {
+                                handsontable.setDataAtCell(i, 0, data["germplasmUris"][i]);
+                            }
+                            handsontable.setDataAtCell(i, lastColumnNumber, data["messages"][i]);
+                        }
+                        $('#germplasms-save').hide();
+                        
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        toastr["error"]("The germplasms creation has failed");
+                        document.getElementById("germplasms-creation").style.display = "block";
+                        document.getElementById("loader").style.display = "none";
+                    });
+                }
+            }
+            
+            //save germplasms
+            $(document).on('click', '#germplasms-save', function() {
+                handsontable.validateCells(add);
+            });
 
         </script>
     </div>

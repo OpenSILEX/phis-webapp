@@ -75,6 +75,7 @@ return [
     'Species' => 'http://www.opensilex.org/vocabulary/oeso#Species',
     'Variety' => 'http://www.opensilex.org/vocabulary/oeso#Variety',
     'Accession' => 'http://www.opensilex.org/vocabulary/oeso#Accession',
+    'PlantMaterialLot' => 'http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot',
 
     // Event
     'event' => 'http://www.opensilex.org/vocabulary/oeev#Event',
