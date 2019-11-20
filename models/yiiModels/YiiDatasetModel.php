@@ -112,9 +112,8 @@ class YiiDatasetModel extends WSActiveRecord {
      */
     public function rules() {
         return [
-            [['variables', 'provenanceAlias', 'file', 'provenanceUri','experiment'], 'required'],
-            [['provenanceSensingDevices'], 'safe'],
-            [['provenanceAgents'], 'safe'],
+            [['provenanceAlias', 'file', 'provenanceUri','experiment'], 'required'],
+            [['variables','provenanceSensingDevices','provenanceAgents'], 'safe'],
             [['provenanceComment'], 'string'],
             [['experiment'], 'string'],
             [['provenanceUri', 'provenanceComment', 'documentsURIs', 'data', 'file'], 'safe'],
