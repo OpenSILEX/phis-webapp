@@ -104,7 +104,7 @@ $form->field($model, 'experiment')->widget(\kartik\select2\Select2::classname(),
 
 
     <hr style="border-color : gray;"/>
-    <h4><?= Yii::t('app', 'Provenance') ?></h4>
+    <h4><?= Yii::t('app', 'Provenance'); ?></h4>
 
     <script>
         $(document).ready(function () {
