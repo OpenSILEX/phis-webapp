@@ -543,6 +543,7 @@ class SensorController extends Controller {
             // Get data
             $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
             $sensorGraphData = $searchModel->getEnvironmentData($sessionToken);
+            
             // Render data
             return $this->renderAjax('_view_sensor_graph', [
                 'sensorGraphData' => $sensorGraphData

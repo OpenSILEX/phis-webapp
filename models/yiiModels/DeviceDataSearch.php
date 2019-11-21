@@ -10,6 +10,8 @@
 
 namespace app\models\yiiModels;
 use Yii;
+use \app\models\wsModels\WSEnvironmentModel;
+
 
 /**
  * implements the search action for the sensor data
@@ -45,11 +47,6 @@ class DeviceDataSearch extends \yii\base\Model {
      * @var string
      */
     public $graphName;
-    
-    /**
-     * Store provenance data to prevent multiple calls to WS
-     */
-    const SESSION_PROVENANCES = 'store_provenances_infos';
     
     /**
      * @inheritdoc
@@ -95,6 +92,7 @@ class DeviceDataSearch extends \yii\base\Model {
      *  ]
      */
     public function getEnvironmentData($sessionToken) {
+        // Create webservice instance
         $ws = new WSEnvironmentModel();
         
         // Define start and end time period
@@ -104,6 +102,7 @@ class DeviceDataSearch extends \yii\base\Model {
         if ($this->dateStart == null && $this->dateEnd == null) {
             // If no dates are defined get the last data for this sensor and variable
             $lastData = $ws->getLastSensorVariableData($sessionToken, $this->sensorURI, $this->variableURI);
+            
             // If no dates are defined get the last data for this sensor and variable
             
             // Get the last date if exists
@@ -111,6 +110,7 @@ class DeviceDataSearch extends \yii\base\Model {
             if ($lastData['date']) {
                 $lastDate = $lastData["date"];
             }
+            
             // If last date found, compute the latest week period
             if ($lastDate != null) {
                 $dateTimeEnd = new \DateTime($lastDate);
@@ -124,7 +124,6 @@ class DeviceDataSearch extends \yii\base\Model {
             } else {
                 return null;
             }
-
         } else if ($this->dateStart == null) {
             // If only dateEnd is defined
             $dateTimeEnd = new \DateTime($this->dateEnd);
@@ -136,10 +135,10 @@ class DeviceDataSearch extends \yii\base\Model {
             $dateTimeStart = new \DateTime($this->dateStart);
             $dateTimeEnd = new \DateTime($this->dateEnd);
         }
-
+        
         // Get all data
         $data = $ws->getAllSensorData($sessionToken, $this->sensorURI, $this->variableURI, $dateTimeStart, $dateTimeEnd);
-       
+                
         // Construct result
         $result = [
             "graphName" => $this->graphName,

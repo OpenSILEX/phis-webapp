@@ -117,5 +117,4 @@ class WSSensorModel extends \openSILEX\guzzleClientPHP\WSModel {
             return $requestRes;
         }
     }
-    
 }
