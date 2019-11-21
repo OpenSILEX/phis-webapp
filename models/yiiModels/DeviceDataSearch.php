@@ -12,7 +12,6 @@ namespace app\models\yiiModels;
 use Yii;
 use \app\models\wsModels\WSEnvironmentModel;
 
-
 /**
  * implements the search action for the sensor data
  * @author Vincent Migot <vincent.migot@inra.fr>
@@ -102,15 +101,13 @@ class DeviceDataSearch extends \yii\base\Model {
         if ($this->dateStart == null && $this->dateEnd == null) {
             // If no dates are defined get the last data for this sensor and variable
             $lastData = $ws->getLastSensorVariableData($sessionToken, $this->sensorURI, $this->variableURI);
-            
-            // If no dates are defined get the last data for this sensor and variable
-            
+        
             // Get the last date if exists
             $lastDate = null;
             if ($lastData['date']) {
                 $lastDate = $lastData["date"];
             }
-            
+
             // If last date found, compute the latest week period
             if ($lastDate != null) {
                 $dateTimeEnd = new \DateTime($lastDate);

@@ -33,7 +33,6 @@ use app\models\wsModels\WSConstants;
  * @update [Vincent Migot] 7 November, 2018: Add sensor/variables link
  * @update [Vincent Migot] 19 November, 2018: Add visualization of environmental data
  * @update [Andréas Garcia] 11 March, 2019: Add event widget
- * @update [Arnaud Charleroy] 30 October, 2019: Add sensor data by data service
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  * @author Arnaud Charleroy <arnaud.charleroy@inra.fr>
  */
