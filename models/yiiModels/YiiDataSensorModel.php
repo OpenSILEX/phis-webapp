@@ -33,5 +33,17 @@ class YiiDataSensorModel extends YiiDatasetModel {
         $rules[] =[['provenanceSensingDevices'], 'required'];
         return $rules;
     }
+    
+    /**
+     * 
+     * @return array the labels of the attributes
+     */
+    public function attributeLabels() {
+        $rules =  parent::rules();
+        $rules['variables'] = Yii::t('app', 'Variable(s)');
+        $rules['provenanceUri'] = Yii::t('app', 'Provenance label');
+
+        return $rules;
+    }
 
 }
