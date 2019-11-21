@@ -101,15 +101,17 @@ $form->field($model, 'experiment')->widget(\kartik\select2\Select2::classname(),
 ]);
 ?>
 
-
-
-    <hr style="border-color : gray;"/>
+    
+    <div class="row">
     <h4><?= Yii::t('app', 'Provenance'); ?></h4>
 
+    <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, tape the provenance label in the research field and press `Enter`'); ?></p>
+
+    <div class="col-sm-12 col-md-11 col-md-offset-1">
     <script>
         $(document).ready(function () {
 <?php
-// Create Provenance select values array
+// Create Provenance select value<div class="collapse" id="collapseExample">s array
 foreach ($this->params['provenances'] as $uri => $provenance) {
     $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
 }
@@ -126,7 +128,6 @@ echo 'var agents = ' . json_encode($this->params['agents']) . ';';
             // Function to update provenance comment field depending of selected URI
             var updateProvenanceFields = function (uri) {
                 if (provenances.hasOwnProperty(uri)) {
-//                    console.log(provenances[uri]);
                     // If selected provenance is known get its comment
                     var comment = provenances[uri]["comment"];
 
@@ -142,7 +143,6 @@ echo 'var agents = ' . json_encode($this->params['agents']) . ';';
                         var provenanceAgents = provenances[uri]["metadata"]["prov:Agent"]["oeso:Operator"];
                         $("#yiidatasetmodel-provenanceagents").val(provenanceAgents);
                         $("#yiidatasetmodel-provenanceagents").trigger("change");
-//                        console.log(provenanceAgents);
                     } catch (error) {
                         $("#yiidatasetmodel-provenanceagents").val([]);
                         $("#yiidatasetmodel-provenanceagents").trigger("change");
@@ -231,21 +231,23 @@ echo 'var agents = ' . json_encode($this->params['agents']) . ';';
         ],
     ])->label(false)
     ?>
- 
-
+    </div>
+    </div>
+    <hr>
+    <hr style="border-color:gray;"/>
     <h3><i>  <?= Yii::t('app', 'Dataset template generation') ?></i></h3>
+    <p class="alert alert-info"><?= Yii::t('app/messages', 'Please, select a experiment to fill this dropdown'); ?></p>
     <?php
     $select2VariablesOptions =  [
-            'placeholder' => Yii::t('app/messages', 'Select one or many variables') . ' ...',
+            'placeholder' => Yii::t('app/messages', 'Select one or many experiment associated variables') . ' ...',
             'id' => 'uriVariable-selector',
             'multiple' => true
         ]; 
     ?>
     
-    
     <?=
     $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(), [
-        'data' => $this->params['variables'],
+        'data' => [],
         'options' => $select2VariablesOptions,
         'pluginOptions' => [
             'allowClear' => true,
@@ -260,15 +262,23 @@ if (Yii::$app->params['csvSeparator'] == ";") {
     $csvPath = "semicolon";
 }
 ?>
-        <i><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv', ['id' => 'downloadDatasetTemplate']) ?></i>
+    <i>
+    <?= 
+        Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download generated template'),
+            \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv',
+            ['id' => 'downloadDatasetTemplate']
+        );
+    ?>
+    </i>
     </p>
-    
-    <hr style="border-color:gray;"/>
+    <hr>
     <hr style="border-color:gray;"/>
     <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetExemple.csv') ?></i>
 
-    <h3><i>  <?= Yii::t('app', 'Dataset rules') ?></i></h3>
-    <!--    <br>
+    <h3><i> <a data-toggle="collapse" href="#collapseDataSetRules" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
+             <?= Yii::t('app', 'Dataset rules') ?> </a></i></h3>
+    <div class="collapse" id="collapseDataSetRules">
+        <br>
         <div class="alert alert-info" role="alert">
             <b><?= Yii::t('app/messages', 'File Rules') ?> : </b>
             <ul>
@@ -291,7 +301,8 @@ if (Yii::$app->params['csvSeparator'] == ";") {
                     <td ><?= Yii::t('app', 'Variable value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)</td>
                 </tr>
             </table>
-        </div>-->
+        </div>
+    </div>
     <hr style="border-color:gray;"/>    
     <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
 
@@ -350,17 +361,26 @@ $form->field($model, 'file')->widget(FileInput::classname(), [
 
             $(document).on('change', '#uriVariable-selector', function () {
                 $(".dataset-variables").remove();
-                $("#uriVariable-selector :selected").each(function (i, sel) {
+                if($("#uriVariable-selector :selected").length > 0){
+                    $("#uriVariable-selector :selected").each(function (i, sel) {
+                        $('#dataset-csv-columns-desc').append(
+                                '<tr class="dataset-variables">'
+                                + '<th style="color:red" >'
+                                + $(sel).text() + ' *'
+                                + '</th>'
+                                + '<td>'
+                                + '<?php echo Yii::t("app/messages", "Value"); ?> (<?php echo Yii::t('app', 'Real number, String or Date'); ?>)'
+                                + '</td>'
+                                + '</tr>');
+                    }); 
+                }else{
                     $('#dataset-csv-columns-desc').append(
-                            '<tr class="dataset-variables">'
-                            + '<th style="color:red" >'
-                            + $(sel).text() + ' *'
-                            + '</th>'
-                            + '<td>'
-                            + '<?php echo Yii::t("app/messages", "Value"); ?> (<?php echo Yii::t('app', 'Real number, String or Date'); ?>)'
-                            + '</td>'
-                            + '</tr>');
-                });
+                                '<tr class="dataset-variables">'
+                              + '<th style="color:red">Variable value *</th>'
+                              + '<td ><?= Yii::t('app', 'Variable value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)'
+                              + '</td>'
+                              + '</tr>');
+                }
             });
 
            
@@ -431,31 +451,34 @@ $form->field($model, 'file')->widget(FileInput::classname(), [
                             $('#document-save-msg').html('Request failed: ' + textStatus);
                         });
             });
-
+            
+            populateVariableList($("#experiment-selector").val());
         });
         
         function populateVariableList(experimentUri){
-            var select = $('#uriVariable-selector');
-            var settings = select.attr('data-krajee-select2'),
-            id = select.attr('id');
-            settings = window[settings];
-            
-            $.ajax({
-                url: '<?= Url::toRoute(['dataset/get-experiment-mesured-variables-select-list']); ?>',
-                type: 'GET',
-                dataType: 'json',
-                data: {"experimentUri": experimentUri}
-            })
-            .done(function (data) {
-                
-                settings.data = data.data;
-                console.log(settings);
-                select.select2(settings);
-            })
-            .fail(function (jqXHR, textStatus) {
-                // Disaply errors
-                console.log(jqXHR)
-            });
+            if(experimentUri !== undefined && experimentUri !== null ){
+                var select = $('#uriVariable-selector');
+                var settings = select.attr('data-krajee-select2'),
+                id = select.attr('id');
+                settings = window[settings];
+
+                $.ajax({
+                    url: '<?= Url::toRoute(['dataset/get-experiment-mesured-variables-select-list']); ?>',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {"experimentUri": experimentUri}
+                })
+                .done(function (data) {
+
+                    settings.data = data.data;
+                    console.log(settings);
+                    select.select2(settings);
+                })
+                .fail(function (jqXHR, textStatus) {
+                    // Disaply errors
+                    console.log(jqXHR)
+                });
+            }
         }
     </script>
 </div>

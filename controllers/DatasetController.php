@@ -52,11 +52,6 @@ class DatasetController extends Controller {
     const ERRORS_COLUMN = "Column";
     const ERRORS_MESSAGE = "Message";
     
-    const SENSORS_DATA = "sensors";
-    const SENSOR_DATA_URI = "sensorUri";
-    const SENSOR_DATA_LABEL = "sensorLabel";
-    const SENSOR_DATA_TYPE = "sensorType";
-
     const PROVENANCE_PARAMS_VALUES = "provenanceNamespaces";
     /**
      * define the behaviors
@@ -139,30 +134,6 @@ class DatasetController extends Controller {
         }
         
         $file = fopen('./documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv', 'w');
-        fputcsv($file, $fileColumns, $delimiter = Yii::$app->params['csvSeparator']);
-        fclose($file);
-    }
-    
-    /**
-     * generate the csv file for the sensor dataset creation action. The csv file is
-     * generated with a column for each variable
-     * @param array variables list of the variables to add to the 
-     *                                file uri => alias
-     * @return mixed
-     */
-    public function actionGenerateAndDownloadDatasetSensorCreationFile() {
-        $fileColumns[] = DatasetController::DATE;
-        $variables = Yii::$app->request->post('variables');
-        foreach ($variables as $variableAlias) {
-            $fileColumns[] = $variableAlias;
-        }
-
-        $csvPath = "coma";
-        if (Yii::$app->params['csvSeparator'] == ";") {
-            $csvPath = "semicolon";
-        }
-        
-        $file = fopen('./documents/DatasetFiles/' . $csvPath . '/datasetSensorTemplate.csv', 'w');
         fputcsv($file, $fileColumns, $delimiter = Yii::$app->params['csvSeparator']);
         fclose($file);
     }
@@ -407,7 +378,7 @@ class DatasetController extends Controller {
             $experimentVariables = $this->getExperimentMesuredVariablesSelectList($datasetModel->experiment) ;
             $csvVariables = array_slice($csvHeaders, 2);
             // select all variables that don"t exist in experiment variables
-            $variablesNotInExperiment = array_diff($csvVariables, $experimentVariables);
+            $variablesNotInExperiment = array_diff($csvVariables, array_values($experimentVariables)); 
             // Check CSV header with variables
             if (count($variablesNotInExperiment) === 0) {
                 // Get selected or create Provenance URI
@@ -456,7 +427,7 @@ class DatasetController extends Controller {
                             $row = str_getcsv($rowStr, Yii::$app->params['csvSeparator']);
                             $scientifObjectAlias = $row[0];
                             if(!array_search($scientifObjectAlias, $objectUris)){
-                                $objectsErrors[] = $scientifObjectAlias .  Yii::t("app/messages", " Object doesn't not exists in this experiment");
+                                $objectsErrors[] = $scientifObjectAlias .  Yii::t("app/messages", " Object does not exists in this experiment");
                                 $scientifObjectUri = null;
                             }else{
                                 $scientifObjectUri = array_search($scientifObjectAlias, $objectUris);
@@ -466,7 +437,7 @@ class DatasetController extends Controller {
                                 $values[] = [
                                     "provenanceUri" => $provenanceUri,
                                     "objectUri" => $scientifObjectUri,
-                                    "variableUri" => array_search($givenVariables[$i - 2], $variables),
+                                    "variableUri" => array_search($csvVariables[$i - 2], $experimentVariables),
                                     "date" => $date,
                                     "value" => $row[$i]
                                 ];
@@ -520,7 +491,7 @@ class DatasetController extends Controller {
                 return $this->render('create', [
                             'model' => $datasetModel,
                             'errors' => [
-                                Yii::t("app/messages", "CSV file headers does not match selected variables (" . implode(",", $variablesNotInExperiment) . ")")
+                                Yii::t("app/messages", "CSV file headers does not match variables used in this experiment. The following Variables are not associated to this experiment " ) . "(" . implode(",", $variablesNotInExperiment) . ")"
                             ]
                 ]);
             }

@@ -127,11 +127,11 @@ class YiiDatasetModel extends WSActiveRecord {
      */
     public function attributeLabels() {
         return [
-            'provenanceUri' => Yii::t('app', 'Provenance (URI)'),
+            'provenanceUri' => Yii::t('app', 'Provenance label'),
             'provenanceComment' => Yii::t('app', 'Provenance comment'),
             'provenanceSensingDevices' => Yii::t('app', 'Sensor'),
             'provenanceAgents' => Yii::t('app', 'Operator'),
-            'variables' => Yii::t('app', 'Variable(s)'),
+            'variables' => Yii::t('app', 'Experiment associated variable(s)'),
             'file' => Yii::t('app', 'Data file'),
             'documentsUris' => Yii::t('app', 'Documents'),
             'experiment' => Yii::t('app', 'Experiment')
