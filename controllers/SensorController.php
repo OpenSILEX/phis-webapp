@@ -313,7 +313,7 @@ class SensorController extends Controller {
         //get sensor's linked documents
         $searchDocumentModel = new DocumentSearch();
         $searchDocumentModel->concernedItemFilter = $id;
-        $documents = $searchDocumentModel->search(Yii::$app->session[WSConstants::ACCESS_TOKEN], ["concernedItem" => $id]);
+        $documents = $searchDocumentModel->search(Yii::$app->session['access_token'], ["concernedItem" => $id]);
         
         //3. get sensor annotations
         $searchAnnotationModel = new AnnotationSearch();
@@ -542,7 +542,7 @@ class SensorController extends Controller {
             
             // Get data
             $sessionToken = Yii::$app->session[WSConstants::ACCESS_TOKEN];
-            $sensorGraphData = $searchModel->getSensorData($sessionToken);
+            $sensorGraphData = $searchModel->getEnvironmentData($sessionToken);
             // Render data
             return $this->renderAjax('_view_sensor_graph', [
                 'sensorGraphData' => $sensorGraphData
