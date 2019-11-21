@@ -94,23 +94,16 @@ class DeviceDataSearch extends \yii\base\Model {
      *      ]
      *  ]
      */
-    public function getSensorData($sessionToken) {
-        // Session provenance
-        $sessionProvenances = Yii::$app->session[self::SESSION_PROVENANCES];
-        if(!isset($sessionProvenances)){
-            $sessionProvenances = [];
-        }
-        // Create webservice instance
-        $wsData = new \app\models\wsModels\WSSensorModel();
-        $wsProv = new \app\models\wsModels\WSProvenanceModel();
+    public function getEnvironmentData($sessionToken) {
+        $ws = new WSEnvironmentModel();
         
         // Define start and end time period
         $dateTimeStart = null;
         $dateTimeEnd = null;
         
         if ($this->dateStart == null && $this->dateEnd == null) {
-            $date = null;
-            $lastData = $wsData->getLastSensorVariableData($sessionToken, $this->variableURI, $this->sensorURI);
+            // If no dates are defined get the last data for this sensor and variable
+            $lastData = $ws->getLastSensorVariableData($sessionToken, $this->sensorURI, $this->variableURI);
             // If no dates are defined get the last data for this sensor and variable
             
             // Get the last date if exists
@@ -118,7 +111,6 @@ class DeviceDataSearch extends \yii\base\Model {
             if ($lastData['date']) {
                 $lastDate = $lastData["date"];
             }
-
             // If last date found, compute the latest week period
             if ($lastDate != null) {
                 $dateTimeEnd = new \DateTime($lastDate);
@@ -146,15 +138,8 @@ class DeviceDataSearch extends \yii\base\Model {
         }
 
         // Get all data
-        $data = $wsData->getAllSensorData($sessionToken, $this->sensorURI, $this->variableURI, $dateTimeStart, $dateTimeEnd);
-        // Get specific associated provenance
-        foreach ($data as $d){
-            if(!isset($sessionProvenances[$d->provenanceUri])){
-                $specificProvenancesData = $wsProv->getSpecificProvenancesByCriteria($sessionToken,['uri' => $d->provenanceUri] );
-                $sessionProvenances[$d->provenanceUri] = $specificProvenancesData[0];
-                $d->provenanceLabel = $specificProvenancesData[0]->label;
-            }
-        }
+        $data = $ws->getAllSensorData($sessionToken, $this->sensorURI, $this->variableURI, $dateTimeStart, $dateTimeEnd);
+       
         // Construct result
         $result = [
             "graphName" => $this->graphName,
@@ -162,8 +147,7 @@ class DeviceDataSearch extends \yii\base\Model {
             "sensorUri" => $this->sensorURI,
             "dateStart" => $dateTimeStart,
             "dateEnd" => $dateTimeEnd,
-            "data" => $data,
-            "provenances" => $sessionProvenances
+            "data" => $data
         ];
         
         return $result;
