@@ -98,7 +98,7 @@ return [
     'Select image view...' => 'Sélectionnez la vue de l\'image...',
     'Select provenance...'=>'Sélectionnez la provenance...',
     'Select type...' => 'Sélectionnez le type...',
-    'Select one or many variables' => 'Sélectionnez une ou plusieurs variables',
+    'Select one or more variables' => 'Sélectionnez une ou plusieurs variables',
     'Select existing provenance or create a new one' => 'Selectionnez une provenance existante où créez en une nouvelle',
     'Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0' => 'Le logiciel est sous licence AGPL-3.0 et les données sous CC BY-NC-SA 4.0',
     'Some required fields are missings' => 'Des champs requis sont manquants.',

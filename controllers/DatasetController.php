@@ -143,7 +143,7 @@ class DatasetController extends Controller {
         fclose($file);
     }
     
-    /**
+     /**
      * generate the csv file for the sensor dataset creation action. The csv file is
      * generated with a column for each variable
      * @param array variables list of the variables to add to the 
@@ -156,7 +156,7 @@ class DatasetController extends Controller {
         foreach ($variables as $variableAlias) {
             $fileColumns[] = $variableAlias;
         }
-
+       
         $csvPath = "coma";
         if (Yii::$app->params['csvSeparator'] == ";") {
             $csvPath = "semicolon";
@@ -167,6 +167,37 @@ class DatasetController extends Controller {
         fclose($file);
     }
 
+    /**
+     * 
+     * @param type $experimentUri
+     */
+    public function actionGetExperimentMesuredVariablesSelectList($experimentUri){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $variables = [];
+        $variables["data"] = [];
+        $experimentVariable = $this->getExperimentMesuredVariablesSelectList($experimentUri);
+        foreach ($experimentVariable as $key => $value) {
+            $variables["data"][] = ["id" => $key, "text" => $value];
+        }
+       
+        return($variables);
+    }
+    
+    private function getExperimentMesuredVariablesSelectList($experimentUri) {
+        if(!isset($experimentUri) || empty($experimentUri)){
+            return [];
+        }
+        $experimentModel = new YiiExperimentModel();
+        $variables = $experimentModel->getMeasuredVariables(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN],
+                $experimentUri
+                );
+        if(isset($variables) && is_array($variables)){
+            return $variables;
+        }
+        return [];
+    }
+    
     /**
      * 
      * @param array $csvErrors the errors founded. 
@@ -344,18 +375,10 @@ class DatasetController extends Controller {
 
         $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
 
-        // Load existing variables
-        $variables = $variablesModel->getInstancesDefinitionsUrisAndLabel($token);
-        $this->view->params["variables"] = $this->getVariablesListLabelToShowFromVariableList($variables);
-
         // Load existing provenances
         $provenanceService = new WSProvenanceModel();
         $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
         $this->view->params["provenances"] = $provenances;
-        
-        // Load existing sensors
-        $sensors = $this->getSensorsUrisTypesLabels($token);
-        $this->view->params["sensingDevices"] = $this->getSensorListToShowFromSensorList($sensors);
 
          // Load existing agents
         $userModel = new \app\models\yiiModels\YiiUserModel();
@@ -380,10 +403,12 @@ class DatasetController extends Controller {
             unlink($serverFilePath);
 
             //Loaded given variables
-            $givenVariables = $datasetModel->variables;
-
+            $experimentVariables = $this->getExperimentMesuredVariablesSelectList($datasetModel->experiment) ;
+            $csvVariables = array_slice($csvHeaders, 2);
+            // select all variables that don"t exist in experiment variables
+            $variablesNotInExperiment = array_diff($csvVariables, array_values($experimentVariables)); 
             // Check CSV header with variables
-            if (array_slice($csvHeaders, 2) === $givenVariables) {
+            if (count($variablesNotInExperiment) === 0) {
                 // Get selected or create Provenance URI
                 if (!array_key_exists($datasetModel->provenanceUri, $provenances)) {
                     $provenanceUri = $this->createProvenance(
@@ -430,7 +455,7 @@ class DatasetController extends Controller {
                             $row = str_getcsv($rowStr, Yii::$app->params['csvSeparator']);
                             $scientifObjectAlias = $row[0];
                             if(!array_search($scientifObjectAlias, $objectUris)){
-                                $objectsErrors[] = $scientifObjectAlias .  Yii::t("app/messages", " Object doesn't not exists in this experiment");
+                                $objectsErrors[] = $scientifObjectAlias .  Yii::t("app/messages", " Object does not exists in this experiment");
                                 $scientifObjectUri = null;
                             }else{
                                 $scientifObjectUri = array_search($scientifObjectAlias, $objectUris);
@@ -440,7 +465,7 @@ class DatasetController extends Controller {
                                 $values[] = [
                                     "provenanceUri" => $provenanceUri,
                                     "objectUri" => $scientifObjectUri,
-                                    "variableUri" => array_search($givenVariables[$i - 2], $variables),
+                                    "variableUri" => array_search($csvVariables[$i - 2], $experimentVariables),
                                     "date" => $date,
                                     "value" => $row[$i]
                                 ];
@@ -494,7 +519,7 @@ class DatasetController extends Controller {
                 return $this->render('create', [
                             'model' => $datasetModel,
                             'errors' => [
-                                Yii::t("app/messages", "CSV file headers does not match selected variables")
+                                Yii::t("app/messages", "CSV file headers does not match variables used in this experiment. The following Variables are not associated to this experiment " ) . "(" . implode(",", $variablesNotInExperiment) . ")"
                             ]
                 ]);
             }
@@ -505,7 +530,7 @@ class DatasetController extends Controller {
         }
     }
     
-    /**
+      /**
      * register the sensor data with the associated provenance and documents
      * @return mixed
      */
