@@ -18,6 +18,7 @@ use unclead\multipleinput\MultipleInput;
 use kartik\form\ActiveForm;
 use kartik\file\FileInput;
 use yii\helpers\Url;
+use kartik\icons\Icon;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiDatasetModel */
@@ -105,10 +106,7 @@ $form->field($model, 'experiment')->widget(\kartik\select2\Select2::classname(),
     
     <div class="row">
     <h4><?= Yii::t('app', 'Provenance'); ?></h4>
-
     <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, tape the provenance label in the research field and press `Enter`'); ?></p>
-
-    <div class="col-sm-12 col-md-11 col-md-offset-1">
     <script>
         $(document).ready(function () {
 <?php
@@ -233,7 +231,6 @@ echo 'var agents = ' . json_encode($this->params['agents']) . ';';
     ])->label(false)
     ?>
     </div>
-    </div>
     <hr>
     <hr style="border-color:gray;"/>
     <h3><i>  <?= Yii::t('app', 'Dataset template generation') ?></i></h3>
@@ -277,7 +274,7 @@ if (Yii::$app->params['csvSeparator'] == ";") {
     <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetExemple.csv') ?></i>
 
     <h3><i> <a data-toggle="collapse" href="#collapseDataSetRules" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
-             <?= Yii::t('app', 'Dataset rules') ?> </a></i></h3>
+             <?=Icon::show('question', ['class' => 'fa-large'], Icon::FA) . Yii::t('app', 'Dataset rules') ?> </a></i></h3>
     <div class="collapse" id="collapseDataSetRules">
         <br>
         <div class="alert alert-info" role="alert">
