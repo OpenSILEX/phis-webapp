@@ -39,9 +39,8 @@ class YiiDataSensorModel extends YiiDatasetModel {
      * @return array the labels of the attributes
      */
     public function attributeLabels() {
-        $rules =  parent::rules();
+        $rules =  parent::attributeLabels();
         $rules['variables'] = Yii::t('app', 'Variable(s)');
-        $rules['provenanceUri'] = Yii::t('app', 'Provenance label');
 
         return $rules;
     }

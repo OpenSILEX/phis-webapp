@@ -37,32 +37,33 @@ if ($handsontable !== null) {
     <?= Yii::$app->session->getFlash('renderArray'); ?>
 
     <?php
-    if (isset($errors) && $errors !== null):
+        if (isset($errors) && $errors !== null):
+    ?>
+    <div class="alert alert-danger" >
+        <h3 style="margin:3%;">Errors found in datasensor :</h3>
+        <ul>
+        <?php 
+            // Display error messages
+            $errorMessages = [];
+            foreach($errors as $error) {
+                if (is_string($error)) {
+                    $errorMessages[] =  $error;
+                } else {
+                    $errorMessages[] =  $error->exception->details;
+                }
+            }
+            
+            $errorMessages = array_unique($errorMessages);
+            foreach ($errorMessages as $errorMessage) {
+                 echo '<li>' . $errorMessage . '</li>';
+            }
+            
         ?>
-        <div class="alert alert-danger" >
-            <h3 style="margin:3%;">Errors found in dataset :</h3>
-            <ul>
-                <?php
-                // Display error messages
-                $errorMessages = [];
-                foreach ($errors as $error) {
-                    if (is_string($error)) {
-                        $errorMessages[] = $error;
-                    } else {
-                        $errorMessages[] = $error->exception->details;
-                    }
-                }
-
-                $errorMessages = array_unique($errorMessages);
-                foreach ($errorMessages as $errorMessage) {
-                    echo '<li>' . $errorMessage . '</li>';
-                }
-                ?>
-            </ul>
-        </div>
+        </ul>
+    </div>
     <?php
-endif;
-?>
+        endif;
+    ?>
     <?php
     if (isset($handsontable) && $handsontable !== null):
         ?>

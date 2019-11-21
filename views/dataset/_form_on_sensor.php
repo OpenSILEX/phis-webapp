@@ -87,7 +87,7 @@ use yii\helpers\Url;
     <?= $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(),[
                 'data' => $this->params['variables'],
                 'options' => [
-                    'placeholder' => Yii::t('app/messages', 'Select one or many variables') . ' ...',
+                    'placeholder' => Yii::t('app/messages', 'Select one or more variables') . ' ...',
                     'id' => 'uriVariable-selector',
                     'multiple' => true
                 ],
@@ -218,7 +218,7 @@ use yii\helpers\Url;
                 'data' => $this->params['sensingDevices'],
                 'options' => [
                     'placeholder' => Yii::t('app/messages', 'Select existing device') . ' ...',
-                    'multiple' => true
+                    'multiple' => false
                 ],
                 'pluginOptions' => [
                     'allowClear' => false,
