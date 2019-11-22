@@ -5,10 +5,10 @@
 //
 // Author(s): Morgane VIDAL
 // PHIS-SILEX version 1.0
-// Copyright © - INRA - 2017
-// Creation date: October 2017
+// Copyright © - INRA - 2019
+// Creation date: November 2019
 // Contact: morgane.vidal@inra.fr, anne.tireau@inra.fr, pascal.neveu@inra.fr
-// Last modification date:  January, 15 2018 (multiple variables datasensor)
+// Last modification date: 
 // Subject: creation of datasensor via CSV
 //***********************************************************************************************
 
@@ -18,6 +18,7 @@ use unclead\multipleinput\MultipleInput;
 use kartik\form\ActiveForm;
 use kartik\file\FileInput;
 use yii\helpers\Url;
+use kartik\icons\Icon;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\YiiDatasetModel */
@@ -25,11 +26,10 @@ use yii\helpers\Url;
 /* @var $handsontable openSILEX\handsontablePHP\adapter\HandsontableSimple */
 /* @var $handsontableErrorsCellsSettings string */
 
- if ($handsontable !== null) {
-     echo $handsontable->loadJSLibraries(true);
-     echo $handsontable->loadCSSLibraries();
- }
-
+if ($handsontable !== null) {
+    echo $handsontable->loadJSLibraries(true);
+    echo $handsontable->loadCSSLibraries();
+}
 ?>
 
 <div class="datasensor-form well">
@@ -66,192 +66,160 @@ use yii\helpers\Url;
         endif;
     ?>
     <?php
-        if (isset($handsontable) && $handsontable !== null):
-    ?>
+    if (isset($handsontable) && $handsontable !== null):
+        ?>
         <div id="errors">
 
-            <h3 class="alert alert-danger" style="margin:3%;">Errors found in datasensor </h3>
+            <h3 class="alert alert-danger" style="margin:3%;">Errors found in dataset </h3>
 
-                <div id="<?= $handsontable->getContainerName() ?>">
-                </div>
-                <script>
-                    <?= $handsontable->generateJavascriptCode(); ?>
-                    <?= $handsontableErrorsCellsSettings; ?>
-                </script>
+            <div id="<?= $handsontable->getContainerName() ?>">
+            </div>
+            <script>
+    <?= $handsontable->generateJavascriptCode(); ?>
+    <?= $handsontableErrorsCellsSettings; ?>
+            </script>
 
         </div>
 
-        <h3 class="alert alert-info" style="margin:3%;">Add datasensor form</h3>
-    <?php endif; ?>
+        <h3 class="alert alert-info" style="margin:3%;">Add dataset form</h3>
+<?php endif; ?>
+    <h3><i>  <?= Yii::t('app', 'Required dataset informations') ?></i></h3>
+
     
-    <?= $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['variables'],
-                'options' => [
-                    'placeholder' => Yii::t('app/messages', 'Select one or more variables') . ' ...',
-                    'id' => 'uriVariable-selector',
-                    'multiple' => true
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'tags' => true
-                ],
-            ]); ?>
+     <?= $form->field($model, 'provenanceSensingDevices')->widget(\kartik\select2\Select2::classname(),[
+            'data' => $this->params['sensingDevices'],
+            'id' => 'sensor-selector',
+            'options' => [
+                'placeholder' => Yii::t('app/messages', 'Select existing device') . ' ...',
+                'multiple' => false
+            ],
+            'pluginOptions' => [
+                'allowClear' => false,
+                'tags' => true
+            ],
+                'pluginEvents' => [
+                'select2:select' => 'function(e) { populateVariableList(e.params.data.id); }',
+            ]
+        ]); ?>
 
-    <hr style="border-color : gray;"/>
-    <h3><?= Yii::t('app', 'Provenance')?></h3>
-
+    
+    <h4><?= Yii::t('app', 'Provenance'); ?></h4>
+    <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, tape the new provenance label in the research field and press `Enter`'); ?></p>
     <script>
-        $(document).ready(function() {
-            <?php
-                // Create Provenance select values array
-                foreach ($this->params['provenances'] as $uri => $provenance) {
-                    $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
-                }
-                // Inject URI to get document widget linked to an URI
-                echo 'var documentsLoadUri = "' . Url::to(['document/get-documents-widget']) . '";';
-                // Inject provenances list indexed by URI
-                echo 'var provenances = ' . json_encode($this->params['provenances']) . ';';
-                 // Inject sensingDevices list indexed by URI
-                echo 'var sensingDevices = ' . json_encode($this->params['sensingDevices']) . ';';
-                 // Inject agents list indexed by URI
-                echo 'var agents = ' . json_encode($this->params['agents']) . ';';
-            ?>
-                
+        $(document).ready(function () {
+<?php
+// Create Provenance select value<div class="collapse" id="collapseExample">s array
+foreach ($this->params['provenances'] as $uri => $provenance) {
+    $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
+}
+// Inject URI to get document widget linked to an URI
+echo 'var documentsLoadUri = "' . Url::to(['document/get-documents-widget']) . '";';
+// Inject provenances list indexed by URI
+echo 'var provenances = ' . json_encode($this->params['provenances']) . ';';
+// Inject sensingDevices list indexed by URI
+echo 'var sensingDevices = ' . json_encode($this->params['sensingDevices']) . ';';
+// Inject agents list indexed by URI
+echo 'var agents = ' . json_encode($this->params['agents']) . ';';
+?>
+
             // Function to update provenance comment field depending of selected URI
-            var updateProvenanceFields = function(uri) {
-                 $("#data-save").prop("disabled",false);
+            var updateProvenanceFields = function (uri) {
                 if (provenances.hasOwnProperty(uri)) {
-//                    console.log(provenances[uri]);
                     // If selected provenance is known get its comment
                     var comment = provenances[uri]["comment"];
-                    
+
                     // Set provenance comment, disable input and remove validation messages 
-                    $("#yiidatasensormodel-provenancecomment").val(comment).attr("disabled", "disabled");
-                    $(".field-yiidatasensormodel-provenancecomment, .field-yiidatasensormodel-provenancecomment *")
-                        .removeClass("has-error")
-                        .removeClass("has-success");
-                    $(".field-yiidatasensormodel-provenancecomment .help-block").empty();
-                    
-                    // Set provenance provenanceSensingDevices, disable input and remove validation messages 
-                    try {
-                        var provenanceSensingDevices = provenances[uri]["metadata"]["prov:Agent"]["oeso:SensingDevice"];
-                        $("#yiidatasensormodel-provenancesensingdevices").val(provenanceSensingDevices);
-                        $("#yiidatasensormodel-provenancesensingdevices").trigger("change");
-                        if(provenanceSensingDevices.length === 0){
-                            toastr.error('<?= Yii::t('app/messages', 'You must select a provenance with a sensor'); ?>');
-                            $("#data-save").prop("disabled",true);
-                        }
-                    }
-                    catch(error) {
-                        $("#yiidatasensormodel-provenancesensingdevices").val([]);
-                        $("#yiidatasensormodel-provenancesensingdevices").trigger("change");
-                        toastr.error('<?= Yii::t('app/messages', 'You must select a provenance with a sensor'); ?>');
-                        $("#data-save").prop("disabled",true);
-                        console.log("No sensing device set");
-                    }finally {
-                        $("#yiidatasensormodel-provenancesensingdevices").val(provenanceSensingDevices).attr("disabled", "disabled");
-                        $(".field-yiidatasensormodel-provenancesensingdevices, .field-yiidatasensormodel-provenancesensingdevices *")
+                    $("#yiidatasetmodel-provenancecomment").val(comment).attr("disabled", "disabled");
+                    $(".field-yiidatasetmodel-provenancecomment, .field-yiidatasetmodel-provenancecomment *")
                             .removeClass("has-error")
                             .removeClass("has-success");
-                        $(".field-yiidatasensormodel-provenancesensingdevices .help-block").empty();
-                    }
-                    // Set provenance provenanceSensingDevices, disable input and remove validation messages 
+                    $(".field-yiidatasetmodel-provenancecomment .help-block").empty();
+
+                    // Set provenance provenanceAgents, disable input and remove validation messages 
                     try {
                         var provenanceAgents = provenances[uri]["metadata"]["prov:Agent"]["oeso:Operator"];
-                        $("#yiidatasensormodel-provenanceagents").val(provenanceAgents);
-                        $("#yiidatasensormodel-provenanceagents").trigger("change");
-//                        console.log(provenanceAgents);
-                    }
-                    catch(error) {
-                         $("#yiidatasensormodel-provenanceagents").val([]);
-                         $("#yiidatasensormodel-provenanceagents").trigger("change");
-                         console.log("No agents set");
-                    }finally {
-                        $("#yiidatasensormodel-provenanceagents").val(agents).attr("disabled", "disabled");
-                        $(".field-yiidatasensormodel-provenanceagents, .field-yiidatasensormodel-provenanceagents *")
-                            .removeClass("has-error")
-                            .removeClass("has-success");
-                        $(".field-yiidatasensormodel-provenanceagents .help-block").empty();
+                        $("#yiidatasetmodel-provenanceagents").val(provenanceAgents);
+                        $("#yiidatasetmodel-provenanceagents").trigger("change");
+                    } catch (error) {
+                        $("#yiidatasetmodel-provenanceagents").val([]);
+                        $("#yiidatasetmodel-provenanceagents").trigger("change");
+                        console.log("No agents set");
+                    } finally {
+                        $("#yiidatasetmodel-provenanceagents").val(agents).attr("disabled", "disabled");
+                        $(".field-yiidatasetmodel-provenanceagents, .field-yiidatasetmodel-provenanceagents *")
+                                .removeClass("has-error")
+                                .removeClass("has-success");
+                        $(".field-yiidatasetmodel-provenanceagents .help-block").empty();
                     }
                     // Load linked documents
                     $("#already-linked-documents").load(documentsLoadUri, {
                         "uri": uri
                     })
                 } else {
+                    // Otherwise clear provenance agents and enable input
+                    $("#yiidatasetmodel-provenanceagents").val(agents).removeAttr("disabled").trigger("change");
+
                     // Otherwise clear provenance comment and enable input
-                    $("#yiidatasensormodel-provenancesensingdevices").val(sensingDevices).removeAttr("disabled").trigger("change");
-                    
-                    // Otherwise clear provenance comment and enable input
-                    $("#yiidatasensormodel-provenanceagents").val(agents).removeAttr("disabled").trigger("change");
-                    
-                    // Otherwise clear provenance comment and enable input
-                    $("#yiidatasensormodel-provenancecomment").val("").removeAttr("disabled");
-                    
+                    $("#yiidatasetmodel-provenancecomment").val("").removeAttr("disabled");
+
                     // Clear linked documents list
                     $("#already-linked-documents").empty();
-                }    
+                }
             }
-            
+
             // On provenance change update provenance fields
-            $("#provenance-selector").change(function() {
+            $("#provenance-selector").change(function () {
                 updateProvenanceFields($(this).val());
             });
-            
+
             // Update provenance fields depending of startup value
             updateProvenanceFields($("#provenance-selector").val());
         });
     </script>
-    <?= $form->field($model, 'provenanceUri')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $provenancesArray,
-                'options' => [
-                    'placeholder' => Yii::t('app/messages', 'Select existing provenance or create a new one') . ' ...',
-                    'id' => 'provenance-selector',
-                    'multiple' => false
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true,
-                    'tags' => true
-                ],
-            ]); ?>
+    <?=
+    $form->field($model, 'provenanceUri')->widget(\kartik\select2\Select2::classname(), [
+        'data' => $provenancesArray,
+        'options' => [
+            'placeholder' => Yii::t('app/messages', 'Select existing provenance or create a new one') . ' ...',
+            'id' => 'provenance-selector',
+            'multiple' => false
+        ],
+        'pluginOptions' => [
+            'allowClear' => true,
+            'tags' => true
+        ],
+    ]);
+    ?>
 
-      <?= $form->field($model, 'provenanceSensingDevices')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['sensingDevices'],
-                'options' => [
-                    'placeholder' => Yii::t('app/messages', 'Select existing device') . ' ...',
-                    'multiple' => false
-                ],
-                'pluginOptions' => [
-                    'allowClear' => false,
-                    'tags' => true
-                ],
-            ]); ?>
-    
-    <?= $form->field($model, 'provenanceAgents')->widget(\kartik\select2\Select2::classname(),[
-                'data' => $this->params['agents'],
-                'options' => [
-                    'placeholder' => 'Select operator ...',
-                    'multiple' => true
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); ?>
+    <?=
+    $form->field($model, 'provenanceAgents')->widget(\kartik\select2\Select2::classname(), [
+        'data' => $this->params['agents'],
+        'options' => [
+            'placeholder' => 'Select operator ...',
+            'multiple' => true
+        ],
+        'pluginOptions' => [
+            'allowClear' => true
+        ],
+    ]);
+    ?>
 
     <?= $form->field($model, 'provenanceComment')->textarea(['rows' => 6]) ?>
-    
+
     <h3><?= Yii::t('app', 'Linked Document(s)') ?></h3>
     <div id="already-linked-documents"></div>
-   <?=  $form->field($model, 'documentsURIs')->widget(MultipleInput::className(), [
-        'max'               => 6,
-        'allowEmptyList'    => true,
-        'enableGuessTitle'  => true,
+    <?=
+    $form->field($model, 'documentsURIs')->widget(MultipleInput::className(), [
+        'max' => 6,
+        'allowEmptyList' => true,
+        'enableGuessTitle' => true,
         'columns' => [
             [
                 'name' => 'documentURI',
                 'options' => [
-                  'readonly' => true,
-                  'style' => 'background-color:#C4DAE7;',
-                 ]
+                    'readonly' => true,
+                    'style' => 'background-color:#C4DAE7;',
+                ]
             ]
         ],
         'addButtonOptions' => [
@@ -260,54 +228,89 @@ use yii\helpers\Url;
         ],
     ])->label(false)
     ?>
-
-
-
-    <hr style="border-color : gray;"/>
-
-      <div class="alert alert-info" role="alert">
-        <b><?= Yii::t('app/messages', 'File Rules')?> : </b>
-        <ul>
-            <li><?= Yii::t('app/messages', 'CSV separator must be')?> "<b><?= Yii::$app->params['csvSeparator']?></b>"</li>
-            <li><?= Yii::t('app/messages', 'Decimal separator for numeric values must be')?> "<b>.</b>"</li>
-        </ul>
-        <br/>
-        <b><?= Yii::t('app', 'Columns')?> : </b>
-        <table class="table table-hover" id="datasensor-csv-columns-desc">
-            <tr>
-                <th style="color:red">Date *</th>
-                <td><p><?= Yii::t('app/messages', 'Acquisition date of the data') ?> (format ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ) </p> </td>
-            </tr>
-             <tr class="datasensor-variables">
-                <th style="color:red">Value *</th>
-                <td ><?= Yii::t('app', 'Value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)</td>
-            </tr>
-        </table>
-    </div>
-
-    <p>
-        <?php 
-            $csvPath = "coma";
-            if (Yii::$app->params['csvSeparator'] == ";") {
-                $csvPath = "semicolon";
-            }
-        ?>
-        <i><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Template'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetSensorTemplate.csv', ['id' => 'datasetSensorTemplate']) ?></i>
-        <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetSensorExemple.csv') ?></i>
-    </p>
-    <?= $form->field($model, 'file')->widget(FileInput::classname(), [
-        'options' => [
-            'maxFileSize' => 2000,
-            'pluginOptions'=>['allowedFileExtensions'=>['csv'],'showUpload' => false],
-        ]
+    <hr>
+    <hr style="border-color:gray;"/>
+    <h3><i>  <?= Yii::t('app', 'Dataset template generation') ?></i></h3>
+    <p class="alert alert-info"><?= Yii::t('app/messages', 'Please, select a sensor to fill this dropdown'); ?></p>
+    <?php
+    $select2VariablesOptions =  [
+            'placeholder' => Yii::t('app/messages', 'Select one or many experiment associated variables') . ' ...',
+            'id' => 'uriVariable-selector',
+            'multiple' => true
+        ]; 
+    ?>
+    
+    <?=
+    $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(), [
+        'data' => [],
+        'options' => $select2VariablesOptions,
+        'pluginOptions' => [
+            'allowClear' => true,
+            'tags' => true
+        ],
     ]);
     ?>
+    <p>
+<?php
+$csvPath = "coma";
+if (Yii::$app->params['csvSeparator'] == ";") {
+    $csvPath = "semicolon";
+}
+?>
+    <i>
+    <?= 
+        Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download generated template'),
+            \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv',
+            ['id' => 'downloadDatasetTemplate']
+        );
+    ?>
+    </i>
+    </p>
+    <hr>
+    <hr style="border-color:gray;"/>
+    <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetExemple.csv') ?></i>
 
-    <div class="form-group" >
-        <?= Html::submitButton(Yii::t('yii' , 'Create') , ['class' => 'btn btn-success','id' => 'data-save']) ?>
+    <h3><i> <a data-toggle="collapse" href="#collapseDataSetRules" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
+             <?= Icon::show('question', ['class' => 'fa-large'], Icon::FA) . Yii::t('app', 'Dataset rules') ?> </a></i></h3>
+    <div class="collapse" id="collapseDataSetRules">
+        <br>
+        <div class="alert alert-info" role="alert">
+            <b><?= Yii::t('app/messages', 'File Rules') ?> : </b>
+            <ul>
+                <li><?= Yii::t('app/messages', 'CSV separator must be') ?> "<b><?= Yii::$app->params['csvSeparator'] ?></b>"</li>
+                <li><?= Yii::t('app/messages', 'Decimal separator for numeric values must be') ?> "<b>.</b>"</li>
+            </ul>
+            <br/>
+            <b><?= Yii::t('app', 'Columns') ?> : </b>
+            <table class="table table-hover" id="dataset-csv-columns-desc">
+                <tr>
+                    <th style="color:red">Date *</th>
+                    <td><p><?= Yii::t('app/messages', 'Acquisition date of the data') ?> (format ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ) </p> </td>
+                </tr>
+                <tr class="dataset-variables">
+                    <th style="color:red">Variable value *</th>
+                    <td ><?= Yii::t('app', 'Variable value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <hr style="border-color:gray;"/>    
+    <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
+
+<?=
+$form->field($model, 'file')->widget(FileInput::classname(), [
+    'options' => [
+        'maxFileSize' => 2000,
+        'pluginOptions' => ['allowedFileExtensions' => ['csv'], 'showUpload' => false],
+    ]
+]);
+?>
+
+    <div class="form-group">
+<?= Html::submitButton(Yii::t('yii', 'Save dataset'), ['class' => 'btn btn-success']) ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
 
     <div class="modal fade" id="document-modal" tabindex="-1" role="dialog" aria-labelledby="document-modal-title">
         <div class="modal-dialog">
@@ -328,49 +331,60 @@ use yii\helpers\Url;
     </div>
 
     <script>
-    $(document).ready(function(){
-        // Load document add form popin
-        $('#document-content').load('<?php echo Url::to(['document/create-from-datasensor']) ?>');
-        
-        var documentUploaded = false;
-        // Clear last uploaded document line if document add form is canceled
-        $('#document-modal').on('hidden.bs.modal', function () {
-            if (!documentUploaded) {
-                $(".js-input-remove:last").click();
-            }
-            documentUploaded = false;
-            
-            $('#document-content form').trigger('reset');
+        $(document).ready(function () {
+            // Load document add form popin
+            $('#document-content').load('<?php echo Url::to(['document/create-from-dataset']) ?>');
 
-            $('#document-save-msg').parent().removeClass('alert-danger');
-            $('#document-save-msg').parent().addClass('alert-info');
-            $('#document-save-msg').html('<?php echo Yii::t('app/messages', 'Request text'); ?>');
-        });
+            var documentUploaded = false;
+            // Clear last uploaded document line if document add form is canceled
+            $('#document-modal').on('hidden.bs.modal', function () {
+                if (!documentUploaded) {
+                    $(".js-input-remove:last").click();
+                }
+                documentUploaded = false;
 
-        $(document).on('change', '#uriVariable-selector', function() {
-            $(".datasensor-variables").remove();
-              $("#uriVariable-selector :selected").each(function (i,sel) {
-                    $('#datasensor-csv-columns-desc').append(
-                            '<tr class="datasensor-variables">'
+                $('#document-content form').trigger('reset');
+
+                $('#document-save-msg').parent().removeClass('alert-danger');
+                $('#document-save-msg').parent().addClass('alert-info');
+                $('#document-save-msg').html('<?php echo Yii::t('app/messages', 'Request text'); ?>');
+            });
+
+            $(document).on('change', '#uriVariable-selector', function () {
+                $(".dataset-variables").remove();
+                if($("#uriVariable-selector :selected").length > 0){
+                    $("#uriVariable-selector :selected").each(function (i, sel) {
+                        $('#dataset-csv-columns-desc').append(
+                                '<tr class="dataset-variables">'
                                 + '<th style="color:red" >'
-                                    + $(sel).text() + ' *'
+                                + $(sel).text() + ' *'
                                 + '</th>'
                                 + '<td>'
-                                    + '<?php echo Yii::t("app/messages", "Value"); ?> (<?php echo Yii::t('app', 'Real number, String or Date'); ?>)'
+                                + '<?php echo Yii::t("app/messages", "Value"); ?> (<?php echo Yii::t('app', 'Real number, String or Date'); ?>)'
                                 + '</td>'
-                            + '</tr>');
-                  });
-        });
+                                + '</tr>');
+                    }); 
+                }else{
+                    $('#dataset-csv-columns-desc').append(
+                                '<tr class="dataset-variables">'
+                              + '<th style="color:red">Variable value *</th>'
+                              + '<td ><?= Yii::t('app', 'Variable value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)'
+                              + '</td>'
+                              + '</tr>');
+                }
+            });
 
-        // Initial document count
-        var nbDocuments = -1;
-        $(document).on('click', '#document-save', function () {
+           
+
+            // Initial document count
+            var nbDocuments = -1;
+            $(document).on('click', '#document-save', function () {
                 // On save get document form values
                 var formData = new FormData();
                 var file_data = $('#document-content #yiidocumentmodel-file').prop('files')[0];
                 formData.append('file', file_data);
                 var other_data = $('form').serializeArray();
-                $.each(other_data, function(key, input) {
+                $.each(other_data, function (key, input) {
                     formData.append(input.name, input.value);
                 });
 
@@ -384,51 +398,78 @@ use yii\helpers\Url;
                     data: formData
 
                 })
-                .done(function (data) {
-                    // Add document URI and close document add form
-                    $('#yiidatasensormodel-documentsuris-documenturi-' + nbDocuments).val(data);
-                    documentUploaded = true;
-                    $('#document-modal').modal('toggle');
+                        .done(function (data) {
+                            // Add document URI and close document add form
+                            $('#yiidatasetmodel-documentsuris-documenturi-' + nbDocuments).val(data);
+                            documentUploaded = true;
+                            $('#document-modal').modal('toggle');
 
+                        })
+                        .fail(function (jqXHR, textStatus) {
+                            // Disaply errors
+                            $('#document-save-msg').parent().removeClass('alert-info');
+                            $('#document-save-msg').parent().addClass('alert-danger');
+                            $('#document-save-msg').html('Request failed: ' + textStatus);
+                        });
+
+                return false;
+            });
+
+            // Open document add form on click
+            $('.buttonDocuments').click(function () {
+                nbDocuments++;
+                typeInsertedDocument = "document";
+                $('#document-modal').modal('toggle');
+            });
+
+            // Download adjusted to variables CSV template file on click
+            $(document).on('change', '#uriVariable-selector', function () {
+                var variablesLabels = [];
+                $("#uriVariable-selector :selected").each(function (i, sel) {
+                    variablesLabels.push($(sel).text());
+                });
+                $.ajax({
+                    url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-creation-file',
+                    type: 'POST',
+                    datatype: 'json',
+                    data: {variables: variablesLabels}
+                })
+                        .done(function (data) {
+                        })
+                        .fail(function (jqXHR, textStatus) {
+                            $('#document-save-msg').parent().removeClass('alert-info');
+                            $('#document-save-msg').parent().addClass('alert-danger');
+                            $('#document-save-msg').html('Request failed: ' + textStatus);
+                        });
+            });
+            
+            populateVariableList($("#sensor-selector").val());
+        });
+        
+        function populateVariableList(sensorUri){
+            if(sensorUri !== undefined && sensorUri !== null ){
+                var select = $('#uriVariable-selector');
+                var settings = select.attr('data-krajee-select2'),
+                id = select.attr('id');
+                settings = window[settings];
+
+                $.ajax({
+                    url: '<?= Url::toRoute(['dataset/get-sensor-mesured-variables-select-list']); ?>',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {"sensorUri": sensorUri}
+                })
+                .done(function (data) {
+
+                    settings.data = data.data;
+                    console.log(settings);
+                    select.select2(settings);
                 })
                 .fail(function (jqXHR, textStatus) {
                     // Disaply errors
-                    $('#document-save-msg').parent().removeClass('alert-info');
-                    $('#document-save-msg').parent().addClass('alert-danger');
-                    $('#document-save-msg').html('Request failed: ' + textStatus);
+                    console.log(jqXHR)
                 });
-                
-                return false;
-        });
-
-        // Open document add form on click
-        $('.buttonDocuments').click(function() {
-            nbDocuments++;
-            typeInsertedDocument = "document";
-            $('#document-modal').modal('toggle');
-        });
-
-        // Download adjusted to variables CSV template file on click
-        $(document).on('change', '#uriVariable-selector', function () {
-            var variablesLabels = [];
-            $("#uriVariable-selector :selected").each(function (i,sel) {
-                variablesLabels.push($(sel).text());
-              });
-            $.ajax({
-                url: 'index.php?r=datasensor%2Fgenerate-and-download-data-sensor-creation-file',
-                type: 'POST',
-                datatype: 'json',
-                data: {variables: variablesLabels}
-            })
-                    .done(function (data) {
-                    })
-                    .fail(function (jqXHR, textStatus) {
-                        $('#document-save-msg').parent().removeClass('alert-info');
-                        $('#document-save-msg').parent().addClass('alert-danger');
-                        $('#document-save-msg').html('Request failed: ' + textStatus);
-                    });
-        });
-
-    });
+            }
+        }
     </script>
 </div>

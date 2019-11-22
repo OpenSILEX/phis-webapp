@@ -28,6 +28,7 @@ use openSILEX\handsontablePHP\classes\ColumnConfig;
 use app\models\wsModels\WSConstants;
 use app\components\helpers\Vocabulary;
 use app\models\yiiModels\YiiExperimentModel;
+use app\models\yiiModels\YiiSensorModel;
 
 require_once '../config/config.php';
 
@@ -198,6 +199,57 @@ class DatasetController extends Controller {
         return [];
     }
     
+    
+    /**
+     * variables associated to a given sensor with select2 dropdwon format
+     * @param type $sensorUri uri of the sensor
+     * @return array 
+     *  @example {
+     *      [
+     *          id =>"http://www.opensilex.org/demo/variables/id/v001", "text" => "labelv1",
+     *          
+     *      ],
+     *      [
+     *          id => "http://www.opensilex.org/demo/variables/id/v002", "text" => "labelv2",
+     *      ],
+     *  .....
+     * }
+     */
+    public function actionGetSensorMesuredVariablesSelectList($sensorUri){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $variables = [];
+        $variables["data"] = [];
+        $experimentVariable = $this->getSensorMesuredVariablesSelectList($sensorUri);
+        foreach ($experimentVariable as $key => $value) {
+            $variables["data"][] = ["id" => $key, "text" => $value];
+        }
+       
+        return($variables);
+    }
+    
+    /**
+     * variables associated to a given sensor
+     * @param type $sensorUri
+     * @return type
+     *  @example [
+     *      "http://www.opensilex.org/demo/variables/id/v001" => "labelv1",
+     *      "http://www.opensilex.org/demo/variables/id/v002" => "labelv2",
+     * ]
+     */
+    private function getSensorMesuredVariablesSelectList($sensorUri) {
+        if(!isset($sensorUri) || empty($sensorUri)){
+            return [];
+        }
+        $experimentModel = new YiiSensorModel();
+        $variables = $experimentModel->getMeasuredVariables(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN],
+                $sensorUri
+                );
+        if(isset($variables) && is_array($variables)){
+            return $variables;
+        }
+        return [];
+    }
     /**
      * 
      * @param array $csvErrors the errors founded. 

@@ -441,4 +441,25 @@ class YiiSensorModel extends WSActiveRecord {
         
         return $sensorsToReturn;
     }
+    
+    /**
+     * Get the variables measured by the given sensor
+     * @param string $sessionToken
+     * @param string $sensorUri the URI of the sensor
+     * @return array List of the variables measured by the sensor. 
+     * @example [
+     *      "http://www.opensilex.org/demo/variables/id/v001" => "labelv1",
+     *      "http://www.opensilex.org/demo/variables/id/v002" => "labelv2",
+     * ]
+     */
+    public function getMeasuredVariables($sessionToken, $sensorUri) {
+        $variables = [];
+        if (!empty($sensorUri)) {
+            if ($this->findByURI($sessionToken, $sensorUri)) {
+                return $this->variables;
+            }
+        }
+        
+        return $variables;
+    }
 }
