@@ -20,13 +20,13 @@ $this->title = Yii::t('app', 'Germplasm');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div id="germplasm-index">
+<div class="germplasm-index">
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
         <?php
             if (Yii::$app->session['isAdmin']) {
-                echo Html::a(Yii::t('yii', 'Create') . ' ' . Yii::t('app', 'Germplasm', ['n' => 1]), ['create'], ['class' => 'btn btn-success']) . "\t";
+                echo Html::a(Yii::t('yii', 'Create') . ' ' . Yii::t('app', 'Germplasm'), ['create'], ['class' => 'btn btn-success']) . "\t";
             }
         ?>
     </p>

@@ -514,5 +514,13 @@ class GermplasmController extends Controller {
         
         return json_encode(array_values($accessionsList), JSON_UNESCAPED_SLASHES); 
     }
+    
+    /**
+     * Lists all germplasm
+     * @return mixed
+     */
+    public function actionIndex() {
+            return $this->render('index');
+    }
 
 }

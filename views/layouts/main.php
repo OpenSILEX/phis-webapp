@@ -108,15 +108,6 @@ ToastrAsset::register($this);
                             ],
                         ]];
         $menuItems[] = [
-                            'label' => Yii::t('app', 'Germplasm'),
-                            'items' => [
-                                [
-                                    'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Add'),
-                                    'url' => ['/germplasm/create']
-                                ]
-                            ]
-                        ];
-        $menuItems[] = [
                             'label' => Yii::t('app', 'Data'),
                             'items' => [
                                 [
