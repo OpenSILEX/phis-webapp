@@ -78,6 +78,9 @@ require_once '../config/config.php';
     <div id="germplasm-table">
         <div id="documentation-info">
             <p><i>
+                <?= Yii::t('app', "When you create Varieties, Accessions or PlantMaterialLots, you have to select at least the species (if you don't know the variety or the accession)") ?>
+            </i></p>
+            <p><i>
                 <?= Yii::t('app', 'See') ?>
                 <a href="https://opensilex.github.io/phis-docs-community/" target="_blank"><?= Yii::t('app', 'the documentation') ?></a>
                 <?= Yii::t('app/messages', 'to get more information about the columns content') ?>.
@@ -101,7 +104,28 @@ require_once '../config/config.php';
             $('#germplasms-multiple-insert-button').hide();
             $('#import-csv').hide();
             $('#documentation-info').hide();
+            
+            // Empty validator
+            emptyValidator = function(value, callback) {
+              if (isEmpty(value)) {
+                callback(false);
+              } else {
+                callback(true);
+              }
+            };
 
+            /**
+             * 
+             * @param {type} value
+             * @returns {Boolean} true if value is empty
+             */
+            function isEmpty(value) {
+              if (!value || 0 === value.length) {
+                return true;
+              } else {
+                return false;
+              }
+            }         
             //creates renderer to color in red required column names
             function firstRowRequiedRenderer(instance, td, row, col, prop, value, cellProperties) {
                 Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -168,7 +192,8 @@ require_once '../config/config.php';
                     {
                         data: 'genus',
                         type: 'text',
-                        required: true
+                        required: true,
+                        validator: emptyValidator
                     }, 
                     externalURI,
                     insertionStatusColumn
@@ -213,7 +238,8 @@ require_once '../config/config.php';
                         {                            
                             data: 'speciesLabelEn',
                             type: 'text',
-                            required: true
+                            required: true,
+                            validator: emptyValidator
                         },
                         {
                             data: 'speciesLabelFr',
@@ -270,7 +296,8 @@ require_once '../config/config.php';
                         {
                             data: 'variety',
                             type: 'text',
-                            required: true
+                            required: true,
+                            validator: emptyValidator
                         },
                         externalURI,
                         insertionStatusColumn
@@ -307,6 +334,9 @@ require_once '../config/config.php';
             
             //table configuration for accession insertion
             } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Accession") {
+            
+                var doc = "<p>Et ceci du Javascript</p>";
+                
                 var table = {
                     startRows: 3,
                     columns: [
@@ -317,7 +347,8 @@ require_once '../config/config.php';
                         {
                             data: 'accession',
                             type: 'text',
-                            required: true
+                            required: true,
+                            validator: emptyValidator
                         },
                         externalURI,        
                         insertionStatusColumn
@@ -353,6 +384,7 @@ require_once '../config/config.php';
                     }
                 };
                 
+                
             //table configuration for lot insertion
             } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot") {
                 var table = {
@@ -372,12 +404,14 @@ require_once '../config/config.php';
                             data: 'lotType',
                             type: 'dropdown',
                             source: lotTypesList,
-                            required: true
+                            required: true,
+                            validator: emptyValidator
                         },
                         {
                             data: 'lot',
                             type: 'text',
-                            required: true
+                            required: true,
+                            validator: emptyValidator
                         },
                         externalURI,      
                         insertionStatusColumn
@@ -417,6 +451,7 @@ require_once '../config/config.php';
             //Generates the handsontable 
             //it is displayed only if a germplasmType has been selected
             if (germplasmType !== "") { 
+                document.write(doc);
                 var hotElement = document.querySelector('#germplasms-multiple-insert-table');
                 var handsontable = new Handsontable(hotElement, table);  
                 $('#germplasms-multiple-insert-button').show();
