@@ -84,26 +84,30 @@ if ($handsontable !== null) {
         <h3 class="alert alert-info" style="margin:3%;">Add dataset form</h3>
 <?php endif; ?>
     <h3><i>  <?= Yii::t('app', 'Required dataset informations') ?></i></h3>
-
-<?=
-$form->field($model, 'experiment')->widget(\kartik\select2\Select2::classname(), [
-    'data' => $this->params['experiments'],
-    'options' => [
-        'placeholder' => Yii::t('app/messages', 'Select one experiment') . ' ...',
-        'id' => 'experiment-selector',
-        'multiple' => false
-    ],
-    'pluginOptions' => [
-        'allowClear' => true,
-        'tags' => true
-    ],  
-    'pluginEvents' => [
-        'select2:select' => 'function(e) { populateVariableList(e.params.data.id); }',
-    ]
-]);
-?>
-
-    
+  <h3><i> <a data-toggle="collapse" href="#collapseExperiment" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
+             <?= "01. " . Yii::t('app', 'What is your experiment ?') ?> <span style="color:red"> *</span></a></i></h3>
+    <div class="collapse" id="collapseExperiment">
+        <?=
+        $form->field($model, 'experiment')->widget(\kartik\select2\Select2::classname(), [
+            'data' => $this->params['experiments'],
+            'options' => [
+                'placeholder' => Yii::t('app/messages', 'Select one experiment') . ' ...',
+                'id' => 'experiment-selector',
+                'multiple' => false
+            ],
+            'pluginOptions' => [
+                'allowClear' => true,
+                'tags' => true
+            ],  
+            'pluginEvents' => [
+                'select2:select' => 'function(e) { populateVariableList(e.params.data.id); }',
+            ]
+        ]);
+        ?>
+    </div>
+    <h3><i> <a data-toggle="collapse" href="#collapseProvenance" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
+             <?= "02. " . Yii::t('app', 'What is the provenance of your dataset ?') ?><span style="color:red"> *</span> </a></i></h3>
+    <div class="collapse" id="collapseProvenance">
     <h4><?= Yii::t('app', 'Provenance'); ?></h4>
     <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, tape the provenance label in the research field and press `Enter`'); ?></p>
     <script>
@@ -229,6 +233,10 @@ echo 'var agents = ' . json_encode($this->params['agents']) . ';';
         ],
     ])->label(false)
     ?>
+    </div>
+    <h3><i> <a data-toggle="collapse" href="#collapseDatasteTemplate" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
+             <?= "03. " . Yii::t('app', 'Do you want to generate a dataset template ?') ?> </a></i></h3>
+    <div class="collapse" id="collapseDatasteTemplate">
     <hr>
     <hr style="border-color:gray;"/>
     <h3><i>  <?= Yii::t('app', 'Dataset template generation') ?></i></h3>
@@ -267,13 +275,10 @@ if (Yii::$app->params['csvSeparator'] == ";") {
     ?>
     </i>
     </p>
+   
     <hr>
     <hr style="border-color:gray;"/>
     <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetExemple.csv') ?></i>
-
-    <h3><i> <a data-toggle="collapse" href="#collapseDataSetRules" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
-             <?= Icon::show('question', ['class' => 'fa-large'], Icon::FA) . Yii::t('app', 'Dataset rules') ?> </a></i></h3>
-    <div class="collapse" id="collapseDataSetRules">
         <br>
         <div class="alert alert-info" role="alert">
             <b><?= Yii::t('app/messages', 'File Rules') ?> : </b>
@@ -299,6 +304,9 @@ if (Yii::$app->params['csvSeparator'] == ";") {
             </table>
         </div>
     </div>
+    <h3><i> <a data-toggle="collapse" href="#collapseSaveDataset" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
+             <?= "04. " . Yii::t('app', 'Save your dataset.') ?> </a></i></h3>
+    <div class="collapse" id="collapseSaveDataset">
     <hr style="border-color:gray;"/>    
     <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
 
@@ -316,7 +324,7 @@ $form->field($model, 'file')->widget(FileInput::classname(), [
     </div>
 
 <?php ActiveForm::end(); ?>
-
+    <div >
     <div class="modal fade" id="document-modal" tabindex="-1" role="dialog" aria-labelledby="document-modal-title">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -449,6 +457,13 @@ $form->field($model, 'file')->widget(FileInput::classname(), [
             });
             
             populateVariableList($("#experiment-selector").val());
+            
+            // collapse each group
+            $('.collapse').on('show.bs.collapse', function (e) {
+                $('.collapse').not($('#'+e.target.id)).each(function(){
+                    $(this).collapse('hide');
+                });
+            });
         });
         
         function populateVariableList(experimentUri){
