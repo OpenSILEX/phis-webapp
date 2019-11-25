@@ -302,7 +302,9 @@ class GermplasmController extends Controller {
                 }
             }
             
-        }                  
+        } else {
+            $p = [];
+        }       
 
         return $p;
     }    

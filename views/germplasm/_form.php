@@ -28,7 +28,7 @@ require_once '../config/config.php';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/0.37.0/handsontable.full.min.js"></script>
 <script src="https://unpkg.com/papaparse@latest/papaparse.min.js"></script>
 
-<div class="germplasm-form well">
+<div class="well row">
     
     <div id="germplasm-selection" class="form-group col-md-6">
     <?php $form = ActiveForm::begin(); ?>   
