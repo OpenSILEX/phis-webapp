@@ -97,6 +97,10 @@ ToastrAsset::register($this);
                                 'url' => ['/experiment/index']
                             ],
                             [
+                                'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Germplasm'),
+                                'url' => ['/germplasm/index']
+                            ],                            
+                            [
                                 'label' => Icon::show('leaf', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]),
                                 'url' => ['/scientific-object/index']
                             ],
