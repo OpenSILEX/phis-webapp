@@ -138,6 +138,37 @@ class DatasetController extends Controller {
         fclose($file);
     }
     
+    
+    /**
+     * 
+     * @param type $experimentUri
+     */
+    public function actionCreateProvenanceFromDataset(){
+        $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $provenance = Yii::$app->request->post();
+
+        $provenanceService = new WSProvenanceModel();
+        $provenanceUri = $this->createProvenance(
+                            $provenance['label'],
+                            $provenance['comment'],
+                            $provenance['sensingDevices'],
+                            $provenance['agents']
+                    );
+        
+        $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
+        $result = [];
+        $provenancesArray =[];
+        $result['newProvenanceUri'] = $provenanceUri;
+        foreach ($provenances as $uri => $provenance) {
+            $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
+        }
+        $result['provenances'] = $provenances;
+        $result['provenancesByUri'] = $provenancesArray;
+        return $result;
+    }
+    
     /**
      * 
      * @param type $experimentUri
@@ -343,8 +374,6 @@ class DatasetController extends Controller {
      */
     public function actionCreate() {
         $datasetModel = new \app\models\yiiModels\YiiDatasetModel();
-        $variablesModel = new \app\models\yiiModels\YiiVariableModel();
-
         $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
 
         // Load existing provenances
@@ -382,30 +411,30 @@ class DatasetController extends Controller {
             // Check CSV header with variables
             if (count($variablesNotInExperiment) === 0) {
                 // Get selected or create Provenance URI
-                if (!array_key_exists($datasetModel->provenanceUri, $provenances)) {
-                    $provenanceUri = $this->createProvenance(
-                            $datasetModel->provenanceUri,
-                            $datasetModel->provenanceComment,
-                            $datasetModel->provenanceSensingDevices,
-                            $datasetModel->provenanceAgents
-                    );
-                    $datasetModel->provenanceUri = $provenanceUri;
-                    $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
-                    $this->view->params["provenances"] = $provenances;
-                } else {
+//                if (!array_key_exists($datasetModel->provenanceUri, $provenances)) {
+//                    $provenanceUri = $this->createProvenance(
+//                            $datasetModel->provenanceUri,
+//                            $datasetModel->provenanceComment,
+//                            $datasetModel->provenanceSensingDevices,
+//                            $datasetModel->provenanceAgents
+//                    );
+//                    $datasetModel->provenanceUri = $provenanceUri;
+//                    $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
+//                    $this->view->params["provenances"] = $provenances;
+//                } else {
                     $provenanceUri = $datasetModel->provenanceUri;
-                }
+//                }
 
                 // If provenance sucessfully created
                 if ($provenanceUri) {
                     // Link uploaded documents to provenance URI
-                    $linkDocuments = true;
-                    if (is_array($datasetModel->documentsURIs) && is_array($datasetModel->documentsURIs["documentURI"])) {
-                        $linkDocuments = $this->linkDocumentsToProvenance(
-                                $provenanceUri,
-                                $datasetModel->documentsURIs["documentURI"]
-                        );
-                    }
+//                    $linkDocuments = true;
+//                    if (is_array($datasetModel->documentsURIs) && is_array($datasetModel->documentsURIs["documentURI"])) {
+//                        $linkDocuments = $this->linkDocumentsToProvenance(
+//                                $provenanceUri,
+//                                $datasetModel->documentsURIs["documentURI"]
+//                        );
+//                    }
                     // Load all objectsl inked to an experiment
                     
                     $SciencitificObjectSearch = new \app\models\yiiModels\ScientificObjectSearch();
