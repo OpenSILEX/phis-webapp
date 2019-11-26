@@ -82,9 +82,9 @@ if ($handsontable !== null) {
 
         <h3 class="alert alert-info" style="margin:3%;">Add dataset form</h3>
 <?php endif; ?>
-    <h3><i>  <?= Yii::t('app', 'Steps to insert your dataset') ?></i></h3>
+    <h3><i>  <?= Yii::t('app', 'Steps :') ?></i></h3>
   <h3><i> <a data-toggle="collapse" href="#step-01" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
-             <?= "1. " . Yii::t('app', 'Choose the experiment from where the dataset comes from') ?> <span style="color:red"> *</span></a></i></h3>
+             <?= "1. " . Yii::t('app', 'Select associated experiment') ?> </a></i></h3>
     <div class="collapse" id="step-01" data-step="1">
         <?=
         $form->field($model, 'experiment')->widget(\kartik\select2\Select2::classname(), [
@@ -176,7 +176,7 @@ if (Yii::$app->params['csvSeparator'] == ";") {
         </div>
     </div>
       <h3><i> <a data-toggle="collapse" href="#step-03" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
-             <?= "3. " . Yii::t('app', 'Select or create a source that describes how the dataset was obtained') ?><span style="color:red"> *</span> </a></i></h3>
+             <?= "3. " . Yii::t('app', 'Select or create a description that describes how the dataset was produced') ?> </a></i></h3>
     <div class="collapse" id="step-03" data-step="3">
     <h4><?= Yii::t('app', 'Provenance'); ?></h4>
     <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, write the provenance label in the research field and press `Enter`'); ?></p>
@@ -263,7 +263,7 @@ echo 'agents = ' . json_encode($this->params['agents']) . ';';
 
     </div>
     <h3><i> <a data-toggle="collapse" href="#step-04" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
-             <?= "4. " . Yii::t('app', 'Save your dataset.') ?> </a></i></h3>
+             <?= "4. " . Yii::t('app', 'Upload dataset') ?> </a></i></h3>
     <div class="collapse" id="step-04" data-step="4">
     <hr style="border-color:gray;"/>    
     <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
