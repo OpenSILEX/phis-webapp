@@ -499,7 +499,7 @@ class YiiExperimentModel extends WSActiveRecord {
         $variables = [];
         if (!empty($experimentUri)) {
             if ($this->findByURI($sessionToken, $experimentUri)) {
-                $variables = $this->findByURI($sessionToken, $experimentUri)->variables;
+                $variables = $this->variables;
             }
         }
 
