@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 ScientificObjectAlias,Date,WindSpeed_TenMinutesAverageWindSpeed_MeterPerSecond,WindSpeed_TenMinutesMaxWindSpeed_MeterPerSecond
+=======
+ScientificObjectAlias,Date
+>>>>>>> add-data-by-scientific-object-alias

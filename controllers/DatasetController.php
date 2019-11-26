@@ -26,7 +26,6 @@ use app\models\yiiModels\YiiConcernedItemModel;
 use openSILEX\handsontablePHP\adapter\HandsontableSimple;
 use openSILEX\handsontablePHP\classes\ColumnConfig;
 use app\models\wsModels\WSConstants;
-use app\components\helpers\Vocabulary;
 use app\models\yiiModels\YiiExperimentModel;
 
 require_once '../config/config.php';
@@ -438,45 +437,17 @@ class DatasetController extends Controller {
             $variablesNotInExperiment = array_diff($csvVariables, array_values($experimentVariables)); 
             // Check CSV header with variables
             if (count($variablesNotInExperiment) === 0) {
-                // Get selected or create Provenance URI
-//                if (!array_key_exists($datasetModel->provenanceUri, $provenances)) {
-//                    $provenanceUri = $this->createProvenance(
-//                            $datasetModel->provenanceUri,
-//                            $datasetModel->provenanceComment,
-//                            $datasetModel->provenanceSensingDevices,
-//                            $datasetModel->provenanceAgents
-//                    );
-//                    $datasetModel->provenanceUri = $provenanceUri;
-//                    $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
-//                    $this->view->params["provenances"] = $provenances;
-//                } else {
                     $provenanceUri = $datasetModel->provenanceUri;
-//                }
-
-                // If provenance sucessfully created
-                if ($provenanceUri) {
-                    // Link uploaded documents to provenance URI
-//                    $linkDocuments = true;
-//                    if (is_array($datasetModel->documentsURIs) && is_array($datasetModel->documentsURIs["documentURI"])) {
-//                        $linkDocuments = $this->linkDocumentsToProvenance(
-//                                $provenanceUri,
-//                                $datasetModel->documentsURIs["documentURI"]
-//                        );
-//                    }
-                    // Load all objectsl inked to an experiment
-                    
                     $SciencitificObjectSearch = new \app\models\yiiModels\ScientificObjectSearch();
                     $SciencitificObjectSearch->experiment = $datasetModel->experiment;
                     $SciencitificObjectSearch->pageSize = 30000;
-                    $result = $SciencitificObjectSearch->search($token);
+                    $SciencitificObjectSearchResults = $SciencitificObjectSearch->search($token);
 
                     $objectUris = [];
-                    foreach ($result->getModels() as $object){
+                    foreach ($SciencitificObjectSearchResults->getModels() as $object){
                         $objectUris[$object->uri]=$object->label;
                     }
                     $datasetModel->documentsURIs = null;
-
-                    if ($linkDocuments === true) {
                         $objectsErrors = [];
                         // Save CSV data linked to provenance URI
                         $values = [];
@@ -528,22 +499,7 @@ class DatasetController extends Controller {
                                         'errors' => $result->metadata->status
                             ]);
                         }
-                    } else {
-                        return $this->render('create', [
-                                    'model' => $datasetModel,
-                                    'errors' => [
-                                        Yii::t("app/messages", "Error while creating linked documents")
-                                    ]
-                        ]);
-                    }
-                } else {
-                    return $this->render('create', [
-                                'model' => $datasetModel,
-                                'errors' => [
-                                    Yii::t("app/messages", "Error while creating provenance")
-                                ]
-                    ]);
-                }
+                
             } else {
                 return $this->render('create', [
                             'model' => $datasetModel,
