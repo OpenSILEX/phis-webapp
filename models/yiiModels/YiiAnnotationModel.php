@@ -155,10 +155,6 @@ class YiiAnnotationModel extends WSActiveRecord {
         $elementForWebService[self::CREATOR] = $this->creator;
         $elementForWebService[self::MOTIVATED_BY] = $this->motivatedBy;
         $elementForWebService[self::CREATION_DATE] = $this->creationDate;
-        // For now one target can be choose
-        if (isset($this->targets) && !empty($this->targets)) {
-            $elementForWebService[self::TARGETS] = $this->targets;
-        }
         if (isset($this->bodyValues) && !empty($this->bodyValues)) {
             $elementForWebService[self::BODY_VALUES] = $this->bodyValues;
         }

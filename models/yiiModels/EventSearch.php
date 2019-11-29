@@ -214,7 +214,6 @@ class EventSearch extends YiiEventModel {
         if (isset($searchParams[YiiModelsConstants::PAGE_SIZE])) {
             $this->pageSize = $searchParams[YiiModelsConstants::PAGE_SIZE];
         }
-
         $results = $this->find($sessionToken, $this->attributesToArray());
         if (is_string($results)) {
             return $results;

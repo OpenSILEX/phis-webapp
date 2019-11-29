@@ -60,10 +60,9 @@ class AnnotationSearch extends YiiAnnotationModel {
         if (!$this->validate()) {
             return new \yii\data\ArrayDataProvider();
         }
- 
         //3. Request to the web service and return result
         $findResult = $this->find($sessionToken, $this->attributesToArray());
-
+       
         if (is_string($findResult)) {
             return $findResult;
         } else if (isset($findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) && $findResult->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
