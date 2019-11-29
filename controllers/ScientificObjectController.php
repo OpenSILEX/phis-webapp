@@ -1108,7 +1108,7 @@ class ScientificObjectController extends Controller {
                 }
             } else {
                 foreach ($searchResult->getModels() as $model) {
-
+                    
                     $annotationObjects = $searchModel->getAnnotations($token, ["uri" => $model->uri]);
                     $annotations = array();
                     foreach ($annotationObjects as $annotationObject) {
@@ -1169,7 +1169,6 @@ class ScientificObjectController extends Controller {
             if (isset($searchParams[WSConstants::ANNOTATION_WIDGET_PAGE])) {
                 $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::ANNOTATION_WIDGET_PAGE] - 1;
             }
-            $annotationSearchParameters[AnnotationSearch::TARGET_SEARCH_LABEL] = $uri;
             $searchAnnotationModel->targets[0] = $uri;
             $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
             $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
