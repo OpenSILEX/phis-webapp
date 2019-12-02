@@ -119,6 +119,7 @@ return [
     'The variety used in the plot (e.g. apache)' => 'La variété du plot (ex. apache)',
     'To assign scientific objects to two experiments: (1) create the scientific objects on one of the experiments and (2) update them with the uri of the second experiment.' => 'Pour affecter des objets scientifiques à deux expériences: (1) créez les objets scientifiques sur l\'une des expériences et (2) mettez-les à jour avec l\'uri de la deuxième expérience.',
     'to get more information about the columns content' => 'pour obtenir davantage d\'information sur le contenu de chaque colonne',
+    'The variables associated to the choosen experiment' => 'Les variables associées à l\'expérimentation choisie',
 
     // U
     'Unknown error' => 'Erreur inconnue',
