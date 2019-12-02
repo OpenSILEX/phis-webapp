@@ -519,7 +519,6 @@ class DatasetController extends Controller {
         $createdDate = $date->format("Y-m-d\TH:i:sO");
         $metadata = [
             "namespaces" => Yii::$app->params[self::PROVENANCE_PARAMS_VALUES],
-            "created" => $date->format("Y-m-d\TH:i:sO"),
             "prov:Agent" =>[
                 "oeso:SensingDevice" => [
                 ],
