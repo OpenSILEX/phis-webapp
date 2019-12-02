@@ -5,7 +5,51 @@
         "This file is @generated automatically"
     ],
     "content-hash": "4b43f8ed7edb33a076632b143edf858d",
+    "content-hash": "c1a3ce2e444177eef1da5e0ce5a3cb00",
     "packages": [
+        {
+            "name": "antkaz/yii2-vue",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/antkaz/yii2-vue.git",
+                "reference": "ba341bdbcfffa96662f49fe83152a867191d3b72"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/antkaz/yii2-vue/zipball/ba341bdbcfffa96662f49fe83152a867191d3b72",
+                "reference": "ba341bdbcfffa96662f49fe83152a867191d3b72",
+                "shasum": ""
+            },
+            "require": {
+                "npm-asset/vue": "~2.5.13",
+                "yiisoft/yii2": "~2.0.14"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "antkaz\\vue\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anton Kazarinov",
+                    "email": "askazarinov@gmail.com"
+                }
+            ],
+            "description": "The Vue.js extension for the Yii framework",
+            "homepage": "https://github.com/antkaz/yii2-vue",
+            "keywords": [
+                "Vue.js",
+                "vue",
+                "yii2"
+            ],
+            "time": "2018-03-01T19:37:33+00:00"
+        },
         {
             "name": "borales/yii2-phone-input",
             "version": "0.1.2",
@@ -2259,7 +2303,75 @@
                 "highlight.js",
                 "yii2"
             ],
-            "time": "2017-03-08T13:50:49+00:00"
+            "time": "2017-03-08T13:50:49+00:00",
+            "name": "npm-asset/vue",
+            "version": "2.5.22",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/vue/-/vue-2.5.22.tgz",
+                "shasum": "3bf88041af08b8539c37b268b70ca79245e9cc30"
+            },
+            "type": "npm-asset-library",
+            "extra": {
+                "npm-asset-bugs": {
+                    "url": "https://github.com/vuejs/vue/issues"
+                },
+                "npm-asset-main": "dist/vue.runtime.common.js",
+                "npm-asset-directories": [],
+                "npm-asset-repository": {
+                    "type": "git",
+                    "url": "git+https://github.com/vuejs/vue.git"
+                },
+                "npm-asset-scripts": {
+                    "dev": "rollup -w -c scripts/config.js --environment TARGET:web-full-dev",
+                    "dev:cjs": "rollup -w -c scripts/config.js --environment TARGET:web-runtime-cjs",
+                    "dev:esm": "rollup -w -c scripts/config.js --environment TARGET:web-runtime-esm",
+                    "dev:test": "karma start test/unit/karma.dev.config.js",
+                    "dev:ssr": "rollup -w -c scripts/config.js --environment TARGET:web-server-renderer",
+                    "dev:compiler": "rollup -w -c scripts/config.js --environment TARGET:web-compiler ",
+                    "dev:weex": "rollup -w -c scripts/config.js --environment TARGET:weex-framework",
+                    "dev:weex:factory": "rollup -w -c scripts/config.js --environment TARGET:weex-factory",
+                    "dev:weex:compiler": "rollup -w -c scripts/config.js --environment TARGET:weex-compiler ",
+                    "build": "node scripts/build.js",
+                    "build:ssr": "npm run build -- web-runtime-cjs,web-server-renderer",
+                    "build:weex": "npm run build -- weex",
+                    "test": "npm run lint && flow check && npm run test:types && npm run test:cover && npm run test:e2e -- --env phantomjs && npm run test:ssr && npm run test:weex",
+                    "test:unit": "karma start test/unit/karma.unit.config.js",
+                    "test:cover": "karma start test/unit/karma.cover.config.js",
+                    "test:e2e": "npm run build -- web-full-prod,web-server-basic-renderer && node test/e2e/runner.js",
+                    "test:weex": "npm run build:weex && jasmine JASMINE_CONFIG_PATH=test/weex/jasmine.js",
+                    "test:ssr": "npm run build:ssr && jasmine JASMINE_CONFIG_PATH=test/ssr/jasmine.js",
+                    "test:sauce": "npm run sauce -- 0 && npm run sauce -- 1 && npm run sauce -- 2",
+                    "test:types": "tsc -p ./types/test/tsconfig.json",
+                    "lint": "eslint src scripts test",
+                    "flow": "flow check",
+                    "sauce": "karma start test/unit/karma.sauce.config.js",
+                    "bench:ssr": "npm run build:ssr && node benchmarks/ssr/renderToString.js && node benchmarks/ssr/renderToStream.js",
+                    "release": "bash scripts/release.sh",
+                    "release:weex": "bash scripts/release-weex.sh",
+                    "release:note": "node scripts/gen-release-note.js",
+                    "commit": "git-cz"
+                },
+                "npm-asset-config": {
+                    "commitizen": {
+                        "path": "./node_modules/cz-conventional-changelog"
+                    }
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Evan You"
+                }
+            ],
+            "description": "Reactive, component-oriented view layer for modern web interfaces.",
+            "homepage": "https://github.com/vuejs/vue#readme",
+            "keywords": [
+                "vue"
+            ],
+            "time": "2019-01-11T23:18:40+00:00"
         },
         {
             "name": "oomphinc/composer-installers-extender",

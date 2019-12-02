@@ -40,7 +40,8 @@
         "fortawesome/font-awesome": "v4.7.0",
         "himiklab/yii2-handsontable-widget" : "v1.1.1",
         "phayes/geophp": "1.2",
-        "nezhelskoy/yii2-highlight": "v1.2.8"
+        "nezhelskoy/yii2-highlight": "v1.2.8",
+        "antkaz/yii2-vue": "^1.0"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "2.0.14",
