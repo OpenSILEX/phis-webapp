@@ -296,12 +296,12 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                              @on-loading="setLoading"
                               shape="square"
                               color="#3498db"
-                              back-button-text="<?= Yii::t('app/messages','Back') ?>"
-                              next-button-text="<?= Yii::t('app/messages','Next') ?>"
-                              finish-button-text="<?= Yii::t('yii', 'Upload dataset') ?>"
+                              back-button-text="<?= Yii::t('app','Back') ?>"
+                              next-button-text="<?= Yii::t('app','Next') ?>"
+                              finish-button-text="<?= Yii::t('app', 'Upload dataset') ?>"
                               >
                     <div class="loader" v-if="loadingWizard"></div>
-                    <tab-content title="Choose experiment"
+                    <tab-content title="<?= Yii::t('app','Choose experiment') ?>"
                                  icon="ti-user" 
                                  :before-change="beforeSelectProvenance">
     <?=
@@ -322,15 +322,15 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
     ]);
     ?>
             </tab-content>
-            <tab-content title="Generate dataset template (optional)"
+            <tab-content title="<?= Yii::t('app','Generate dataset template (Optional)') ?>"
                                          icon="ti-user" 
                                          :before-change="beforeSelectProvenance">
             <hr style="border-color:gray;"/>
             <h3><i>  <?= Yii::t('app', 'Need a dataset template ? (Optional)') ?></i></h3>
-            <p class="alert alert-info"><?= Yii::t('app/messages', 'The variables below are associated to the choosen experiment'); ?></p>
+            <p class="alert alert-info"><?= Yii::t('app/messages', 'The variables associated to the choosen experiment'); ?></p>
     <?php
         $select2VariablesOptions =  [
-            'placeholder' => Yii::t('app/messages', 'Select one or many experiment associated variables') . ' ...',
+            'placeholder' => Yii::t('app/messages', 'Select one or more variables') . ' ...',
             'id' => 'uriVariable-selector',
             'multiple' => true
         ]; 
@@ -346,20 +346,20 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
             ],
         ]);
     ?>
-    <p>
-    <?php
-        $csvPath = "coma";
-        if (Yii::$app->params['csvSeparator'] == ";") {
-            $csvPath = "semicolon";
-        }
-    ?>
-    <i>
+            
+                <p>
+                <?php
+                    $csvPath = "coma";
+                    if (Yii::$app->params['csvSeparator'] == ";") {
+                        $csvPath = "semicolon";
+                    }
+                ?>
+                <i>
     
                 </i>
                 </p>
 
                 <hr>
-                <hr style="border-color:gray;"/>
                 <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetExemple.csv') ?></i>
                     <br>
                     <div class="alert alert-info" role="alert">
@@ -387,14 +387,14 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                     </div>               
                     
                     <?= 
-        Html::a("<button type='button' class='btn btn-info'> " . Yii::t('app', 'Download generated template') . "</button>",
+        Html::a("<button type='button' class='btn btn-success'> " . Yii::t('app', 'Download Template') . "</button>",
             \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv',
             ['id' => 'downloadDatasetTemplate']
         );
     ?>
                     <br><br>
                 </tab-content>
-                <tab-content title="Select or create a description that describes how the dataset was produced"
+                <tab-content title="<?= Yii::t('app','Describe the produced dataset') ?>"
                                  icon="ti-settings"
                                  :before-change="beforeUploadDataset">
                        <h4><?= Yii::t('app', 'Provenance'); ?></h4>
@@ -452,10 +452,13 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         ],
     ])->label(false)
     ?>
-    <?= Html::button(Yii::t('yii', 'Save provenance'), ['class' => 'btn btn-success','onclick' => 'saveProvenance()']) ?>
+    <br>
+    <?= Html::button(Yii::t('app', 'Create provenance'), ['class' => 'btn btn-success','onclick' => 'saveProvenance()']) ?>
+    <br>
+    <br>
 
                     </tab-content>
-                    <tab-content title="Upload dataset"
+                    <tab-content title="<?= Yii::t('app','Upload dataset'); ?>"
                                  icon="ti-check">
                     <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
 
