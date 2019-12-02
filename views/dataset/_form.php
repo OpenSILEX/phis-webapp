@@ -217,6 +217,68 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 $("#already-linked-documents").empty();
             }
         }
+        
+        /**
+         *
+         * @returns void         */
+        function refreshRules(){
+             $(".dataset-variables").remove();
+                if($("#uriVariable-selector :selected").length > 0){
+                    $("#uriVariable-selector :selected").each(function (i, sel) {
+                        $('#dataset-csv-columns-desc').append(
+                                '<tr class="dataset-variables">'
+                                + '<th style="color:red" >'
+                                + $(sel).text() + ' *'
+                                + '</th>'
+                                + '<td>'
+                                + '<?php echo Yii::t("app/messages", "Value"); ?> (<?php echo Yii::t('app', 'Real number, String or Date'); ?>)'
+                                + '</td>'
+                                + '</tr>');
+                    }); 
+                }else{
+                    $('#dataset-csv-columns-desc').append(
+                                '<tr class="dataset-variables">'
+                              + '<th style="color:red">Variable value *</th>'
+                              + '<td ><?= Yii::t('app', 'Variable value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)'
+                              + '</td>'
+                              + '</tr>');
+                }
+        }
+        
+        function saveDocument(){
+            // On save get document form values
+            var formData = new FormData();
+            var file_data = $('#document-content #yiidocumentmodel-file').prop('files')[0];
+            formData.append('file', file_data);
+            var other_data = $('form').serializeArray();
+            $.each(other_data, function (key, input) {
+                formData.append(input.name, input.value);
+            });
+
+            // Send documents form
+            $.ajax({
+                url: 'index.php?r=document%2Fcreate-from-dataset',
+                type: 'POST',
+                processData: false,
+                datatype: 'json',
+                contentType: false,
+                data: formData
+
+            })
+            .done(function (data) {
+                    // Add document URI and close document add form
+                    $('#yiidatasetmodel-documentsuris-documenturi-' + nbDocuments).val(data);
+                    documentUploaded = true;
+                    $('#document-modal').modal('toggle');
+
+            })
+            .fail(function (jqXHR, textStatus) {
+                    // Disaply errors
+                    $('#document-save-msg').parent().removeClass('alert-info');
+                    $('#document-save-msg').parent().addClass('alert-danger');
+                    $('#document-save-msg').html('Request failed: ' + textStatus);
+            });
+        }
     </script>
         <script>
     $(document).ready(function () {
@@ -328,25 +390,25 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
             <hr style="border-color:gray;"/>
             <h3><i>  <?= Yii::t('app', 'Need a dataset template ? (Optional)') ?></i></h3>
             <p class="alert alert-info"><?= Yii::t('app/messages', 'The variables associated to the choosen experiment'); ?></p>
-    <?php
-        $select2VariablesOptions =  [
-            'placeholder' => Yii::t('app/messages', 'Select one or more variables') . ' ...',
-            'id' => 'uriVariable-selector',
-            'multiple' => true
-        ]; 
-    ?>
-    
-    <?=
-        $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(), [
-            'data' => [],
-            'options' => $select2VariablesOptions,
-            'pluginOptions' => [
-                'allowClear' => true,
-                'tags' => false
-            ],
-        ]);
-    ?>
-            
+        <?php
+            $select2VariablesOptions =  [
+                'placeholder' => Yii::t('app/messages', 'Select one or more variables') . ' ...',
+                'id' => 'uriVariable-selector',
+                'multiple' => true
+            ]; 
+        ?>
+
+        <?=
+            $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(), [
+                'data' => [],
+                'options' => $select2VariablesOptions,
+                'pluginOptions' => [
+                    'allowClear' => true,
+                    'tags' => false
+                ],
+            ]);
+        ?>
+
                 <p>
                 <?php
                     $csvPath = "coma";
@@ -386,13 +448,13 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                         </table>
                     </div>               
                     
-                    <?= 
+        <?= 
         Html::a("<button type='button' class='btn btn-success'> " . Yii::t('app', 'Download Template') . "</button>",
             \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv',
             ['id' => 'downloadDatasetTemplate']
         );
-    ?>
-                    <br><br>
+        ?>
+                <br><br>
                 </tab-content>
                 <tab-content title="<?= Yii::t('app','Describe the produced dataset') ?>"
                                  icon="ti-settings"
@@ -400,67 +462,67 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                        <h4><?= Yii::t('app', 'Provenance'); ?></h4>
                 <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, write the provenance label in the research field and press `Enter`'); ?></p>
     
-    <?=
-    $form->field($model, 'provenanceUri')->widget(\kartik\select2\Select2::classname(), [
-        'data' => $provenancesArray,
-        'options' => [
-            'placeholder' => Yii::t('app/messages', 'Select existing provenance or create a new one') . ' ...',
-            'id' => 'provenance-selector',
-            'multiple' => false
-        ],
-        'pluginOptions' => [
-            'allowClear' => true,
-            'tags' => true
-        ],
-    ]);
-    ?>
+        <?=
+        $form->field($model, 'provenanceUri')->widget(\kartik\select2\Select2::classname(), [
+            'data' => $provenancesArray,
+            'options' => [
+                'placeholder' => Yii::t('app/messages', 'Select existing provenance or create a new one') . ' ...',
+                'id' => 'provenance-selector',
+                'multiple' => false
+            ],
+            'pluginOptions' => [
+                'allowClear' => true,
+                'tags' => true
+            ],
+        ]);
+        ?>
 
-    <?=
-    $form->field($model, 'provenanceAgents')->widget(\kartik\select2\Select2::classname(), [
-        'data' => $this->params['agents'],
-        'options' => [
-            'placeholder' => 'Select operator ...',
-            'multiple' => true
-        ],
-        'pluginOptions' => [
-            'allowClear' => true
-        ],
-    ]);
-    ?>
+        <?=
+        $form->field($model, 'provenanceAgents')->widget(\kartik\select2\Select2::classname(), [
+            'data' => $this->params['agents'],
+            'options' => [
+                'placeholder' => 'Select operator ...',
+                'multiple' => true
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+        ?>
 
-    <?= $form->field($model, 'provenanceComment')->textarea(['rows' => 6]) ?>
+        <?= $form->field($model, 'provenanceComment')->textarea(['rows' => 6]) ?>
 
-            <h3><?= Yii::t('app', 'Linked Document(s)') ?></h3>
-            <div id="already-linked-documents"></div>
-    <?=
-    $form->field($model, 'documentsURIs')->widget(MultipleInput::className(), [
-        'max' => 6,
-        'allowEmptyList' => true,
-        'enableGuessTitle' => true,
-        'columns' => [
-            [
-                'name' => 'documentURI',
-                'options' => [
-                    'readonly' => true,
-                    'style' => 'background-color:#C4DAE7;',
+                <h3><?= Yii::t('app', 'Linked Document(s)') ?></h3>
+                <div id="already-linked-documents"></div>
+        <?=
+        $form->field($model, 'documentsURIs')->widget(MultipleInput::className(), [
+            'max' => 6,
+            'allowEmptyList' => true,
+            'enableGuessTitle' => true,
+            'columns' => [
+                [
+                    'name' => 'documentURI',
+                    'options' => [
+                        'readonly' => true,
+                        'style' => 'background-color:#C4DAE7;',
+                    ]
                 ]
-            ]
-        ],
-        'addButtonOptions' => [
-            'class' => 'btn btn-primary buttonDocuments',
-            'label' => Yii::t('app', 'Add Document'),            
-        ],
-    ])->label(false)
-    ?>
-    <br>
-    <?= Html::button(Yii::t('app', 'Create provenance'), ['class' => 'btn btn-success','onclick' => 'saveProvenance()']) ?>
-    <br>
-    <br>
+            ],
+            'addButtonOptions' => [
+                'class' => 'btn btn-primary buttonDocuments',
+                'label' => Yii::t('app', 'Add Document'),            
+            ],
+        ])->label(false)
+        ?>
+        <br>
+        <?= Html::button(Yii::t('app', 'Create provenance'), ['class' => 'btn btn-success','onclick' => 'saveProvenance()']) ?>
+        <br>
+        <br>
 
-                    </tab-content>
-                    <tab-content title="<?= Yii::t('app','Upload dataset'); ?>"
-                                 icon="ti-check">
-                    <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
+                </tab-content>
+                <tab-content title="<?= Yii::t('app','Upload dataset'); ?>"
+                             icon="ti-check">
+                <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
 
             <?=
             $form->field($model, 'file')->widget(FileInput::classname(), [
@@ -472,7 +534,6 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
             ?>
 
                         <div class="form-group">
-            <?php // Html::submitButton(Yii::t('yii', 'Save dataset'), ['class' => 'btn btn-success']) ?>
                         </div>
                         </div>
         <?php ActiveForm::end(); ?>
@@ -497,181 +558,116 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 </div>
             </template>
             </div>
-        </div>     
-        
-        
+        </div>
     </div>
-  
-   
-    
     <div>
-    
-       
     <script>
         $(document).ready(function () {
-             Vue.use(VueFormWizard)
+            Vue.use(VueFormWizard)
             new Vue({
              el: '#app',
              data:{
                 loadingWizard: false
              },
              methods: {
-              onComplete: function(){
-                  $("#<?= $form->getId() ?>").submit();
-               },
-               setLoading: function(value) {
-                    this.loadingWizard = value
+                onComplete: function(){
+                    $("#<?= $form->getId() ?>").submit();
+                },
+                setLoading: function(value) {
+                      this.loadingWizard = value
                 },
                 handleValidation: function(isValid, tabIndex){
-                    console.log('Tab: '+tabIndex+ ' valid: '+isValid)
+                      console.log('Tab: '+tabIndex+ ' valid: '+isValid)
                 },
                 beforeSelectProvenance: function(){
-                    return new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                            let experimentUri = $("#experiment-selector").val();
-                            if(experimentUri === undefined || experimentUri === null || experimentUri === "" ){
-                                toastr.warning("You must select a valid experiment to continued");
-                                reject("You must select a valid experiment to continue");
-                            }else{
-                               resolve(true);
-                              }   
-                            }, 200)
-                    });
-                },
-                beforeUploadDataset: function(){
-                    return new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                            let provenanceUri = $("#provenance-selector").val();
-                            if(provenanceUri === undefined ||
-                                    provenanceUri === null ||
-                                    provenanceUri === "" ||
-                                    !provenances.hasOwnProperty(provenanceUri)){
-                                toastr.warning("You must select a valid provenance to continued");
-                                reject("You must select a valid provenance to continue");
-                            }else{
-                               resolve(true);
-                              }   
-                            }, 200)
-                    });
-                }
-            }
+                      return new Promise((resolve, reject) => {
+                          setTimeout(() => {
+                              let experimentUri = $("#experiment-selector").val();
+                              if(experimentUri === undefined || experimentUri === null || experimentUri === "" ){
+                                  toastr.warning("You must select a valid experiment to continued");
+                                  reject("You must select a valid experiment to continue");
+                              }else{
+                                 resolve(true);
+                                }   
+                              }, 200)
+                      });
+                  },
+                  beforeUploadDataset: function(){
+                      return new Promise((resolve, reject) => {
+                          setTimeout(() => {
+                              let provenanceUri = $("#provenance-selector").val();
+                              if(provenanceUri === undefined ||
+                                      provenanceUri === null ||
+                                      provenanceUri === "" ||
+                                      !provenances.hasOwnProperty(provenanceUri)){
+                                  toastr.warning("You must select a valid provenance to continued");
+                                  reject("You must select a valid provenance to continue");
+                              }else{
+                                 resolve(true);
+                                }   
+                              }, 200)
+                      });
+                  }
+              }
         });
-            // Load document add form popin
-            $('#document-content').load('<?php echo Url::to(['document/create-from-dataset']) ?>');
-
-            var documentUploaded = false;
-            // Clear last uploaded document line if document add form is canceled
-            $('#document-modal').on('hidden.bs.modal', function () {
-                if (!documentUploaded) {
-                    $(".js-input-remove:last").click();
-                }
-                documentUploaded = false;
-
-                $('#document-content form').trigger('reset');
-
-                $('#document-save-msg').parent().removeClass('alert-danger');
-                $('#document-save-msg').parent().addClass('alert-info');
-                $('#document-save-msg').html('<?php echo Yii::t('app/messages', 'Request text'); ?>');
-            });
-
-            $(document).on('change', '#uriVariable-selector', function () {
-                $(".dataset-variables").remove();
-                if($("#uriVariable-selector :selected").length > 0){
-                    $("#uriVariable-selector :selected").each(function (i, sel) {
-                        $('#dataset-csv-columns-desc').append(
-                                '<tr class="dataset-variables">'
-                                + '<th style="color:red" >'
-                                + $(sel).text() + ' *'
-                                + '</th>'
-                                + '<td>'
-                                + '<?php echo Yii::t("app/messages", "Value"); ?> (<?php echo Yii::t('app', 'Real number, String or Date'); ?>)'
-                                + '</td>'
-                                + '</tr>');
-                    }); 
-                }else{
-                    $('#dataset-csv-columns-desc').append(
-                                '<tr class="dataset-variables">'
-                              + '<th style="color:red">Variable value *</th>'
-                              + '<td ><?= Yii::t('app', 'Variable value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)'
-                              + '</td>'
-                              + '</tr>');
-                }
-            });
-
-           
-
-            // Initial document count
-            var nbDocuments = -1;
-            $(document).on('click', '#document-save', function () {
-                // On save get document form values
-                var formData = new FormData();
-                var file_data = $('#document-content #yiidocumentmodel-file').prop('files')[0];
-                formData.append('file', file_data);
-                var other_data = $('form').serializeArray();
-                $.each(other_data, function (key, input) {
-                    formData.append(input.name, input.value);
-                });
-
-                // Send documents form
-                $.ajax({
-                    url: 'index.php?r=document%2Fcreate-from-dataset',
-                    type: 'POST',
-                    processData: false,
-                    datatype: 'json',
-                    contentType: false,
-                    data: formData
-
-                })
-                .done(function (data) {
-                        // Add document URI and close document add form
-                        $('#yiidatasetmodel-documentsuris-documenturi-' + nbDocuments).val(data);
-                        documentUploaded = true;
-                        $('#document-modal').modal('toggle');
-
-                })
-                .fail(function (jqXHR, textStatus) {
-                        // Disaply errors
-                        $('#document-save-msg').parent().removeClass('alert-info');
-                        $('#document-save-msg').parent().addClass('alert-danger');
-                        $('#document-save-msg').html('Request failed: ' + textStatus);
-                });
-
-                return false;
-            });
             
-            // Open document add form on click
-            $('.buttonDocuments').click(function () {
-                console.log("click")
-                nbDocuments++;
-                typeInsertedDocument = "document";
-                $('#document-modal').modal('toggle');
-            });
+        // Load document add form popin
+        $('#document-content').load('<?php echo Url::to(['document/create-from-dataset']) ?>');
 
-            // Download adjusted to variables CSV template file on click
-            $(document).on('change', '#uriVariable-selector', function () {
-                var variablesLabels = [];
-                $("#uriVariable-selector :selected").each(function (i, sel) {
-                    variablesLabels.push($(sel).text());
-                });
-                $.ajax({
-                    url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-creation-file',
-                    type: 'POST',
-                    datatype: 'json',
-                    data: {variables: variablesLabels}
-                })
-                        .done(function (data) {
-                        })
-                        .fail(function (jqXHR, textStatus) {
-                            $('#document-save-msg').parent().removeClass('alert-info');
-                            $('#document-save-msg').parent().addClass('alert-danger');
-                            $('#document-save-msg').html('Request failed: ' + textStatus);
-                        });
+        var documentUploaded = false;
+        // Clear last uploaded document line if document add form is canceled
+        $('#document-modal').on('hidden.bs.modal', function () {
+            if (!documentUploaded) {
+                $(".js-input-remove:last").click();
+            }
+            documentUploaded = false;
+
+            $('#document-content form').trigger('reset');
+
+            $('#document-save-msg').parent().removeClass('alert-danger');
+            $('#document-save-msg').parent().addClass('alert-info');
+            $('#document-save-msg').html('<?php echo Yii::t('app/messages', 'Request text'); ?>');
+        });
+
+        $(document).on('change', '#uriVariable-selector', function () {
+           refreshRules();
+        });
+
+        // Initial document count
+        var nbDocuments = -1;
+        $(document).on('click', '#document-save', function () {
+            saveDocument();
+            return false;
+        });
+
+        // Open document add form on click
+        $('.buttonDocuments').click(function () {
+            console.log("click")
+            nbDocuments++;
+            typeInsertedDocument = "document";
+            $('#document-modal').modal('toggle');
+        });
+
+        // Download adjusted to variables CSV template file on click
+        $(document).on('change', '#uriVariable-selector', function () {
+            var variablesLabels = [];
+            $("#uriVariable-selector :selected").each(function (i, sel) {
+                variablesLabels.push($(sel).text());
             });
-            
-           
-            
-            
-           
+            $.ajax({
+                url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-creation-file',
+                type: 'POST',
+                datatype: 'json',
+                data: {variables: variablesLabels}
+            })
+            .done(function (data) {
+            })
+            .fail(function (jqXHR, textStatus) {
+                $('#document-save-msg').parent().removeClass('alert-info');
+                $('#document-save-msg').parent().addClass('alert-danger');
+                $('#document-save-msg').html('Request failed: ' + textStatus);
+            });
+        });
         
         // On provenance change update provenance fields
         $("#experiment-selector").change(function () {

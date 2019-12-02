@@ -139,8 +139,11 @@ class DatasetController extends Controller {
     
     
     /**
-     * 
-     * @param type $experimentUri
+     * Create a provenance from post data with documents Uri associated
+     * [
+     *  provenance : { label, comment, metadata:{ ... } },
+     *  documents : { uri1,uri2}
+     * ]
      */
     public function actionCreateProvenanceFromDataset(){
 
@@ -168,13 +171,17 @@ class DatasetController extends Controller {
         return false;
     }
     
+    /**
+     * Return an array with provenance list with all characteristics
+     * and provenance label mapped with provenance uri
+     * @return array
+     */
     public function actionGetProvenancesSelectList(){
         $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         $provenanceService = new WSProvenanceModel();
 
-        $provenances= [];
         $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
         
         foreach ($provenances as $uri => $provenance) {
@@ -186,8 +193,8 @@ class DatasetController extends Controller {
     }
     
     /**
-     * 
-     * @param type $experimentUri
+     * Return an array of variable label mapped with variable uri
+     * @return array
      */
     public function actionGetExperimentMesuredVariablesSelectList($experimentUri){
         
@@ -202,6 +209,11 @@ class DatasetController extends Controller {
         return($variables);
     }
     
+    /**
+     * Prepare a variable list associated to an experiment
+     * @param string $experimentUri
+     * @return array
+     */
     private function getExperimentMesuredVariablesSelectList($experimentUri) {
         if(!isset($experimentUri) || empty($experimentUri)){
             return [];
