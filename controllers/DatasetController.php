@@ -143,12 +143,16 @@ class DatasetController extends Controller {
      * @param type $experimentUri
      */
     public function actionCreateProvenanceFromDataset(){
-        $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
 
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $provenance = Yii::$app->request->post();
-
-        $provenanceService = new WSProvenanceModel();
+        $data = Yii::$app->request->post();
+        
+        $documents = [];
+        
+        $provenance = $data["provenance"];
+        if(isset($data["documents"])){
+            $documents = $data["documents"];
+        }
         $provenanceUri = $this->createProvenance(
                             $provenance['label'],
                             $provenance['comment'],
@@ -156,10 +160,23 @@ class DatasetController extends Controller {
                             $provenance['agents']
                     );
         
+        $this->linkDocumentsToProvenance($provenanceUri, $documents);
+        
+        if($provenanceUri != false){
+            return $provenanceUri;
+        }
+        return false;
+    }
+    
+    public function actionGetProvenancesSelectList(){
+        $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $provenanceService = new WSProvenanceModel();
+
+        $provenances= [];
         $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
-        $result = [];
-        $provenancesArray =[];
-        $result['newProvenanceUri'] = $provenanceUri;
+        
         foreach ($provenances as $uri => $provenance) {
             $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
         }
@@ -499,9 +516,10 @@ class DatasetController extends Controller {
     private function createProvenance($alias, $comment,$sensingDevice = null, $agent =null) {
         $provenanceService = new WSProvenanceModel();
         $date = new \DateTime();
+        $createdDate = $date->format("Y-m-d\TH:i:sO");
         $metadata = [
             "namespaces" => Yii::$app->params[self::PROVENANCE_PARAMS_VALUES],
-            "creationDate" => $date->format("Y-m-d\TH:i:sO"),
+            "created" => $date->format("Y-m-d\TH:i:sO"),
             "prov:Agent" =>[
                 "oeso:SensingDevice" => [
                 ],
@@ -519,6 +537,7 @@ class DatasetController extends Controller {
                 Yii::$app->session['access_token'],
                 $alias,
                 $comment,
+                $createdDate,
                 $metadata
         );
 

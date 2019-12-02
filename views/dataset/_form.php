@@ -29,8 +29,214 @@ if ($handsontable !== null) {
     echo $handsontable->loadJSLibraries(true);
     echo $handsontable->loadCSSLibraries();
 }
+use antkaz\vue\VueAsset;
+VueAsset::register($this);
+$this->registerJsFile("https://rawgit.com/cristijora/vue-form-wizard/master/dist/vue-form-wizard.js");
+$this->registerCssFile("https://rawgit.com/cristijora/vue-form-wizard/master/dist/vue-form-wizard.min.css");
+$this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/themify-icons.css");
 ?>
+ <script>
+            
+        /**
+         * Fill variable dropdown
+         * @param string experimentUri
+         * @returns void        */
+        function populateVariableList(experimentUri){
+            var select = $('#uriVariable-selector');
+            var settings = select.attr('data-krajee-select2'),
+            settings = window[settings];
+            if(experimentUri !== undefined && experimentUri !== null ){
+                $.ajax({
+                    url: '<?= Url::toRoute(['dataset/get-experiment-mesured-variables-select-list']); ?>',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {"experimentUri": experimentUri}
+                })
+                .done(function (data) {
+                    select.html("");
+                    console.log(data)
+                    if(data.data.length === 0){
+                        settings.data = {};
+                        select.val('').change();
+                    }else{
+                        settings.data = data.data;
+                        select.select2(settings).change();
+                    }
+                    
+                    
+                })
+                .fail(function (jqXHR, textStatus) {
+                    // Disaply errors
+                    console.log(jqXHR)
+                });
+            }else{
+                select.val('').change();
+                select.html("");
+            }
+        }
+        
+        /**
+         * Save provenance model via ajax
+         * @returns {Boolean}         */
+        function saveProvenance(){
 
+            var newProvenanceUri = $("#provenance-selector :selected").val();
+            
+            if(provenances.hasOwnProperty(newProvenanceUri)){
+                  toastr.info("Already existing provenance");
+            }
+            
+            if(!provenances.hasOwnProperty(newProvenanceUri) 
+                    && $("#provenance-selector :selected").val() !== undefined
+                    && $("#provenance-selector :selected").val() !== ""){
+                var provenance = {};
+                toastr.info("Saving provenance ...");
+                provenance['label']= $("#provenance-selector :selected").val();
+                provenance['comment']= $("#yiidatasetmodel-provenancecomment").val();
+                provenance['documents']= [];
+                if($("#yiidatasetmodel-documentsuris").val() !== undefined){
+                    provenance['documents']= $("#yiidatasetmodel-documentsuris").val();
+                }
+                provenance['sensingDevices']= [];
+                if($("#yiidatasetmodel-sensingDevices").val() !== undefined){
+                    provenance['sensingDevices']= $("#yiidatasetmodel-sensingDevices").val();
+                }
+                provenance['agents']= [];
+                if($("#yiidatasetmodel-provenanceagents").val() !== undefined){
+                    provenance['agents']= $("#yiidatasetmodel-provenanceagents").val();
+                }
+                var documents = [];
+                var documentsInputList = $("input[id^='yiidatasetmodel-documentsuris-documenturi-']")
+                documentsInputList.each(function (i, documentInput) {
+                    documents.push($(documentInput).val());
+                });
+                
+                 $.ajax({
+                    url: 'index.php?r=dataset%2Fcreate-provenance-from-dataset',
+                    type: 'POST',
+                    datatype: 'json',
+                    data: {provenance :provenance,
+                            documents : documents}
+                })
+                .done(function (newProvenanceUri) {
+                    if(newProvenanceUri !== false){
+                        loadProvenances(newProvenanceUri)
+                        .done(function (data) {
+                            var select = $('#provenance-selector');
+                            var settings = select.attr('data-krajee-select2'),
+                            settings = window[settings];
+                            provenances = data.provenances;
+                            settings.data = data.provenancesByUri;
+                            select.select2(settings);
+                            updateProvenanceFields(newProvenanceUri);
+                            if(newProvenanceUri !== undefined && newProvenanceUri !== null){
+                                var $newOption = $("<option selected='selected'></option>").val(newProvenanceUri).text(data.provenancesByUri[newProvenanceUri])
+                                select.append($newOption).trigger('change');
+                            }
+                            toastr.success("Provenance saved");
+                        }).fail(function (jqXHR, textStatus) {
+                                // Disaply errors
+                                $('#document-save-msg').parent().removeClass('alert-info');
+                                $('#document-save-msg').parent().addClass('alert-danger');
+                                $('#document-save-msg').html('Request failed: ' + textStatus);
+                                toastr.error("An error has occured during provenance saving");
+                        });
+                    }else{
+                        $('#document-save-msg').parent().removeClass('alert-info');
+                        $('#document-save-msg').parent().addClass('alert-danger');
+                        $('#document-save-msg').html('Request failed: ' + textStatus);
+                        toastr.error("An error has occured during provenance saving"); 
+                    }
+                   
+                })
+                .fail(function (jqXHR, textStatus) {
+                    // Disaply errors
+                    $('#document-save-msg').parent().removeClass('alert-info');
+                    $('#document-save-msg').parent().addClass('alert-danger');
+                    $('#document-save-msg').html('Request failed: ' + textStatus);
+                    toastr.error("An error has occured during provenance saving");
+                });
+
+            return false;   
+            }
+        }
+        
+        
+        function loadProvenances(provenanceSelectedUri){
+            return $.ajax({
+                    url: 'index.php?r=dataset%2Fget-provenances-select-list',
+                    type: 'POST',
+                    datatype: 'json'
+            });
+        }
+        
+        /**
+        * Function to update provenance comment field depending of selected URI
+         * @param string  provenance uri
+         * @returns {undefined}         */
+        function updateProvenanceFields(uri) {
+            if (provenances.hasOwnProperty(uri)) {
+                // If selected provenance is known get its comment
+                var comment = provenances[uri]["comment"];
+
+                // Set provenance comment, disable input and remove validation messages 
+                $("#yiidatasetmodel-provenancecomment").val(comment).attr("disabled", "disabled");
+                $(".field-yiidatasetmodel-provenancecomment, .field-yiidatasetmodel-provenancecomment *")
+                        .removeClass("has-error")
+                        .removeClass("has-success");
+                $(".field-yiidatasetmodel-provenancecomment .help-block").empty();
+
+                // Set provenance provenanceAgents, disable input and remove validation messages 
+                try {
+                    var provenanceAgents = provenances[uri]["metadata"]["prov:Agent"]["oeso:Operator"];
+                    $("#yiidatasetmodel-provenanceagents").val(provenanceAgents);
+                    $("#yiidatasetmodel-provenanceagents").trigger("change");
+                } catch (error) {
+                    $("#yiidatasetmodel-provenanceagents").val([]);
+                    $("#yiidatasetmodel-provenanceagents").trigger("change");
+                    console.log("No agents set");
+                } finally {
+                    $("#yiidatasetmodel-provenanceagents").val(agents).attr("disabled", "disabled");
+                    $(".field-yiidatasetmodel-provenanceagents, .field-yiidatasetmodel-provenanceagents *")
+                            .removeClass("has-error")
+                            .removeClass("has-success");
+                    $(".field-yiidatasetmodel-provenanceagents .help-block").empty();
+                }
+                // Load linked documents
+                $("#already-linked-documents").load(documentsLoadUri, {
+                    "uri": uri
+                });
+            } else {
+                // Otherwise clear provenance agents and enable input
+                $("#yiidatasetmodel-provenanceagents").val(agents).removeAttr("disabled").trigger("change");
+
+                // Otherwise clear provenance comment and enable input
+                $("#yiidatasetmodel-provenancecomment").val("").removeAttr("disabled");
+
+                // Clear linked documents list
+                $("#already-linked-documents").empty();
+            }
+        }
+    </script>
+        <script>
+    $(document).ready(function () {
+        <?php
+        // Create Provenance select value<div class="collapse" id="collapseExample">s array
+        foreach ($this->params['provenances'] as $uri => $provenance) {
+            $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
+        }
+        // Inject URI to get document widget linked to an URI
+        echo 'documentsLoadUri = "' . Url::to(['document/get-documents-widget']) . '";';
+        // Inject provenances list indexed by URI
+        echo 'provenances = ' . json_encode($this->params['provenances']) . ';';
+        // Inject sensingDevices list indexed by URI
+        echo 'sensingDevices = ' . json_encode($this->params['sensingDevices']) . ';';
+        // Inject agents list indexed by URI
+        echo 'agents = ' . json_encode($this->params['agents']) . ';';
+        ?>
+
+    });
+    </script>
 <div class="dataset-form well">
     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
@@ -82,38 +288,48 @@ if ($handsontable !== null) {
 
         <h3 class="alert alert-info" style="margin:3%;">Add dataset form</h3>
 <?php endif; ?>
-    <h3><i>  <?= Yii::t('app', 'Steps :') ?></i></h3>
-  <h3><i> <a data-toggle="collapse" href="#step-01" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
-             <?= "1. " . Yii::t('app', 'Select associated experiment') ?> </a></i></h3>
-    <div class="collapse" id="step-01" data-step="1">
-        <?=
-        $form->field($model, 'experiment')->widget(\kartik\select2\Select2::classname(), [
-            'data' => $this->params['experiments'],
-            'options' => [
-                'placeholder' => Yii::t('app/messages', 'Select one experiment') . ' ...',
-                'id' => 'experiment-selector',
-                'multiple' => false
-            ],
-            'pluginOptions' => [
-                'allowClear' => true,
-                'tags' => true
-            ],  
-            'pluginEvents' => [
-                'select2:select' => 'function(e) { populateVariableList(e.params.data.id); }',
-            ]
-        ]);
-        ?>
-    </div>
-  
-    <h3><i> <a data-toggle="collapse" href="#step-02" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
-             <?= "2. " . Yii::t('app', 'Do you want to generate a dataset template ?') ?> </a></i></h3>
-    <div class="collapse" id="step-02" data-step="2">
-    <hr>
-    <hr style="border-color:gray;"/>
-    <h3><i>  <?= Yii::t('app', 'Dataset template generation') ?></i></h3>
-    <p class="alert alert-info"><?= Yii::t('app/messages', 'The variables below are associated to the choosen experiment'); ?></p>
+        <div id="app">
+            <div>
+                <template>
+                <form-wizard @on-complete="onComplete"
+                             @on-validate="handleValidation"
+                             @on-loading="setLoading"
+                              shape="square"
+                              color="#3498db"
+                              back-button-text="<?= Yii::t('app/messages','Back') ?>"
+                              next-button-text="<?= Yii::t('app/messages','Next') ?>"
+                              finish-button-text="<?= Yii::t('yii', 'Upload dataset') ?>"
+                              >
+                    <div class="loader" v-if="loadingWizard"></div>
+                    <tab-content title="Choose experiment"
+                                 icon="ti-user" 
+                                 :before-change="beforeSelectProvenance">
+    <?=
+    $form->field($model, 'experiment')->widget(\kartik\select2\Select2::classname(), [
+        'data' => $this->params['experiments'],
+        'options' => [
+            'placeholder' => Yii::t('app/messages', 'Select one experiment') . ' ...',
+            'id' => 'experiment-selector',
+            'multiple' => false
+        ],
+        'pluginOptions' => [
+            'allowClear' => true,
+            'tags' => true
+        ],  
+        'pluginEvents' => [
+            'select2:select' => 'function(e) { populateVariableList(e.params.data.id); }',
+        ]
+    ]);
+    ?>
+            </tab-content>
+            <tab-content title="Generate dataset template (optional)"
+                                         icon="ti-user" 
+                                         :before-change="beforeSelectProvenance">
+            <hr style="border-color:gray;"/>
+            <h3><i>  <?= Yii::t('app', 'Need a dataset template ? (Optional)') ?></i></h3>
+            <p class="alert alert-info"><?= Yii::t('app/messages', 'The variables below are associated to the choosen experiment'); ?></p>
     <?php
-    $select2VariablesOptions =  [
+        $select2VariablesOptions =  [
             'placeholder' => Yii::t('app/messages', 'Select one or many experiment associated variables') . ' ...',
             'id' => 'uriVariable-selector',
             'multiple' => true
@@ -121,92 +337,69 @@ if ($handsontable !== null) {
     ?>
     
     <?=
-    $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(), [
-        'data' => [],
-        'options' => $select2VariablesOptions,
-        'pluginOptions' => [
-            'allowClear' => true,
-            'tags' => true
-        ],
-    ]);
+        $form->field($model, 'variables')->widget(\kartik\select2\Select2::classname(), [
+            'data' => [],
+            'options' => $select2VariablesOptions,
+            'pluginOptions' => [
+                'allowClear' => true,
+                'tags' => false
+            ],
+        ]);
     ?>
     <p>
-<?php
-$csvPath = "coma";
-if (Yii::$app->params['csvSeparator'] == ";") {
-    $csvPath = "semicolon";
-}
-?>
+    <?php
+        $csvPath = "coma";
+        if (Yii::$app->params['csvSeparator'] == ";") {
+            $csvPath = "semicolon";
+        }
+    ?>
     <i>
-    <?= 
-        Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download generated template'),
+    
+                </i>
+                </p>
+
+                <hr>
+                <hr style="border-color:gray;"/>
+                <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetExemple.csv') ?></i>
+                    <br>
+                    <div class="alert alert-info" role="alert">
+                        <b><?= Yii::t('app/messages', 'File Rules') ?> : </b>
+                        <ul>
+                            <li><?= Yii::t('app/messages', 'CSV separator must be') ?> "<b><?= Yii::$app->params['csvSeparator'] ?></b>"</li>
+                            <li><?= Yii::t('app/messages', 'Decimal separator for numeric values must be') ?> "<b>.</b>"</li>
+                        </ul>
+                        <br/>
+                        <b><?= Yii::t('app', 'Columns') ?> : </b>
+                        <table class="table table-hover" id="dataset-csv-columns-desc">
+                            <tr>
+                                <th style="color:red">ScientificObjectAlias *</th>
+                                <td><?= Yii::t('app/messages', 'The ALIAS of the scientific object for the choosen experiment (e.g MTP_WW_2019_P050_SH1_2018_LF14)') ?></td>
+                            </tr>
+                            <tr>
+                                <th style="color:red">Date *</th>
+                                <td><p><?= Yii::t('app/messages', 'Acquisition date of the data') ?> (format ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ) </p> </td>
+                            </tr>
+                            <tr class="dataset-variables">
+                                <th style="color:red">Variable value *</th>
+                                <td ><?= Yii::t('app', 'Variable value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)</td>
+                            </tr>
+                        </table>
+                    </div>               
+                    
+                    <?= 
+        Html::a("<button type='button' class='btn btn-info'> " . Yii::t('app', 'Download generated template') . "</button>",
             \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv',
             ['id' => 'downloadDatasetTemplate']
         );
     ?>
-    </i>
-    </p>
-   
-    <hr>
-    <hr style="border-color:gray;"/>
-    <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetExemple.csv') ?></i>
-        <br>
-        <div class="alert alert-info" role="alert">
-            <b><?= Yii::t('app/messages', 'File Rules') ?> : </b>
-            <ul>
-                <li><?= Yii::t('app/messages', 'CSV separator must be') ?> "<b><?= Yii::$app->params['csvSeparator'] ?></b>"</li>
-                <li><?= Yii::t('app/messages', 'Decimal separator for numeric values must be') ?> "<b>.</b>"</li>
-            </ul>
-            <br/>
-            <b><?= Yii::t('app', 'Columns') ?> : </b>
-            <table class="table table-hover" id="dataset-csv-columns-desc">
-                <tr>
-                    <th style="color:red">ScientificObjectAlias *</th>
-                    <td><?= Yii::t('app/messages', 'The ALIAS of the scientific object for the choosen experiment (e.g MTP_WW_2019_P050_SH1_2018_LF14)') ?></td>
-                </tr>
-                <tr>
-                    <th style="color:red">Date *</th>
-                    <td><p><?= Yii::t('app/messages', 'Acquisition date of the data') ?> (format ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ) </p> </td>
-                </tr>
-                <tr class="dataset-variables">
-                    <th style="color:red">Variable value *</th>
-                    <td ><?= Yii::t('app', 'Variable value') ?> (<?= Yii::t('app', 'Real number, String or Date') ?>)</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-      <h3><i> <a data-toggle="collapse" href="#step-03" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
-             <?= "3. " . Yii::t('app', 'Select or create a description that describes how the dataset was produced') ?> </a></i></h3>
-    <div class="collapse" id="step-03" data-step="3">
-    <h4><?= Yii::t('app', 'Provenance'); ?></h4>
-    <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, write the provenance label in the research field and press `Enter`'); ?></p>
-    <script>
-    $(document).ready(function () {
-<?php
-// Create Provenance select value<div class="collapse" id="collapseExample">s array
-foreach ($this->params['provenances'] as $uri => $provenance) {
-    $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
-}
-// Inject URI to get document widget linked to an URI
-echo 'documentsLoadUri = "' . Url::to(['document/get-documents-widget']) . '";';
-// Inject provenances list indexed by URI
-echo 'provenances = ' . json_encode($this->params['provenances']) . ';';
-// Inject sensingDevices list indexed by URI
-echo 'sensingDevices = ' . json_encode($this->params['sensingDevices']) . ';';
-// Inject agents list indexed by URI
-echo 'agents = ' . json_encode($this->params['agents']) . ';';
-?>
-
-        // On provenance change update provenance fields
-        $("#provenance-selector").change(function () {
-            updateProvenanceFields($(this).val());
-        });
-
-        // Update provenance fields depending of startup value
-        updateProvenanceFields($("#provenance-selector").val());
-
-    });
-    </script>
+                    <br><br>
+                </tab-content>
+                <tab-content title="Select or create a description that describes how the dataset was produced"
+                                 icon="ti-settings"
+                                 :before-change="beforeUploadDataset">
+                       <h4><?= Yii::t('app', 'Provenance'); ?></h4>
+                <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, write the provenance label in the research field and press `Enter`'); ?></p>
+    
     <?=
     $form->field($model, 'provenanceUri')->widget(\kartik\select2\Select2::classname(), [
         'data' => $provenancesArray,
@@ -237,8 +430,8 @@ echo 'agents = ' . json_encode($this->params['agents']) . ';';
 
     <?= $form->field($model, 'provenanceComment')->textarea(['rows' => 6]) ?>
 
-    <h3><?= Yii::t('app', 'Linked Document(s)') ?></h3>
-    <div id="already-linked-documents"></div>
+            <h3><?= Yii::t('app', 'Linked Document(s)') ?></h3>
+            <div id="already-linked-documents"></div>
     <?=
     $form->field($model, 'documentsURIs')->widget(MultipleInput::className(), [
         'max' => 6,
@@ -255,55 +448,111 @@ echo 'agents = ' . json_encode($this->params['agents']) . ';';
         ],
         'addButtonOptions' => [
             'class' => 'btn btn-primary buttonDocuments',
-            'label' => Yii::t('app', 'Add Document')
+            'label' => Yii::t('app', 'Add Document'),            
         ],
     ])->label(false)
     ?>
     <?= Html::button(Yii::t('yii', 'Save provenance'), ['class' => 'btn btn-success','onclick' => 'saveProvenance()']) ?>
 
-    </div>
-    <h3><i> <a data-toggle="collapse" href="#step-04" role="button" aria-expanded="false" aria-controls="collapseDataSetRules">
-             <?= "4. " . Yii::t('app', 'Upload dataset') ?> </a></i></h3>
-    <div class="collapse" id="step-04" data-step="4">
-    <hr style="border-color:gray;"/>    
-    <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
+                    </tab-content>
+                    <tab-content title="Upload dataset"
+                                 icon="ti-check">
+                    <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
 
-    <?=
-    $form->field($model, 'file')->widget(FileInput::classname(), [
-        'options' => [
-            'maxFileSize' => 2000,
-            'pluginOptions' => ['allowedFileExtensions' => ['csv'], 'showUpload' => false],
-        ]
-    ]);
-    ?>
+            <?=
+            $form->field($model, 'file')->widget(FileInput::classname(), [
+                'options' => [
+                    'maxFileSize' => 2000,
+                    'pluginOptions' => ['allowedFileExtensions' => ['csv'], 'showUpload' => false],
+                ]
+            ]);
+            ?>
 
-    <div class="form-group">
-    <?= Html::submitButton(Yii::t('yii', 'Save dataset'), ['class' => 'btn btn-success']) ?>
-    </div>
-    </div>
-<?php ActiveForm::end(); ?>
-    <div>
-    <div class="modal fade" id="document-modal" tabindex="-1" role="dialog" aria-labelledby="document-modal-title">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title" id="document-modal-title"><?php echo Html::encode(Yii::t('app', 'Create Document')); ?></h4>
+                        <div class="form-group">
+            <?php // Html::submitButton(Yii::t('yii', 'Save dataset'), ['class' => 'btn btn-success']) ?>
+                        </div>
+                        </div>
+        <?php ActiveForm::end(); ?>
+                    </tab-content>
+                </form-wizard>
+                    <div class="modal fade" id="document-modal" tabindex="-1" role="dialog" aria-labelledby="document-modal-title">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title" id="document-modal-title"><?php echo Html::encode(Yii::t('app', 'Create Document')); ?></h4>
+                            </div>
+                            <div class="modal-body">
+                                <div id="document-content"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" id="document-save"><?php echo Html::encode(Yii::t('yii', 'Create')) ?></button>
+                                <button type="button" class="btn btn-default modal-close" data-dismiss="modal"><?php echo Html::encode(Yii::t('yii', 'Close')) ?></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <div id="document-content"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="document-save"><?php echo Html::encode(Yii::t('yii', 'Create')) ?></button>
-                    <button type="button" class="btn btn-default modal-close" data-dismiss="modal"><?php echo Html::encode(Yii::t('yii', 'Close')) ?></button>
-                </div>
+            </template>
             </div>
-        </div>
+        </div>     
+        
+        
     </div>
-
+  
+   
+    
+    <div>
+    
+       
     <script>
         $(document).ready(function () {
-            
+             Vue.use(VueFormWizard)
+            new Vue({
+             el: '#app',
+             data:{
+                loadingWizard: false
+             },
+             methods: {
+              onComplete: function(){
+                  $("#<?= $form->getId() ?>").submit();
+               },
+               setLoading: function(value) {
+                    this.loadingWizard = value
+                },
+                handleValidation: function(isValid, tabIndex){
+                    console.log('Tab: '+tabIndex+ ' valid: '+isValid)
+                },
+                beforeSelectProvenance: function(){
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            let experimentUri = $("#experiment-selector").val();
+                            if(experimentUri === undefined || experimentUri === null || experimentUri === "" ){
+                                toastr.warning("You must select a valid experiment to continued");
+                                reject("You must select a valid experiment to continue");
+                            }else{
+                               resolve(true);
+                              }   
+                            }, 200)
+                    });
+                },
+                beforeUploadDataset: function(){
+                    return new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            let provenanceUri = $("#provenance-selector").val();
+                            if(provenanceUri === undefined ||
+                                    provenanceUri === null ||
+                                    provenanceUri === "" ||
+                                    !provenances.hasOwnProperty(provenanceUri)){
+                                toastr.warning("You must select a valid provenance to continued");
+                                reject("You must select a valid provenance to continue");
+                            }else{
+                               resolve(true);
+                              }   
+                            }, 200)
+                    });
+                }
+            }
+        });
             // Load document add form popin
             $('#document-content').load('<?php echo Url::to(['document/create-from-dataset']) ?>');
 
@@ -386,9 +635,10 @@ echo 'agents = ' . json_encode($this->params['agents']) . ';';
 
                 return false;
             });
-
+            
             // Open document add form on click
             $('.buttonDocuments').click(function () {
+                console.log("click")
                 nbDocuments++;
                 typeInsertedDocument = "document";
                 $('#document-modal').modal('toggle');
@@ -415,184 +665,69 @@ echo 'agents = ' . json_encode($this->params['agents']) . ';';
                         });
             });
             
-            populateVariableList($("#experiment-selector").val());
+           
             
-            // Verifiy saving form step
-            $('.collapse').on('show.bs.collapse', function (e) {
-                var target = e.target.id;
-                var varStepString = "step-0" ;
-
-                if( e.target.id === varStepString + 2 ){
-                    if($("#experiment-selector :selected").val() === ""){
-                        e.stopPropagation();
-                        e.preventDefault();
-                        toastr.warning('You must select an experiment, in step 1');
-                    }
-                }
-                if( e.target.id === varStepString + 3 ){
-                    if($("#experiment-selector :selected").val() === ""){
-                        e.stopPropagation();
-                        e.preventDefault();
-                        toastr.warning('You must select an experiment, in step 1');
-                    }else{
-                        $("#" + varStepString + 2).collapse('hide');
-                    }
-                }
-                if( e.target.id === varStepString + 4 ){
-                    if($("#experiment-selector :selected").val() === ""){
-                        e.stopPropagation();
-                        e.preventDefault();
-                        toastr.warning('You must select an experiment, in step 1');
-                    }
-                    if($("#provenance-selector :selected").val() === ""
-                          ||  !provenances.hasOwnProperty($("#provenance-selector :selected").val())){
-                        e.stopPropagation();
-                        e.preventDefault();
-                        toastr.warning('You must select a valid provenance or save your new provenance, in step 3');
-                    }
-                }
-            });
+            
+           
+        
+        // On provenance change update provenance fields
+        $("#experiment-selector").change(function () {
+             populateVariableList($(this).val());
         });
+         populateVariableList($("#experiment-selector").val());
         
-        /**
-         * Fill variable dropdown
-         * @param string experimentUri
-         * @returns void        */
-        function populateVariableList(experimentUri){
-            if(experimentUri !== undefined && experimentUri !== null ){
-                var select = $('#uriVariable-selector');
-                var settings = select.attr('data-krajee-select2'),
+        // On provenance change update provenance fields
+        $("#provenance-selector").change(function () {
+            updateProvenanceFields($(this).val());
+        });
 
-                settings = window[settings];
-
-                $.ajax({
-                    url: '<?= Url::toRoute(['dataset/get-experiment-mesured-variables-select-list']); ?>',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {"experimentUri": experimentUri}
-                })
-                .done(function (data) {
-
-                    settings.data = data.data;
-                    select.select2(settings);
-                })
-                .fail(function (jqXHR, textStatus) {
-                    // Disaply errors
-                    console.log(jqXHR)
-                });
-            }
-        }
-        
-        /**
-         * Save provenance model via ajax
-         * @returns {Boolean}         */
-        function saveProvenance(){
-
-            var uriTest = $("#provenance-selector :selected").val();
-            
-            if(provenances.hasOwnProperty(uriTest)){
-                  toastr.info("Already existing provenance");
-            }
-            
-            if(!provenances.hasOwnProperty(uriTest) 
-                    && $("#provenance-selector :selected").val() !== undefined
-                    && $("#provenance-selector :selected").val() !== ""){
-                var provenance = {};
-                toastr.info("Saving provenance ...");
-                provenance['label']= $("#provenance-selector :selected").val();
-                provenance['comment']= $("#yiidatasetmodel-provenancecomment").val();
-                provenance['documents']= [];
-                if($("#yiidatasetmodel-documentsuris").val() !== undefined){
-                    provenance['documents']= $("#yiidatasetmodel-documentsuris").val();
-                }
-                provenance['sensingDevices']= [];
-                if($("#yiidatasetmodel-sensingDevices").val() !== undefined){
-                    provenance['sensingDevices']= $("#yiidatasetmodel-sensingDevices").val();
-                }
-                provenance['agents']= [];
-                if($("#yiidatasetmodel-provenanceagents").val() !== undefined){
-                    provenance['agents']= $("#yiidatasetmodel-provenanceagents").val();
-                }
-                console.log(provenance);
-                 $.ajax({
-                    url: 'index.php?r=dataset%2Fcreate-provenance-from-dataset',
-                    type: 'POST',
-                    datatype: 'json',
-                    data: provenance
-
-                })
-                .done(function (data) {
-                    var select = $('#provenance-selector');
-                    var settings = select.attr('data-krajee-select2'),
-                    settings = window[settings];
-                    
-                    provenances = data.provenances;
-                    console.log(provenances);
-                    settings.data = data.provenancesByUri;
-                    select.select2(settings);
-                    updateProvenanceFields(data.newProvenanceUri);
-                    console.log(provenances.hasOwnProperty(data.newProvenanceUri))
-                    toastr.success("Provenance saved");
-                })
-                .fail(function (jqXHR, textStatus) {
-                    // Disaply errors
-                    $('#document-save-msg').parent().removeClass('alert-info');
-                    $('#document-save-msg').parent().addClass('alert-danger');
-                    $('#document-save-msg').html('Request failed: ' + textStatus);
-                    toastr.error("An error has occured during provenance saving");
-                });
-
-            return false;   
-            }
-        }
-        
-        /**
-        * Function to update provenance comment field depending of selected URI
-         * @param string  provenance uri
-         * @returns {undefined}         */
-        function updateProvenanceFields(uri) {
-            if (provenances.hasOwnProperty(uri)) {
-                // If selected provenance is known get its comment
-                var comment = provenances[uri]["comment"];
-
-                // Set provenance comment, disable input and remove validation messages 
-                $("#yiidatasetmodel-provenancecomment").val(comment).attr("disabled", "disabled");
-                $(".field-yiidatasetmodel-provenancecomment, .field-yiidatasetmodel-provenancecomment *")
-                        .removeClass("has-error")
-                        .removeClass("has-success");
-                $(".field-yiidatasetmodel-provenancecomment .help-block").empty();
-
-                // Set provenance provenanceAgents, disable input and remove validation messages 
-                try {
-                    var provenanceAgents = provenances[uri]["metadata"]["prov:Agent"]["oeso:Operator"];
-                    $("#yiidatasetmodel-provenanceagents").val(provenanceAgents);
-                    $("#yiidatasetmodel-provenanceagents").trigger("change");
-                } catch (error) {
-                    $("#yiidatasetmodel-provenanceagents").val([]);
-                    $("#yiidatasetmodel-provenanceagents").trigger("change");
-                    console.log("No agents set");
-                } finally {
-                    $("#yiidatasetmodel-provenanceagents").val(agents).attr("disabled", "disabled");
-                    $(".field-yiidatasetmodel-provenanceagents, .field-yiidatasetmodel-provenanceagents *")
-                            .removeClass("has-error")
-                            .removeClass("has-success");
-                    $(".field-yiidatasetmodel-provenanceagents .help-block").empty();
-                }
-                // Load linked documents
-                $("#already-linked-documents").load(documentsLoadUri, {
-                    "uri": uri
-                })
-            } else {
-                // Otherwise clear provenance agents and enable input
-                $("#yiidatasetmodel-provenanceagents").val(agents).removeAttr("disabled").trigger("change");
-
-                // Otherwise clear provenance comment and enable input
-                $("#yiidatasetmodel-provenancecomment").val("").removeAttr("disabled");
-
-                // Clear linked documents list
-                $("#already-linked-documents").empty();
-            }
-        }
+        // Update provenance fields depending of startup value
+        updateProvenanceFields($("#provenance-selector").val());
+     });    
     </script>
+    <style>
+        /* This is a css loader. It's not related to vue-form-wizard */
+        .loader,
+        .loader:after {
+          border-radius: 50%;
+          width: 10em;
+          height: 10em;
+        }
+        .loader {
+          margin: 60px auto;
+          font-size: 10px;
+          position: relative;
+          text-indent: -9999em;
+          border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+          border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+          border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+          border-left: 1.1em solid #0033ff;
+          -webkit-transform: translateZ(0);
+          -ms-transform: translateZ(0);
+          transform: translateZ(0);
+          -webkit-animation: load8 1.1s infinite linear;
+          animation: load8 1.1s infinite linear;
+        }
+        @-webkit-keyframes load8 {
+          0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+          }
+          100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+          }
+        }
+        @keyframes load8 {
+          0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+          }
+          100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+          }
+        }
+    </style>
 </div>
 </div>
