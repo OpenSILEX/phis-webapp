@@ -125,7 +125,77 @@ require_once '../config/config.php';
               } else {
                 return false;
               }
-            }         
+            }        
+            
+            /**
+             * validate a the type value. callback will be true if the value is 
+             * not empty and is a sensor type
+             * @param {type} value
+             * @param {type} callback
+             * @returns {undefined} 
+             */
+            speciesValidator = function(value, callback) {
+                if (isEmpty(value)) {
+                    callback(false);
+                } else if (speciesList.indexOf(value) > -1) {
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            };
+            
+            /**
+             * validate a the type value. callback will be true if the value is 
+             * not empty and is a sensor type
+             * @param {type} value
+             * @param {type} callback
+             * @returns {undefined} 
+             */
+            genusValidator = function(value, callback) {
+                if (isEmpty(value)) {
+                    callback(false);
+                } else if (genusList.indexOf(value) > -1) {
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            };
+            
+            /**
+             * validate a the type value. callback will be true if the value is 
+             * not empty and is a sensor type
+             * @param {type} value
+             * @param {type} callback
+             * @returns {undefined} 
+             */
+            varietiesValidator = function(value, callback) {
+                if (isEmpty(value)) {
+                    callback(false);
+                } else if (varietiesList.indexOf(value) > -1) {
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            };
+            
+            /**
+             * validate a the type value. callback will be true if the value is 
+             * not empty and is a sensor type
+             * @param {type} value
+             * @param {type} callback
+             * @returns {undefined} 
+             */
+            accessionsValidator = function(value, callback) {
+                if (isEmpty(value)) {
+                    callback(false);
+                } else if (accessionsList.indexOf(value) > -1) {
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            };
+            
+            
             //creates renderer to color in red required column names
             function firstRowRequiedRenderer(instance, td, row, col, prop, value, cellProperties) {
                 Handsontable.renderers.TextRenderer.apply(this, arguments);
@@ -158,24 +228,30 @@ require_once '../config/config.php';
                                         readOnly: true
                                         };
             var genusListColumn = {
+                            colWidths: 100, 
                             data: 'genus',
                             type: 'dropdown',
                             source: genusList,
                             strict: true,
-                            required: false
+                            required: false,
+                            genus: genusValidator
                         };
             var speciesListColumn = {
+                            colWidths: 100,
                             data: 'species',
                             type: 'dropdown',
                             source: speciesList,
-                            required: false
+                            required: false,
+                            validator: speciesValidator
                         };
             
             var varietiesListColumn = {
+                            colWidths: 100,
                             data: 'variety',
                             type: 'dropdown',
                             source: varietiesList,
-                            required: false
+                            required: false,
+                            validator: varietiesValidator
                         };   
             var externalURI = {
                             data: 'externalURI',
@@ -334,8 +410,6 @@ require_once '../config/config.php';
             
             //table configuration for accession insertion
             } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Accession") {
-            
-                var doc = "<p>Et ceci du Javascript</p>";
                 
                 var table = {
                     startRows: 3,
@@ -389,18 +463,22 @@ require_once '../config/config.php';
             } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot") {
                 var table = {
                     startRows: 3,
+                    data: [[]],
                     columns: [
                         uriColumn,
                         genusListColumn,
                         speciesListColumn,
                         varietiesListColumn,
                         {
+                            colWidths: 100,
                             data: 'accession',
                             type: 'dropdown',
                             source: accessionsList,
-                            required: false
+                            required: false,
+                            validator: accessionsValidator
                         },
-                                        {
+                        {
+                            colWidths: 100,
                             data: 'lotType',
                             type: 'dropdown',
                             source: lotTypesList,
@@ -408,6 +486,7 @@ require_once '../config/config.php';
                             validator: emptyValidator
                         },
                         {
+                            colWidths: 100,
                             data: 'lot',
                             type: 'text',
                             required: true,
@@ -423,8 +502,8 @@ require_once '../config/config.php';
                         "<b><?= Yii::t('app', 'Species') ?></b>",
                         "<b><?= Yii::t('app', 'Variety') ?></b>",
                         "<b><?= Yii::t('app', 'Accession') ?></b>",
-                        "<b><?= Yii::t('app', 'LotType') ?></b>",
-                        "<b><?= Yii::t('app', 'Lot') ?></b>",
+                        "<b><?= Yii::t('app', 'Lot Type') ?></b>",
+                        "<b><?= Yii::t('app', 'Lot Number') ?></b>",
                         "<b><?= Yii::t('app', 'Lot URI') ?></b>",
                         "<b><?= Yii::t('app', 'Insertion status') ?></b>"
                     ],
@@ -451,15 +530,154 @@ require_once '../config/config.php';
             //Generates the handsontable 
             //it is displayed only if a germplasmType has been selected
             if (germplasmType !== "") { 
-                document.write(doc);
                 var hotElement = document.querySelector('#germplasms-multiple-insert-table');
                 var handsontable = new Handsontable(hotElement, table);  
                 $('#germplasms-multiple-insert-button').show();
                 $('#import-csv').show();
                 $('#documentation-info').show();
             }
-      
+
+            /**
+             * fill the table with the csv files data             * 
+             * @param the imported file
+             */
+            function fillTheTable(files) {
+                //const selectedFile = document.getElementById('input').files[0];
+                if (files && files[0]) {
+                    Papa.parse(files[0],{
+                        complete: function(results) {
+                            if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Genus") {
+                                objectData = [];
+                                for (var i= 1; i < results.data.length; i++) {
+                                    var line = 
+                                            {
+                                                "generatedUri": results.data[i][0],
+                                                "genus": results.data[i][1],
+                                                "externalURI": results.data[i][2],
+                                                "insertionStatus": results.data[i][3]
+                                            };
+                                    objectData.push(line);
+                                }
+                                console.log(objectData);                                
+                                
+                            } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Species") {
+                                objectData = [];
+                                for (var i= 1; i < results.data.length; i++) {
+                                    var line = 
+                                            {
+                                                "generatedUri": results.data[i][0],
+                                                "genus": results.data[i][1],
+                                                "speciesEN": results.data[i][2],
+                                                "speciesFR": results.data[i][3],
+                                                "speciesLA": results.data[i][4],
+                                                "externalURI": results.data[i][5],
+                                                "insertionStatus": results.data[i][6]
+                                            };
+                                    objectData.push(line);
+                                }
+                                console.log(objectData);
+                            
+                            } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Variety") {
+                                objectData = [];
+                                for (var i= 1; i < results.data.length; i++) {
+                                    var line = 
+                                            {
+                                                "generatedUri": results.data[i][0],
+                                                "genus": results.data[i][1],
+                                                "species": results.data[i][2],
+                                                "variety": results.data[i][3],
+                                                "externalURI": results.data[i][4],
+                                                "insertionStatus": results.data[i][5]
+                                            };
+                                    objectData.push(line);
+                                }
+                                console.log(objectData);
+                                
+                            } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#Accession") {
+                                objectData = [];
+                                for (var i= 1; i < results.data.length; i++) {
+                                    var line = 
+                                            {
+                                                "generatedUri": results.data[i][0],
+                                                "genus": results.data[i][1],
+                                                "species": results.data[i][2],
+                                                "variety": results.data[i][3],
+                                                "accession": results.data[i][5],
+                                                "externalURI": results.data[i][6],
+                                                "insertionStatus": results.data[i][7]
+                                            };
+                                    objectData.push(line);
+                                }
+                                console.log(objectData);
+                                
+                            } else if (germplasmType === "http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot") {
+                                objectData = [];
+                                for (var i= 1; i < results.data.length; i++) {
+                                    var line = 
+                                            {
+                                                "generatedUri": results.data[i][0],
+                                                "genus": results.data[i][1],
+                                                "species": results.data[i][2],
+                                                "variety": results.data[i][3],
+                                                "accession": results.data[i][4],
+                                                "lotType": results.data[i][5],
+                                                "lot": results.data[i][6],
+                                                "insertionStatus": results.data[i][7]
+                                            };
+                                    objectData.push(line);
+                                }
+                                console.log(objectData);
+                            }
+//                          
+                            dataObject = [["","genus","species","variety","uri","status"],
+                                          ["","Zea","Maize","VPG110","",""],
+                                          ["","Zea","Maize","VPG121","",""],
+                                          ["","Zea","Maize","VPG063","",""],
+                                          ["","Zea","Maize","VPG117","",""]];
+                            handsontable.loadData(dataObject);
+                            //handsontable.loadData(results.data);
+//                            var hotData = handsontable.getData();
+//                            console.log(hotData);
+//                            for (var i = 1; i < dataObject.length; i ++) {
+//                                var line = dataObject[i];
+//                                console.log(line);                                
+//                                hotData.push(line);
+//                                console.log(hotData);
+//                                handsontable.getData().push(line);
+//                                //handsontable.table.data = hotData;
+//                            }
+//                            
+//                            handsontable.render();
+                        }
+                    });
+                }
+            }
+                            
+//                            //Empty the DOM element containing the handsontable to add a new one
+//                            var tableElement = document.getElementById("germplasms-multiple-insert-table");
+//                            tableElement.removeChild(tableElement.firstChild);
+//
+//                            var hotElement = document.querySelector('#germplasms-multiple-insert-table');
+//                            table.data = objectData;
+//                            
+//                            var handsontable = new Handsontable(hotElement, table);  
+//                            $('#germplasms-multiple-insert-button').show();
+//                            $('#import-csv').show();
+//                            $('#documentation-info').show();
+//                            
+//                            handsontable.render();
+
+                            
+//                            var handsontable = new Handsontable(hotElement, table);
+//                            for(var i= 1; i < dataToPut.length; i++) {
+//                                for (var j=0; j < dataToPut[i].length; j++) {
+//                                    handsontable.setDataAtCell(i-1,j,dataToPut[i][j]);
+//                                }
+//                            }
             //Updates the dropdown lists depending on others lists selection
+ 
+            
+                        //Updates the dropdown lists depending on others lists selection
             handsontable.updateSettings({
                 afterChange: function(changes) {
                     changes.forEach(([row, prop, oldVal, newVal]) => {
@@ -475,6 +693,7 @@ require_once '../config/config.php';
                                 }).done(function (data) {
                                     cell.source = data;
                                     cell.type = 'dropdown';
+                                    cell.validator = speciesValidator;
                                     handsontable.setCellMetaObject(row,2,cell);
                                 });
                                 //if a genus is selected and the germplasm type is not a variety, species or genus, then we filter the list of varieties
@@ -559,29 +778,9 @@ require_once '../config/config.php';
                   handsontable.render();
                 }
             });
-
-            /**
-             * fill the table with the csv files data             * 
-             * @param the imported file
-             */
-            function fillTheTable(files) {
-                //const selectedFile = document.getElementById('input').files[0];
-                if (files && files[0]) {
-                    Papa.parse(files[0],{
-                        complete: function(results) {
-                            console.log(results.data);
-                            var dataToPut = results.data; 
-                            for(var i= 1; i < dataToPut.length; i++) {
-                                for (var j=0; j < dataToPut[i].length; j++) {
-                                    handsontable.setDataAtCell(i-1,j,dataToPut[i][j]);
-                                }
-                            }
-                        }
-                    });
-
-                }    
-
-            }
+            
+            
+            
             /**
              * if the data is valid, calls the insert action
              * @param {boolean} callback
