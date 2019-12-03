@@ -58,7 +58,6 @@ class DatasetController extends Controller {
     const SENSOR_DATA_LABEL = "sensorLabel";
     const SENSOR_DATA_TYPE = "sensorType";
 
-    const PROVENANCE_PARAMS_VALUES = "provenanceNamespaces";
     /**
      * define the behaviors
      * @return array
@@ -201,26 +200,6 @@ class DatasetController extends Controller {
         return false;
     }
     
-    /**
-     * Return an array with provenance list with all characteristics
-     * and provenance label mapped with provenance uri
-     * @return array
-     */
-    public function actionGetProvenancesSelectList(){
-        $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
-
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $provenanceService = new WSProvenanceModel();
-
-        $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
-        
-        foreach ($provenances as $uri => $provenance) {
-            $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
-        }
-        $result['provenances'] = $provenances;
-        $result['provenancesByUri'] = $provenancesArray;
-        return $result;
-    }
     
      /**
      * Return an array with provenance list with all characteristics
@@ -290,7 +269,6 @@ class DatasetController extends Controller {
         }
         return [];
     }
-    
     
     /**
      * variables associated to a given sensor with select2 dropdwon format
@@ -550,7 +528,8 @@ class DatasetController extends Controller {
             unlink($serverFilePath);
 
             //Loaded given variables
-            $experimentVariables = $this->getExperimentMesuredVariablesSelectList($datasetModel->experiment) ;
+            $experimentController = new ExperimentController();
+            $experimentVariables = $experimentController->getExperimentMesuredVariablesSelectList($datasetModel->experiment) ;
             $csvVariables = array_slice($csvHeaders, 2);
             // select all variables that don"t exist in experiment variables
             $variablesNotInExperiment = array_diff($csvVariables, array_values($experimentVariables)); 

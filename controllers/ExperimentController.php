@@ -404,4 +404,42 @@ class ExperimentController extends Controller {
         
         return json_encode($res, JSON_UNESCAPED_SLASHES);
     }
+    
+    
+     /**
+     * Return an array of variable label mapped with variable uri
+     * @return array
+     */
+    public function actionAjaxGetExperimentMesuredVariablesSelectList($experimentUri){
+        
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $variables = [];
+        $variables["data"] = [];
+        $experimentVariable = $this->getExperimentMesuredVariablesSelectList($experimentUri);
+        foreach ($experimentVariable as $key => $value) {
+            $variables["data"][] = ["id" => $key, "text" => $value];
+        }
+       
+        return($variables);
+    }
+    
+    /**
+     * Prepare a variable list associated to an experiment
+     * @param string $experimentUri
+     * @return array
+     */
+    public function getExperimentMesuredVariablesSelectList($experimentUri) {
+        if(!isset($experimentUri) || empty($experimentUri)){
+            return [];
+        }
+        $experimentModel = new YiiExperimentModel();
+        $variables = $experimentModel->getMeasuredVariables(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN],
+                $experimentUri
+                );
+        if(isset($variables) && is_array($variables)){
+            return $variables;
+        }
+        return [];
+    }
 }
