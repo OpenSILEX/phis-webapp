@@ -27,6 +27,8 @@ use openSILEX\handsontablePHP\adapter\HandsontableSimple;
 use openSILEX\handsontablePHP\classes\ColumnConfig;
 use app\models\wsModels\WSConstants;
 use app\models\yiiModels\YiiExperimentModel;
+use app\models\yiiModels\YiiSensorModel;
+use app\components\helpers\Vocabulary;
 
 require_once '../config/config.php';
 
@@ -56,7 +58,6 @@ class DatasetController extends Controller {
     const SENSOR_DATA_LABEL = "sensorLabel";
     const SENSOR_DATA_TYPE = "sensorType";
 
-    const PROVENANCE_PARAMS_VALUES = "provenanceNamespaces";
     /**
      * define the behaviors
      * @return array
@@ -149,7 +150,7 @@ class DatasetController extends Controller {
      *                                file uri => alias
      * @return mixed
      */
-    public function actionGenerateAndDownloadDataSensorCreationFile() {
+    public function actionGenerateAndDownloadSensorDatasetCreationFile() {
         $fileColumns[] = DatasetController::DATE;
         $variables = Yii::$app->request->post('variables');
         foreach ($variables as $variableAlias) {
@@ -166,85 +167,7 @@ class DatasetController extends Controller {
         fclose($file);
     }
 
-    
-    /**
-     * 
-     * @param type $experimentUri
-     */
-    public function actionCreateProvenanceFromDataset(){
-
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $data = Yii::$app->request->post();
-        
-        $documents = [];
-        
-        $provenance = $data["provenance"];
-        if(isset($data["documents"])){
-            $documents = $data["documents"];
-        }
-        $provenanceUri = $this->createProvenance(
-                            $provenance['label'],
-                            $provenance['comment'],
-                            $provenance['sensingDevices'],
-                            $provenance['agents']
-                    );
-        
-        $this->linkDocumentsToProvenance($provenanceUri, $documents);
-        
-        if($provenanceUri != false){
-            return $provenanceUri;
-        }
-        return false;
-    }
-    
-    public function actionGetProvenancesSelectList(){
-        $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
-
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $provenanceService = new WSProvenanceModel();
-
-        $provenances= [];
-        $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
-        
-        foreach ($provenances as $uri => $provenance) {
-            $provenancesArray[$uri] = $provenance->label . " (" . $uri . ")";
-        }
-        $result['provenances'] = $provenances;
-        $result['provenancesByUri'] = $provenancesArray;
-        return $result;
-    }
-    
-    /**
-     * 
-     * @param type $experimentUri
-     */
-    public function actionGetExperimentMesuredVariablesSelectList($experimentUri){
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-        $variables = [];
-        $variables["data"] = [];
-        $experimentVariable = $this->getExperimentMesuredVariablesSelectList($experimentUri);
-        foreach ($experimentVariable as $key => $value) {
-            $variables["data"][] = ["id" => $key, "text" => $value];
-        }
-       
-        return($variables);
-    }
-    
-    private function getExperimentMesuredVariablesSelectList($experimentUri) {
-        if(!isset($experimentUri) || empty($experimentUri)){
-            return [];
-        }
-        $experimentModel = new YiiExperimentModel();
-        $variables = $experimentModel->getMeasuredVariables(
-                Yii::$app->session[WSConstants::ACCESS_TOKEN],
-                $experimentUri
-                );
-        if(isset($variables) && is_array($variables)){
-            return $variables;
-        }
-        return [];
-    }
-    
+  
     /**
      * 
      * @param array $csvErrors the errors founded. 
@@ -448,7 +371,8 @@ class DatasetController extends Controller {
             unlink($serverFilePath);
 
             //Loaded given variables
-            $experimentVariables = $this->getExperimentMesuredVariablesSelectList($datasetModel->experiment) ;
+            $experimentController = new ExperimentController();
+            $experimentVariables = $experimentController->getExperimentMesuredVariablesSelectList($datasetModel->experiment) ;
             $csvVariables = array_slice($csvHeaders, 2);
             // select all variables that don"t exist in experiment variables
             $variablesNotInExperiment = array_diff($csvVariables, array_values($experimentVariables)); 
@@ -571,180 +495,61 @@ class DatasetController extends Controller {
             $csvHeaders = str_getcsv(array_shift($fileContent), Yii::$app->params['csvSeparator']);
             unlink($serverFilePath);
 
-            //Loaded given variables
-            $givenVariables = $datasetModel->variables;
-
+            $sensorController = new SensorController();
+            $sensorVariables = $sensorController->getSensorMeasuredVariablesSelectList($datasetModel->provenanceSensingDevices) ;
+            $csvVariables = array_slice($csvHeaders, 1);
+            // select all variables that don"t exist in experiment variables
+            $variablesNotInSensor = array_diff($csvVariables, array_values($sensorVariables)); 
+     
             // Check CSV header with variables
-            if (array_slice($csvHeaders, 1) === $givenVariables) {
+            if (count($variablesNotInSensor) === 0) {
                 // Get selected or create Provenance URI
-                if (!array_key_exists($datasetModel->provenanceUri, $provenances)) {
-                    $provenanceUri = $this->createProvenance(
-                            $datasetModel->provenanceUri,
-                            $datasetModel->provenanceComment,
-                            $datasetModel->provenanceSensingDevices,
-                            $datasetModel->provenanceAgents
-                    );
-                    $datasetModel->provenanceUri = $provenanceUri;
-                    $provenances = $this->mapProvenancesByUri($provenanceService->getAllProvenances($token));
-                    $this->view->params["provenances"] = $provenances;
-                } else {
-                    $provenanceUri = $datasetModel->provenanceUri;
+               $provenanceUri = $datasetModel->provenanceUri;
+                // Save CSV data linked to provenance URI
+                $values = [];
+                foreach ($fileContent as $rowStr) {
+                    $row = str_getcsv($rowStr, Yii::$app->params['csvSeparator']);
+                    $date = $row[0];
+                    for ($i = 1; $i < count($row); $i++) {
+                        $values[] = [
+                            "provenanceUri" => $provenanceUri,
+                            "variableUri" => array_search($csvVariables[$i - 1], $sensorVariables),
+                            "date" => $date,
+                            "value" => $row[$i]
+                        ];
+                    }
                 }
+                
+                $dataService = new WSDataModel();
+                $result = $dataService->post($token, "/", $values);
+                // If data successfully saved
+                if (is_array($result->metadata->datafiles) && count($result->metadata->datafiles) > 0) {
+                    $arrayData = $this->csvToArray($fileContent);
+                    return $this->render('_form_dataset_created', [
+                                'model' => $datasetModel,
+                                'handsontable' => $this->generateHandsontableDataset($csvHeaders, $arrayData),
+                                'insertedDataNumber' => count($arrayData)
+                    ]);
+                } else {
 
-                // If provenance sucessfully created
-                if ($provenanceUri) {
-                    // Link uploaded documents to provenance URI
-                    $linkDocuments = true;
-                    if (is_array($datasetModel->documentsURIs) && is_array($datasetModel->documentsURIs["documentURI"])) {
-                        $linkDocuments = $this->linkDocumentsToProvenance(
-                                $provenanceUri,
-                                $datasetModel->documentsURIs["documentURI"]
-                        );
-                    }
-
-                    $datasetModel->documentsURIs = null;
-                      
-                    if ($linkDocuments === true) {
-                        // Save CSV data linked to provenance URI
-                        $values = [];
-                        $scientifObjectUri = null;
-                        foreach ($fileContent as $rowStr) {
-                            $row = str_getcsv($rowStr, Yii::$app->params['csvSeparator']);
-                            $date = $row[0];
-                            for ($i = 1; $i < count($row); $i++) {
-                                $values[] = [
-                                    "provenanceUri" => $provenanceUri,
-                                    "objectUri" => $scientifObjectUri,
-                                    "variableUri" => array_search($givenVariables[$i - 1], $variables),
-                                    "date" => $date,
-                                    "value" => $row[$i]
-                                ];
-                            }
-                        }
-                        
-                        $dataService = new WSDataModel();
-                        $result = $dataService->post($token, "/", $values);
-//                        var_dump($result);exit;
-                        // If data successfully saved
-                        if (is_array($result->metadata->datafiles) && count($result->metadata->datafiles) > 0) {
-                            $arrayData = $this->csvToArray($fileContent);
-                            return $this->render('_form_dataset_created', [
-                                        'model' => $datasetModel,
-                                        'handsontable' => $this->generateHandsontableDataset($csvHeaders, $arrayData),
-                                        'insertedDataNumber' => count($arrayData)
-                            ]);
-                        } else {
-
-                            return $this->render('create_on_sensor', [
-                                        'model' => $datasetModel,
-                                        'errors' => $result->metadata->status
-                            ]);
-                        }
-                    } else {
-                        return $this->render('create_on_sensor', [
-                                    'model' => $datasetModel,
-                                    'errors' => [
-                                        Yii::t("app/messages", "Error while creating linked documents")
-                                    ]
-                        ]);
-                    }
+                    return $this->render('create_on_sensor', [
+                                'model' => $datasetModel,
+                                'errors' => $result->metadata->status
+                    ]);
+                }
+                    
                 } else {
                     return $this->render('create_on_sensor', [
                                 'model' => $datasetModel,
                                 'errors' => [
-                                    Yii::t("app/messages", "Error while creating provenance")
+                                    Yii::t("app/messages", "CSV file headers does not match variables used in this experiment. The following Variables are not associated to this experiment " ) . "(" . implode(",", $variablesNotInExperiment) . ")"
                                 ]
                     ]);
-                }
-            } else {
-                return $this->render('create_on_sensor', [
-                            'model' => $datasetModel,
-                            'errors' => [
-                                Yii::t("app/messages", "CSV file headers does not match selected variables")
-                            ]
-                ]);
             }
         } else {
             return $this->render('create_on_sensor', [
                         'model' => $datasetModel,
             ]);
-        }
-    }
-
-    /**
-     * Create provenance from an alias and a comment
-     * @param type $alias label of the provenance
-     * @param type $comment comment linked to the provenance
-     * @param type $sensingDevice uri of the sensor
-     * @param String $agent uri of the agent
-     * @return boolean
-     */
-    private function createProvenance($alias, $comment,$sensingDevice = null, $agent =null) {
-        $provenanceService = new WSProvenanceModel();
-        $date = new \DateTime();
-        $createdDate = $date->format("Y-m-d\TH:i:sO");
-        $metadata = [
-            "namespaces" => Yii::$app->params[self::PROVENANCE_PARAMS_VALUES],
-            "prov:Agent" =>[
-                "oeso:SensingDevice" => [
-                ],
-                "oeso:Operator" => [
-                ]
-              ],
-            ];
-        if($sensingDevice != null){
-            $metadata["prov:Agent"]["oeso:SensingDevice"] = $sensingDevice;
-        }
-        if($agent != null){
-            $metadata["prov:Agent"]["oeso:Operator"] = $agent;
-        }
-        $provenanceUri = $provenanceService->createProvenance(
-                Yii::$app->session['access_token'],
-                $alias,
-                $comment,
-                $createdDate,
-                $metadata
-        );
-
-        if (is_string($provenanceUri) && $provenanceUri != "token") {
-            return $provenanceUri;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Link list of documents to the given provenance uri
-     * (unlinked -> linked)
-     * @param string $provenanceUri
-     * @param array $documents
-     * @return boolean
-     */
-    private function linkDocumentsToProvenance($provenanceUri, $documents) {
-        $documentModel = new YiiDocumentModel(null, null);
-
-        // associated documents update
-        foreach ($documents as $documentURI) {
-            $documentModel = new YiiDocumentModel(null, null);
-            $documentModel->findByURI(Yii::$app->session['access_token'], $documentURI);
-            $documentModel->status = "linked";
-            $concernedItem = new YiiConcernedItemModel();
-            $concernedItem->uri = $provenanceUri;
-            $concernedItem->rdfType = Yii::$app->params["Provenance"];
-            $documentModel->concernedItems = [$concernedItem];
-            $dataToSend[] = $documentModel->attributesToArray();
-        }
-
-        if (isset($dataToSend)) {
-            $requestRes = $documentModel->update(Yii::$app->session['access_token'], $dataToSend);
-
-            if (is_string($requestRes) && $requestRes === "token") {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return true;
         }
     }
     

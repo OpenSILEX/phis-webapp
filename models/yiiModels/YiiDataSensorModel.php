@@ -16,7 +16,6 @@ namespace app\models\yiiModels;
 
 use Yii;
 use app\models\yiiModels\YiiDatasetModel;
-use app\models\wsModels\WSDatasetModel;
 
 /**
  * Model for the dataset. Used with web services
@@ -41,7 +40,7 @@ class YiiDataSensorModel extends YiiDatasetModel {
     public function attributeLabels() {
         $rules =  parent::attributeLabels();
         $rules['variables'] = Yii::t('app', 'Variable(s)');
-
+        $rules['provenanceSensingDevices' ] = Yii::t('app', 'Sensor');
         return $rules;
     }
 
