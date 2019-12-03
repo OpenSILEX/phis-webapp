@@ -16,7 +16,6 @@ namespace app\models\yiiModels;
 
 use Yii;
 use app\models\yiiModels\YiiDatasetModel;
-use app\models\wsModels\WSDatasetModel;
 
 /**
  * Model for the dataset. Used with web services

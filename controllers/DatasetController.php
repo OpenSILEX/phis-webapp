@@ -28,6 +28,7 @@ use openSILEX\handsontablePHP\classes\ColumnConfig;
 use app\models\wsModels\WSConstants;
 use app\models\yiiModels\YiiExperimentModel;
 use app\models\yiiModels\YiiSensorModel;
+use app\components\helpers\Vocabulary;
 
 require_once '../config/config.php';
 
@@ -221,6 +222,39 @@ class DatasetController extends Controller {
         return $result;
     }
     
+     /**
+     * Return an array with provenance list with all characteristics
+     * and provenance label mapped with provenance uri
+     * @param array $sensorUri Array of sensor uri
+     * @return array
+     */
+    public function actionAjaxGetSpecificSensorProvenancesSelectList(){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
+
+        $data = Yii::$app->request->post();
+        $result = [];
+        $provenancesFiltered = [];
+        if(isset($data["sensorUris"])){
+            
+                $provenanceService = new WSProvenanceModel();
+                $jsonValueFilter =[];
+                $jsonValueFilter["metadata.prov:Agent.oeso:SensingDevice"]= ["\$all" => $data["sensorUris"]];
+                $provenancesFiltered = $provenanceService->getSpecificProvenancesByCriteria(
+                $token,
+                    ['jsonValueFilter' => json_encode($jsonValueFilter)]
+                );
+        }
+        $provenances = $this->mapProvenancesByUri($provenancesFiltered);
+        
+        foreach ($provenances as $uri => $provenance) {
+            $provenancesArray[] = ['id' => $uri, 'text' =>$provenance->label . " (" . $uri . ")"];
+        }
+        $result['provenances'] = $provenances;
+        $result['provenancesByUri'] = $provenancesArray;
+        return $result;
+    }
+
     /**
      * Return an array of variable label mapped with variable uri
      * @return array
@@ -260,7 +294,7 @@ class DatasetController extends Controller {
     
     /**
      * variables associated to a given sensor with select2 dropdwon format
-     * @param type $sensorUri uri of the sensor
+     * @param array $sensorUri uris of the sensors
      * @return array 
      *  @example {
      *      [
@@ -273,15 +307,19 @@ class DatasetController extends Controller {
      *  .....
      * }
      */
-    public function actionGetSensorMesuredVariablesSelectList($sensorUri){
+    public function actionAjaxGetSensorMeasuredVariablesSelectList(){
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $data = Yii::$app->request->post();
         $variables = [];
         $variables["data"] = [];
-        $experimentVariable = $this->getSensorMesuredVariablesSelectList($sensorUri);
-        foreach ($experimentVariable as $key => $value) {
-            $variables["data"][] = ["id" => $key, "text" => $value];
+        if(isset($data['sensorUris'])){
+            foreach ($data['sensorUris'] as $uri) {
+                 $sensorVariables = $this->getSensorMeasuredVariablesSelectList($uri);
+                foreach ($sensorVariables as $key => $value) {
+                    $variables["data"][] = ["id" => $key, "text" => $value];
+                }
+            }
         }
-       
         return($variables);
     }
     
@@ -294,12 +332,12 @@ class DatasetController extends Controller {
      *      "http://www.opensilex.org/demo/variables/id/v002" => "labelv2",
      * ]
      */
-    private function getSensorMesuredVariablesSelectList($sensorUri) {
+    private function getSensorMeasuredVariablesSelectList($sensorUri) {
         if(!isset($sensorUri) || empty($sensorUri)){
             return [];
         }
-        $experimentModel = new YiiSensorModel();
-        $variables = $experimentModel->getMeasuredVariables(
+        $sensorModel = new YiiSensorModel();
+        $variables = $sensorModel->getMeasuredVariables(
                 Yii::$app->session[WSConstants::ACCESS_TOKEN],
                 $sensorUri
                 );
@@ -308,6 +346,7 @@ class DatasetController extends Controller {
         }
         return [];
     }
+    
     /**
      * 
      * @param array $csvErrors the errors founded. 

@@ -281,6 +281,7 @@ return [
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',
     'Select type...' => 'Sélectionez le type',
     'Select unit alias...' => 'Sélectionnez l\'alias de l\'unité',
+    'Sensor(s)' => 'Capteur(s)',
     'Sensor Data Visualization' => 'Visualisation des données du capteur',
     'Sensor Position' => 'Position du Capteur',
     'Sensor Profile' => 'Profil du Capteur',
