@@ -51,6 +51,7 @@ return [
     'Add Document' => 'Ajouter un document',
     'Add Document Script' => 'Ajouter un script',
     'Add on scientific object' => 'Importer pour un objet scientifique',
+    'Add only on sensor' => 'Ajout des données capteurs',
     'Add row' => 'Ajouter une ligne',
     'Add Sensors' => 'Ajouter des Capteurs',
     'Add Vectors' => 'Ajouter des Vecteurs',
