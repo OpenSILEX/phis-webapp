@@ -47,7 +47,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
             settings = window[settings];
             if(experimentUri !== undefined && experimentUri !== null ){
                 $.ajax({
-                    url: '<?= Url::toRoute(['dataset/get-experiment-mesured-variables-select-list']); ?>',
+                    url: '<?= Url::toRoute(['experiment/ajax-get-experiment-mesured-variables-select-list']); ?>',
                     type: 'GET',
                     dataType: 'json',
                     data: {"experimentUri": experimentUri}
@@ -112,7 +112,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 });
                 
                  $.ajax({
-                    url: 'index.php?r=dataset%2Fcreate-provenance-from-dataset',
+                    url: '<?= Url::toRoute(['provenance/ajax-create-provenance-from-dataset']); ?>',
                     type: 'POST',
                     datatype: 'json',
                     data: {provenance :provenance,
@@ -164,7 +164,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         
         function loadProvenances(provenanceSelectedUri){
             return $.ajax({
-                    url: 'index.php?r=dataset%2Fget-provenances-select-list',
+                    url: '<?= Url::toRoute(['provenance/ajax-get-provenances-select-list']); ?>',
                     type: 'POST',
                     datatype: 'json'
             });
@@ -245,40 +245,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 }
         }
         
-        function saveDocument(){
-            // On save get document form values
-            var formData = new FormData();
-            var file_data = $('#document-content #yiidocumentmodel-file').prop('files')[0];
-            formData.append('file', file_data);
-            var other_data = $('form').serializeArray();
-            $.each(other_data, function (key, input) {
-                formData.append(input.name, input.value);
-            });
-
-            // Send documents form
-            $.ajax({
-                url: 'index.php?r=document%2Fcreate-from-dataset',
-                type: 'POST',
-                processData: false,
-                datatype: 'json',
-                contentType: false,
-                data: formData
-
-            })
-            .done(function (data) {
-                    // Add document URI and close document add form
-                    $('#yiidatasetmodel-documentsuris-documenturi-' + nbDocuments).val(data);
-                    documentUploaded = true;
-                    $('#document-modal').modal('toggle');
-
-            })
-            .fail(function (jqXHR, textStatus) {
-                    // Disaply errors
-                    $('#document-save-msg').parent().removeClass('alert-info');
-                    $('#document-save-msg').parent().addClass('alert-danger');
-                    $('#document-save-msg').html('Request failed: ' + textStatus);
-            });
-        }
+        
     </script>
         <script>
     $(document).ready(function () {
@@ -635,12 +602,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
 
         // Initial document count
         var nbDocuments = -1;
-        $(document).on('click', '#document-save', function () {
-            saveDocument();
-            return false;
-        });
-
-        // Open document add form on click
+        
+          // Open document add form on click
         $('.buttonDocuments').click(function () {
             console.log("click")
             nbDocuments++;
@@ -648,6 +611,43 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
             $('#document-modal').modal('toggle');
         });
 
+        $(document).on('click', '#document-save', function () {
+            // On save get document form values
+            var formData = new FormData();
+            var file_data = $('#document-content #yiidocumentmodel-file').prop('files')[0];
+            formData.append('file', file_data);
+            var other_data = $('form').serializeArray();
+            $.each(other_data, function (key, input) {
+                formData.append(input.name, input.value);
+            });
+
+            // Send documents form
+            $.ajax({
+                url: '<?= Url::to(['document/create-from-dataset']);?>',
+                type: 'POST',
+                processData: false,
+                datatype: 'json',
+                contentType: false,
+                data: formData
+
+            })
+            .done(function (data) {
+                    // Add document URI and close document add form
+                    $('#yiidatasetmodel-documentsuris-documenturi-' + nbDocuments).val(data);
+                    documentUploaded = true;
+                    $('#document-modal').modal('toggle');
+
+            })
+            .fail(function (jqXHR, textStatus) {
+                    // Disaply errors
+                    $('#document-save-msg').parent().removeClass('alert-info');
+                    $('#document-save-msg').parent().addClass('alert-danger');
+                    $('#document-save-msg').html('Request failed: ' + textStatus);
+            });
+            return false;
+        });
+
+      
         // Download adjusted to variables CSV template file on click
         $(document).on('change', '#uriVariable-selector', function () {
             var variablesLabels = [];
@@ -683,6 +683,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         // Update provenance fields depending of startup value
         updateProvenanceFields($("#provenance-selector").val());
      });    
+     
+   
     </script>
     <style>
         /* This is a css loader. It's not related to vue-form-wizard */
