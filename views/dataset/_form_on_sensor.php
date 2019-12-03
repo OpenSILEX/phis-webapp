@@ -47,7 +47,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
             settings = window[settings];
             if(sensorUris !== undefined && sensorUris !== null ){
                 $.ajax({
-                    url: '<?= Url::toRoute(['dataset/ajax-get-sensor-measured-variables-select-list']); ?>',
+                    url: '<?= Url::toRoute(['sensor/ajax-get-sensor-measured-variables-select-list']); ?>',
                     type: 'POST',
                     dataType: 'json',
                     data: {"sensorUris": sensorUris}
@@ -159,7 +159,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         
         function updateProvenancesWithSpecificSensorUris(sensorUris){
             return $.ajax({
-                    url: "<?= Url::toRoute(['dataset/ajax-get-specific-sensor-provenances-select-list']); ?>",
+                    url: "<?= Url::toRoute(['provenance/ajax-get-specific-sensor-provenances-select-list']); ?>",
                     type: 'POST',
                     datatype: 'json',
                     data: {"sensorUris": sensorUris}
@@ -397,7 +397,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
             ],
             'pluginOptions' => [
                 'allowClear' => false,
-                'tags' => true
+                'tags' => true,
+                'maximumSelectionLength' =>'1'
             ],
                 'pluginEvents' => [
                 'select2:select' => 'function(e) { populateVariableListFromSensorUris(e.params.data.id); }',
@@ -442,7 +443,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 </p>
 
                 <hr>
-                <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetExemple.csv') ?></i>
+                <i style="float: right"><?= Html::a("<span class=\"glyphicon glyphicon-download-alt\" aria-hidden=\"true\"></span> " . Yii::t('app', 'Download Example'), \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetSensorExemple.csv') ?></i>
                     <br>
                     <div class="alert alert-info" role="alert">
                         <b><?= Yii::t('app/messages', 'File Rules') ?> : </b>
@@ -453,10 +454,6 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                         <br/>
                         <b><?= Yii::t('app', 'Columns') ?> : </b>
                         <table class="table table-hover" id="dataset-csv-columns-desc">
-                            <tr>
-                                <th style="color:red">ScientificObjectAlias *</th>
-                                <td><?= Yii::t('app/messages', 'The ALIAS of the scientific object for the choosen experiment (e.g MTP_WW_2019_P050_SH1_2018_LF14)') ?></td>
-                            </tr>
                             <tr>
                                 <th style="color:red">Date *</th>
                                 <td><p><?= Yii::t('app/messages', 'Acquisition date of the data') ?> (format ISO 8601: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ssZ) </p> </td>
@@ -470,7 +467,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                     
         <?= 
         Html::a("<button type='button' class='btn btn-success'> " . Yii::t('app', 'Download Template') . "</button>",
-            \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv',
+            \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetSensorTemplate.csv',
             ['id' => 'downloadDatasetTemplate']
         );
         ?>
@@ -675,7 +672,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 variablesLabels.push($(sel).text());
             });
             $.ajax({
-                url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-creation-file',
+                url: 'index.php?r=dataset%2Fgenerate-and-download-sensor-dataset-creation-file',
                 type: 'POST',
                 datatype: 'json',
                 data: {variables: variablesLabels}

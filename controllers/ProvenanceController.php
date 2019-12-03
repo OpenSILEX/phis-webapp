@@ -189,4 +189,37 @@ class ProvenanceController extends Controller {
             return true;
         }
     }
+    
+     /**
+     * Return an array with provenance list with all characteristics
+     * and provenance label mapped with provenance uri
+     * @param array $sensorUri Array of sensor uri
+     * @return array
+     */
+    public function actionAjaxGetSpecificSensorProvenancesSelectList(){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $token = Yii::$app->session[WSConstants::ACCESS_TOKEN];
+
+        $data = Yii::$app->request->post();
+        $result = [];
+        $provenancesFiltered = [];
+        if(isset($data["sensorUris"])){
+            
+                $provenanceService = new WSProvenanceModel();
+                $jsonValueFilter =[];
+                $jsonValueFilter["metadata.prov:Agent.oeso:SensingDevice"]= ["\$all" => $data["sensorUris"]];
+                $provenancesFiltered = $provenanceService->getSpecificProvenancesByCriteria(
+                $token,
+                    ['jsonValueFilter' => json_encode($jsonValueFilter)]
+                );
+        }
+        $provenances = $this->mapProvenancesByUri($provenancesFiltered);
+        
+        foreach ($provenances as $uri => $provenance) {
+            $provenancesArray[] = ['id' => $uri, 'text' =>$provenance->label . " (" . $uri . ")"];
+        }
+        $result['provenances'] = $provenances;
+        $result['provenancesByUri'] = $provenancesArray;
+        return $result;
+    }
 }

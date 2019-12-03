@@ -607,4 +607,64 @@ class SensorController extends Controller {
             ]);
         }
     }
+    
+     /**
+     * variables associated to a given sensor with select2 dropdwon format
+     * @param array $sensorUri uris of the sensors
+     * @return array 
+     *  @example {
+     *      [
+     *          id =>"http://www.opensilex.org/demo/variables/id/v001", "text" => "labelv1",
+     *          
+     *      ],
+     *      [
+     *          id => "http://www.opensilex.org/demo/variables/id/v002", "text" => "labelv2",
+     *      ],
+     *  .....
+     * }
+     */
+    public function actionAjaxGetSensorMeasuredVariablesSelectList(){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $data = Yii::$app->request->post();
+        $variables = [];
+        $variables["data"] = [];
+        if(isset($data['sensorUris'])){
+            $sensorVariables = $this->getSensorMeasuredVariablesSelectList($data['sensorUris']);
+            foreach ($sensorVariables as $key => $value) {
+                $variables["data"][] = ["id" => $key, "text" => $value];
+            }
+        }
+        return($variables);
+    }
+    
+    
+    /**
+     * variables associated to a given sensor
+     * @param array $sensorUris
+     * @return type
+     *  @example [
+     *      "http://www.opensilex.org/demo/variables/id/v001" => "labelv1",
+     *      "http://www.opensilex.org/demo/variables/id/v002" => "labelv2",
+     * ]
+     */
+    public function getSensorMeasuredVariablesSelectList($sensorUris) {
+        $variables = [];
+        if(!isset($sensorUris) || empty($sensorUris)){
+            return $variables;
+        }
+        $sensorModel = new YiiSensorModel();
+        foreach ($sensorUris as $uri) {
+            $variablesTmp = $sensorModel->getMeasuredVariables(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN],
+                $uri
+                );
+            $variables = array_merge($variables,$variablesTmp);
+        }
+        
+        if(isset($variables) && is_array($variables)){
+            return $variables;
+        }
+        return [];
+    }
+    
 }
