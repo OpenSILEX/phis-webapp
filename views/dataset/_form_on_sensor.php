@@ -110,8 +110,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                     documents.push($(documentInput).val());
                 });
                 
-                 $.ajax({
-                    url: 'index.php?r=dataset%2Fcreate-provenance-from-dataset',
+                $.ajax({
+                    url: '<?= Url::toRoute(['provenance/ajax-create-provenance-from-dataset']); ?>',
                     type: 'POST',
                     datatype: 'json',
                     data: {provenance :provenance,
@@ -183,8 +183,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         
         function loadProvenances(provenanceSelectedUri){
             return $.ajax({
-                    url: 'index.php?r=dataset%2Fget-provenances-select-list',
-                    type: 'GET',
+                    url: '<?= Url::toRoute(['provenance/ajax-get-provenances-select-list']); ?>',
+                    type: 'POST',
                     datatype: 'json'
             });
         }
