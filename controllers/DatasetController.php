@@ -542,7 +542,7 @@ class DatasetController extends Controller {
                     return $this->render('create_on_sensor', [
                                 'model' => $datasetModel,
                                 'errors' => [
-                                    Yii::t("app/messages", "CSV file headers does not match variables used in this experiment. The following Variables are not associated to this experiment " ) . "(" . implode(",", $variablesNotInExperiment) . ")"
+                                    Yii::t("app/messages", "CSV file headers does not match variables followed by this sensor. The following Variables are not associated to this sensor " ) . "(" . implode(",", $variablesNotInSensor) . ")"
                                 ]
                     ]);
             }
