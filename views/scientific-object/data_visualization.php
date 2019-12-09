@@ -453,6 +453,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                             }")
                         ],
                         'plotOptions' => [
+                            'line' => [
+                                'marker' => [
+                                    'enabled' => true,
+                                    'symbol' => 'circle',
+                                    'radius' => 3
+                                ]
+                            ],
                             'series' => [
                                 'dataGrouping' => [
                                     'enabled' => false
@@ -545,16 +552,16 @@ $this->params['breadcrumbs'][] = $this->title;
 </div>
 <script>
     $(document).ready(function () {
-        
+
         $("#filterSelect").on("change", function (e) {
             var id = $("#filterSelect").select2("data")[0].id;
         });
 
-        <?php
-        if (isset($data)) {
-            echo "$('#data-visualization-form').collapse('hide');";
-        }
-        ?>
+<?php
+if (isset($data)) {
+    echo "$('#data-visualization-form').collapse('hide');";
+}
+?>
         $('#data-visualization-form').on('hidden.bs.collapse', function () {
             $('#graphic').show();
             $('#visualization-images').show();
@@ -567,7 +574,7 @@ $this->params['breadcrumbs'][] = $this->title;
         });
 
     });
-    
+
     $(window).on('load', function () { // to put the script at the end of the page 
     });
 

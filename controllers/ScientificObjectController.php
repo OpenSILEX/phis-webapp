@@ -1014,14 +1014,18 @@ class ScientificObjectController extends Controller {
             $searchModel->provenance = $_GET['provenances'];
             $searchModel->dateSortAsc = 'true'; //FIX HIGHCHARTS WHEN FLAGS IS ATTACHED TO A SERIE
             $searchResult = $searchModel->search($token, null);
+           
             foreach ($searchResult->getModels() as $model) {
-                if (!empty($model->value)) {
-                    $dataToSave = null;
-                    $dataToSave["provenanceUri"] = $model->provenanceUri;
-                    $dataToSave["date"] = (strtotime($model->date)) * 1000;
+                $dataToSave = null;
+                $dataToSave["provenanceUri"] = $model->provenanceUri;
+                $dataToSave["date"] = (strtotime($model->date)) * 1000;
+                if(is_numeric($model->value)){
                     $dataToSave["value"] = doubleval($model->value);
-                    $data[] = $dataToSave;
+                } else {
+                    $dataToSave["value"]=null;
                 }
+                
+                $data[] = $dataToSave;
             }
 
             $dataByProvenance = array();
@@ -1038,7 +1042,6 @@ class ScientificObjectController extends Controller {
                 $dataByProvenanceToSave[] = $dataEl['value'];
                 $dataByProvenance[$dataEl['provenanceUri']][] = $dataByProvenanceToSave;
             }
-
 
             /* Step 3: Add photos serie to each provenance or null
              * e.g :
@@ -1108,7 +1111,7 @@ class ScientificObjectController extends Controller {
                 }
             } else {
                 foreach ($searchResult->getModels() as $model) {
-                    
+
                     $annotationObjects = $searchModel->getAnnotations($token, ["uri" => $model->uri]);
                     $annotations = array();
                     foreach ($annotationObjects as $annotationObject) {
@@ -1149,8 +1152,8 @@ class ScientificObjectController extends Controller {
             ];
 
             $searchParams = Yii::$app->request->queryParams;
-            
-            
+
+
             // Get events associated to the table widget
             $searchEventModel = new EventSearch();
             $searchEventModel->searchConcernedItemUri = $uri;
@@ -1161,8 +1164,6 @@ class ScientificObjectController extends Controller {
             $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
             $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
             $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE; // multiple gridview pagination
-           
-            
             // Get annotations associated to the table widget
             $searchAnnotationModel = new AnnotationSearch();
             $annotationSearchParameters = [];
@@ -1283,7 +1284,7 @@ class ScientificObjectController extends Controller {
      * @param {Array} $data Array that stores multiple associative arrays.
      */
     function group_by($key, $array) {
-        
+
         $result = array();
         foreach ($array as $val) {
             if (array_key_exists($key, $val)) {
