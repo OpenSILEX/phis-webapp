@@ -410,7 +410,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                                          :before-change="beforeSelectProvenance">
             <hr style="border-color:gray;"/>
             <h3><i>  <?= Yii::t('app', 'Need a dataset template ? (Optional)') ?></i></h3>
-            <p class="alert alert-info"><?= Yii::t('app/messages', 'The variables associated to the choosen experiment'); ?></p>
+            <p class="alert alert-info"><?= Yii::t('app/messages', 'The variables associated to the choosen sensor'); ?></p>
         <?php
             $select2VariablesOptions =  [
                 'placeholder' => Yii::t('app/messages', 'Select one or more variables') . ' ...',
