@@ -11,10 +11,7 @@ build:webapp:
   stage: build
   script:
      - composer install --ignore-platform-reqs 
-  artifacts:
-    paths:
-    - phis-webapp
-    expire_in: 1 week
+ 
 
 deploy:webapp:
   stage: deploy
