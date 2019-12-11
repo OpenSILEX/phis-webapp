@@ -12,6 +12,7 @@ build:webapp:
  
 
 deploy:webapp:
+  image: ubuntu:18.04
   stage: deploy
   script:
     - apt-get update && apt-get install \
