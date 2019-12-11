@@ -1,25 +1,15 @@
 image: ubuntu:18.0.4
 
 variables:
-  # War filename
-  WAR : openSilexTestAPI
-  # RSYNC destination
+  WAR : openSilexTestAPI  # War filename
   RSYNC_DEST : test
-  # Remote IP
   REMOTE_IP : "138.102.159.37"
-  # SCP Account
   SCP_ACCOUNT : mvidal
-  # SCP key
   SCP_KEY : opensilex_key
-  # RSYNC key
   RSYNC_KEY : opensilex_key
-  # RSYNC user
   RSYNC_USER : phis
-  # Manager Account
   MANAGER_ACCOUNT : phis
-  # Manager Password (need to escape !)
   MANAGER_PASS : "fieldc1.61!"
-  # RSYNC Account
   RSYNC_ACCOUNT : phis
   SCRIPT_DIR : "$(dirname "$(readlink -f "$0")")"
 
