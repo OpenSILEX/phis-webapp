@@ -14,5 +14,9 @@ build:webapp:
 deploy:webapp:
   stage: deploy
   script:
-     - git clone https://forgemia.inra.fr/OpenSILEX/opensilex-dev-tools.git ../scripts
+    - apt-get install \
+        rsync \
+        openssh-client \
+        ca-certificates \
+    - git clone https://forgemia.inra.fr/OpenSILEX/opensilex-dev-tools.git ../scripts
  
