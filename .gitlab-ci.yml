@@ -1,4 +1,3 @@
-image: ubuntu:18.0.4
 
 # define system environment variables 
 cache:
@@ -16,5 +15,6 @@ build:webapp:
 deploy:webapp:
   stage: deploy
   script:
+     -
      - git clone https://forgemia.inra.fr/OpenSILEX/opensilex-dev-tools.git ../scripts
  
