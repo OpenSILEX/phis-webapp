@@ -15,9 +15,6 @@ deploy:webapp:
   image: ubuntu:18.04
   stage: deploy
   script:
-    - apt-get update && apt-get install \
-        rsync \
-        openssh-client \
-        ca-certificates \
+    - apt-get update && apt-get install git rsync openssh-client ca-certificates 
     - git clone https://forgemia.inra.fr/OpenSILEX/opensilex-dev-tools.git ../scripts
  
