@@ -17,5 +17,4 @@ deploy:webapp:
   stage: deploy
   script:
      - git clone https://forgemia.inra.fr/OpenSILEX/opensilex-dev-tools.git ../scripts
-  dependencies:
-    - build:webapp
+ 
