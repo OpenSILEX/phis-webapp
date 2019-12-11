@@ -1,19 +1,5 @@
 image: ubuntu:18.0.4
 
-variables:
-  WAR : openSilexTestAPI  # War filename
-  RSYNC_DEST : test
-  REMOTE_IP : "138.102.159.37"
-  SCP_ACCOUNT : mvidal
-  SCP_KEY : opensilex_key
-  RSYNC_KEY : opensilex_key
-  RSYNC_USER : phis
-  MANAGER_ACCOUNT : phis
-  MANAGER_PASS : "fieldc1.61!"
-  RSYNC_ACCOUNT : phis
-  SCRIPT_DIR : "$(dirname "$(readlink -f "$0")")"
-
-
 # define system environment variables 
 cache:
     key: "$CI_COMMIT_REF_SLUG"
