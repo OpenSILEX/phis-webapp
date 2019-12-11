@@ -18,7 +18,7 @@ variables:
     # Manager Account
     MANAGER_ACCOUNT : phis
     # Manager Password (need to escape !)
-    MANAGER_PASS : "fieldc1.61\!"
+    MANAGER_PASS : "fieldc1.61!"
     # RSYNC Account
     RSYNC_ACCOUNT : phis
     SCRIPT_DIR : "$(dirname "$(readlink -f "$0")")"
