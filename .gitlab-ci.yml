@@ -8,6 +8,7 @@ variables:
    SCP_ACCOUNT : mvidal
    REMOTE_IP : "138.102.159.37"
    KEY_DIR : "/tmp/opensilex_key"
+   TMP_DIR : "/tmp/phis-webapp"
 
 
 build:webapp:
@@ -28,7 +29,7 @@ deploy:webapp:
     - ssh-add <(echo "$OPENSILEX_PRIVATE_KEY")
     - apt-get install -y rsync
   script:
-    - TMP_DIR = "$(mktemp -d)"
+    - mkdir -p $TMP_DIR
     - echo $OPENSILEX_PRIVATE_KEY >> $KEY_DIR
     - chmod 400 $KEY_DIR
     - chmod 400 $KEY_DIR
