@@ -1,0 +1,22 @@
+image: ubuntu:18.0.4
+
+# define system environment variables 
+before_script:
+ - "wget $SWAGGER_CLI_URL -O swagger-codegen-cli.jar"
+
+cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - "phis-webapp/vendor"
+
+webappBuild:
+  image: composer:1.9.1
+  stage: build
+  script:
+     - git clone git@forgemia.inra.fr:OpenSILEX/phis-webapp.git
+     - cd phis-webapp
+     - composer install --ignore-platform-reqs 
+  artifacts:
+    paths:
+    - phis-webapp
+    expire_in: 1 week
