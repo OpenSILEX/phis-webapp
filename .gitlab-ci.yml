@@ -14,7 +14,7 @@ build:webapp:
 deploy:webapp:
   stage: deploy
   script:
-    - apt-get install \
+    - apt-get update && apt-get install \
         rsync \
         openssh-client \
         ca-certificates \
