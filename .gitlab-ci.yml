@@ -12,9 +12,15 @@ build:webapp:
  
 
 deploy:webapp:
-  image: ubuntu:18.04
+  image: tetraweb/php:7.0
   stage: deploy
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - ssh-add <(echo "$OPENSILEX_PRIVATE_KEY")
+    - apt-get install -y rsync
   script:
-    - apt-get update && apt-get install -y git rsync openssh-client ca-certificates 
     - git clone https://forgemia.inra.fr/OpenSILEX/opensilex-dev-tools.git ../scripts
  
