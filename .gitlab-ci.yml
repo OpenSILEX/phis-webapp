@@ -60,9 +60,9 @@ deploy:webapp2:
     - mkdir -p $TMP_DIR
     - cd $TMP_DIR
     - echo 'ssh -i $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"'
-    - ssh  -i  $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
+    - ssh  -vvv -i  $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
     - echo "#### [Webapp] Rsync webapp files"
-    - ssh -vvv   -i $OPENSILEX_PRIVATE_KEY_PATH  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
+    - ssh -vvv -i $OPENSILEX_PRIVATE_KEY_PATH  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - rsync -arzv -e "ssh  -i $KEY_DIR" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
     - ssh  -vvv  -i $OPENSILEX_PRIVATE_KEY_PATH -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
     - ssh  -vvv  -i $OPENSILEX_PRIVATE_KEY_PATH -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
