@@ -7,7 +7,7 @@ cache:
 variables:
    SCP_ACCOUNT : "mvidal"
    REMOTE_IP : "138.102.159.37"
-   KEY_DIR : "${HOME}/.ssh/id_rsa"
+   KEY_DIR : "~/.ssh/id_rsa"
    TMP_DIR : "/tmp/phis-webapp"
    RSYNC_DEST : "test"
    RSYNC_USER : "phis"
@@ -25,13 +25,15 @@ deploy:webapp:
   stage: deploy
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    - mkdir "${HOME}/.ssh"
+    - mkdir "~/.ssh"
     - eval $(ssh-agent -s)
-    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ${HOME}/.ssh/config'
-    - echo "$OPENSILEX_PRIVATE_KEY" | tr -d '\r' > ${HOME}/.ssh/id_rsa
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - echo "$OPENSILEX_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - echo "key"
+    - echo ~/.ssh/id_rsa
     - chmod 400 $KEY_DIR
     - ssh-add <(echo "$OPENSILEX_PRIVATE_KEY")
-    - echo "${SSH_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - echo "${SSH_HOST_KEY}" > "~/.ssh/known_hosts"
     - apt-get install -y rsync
   script:
     - mkdir -p $TMP_DIR
