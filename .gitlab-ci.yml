@@ -29,6 +29,9 @@ deploy:webapp:
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     - ssh-add <(echo "$OPENSILEX_PRIVATE_KEY")
+    - echo "$OPENSILEX_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $REMOTE_IP "$REMOTE_IP" >> ~/.ssh/known_hosts
     - apt-get install -y rsync
   script:
     - echo $OPENSILEX_PRIVATE_KEY >> $KEY_DIR
