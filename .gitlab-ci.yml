@@ -27,7 +27,8 @@ deploy:webapp1:
     - mkdir -p ~/.ssh  && touch ~/.ssh/known_hosts
     - cp $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
     - ssh-keyscan -H "$REMOTE_IP" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/id_rsa ~/.ssh/known_hosts
+    - chmod 600 ~/.ssh/id_rsa
+    - chmod 644 ~/.ssh/known_hosts
     - eval "$(ssh-agent -s)"
     - ssh-add ~/.ssh/id_rsa
   script:
@@ -49,11 +50,10 @@ deploy:webapp2:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
     - ssh-keyscan -H "$REMOTE_IP" >> ~/.ssh/known_hosts
-    - cp "$OPENSILEX_PRIVATE_KEY_PATH" ~/.ssh/
-    - chmod -R 644 ~/.ssh
+    - chmod 644 ~/.ssh/known_hosts
     - ls ~/.ssh
     - eval $(ssh-agent -s)
-    - chmod 644 $OPENSILEX_PRIVATE_KEY_PATH
+    - chmod 600 $OPENSILEX_PRIVATE_KEY_PATH
     - apt-get install -y rsync
   script:
     - echo "#### Create temporary directory"
