@@ -33,6 +33,7 @@ deploy:webapp:
   script:
     - echo $OPENSILEX_PRIVATE_KEY >> $KEY_DIR
     - chmod 400 $KEY_DIR
+    - mkdir -p $TMP_DIR
     - cd $TMP_DIR
     - echo "ssh -i $KEY_DIR -t $SCP_ACCOUNT@$REMOTE_IP"
     - echo "#### [Webapp] Rsync webapp files"
