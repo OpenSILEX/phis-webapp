@@ -49,7 +49,8 @@ deploy:webapp2:
     - chmod 600 ~/.ssh
     - eval $(ssh-agent -s)
     - chmod 600 $OPENSILEX_PRIVATE_KEY_PATH
-    - echo "${SSH_HOST_KEY}" > "~/.ssh/known_hosts"
+    - echo "${$OPENSILEX_PRIVATE_KEY_PATH}"
+    - echo "${SSH_HOST_KEY}" >> "~/.ssh/known_hosts"
     - apt-get install -y rsync
   script:
     - echo "#### Create temporary directory"
