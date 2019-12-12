@@ -44,10 +44,11 @@ deploy:webapp2:
   image: tetraweb/php:7.0
   stage: deploy
   before_script:
+    - echo $OPENSILEX_PRIVATE_KEY_PATH
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ~/.ssh
-    - echo "${SSH_HOST_KEY}" >> "~/.ssh/known_hosts"
-    - cp "${$OPENSILEX_PRIVATE_KEY_PATH}" ~/.ssh/
+    - echo "$SSH_HOST_KEY" >> "~/.ssh/known_hosts"
+    - cp "$OPENSILEX_PRIVATE_KEY_PATH" ~/.ssh/
     - chmod -R 600 ~/.ssh
     - ls ~/.ssh
     - eval $(ssh-agent -s)
