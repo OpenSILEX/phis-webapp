@@ -30,15 +30,15 @@ deploy:webapp1:
     - ssh-add <(echo "$OPENSILEX_PRIVATE_KEY")
     - apt-get install rsync
   script:
-      echo "#### Create temporary directory"
+    - echo "#### Create temporary directory"
     - mkdir -p $TMP_DIR
     - cd $TMP_DIR
     - echo "ssh  -t $SCP_ACCOUNT@$REMOTE_IP"
     - echo "#### [Webapp] Rsync webapp files"
-    - ssh -vvv   $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
+    - ssh -vvv -t  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - rsync -arzv -e "ssh" -progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
-    - ssh  -vvv -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
-    - ssh  -vvv -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
+    - ssh  -vvv -t -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
+    - ssh  -vvv -t  -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
     
 deploy:webapp2:
   image: tetraweb/php:7.0
@@ -48,20 +48,19 @@ deploy:webapp2:
     - mkdir -p ~/.ssh
     - chmod 600 ~/.ssh
     - eval $(ssh-agent -s)
-    - echo "$OPENSILEX_PRIVATE_KEY" | tr -d '\r' >> $KEY_DIR
-    - chmod 600 $KEY_DIR
+    - chmod 600 $OPENSILEX_PRIVATE_KEY_PATH
     - echo "${SSH_HOST_KEY}" > "~/.ssh/known_hosts"
     - apt-get install -y rsync
   script:
+    - echo "#### Create temporary directory"
     - mkdir -p $TMP_DIR
     - cd $TMP_DIR
     - echo "ssh  -t -i $KEY_DIR $SCP_ACCOUNT@$REMOTE_IP"
     - echo "#### [Webapp] Rsync webapp files"
-    - ssh -vvv  -t -i $KEY_DIR  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
+    - ssh -vvv  -t -i $OPENSILEX_PRIVATE_KEY_PATH  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - rsync -arzv -e "ssh  -i $KEY_DIR" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
-    - ssh  -vvv  -t -i $KEY_DIR -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
-    - ssh  -vvv  -t -i $KEY_DIR -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
-    - echo "#### Create temporary directory"
+    - ssh  -vvv  -t -i $OPENSILEX_PRIVATE_KEY_PATH -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
+    - ssh  -vvv  -t -i $OPENSILEX_PRIVATE_KEY_PATH -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
         
     
 
