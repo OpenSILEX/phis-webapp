@@ -29,9 +29,8 @@ deploy:webapp:
     - ssh-add <(echo "$OPENSILEX_PRIVATE_KEY")
     - apt-get install -y rsync
   script:
-    - mkdir -p $TMP_DIR
+    
     - echo $OPENSILEX_PRIVATE_KEY >> $KEY_DIR
-    - chmod 400 $KEY_DIR
     - chmod 400 $KEY_DIR
     - cd $TMP_DIR
     - echo "ssh -i $KEY_DIR -t $SCP_ACCOUNT@$REMOTE_IP"
