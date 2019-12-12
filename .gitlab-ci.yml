@@ -37,10 +37,10 @@ deploy:webapp:
     - cd $TMP_DIR
     - echo "ssh -i $KEY_DIR -t $SCP_ACCOUNT@$REMOTE_IP"
     - echo "#### [Webapp] Rsync webapp files"
-    - ssh -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
+    - ssh -vvv -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - rsync -arzv -e "ssh" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
-    - ssh -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
-    - ssh -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
+    - ssh  -vvv -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
+    - ssh  -vvv -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
     - echo "#### Create temporary directory"
     
     
