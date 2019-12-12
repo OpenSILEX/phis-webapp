@@ -28,7 +28,7 @@ deploy:webapp:
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    - echo "$OPENSILEX_PRIVATE_KEY" | tr -d '\r' > $KEY_DIR
+    - echo "$OPENSILEX_PRIVATE_KEY" | tr -d '\r' >> $KEY_DIR
     - echo "key"
     - echo ~/.ssh/id_rsa
     - chmod 400 $KEY_DIR
