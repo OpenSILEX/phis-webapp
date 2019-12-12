@@ -31,7 +31,6 @@ deploy:webapp1:
     - eval "$(ssh-agent -s)"
     - ssh-add ~/.ssh/id_rsa
     - ls ~/.ssh
-    - ls /etc/.ssh
   script:
     - echo "#### Create temporary directory"
     - mkdir -p $TMP_DIR
@@ -52,7 +51,6 @@ deploy:webapp2:
     - ssh-keyscan -H "$REMOTE_IP" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - ls ~/.ssh
-    - ls /etc/.ssh
     - eval $(ssh-agent -s)
     - chmod 600 $OPENSILEX_PRIVATE_KEY_PATH
     - apt-get install -y rsync
