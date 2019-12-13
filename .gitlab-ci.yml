@@ -50,9 +50,13 @@ deploy:webapp2:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
     - ssh-keyscan -H "$REMOTE_IP" >> ~/.ssh/known_hosts
+    - echo "ssh host"
+    - echo ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - ls ~/.ssh
     - eval $(ssh-agent -s)
+    - echo "private key"
+    - echo $OPENSILEX_PRIVATE_KEY_PATH
     - chmod 600 $OPENSILEX_PRIVATE_KEY_PATH
     - apt-get install -y rsync
   script:
