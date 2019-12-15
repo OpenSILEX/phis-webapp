@@ -275,9 +275,11 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         if (isset($errors) && $errors !== null):
     ?>
     <div class="alert alert-danger" >
-        <h3 style="margin:3%;">Errors found in datasensor :</h3>
+        <h3 style="margin:3%;">Errors found in dataset :</h3>
         <ul>
         <?php 
+            $messageLimit = 10;
+            $messageCount = 0;
             // Display error messages
             $errorMessages = [];
             foreach($errors as $error) {
@@ -290,9 +292,14 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
             
             $errorMessages = array_unique($errorMessages);
             foreach ($errorMessages as $errorMessage) {
-                 echo '<li>' . $errorMessage . '</li>';
+                if($messageCount <= $messageLimit){
+                    echo '<li>' . $errorMessage . '</li>';
+                }elseif($messageCount > $messageLimit){
+                    echo '<li>... other errors are masked</li>';
+                    break;
+                }
+                $messageCount++;
             }
-            
         ?>
         </ul>
     </div>
@@ -538,10 +545,11 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
              },
              methods: {
                 onComplete: function(){
+                    this.loadingWizard = true;
                     $("#<?= $form->getId() ?>").submit();
                 },
                 setLoading: function(value) {
-                      this.loadingWizard = value
+                      this.loadingWizard = value;
                 },
                 handleValidation: function(isValid, tabIndex){
                       console.log('Tab: '+tabIndex+ ' valid: '+isValid)
