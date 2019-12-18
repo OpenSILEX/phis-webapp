@@ -188,7 +188,12 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
 
                 // Set provenance provenanceAgents, disable input and remove validation messages 
                 try {
-                    var provenanceAgents = provenances[uri]["metadata"]["prov:Agent"]["oeso:Operator"];
+                    var provenanceAgents = [];
+                    provenances[uri]["metadata"]["prov:Agent"].forEach(function(agentElement){
+                        if(agentElement.hasOwnProperty("oeso:Operator")){
+                            provenanceAgents.push(agentElement["oeso:Operator"]);
+                        }
+                      });
                     $("#yiidatasetmodel-provenanceagents").val(provenanceAgents);
                     $("#yiidatasetmodel-provenanceagents").trigger("change");
                 } catch (error) {
