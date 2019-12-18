@@ -170,7 +170,7 @@ class VariableController extends Controller {
         $variableModel = new YiiVariableModel();
         $traitModel = new YiiTraitModel();
         $methodModel = new YiiMethodModel();
-        $unitModel = new YiiUnitModel();
+        $unitModel = new YiiUnitModel($pageSize = 5000);
         
         //Form has been complete
         if ($variableModel->load(Yii::$app->request->post()) 

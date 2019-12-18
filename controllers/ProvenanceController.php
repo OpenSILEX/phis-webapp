@@ -99,31 +99,30 @@ class ProvenanceController extends Controller {
     
     /**
      * Create provenance from an alias and a comment
-     * @param type $alias label of the provenance
-     * @param type $comment comment linked to the provenance
-     * @param type $sensingDevice uri of the sensor
-     * @param String $agent uri of the agent
+     * @param string $alias label of the provenance
+     * @param string $comment comment linked to the provenance
+     * @param array $sensingDevices uri of the sensor
+     * @param array $agents uri of the agent
      * @return boolean
      */
-    private function createProvenance($alias, $comment,$sensingDevice = null, $agent =null) {
+    private function createProvenance($alias, $comment,$sensingDevices = [], $agents = []) {
         $provenanceService = new WSProvenanceModel();
         $date = new \DateTime();
         $createdDate = $date->format("Y-m-d\TH:i:sO");
         $metadata = [
             "namespaces" => Yii::$app->params[self::PROVENANCE_PARAMS_VALUES],
             "prov:Agent" =>[
-                "oeso:SensingDevice" => [
-                ],
-                "oeso:Operator" => [
-                ]
-              ],
+             ],
+            "prov:Entity" =>[
+             ]
             ];
-        if($sensingDevice != null){
-            $metadata["prov:Agent"]["oeso:SensingDevice"] = $sensingDevice;
+        foreach ($sensingDevices as $sensingDevice) {
+          $metadata["prov:Agent"][] = ["oeso:SensingDevice" => $sensingDevice];
         }
-        if($agent != null){
-            $metadata["prov:Agent"]["oeso:Operator"] = $agent;
+        foreach ($agents as $agent) {
+          $metadata["prov:Agent"][] = ["oeso:Operator" => $agent];
         }
+            
         $provenanceUri = $provenanceService->createProvenance(
                 Yii::$app->session['access_token'],
                 $alias,

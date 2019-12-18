@@ -48,7 +48,7 @@ class WSProvenanceModel extends WSModel {
         ]]);
 
         if (
-                isset($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) && count($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) == 1
+            isset($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) && count($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) == 1
         ) {
             return $provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0];
         } else {
