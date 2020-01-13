@@ -36,7 +36,7 @@ deploy:webapp1:
     - mkdir -p $TMP_DIR
     - cd $TMP_DIR
     - echo 'ssh -vvv  -i $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"'
-    - ssh -vvv  -i $OPENSILEX_PRIVATE_KEY_PATH -tt  $SCP_ACCOUNT@$REMOTE_IP "exit"
+    - ssh -vvv  -i ~/.ssh/id_rsa -tt  $SCP_ACCOUNT@$REMOTE_IP "exit"
     - echo "#### [Webapp] Rsync webapp files"
     - ssh -vvv  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - rsync -arzv -e "ssh" -progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
@@ -53,10 +53,11 @@ deploy:webapp2:
     - echo "ssh host"
     - cat ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
+    - cp $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
     - ls ~/.ssh
     - eval $(ssh-agent -s)
     - echo "private key"
-    - cat $OPENSILEX_PRIVATE_KEY_PATH
+    - cat ~/.ssh/id_rsa
     - chmod 600 $OPENSILEX_PRIVATE_KEY_PATH
     - apt-get install -y rsync
   script:
@@ -64,7 +65,7 @@ deploy:webapp2:
     - mkdir -p $TMP_DIR
     - cd $TMP_DIR
     - echo 'ssh -vvv -i $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"'
-    #- ssh  -vvv -i  $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
+    - ssh  -vvv -i ~/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
     - echo "#### [Webapp] Rsync webapp files"
     - ssh -vvv -i $OPENSILEX_PRIVATE_KEY_PATH  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - rsync -arzv -e "ssh  -i $KEY_DIR" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
