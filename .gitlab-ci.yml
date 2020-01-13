@@ -74,7 +74,7 @@ deploy:webapp2:
     - ssh  -vvv  -i $OPENSILEX_PRIVATE_KEY_PATH -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
     - ssh  -vvv  -i $OPENSILEX_PRIVATE_KEY_PATH -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
         
-deploy:webapp2:
+deploy:webapp3:
   image: tetraweb/php:7.0
   stage: deploy
   when : manual
