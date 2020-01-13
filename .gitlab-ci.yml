@@ -85,7 +85,7 @@ deploy:webapp3:
     - echo "ssh host"
     - cat ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - cp $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa*
+    - cp $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
     - echo $OPENSILEX_PRIVATE_KEY_PATH
     - ls ~/.ssh
     - eval $(ssh-agent -s)
