@@ -56,11 +56,12 @@ deploy:webapp2:
     - cat ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - cp $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
+    - chmod 600 $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
     - ls ~/.ssh
     - eval $(ssh-agent -s)
     - echo "private key"
     - cat ~/.ssh/id_rsa
-    - chmod 600 $OPENSILEX_PRIVATE_KEY_PATH
+   
     - apt-get install -y rsync
   script:
     - echo "#### Create temporary directory"
@@ -86,13 +87,13 @@ deploy:webapp3:
     - cat ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - cp $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
+    - chmod 600  ~/.ssh/id_rsa
     - echo $OPENSILEX_PRIVATE_KEY_PATH
     - ls ~/.ssh
     - eval $(ssh-agent -s)
     - echo "private key"
     - cat ~/.ssh/id_rsa
     - ssh  -vvv -i ~/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
-    - chmod 600 $OPENSILEX_PRIVATE_KEY_PATH
     - apt-get install -y rsync
   script:
     - echo "#### Create temporary directory"
