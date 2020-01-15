@@ -6,14 +6,6 @@ cache:
     paths:
       - "vendor"
       
-variables:
-   SCP_ACCOUNT : "mvidal"
-   REMOTE_IP : "138.102.159.37"
-   TMP_DIR : "/tmp/phis-webapp"
-   RSYNC_DEST : "test"
-   RSYNC_USER : "phis"
-   RSYNC_ACCOUNT : "phis"
-
 build:webapp:
   image: composer:1.9.1
   stage: build
@@ -30,7 +22,7 @@ deploy:webapp:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ${HOME}/.ssh && touch ${HOME}/.ssh/known_hosts
     - ssh-keyscan -H "$REMOTE_IP" >> ${HOME}/.ssh/known_hosts
-    - cp $OPENSILEX_PRIVATE_KEY_PATH  ${HOME}/.ssh/id_rsa
+    - cp $SSH_PRIVATE_KEY_PATH  ${HOME}/.ssh/id_rsa
     - eval $(ssh-agent -s)
     - ssh -i ${HOME}/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
     - echo "successful connection"
