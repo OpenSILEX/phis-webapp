@@ -21,7 +21,7 @@ build:webapp:
      - composer install --ignore-platform-reqs 
  
 
-deploy:webapp3:
+deploy:webapp:
   image: tetraweb/php:7.0
   stage: deploy
   when : manual
