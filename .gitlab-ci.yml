@@ -30,12 +30,11 @@ deploy:webapp:
     - cat ~/.ssh/known_hosts
     - chmod 600 ~/.ssh/known_hosts
     - chmod 400  $OPENSILEX_PRIVATE_KEY_PATH
-    - echo $OPENSILEX_PRIVATE_KEY_PATH
     - eval $(ssh-agent -s)
-    - echo "private key"
-    - cat ~/.ssh/id_rsa
-    - echo 'ssh -vvv -i $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"'
-    - ssh  -vvv -i ~/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
+    - echo "private key $OPENSILEX_PRIVATE_KEY_PATH "
+    - echo "ssh -vvv -i $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP \"exit\""
+    - ssh  -vvv -i $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
+    - echo "Connection succeeded"
     - apt-get install -y rsync
   script:
     - echo "#### Create temporary directory"
