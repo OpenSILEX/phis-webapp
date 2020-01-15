@@ -39,15 +39,16 @@ deploy:webapp3:
     - echo "private key"
     - cat $HOME/.ssh/id_rsa
     - echo 'ssh -vvv -i $HOME/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"'
-    - ssh  -vvv -i $HOME/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
+    - ssh -i $HOME/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
+    - echo "successful connection"
     - apt-get install -y rsync
   script:
     - echo "#### Create temporary directory"
     - mkdir -p $TMP_DIR
     - cd $TMP_DIR
     - echo "#### [Webapp] Rsync webapp files"
-    - ssh -vvv -i $HOME/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
+    - ssh -i $HOME/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - rsync -arzv -e "ssh  -i $HOME/.ssh/id_rsa" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
-    - ssh  -vvv  -i $HOME/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
-    - ssh  -vvv  -i $HOME/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
+    - ssh -i $HOME/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
+    - ssh -i $HOME/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
         
