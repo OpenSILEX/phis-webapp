@@ -85,9 +85,9 @@ deploy:webapp3:
     - ssh-keyscan -H "$REMOTE_IP" >> ~/.ssh/known_hosts
     - echo "ssh host"
     - cat ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
+    - chmod 600 ~/.ssh/known_hosts
     - cp $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
-    - chmod 600  ~/.ssh/id_rsa
+    - chmod 400  ~/.ssh/id_rsa
     - echo $OPENSILEX_PRIVATE_KEY_PATH
     - ls ~/.ssh
     - eval $(ssh-agent -s)
