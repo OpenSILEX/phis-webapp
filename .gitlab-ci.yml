@@ -18,64 +18,7 @@ build:webapp:
   script:
      - composer install --ignore-platform-reqs 
  
-
-deploy:webapp1:
-  image: tetraweb/php:7.0
-  stage: deploy
-  when : manual
-  before_script:
-    - mkdir -p ~/.ssh  && touch ~/.ssh/known_hosts
-    - cp $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
-    - ssh-keyscan -H "$REMOTE_IP" >> ~/.ssh/known_hosts
-    - chmod 600 ~/.ssh/id_rsa
-    - chmod 644 ~/.ssh/known_hosts
-    - eval "$(ssh-agent -s)"
-    - ssh-add ~/.ssh/id_rsa
-    - ls ~/.ssh
-  script:
-    - echo "#### Create temporary directory"
-    - mkdir -p $TMP_DIR
-    - cd $TMP_DIR
-    - echo 'ssh -vvv  -i $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"'
-    - ssh -vvv  -i ~/.ssh/id_rsa -tt  $SCP_ACCOUNT@$REMOTE_IP "exit"
-    - echo "#### [Webapp] Rsync webapp files"
-    - ssh -vvv  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
-    - rsync -arzv -e "ssh" -progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
-    - ssh  -vvv -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
-    - ssh  -vvv  -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
-    
-deploy:webapp2:
-  image: tetraweb/php:7.0
-  stage: deploy
-  when : manual
-  before_script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
-    - ssh-keyscan -H "$REMOTE_IP" >> ~/.ssh/known_hosts
-    - echo "ssh host"
-    - cat ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    - cp $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
-    - chmod 600 $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
-    - ls ~/.ssh
-    - eval $(ssh-agent -s)
-    - echo "private key"
-    - cat ~/.ssh/id_rsa
-   
-    - apt-get install -y rsync
-  script:
-    - echo "#### Create temporary directory"
-    - mkdir -p $TMP_DIR
-    - cd $TMP_DIR
-    - echo 'ssh -vvv -i $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"'
-    - ssh  -vvv -i ~/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
-    - echo "#### [Webapp] Rsync webapp files"
-    - ssh -vvv -i $OPENSILEX_PRIVATE_KEY_PATH  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
-    - rsync -arzv -e "ssh  -i $KEY_DIR" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
-    - ssh  -vvv  -i $OPENSILEX_PRIVATE_KEY_PATH -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
-    - ssh  -vvv  -i $OPENSILEX_PRIVATE_KEY_PATH -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
-
-deploy:webapp3:
+deploy:webapp:
   image: tetraweb/php:7.0
   stage: deploy
   when : manual
@@ -86,10 +29,8 @@ deploy:webapp3:
     - echo "ssh host"
     - cat ~/.ssh/known_hosts
     - chmod 600 ~/.ssh/known_hosts
-    - cp $OPENSILEX_PRIVATE_KEY_PATH  ~/.ssh/id_rsa
-    - chmod 400  ~/.ssh/id_rsa
+    - chmod 400  $OPENSILEX_PRIVATE_KEY_PATH
     - echo $OPENSILEX_PRIVATE_KEY_PATH
-    - ls ~/.ssh
     - eval $(ssh-agent -s)
     - echo "private key"
     - cat ~/.ssh/id_rsa
@@ -100,8 +41,6 @@ deploy:webapp3:
     - echo "#### Create temporary directory"
     - mkdir -p $TMP_DIR
     - cd $TMP_DIR
-    - echo 'ssh -vvv -i $OPENSILEX_PRIVATE_KEY_PATH -tt $SCP_ACCOUNT@$REMOTE_IP "exit"'
-    - ssh  -vvv -i ~/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
     - echo "#### [Webapp] Rsync webapp files"
     - echo ssh -vvv -i $OPENSILEX_PRIVATE_KEY_PATH  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - ssh -vvv -i $OPENSILEX_PRIVATE_KEY_PATH  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
