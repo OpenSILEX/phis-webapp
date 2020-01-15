@@ -29,7 +29,7 @@ deploy:webapp3:
     - echo "Setting private key and known hosts"
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
     - mkdir -p ${HOME}/.ssh && touch ${HOME}/.ssh/known_hosts
-    - ssh-keyscan -H "$REMOTE_IP" >> ${HOME}/.ssh/
+    - ssh-keyscan -H "$REMOTE_IP" >> ${HOME}/.ssh/known_hosts
     - cp $OPENSILEX_PRIVATE_KEY_PATH  ${HOME}/.ssh/id_rsa
     - eval $(ssh-agent -s)
     - ssh -i ${HOME}/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
