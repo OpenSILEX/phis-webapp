@@ -373,7 +373,9 @@ class DatasetController extends Controller {
             //Loaded given variables
             $experimentController = new ExperimentController();
             $experimentVariables = $experimentController->getExperimentMesuredVariablesSelectList($datasetModel->experiment) ;
-            $csvVariables = array_slice($csvHeaders, 2);
+            $csvRawVariables = array_slice($csvHeaders, 2);
+            // clean variables name
+            $csvVariables = array_map('trim', $csvRawVariables);
             // select all variables that don"t exist in experiment variables
             $variablesNotInExperiment = array_diff($csvVariables, array_values($experimentVariables)); 
             // Check CSV header with variables
