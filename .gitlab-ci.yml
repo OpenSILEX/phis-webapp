@@ -2,8 +2,4 @@ build_docs:
   image: curlimages/curl
   stage: deploy
   script: 
-    - curl --request POST \
-      --form token=TOKEN \
-      --form ref=master \
-      --form "variables[INSTANCE]=test" \
-      https://forgemia.inra.fr/api/v4/projects/403/trigger/pipeline
+    - curl --request POST --form token=TOKEN --form ref=master --form "variables[INSTANCE]=test"  https://forgemia.inra.fr/api/v4/projects/403/trigger/pipeline
