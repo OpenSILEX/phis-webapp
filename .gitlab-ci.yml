@@ -1,6 +1,6 @@
-deploy_test:
-  image: curlimages/curl
-  stage: deploy
-  script:
-    - echo $CI_JOB_TOKEN
-    - curl --request POST --form "token=$CI_JOB_TOKEN" --form "ref=master" --form "variables[INSTANCE]=test"  https://forgemia.inra.fr/api/v4/projects/403/trigger/pipeline
+#deploy_test:
+ # image: curlimages/curl
+ # stage: deploy
+  #script:
+    #- echo $CI_JOB_TOKEN
+   # - curl --request POST --form "token=$CI_JOB_TOKEN" --form "ref=master" --form "variables[INSTANCE]=test"  https://forgemia.inra.fr/api/v4/projects/403/trigger/pipeline
