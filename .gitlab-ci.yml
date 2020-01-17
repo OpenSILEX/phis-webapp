@@ -1,4 +1,4 @@
-build_docs:
+deploy_test:
   image: curlimages/curl
   stage: deploy
   script:
