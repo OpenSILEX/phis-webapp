@@ -33,9 +33,7 @@ class ProjectSearch extends YiiProjectModel {
      */
     public function rules() {
         return [
-                    [['uri', 'name', 'acronyme', 'dateStart', 'dateEnd', 'keywords', 'description',
-                'objective', 'parentProject', 'scientificContact', 'administrativeContact',
-                'projectCoordinator', 'financialSupport'], 'safe']
+                    [['uri', 'name', 'shortname', 'startDate', 'endDate','financialSupport'], 'safe']
             ];
     }
     

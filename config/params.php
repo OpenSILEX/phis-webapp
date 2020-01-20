@@ -8,6 +8,7 @@ return [
     'demoPassword' => 'guest',
     'opensilex-webapp-type' => 'opensilex', //'opensilex' or 'phis' (used to adapt the view)
     'dateTimeFormatPhp' => 'Y-m-d H:i:sP',
+    'csvSeparator' => ',',
     //SILEX:info
     //this param should be removed when the new version of data will be used instead of Dataset
     'baseURI' => 'http://www.opensilex.org/demo/',
@@ -67,11 +68,14 @@ return [
     'NationalInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#NationalInfrastructure',
     'EuropeanInfrastructure' => 'http://www.opensilex.org/vocabulary/oeso#EuropeanInfrastructure',
     'Installation' => 'http://www.opensilex.org/vocabulary/oeso#Installation',
+    
+    'FinancialFunding' => 'http://www.opensilex.org/vocabulary/oeso#FinancialFunding',
 
     // Event
     'event' => 'http://www.opensilex.org/vocabulary/oeev#Event',
     'moveFrom' => 'http://www.opensilex.org/vocabulary/oeev#MoveFrom',
     'moveTo' => 'http://www.opensilex.org/vocabulary/oeev#MoveTo',
+    'AssociatedToASensor' => 'http://www.opensilex.org/vocabulary/oeev#AssociatedToASensor',
 
     'Provenance' => 'http://www.opensilex.org/vocabulary/oeso#Provenance',
 
@@ -126,6 +130,23 @@ return [
 
     // Event
     'from' => 'http://www.opensilex.org/vocabulary/oeev#from',
-    'to' => 'http://www.opensilex.org/vocabulary/oeev#to'
+    'to' => 'http://www.opensilex.org/vocabulary/oeev#to',
+    'associatedToASensor' => 'http://www.opensilex.org/vocabulary/oeev#associatedToASensor',
 
+    // Image filters
+    'image.filter' => [
+        'metadata.position' => [
+            'position:1','position:2','position:3','position:4','position:5',
+            'position:6','position:7','position:8','position:9','position:10',
+            'labelView:top0','labelView:top90','labelView:side0','labelView:side30','labelView:side60',
+            'labelView:side90','labelView:side120','labelView:side150','labelView:side180','labelView:side210',
+            'labelView:side240','labelView:side270','labelView:side300','labelView:side330',
+            ],
+        ]
+//     // Image filters GENERIC
+//    'image.filter' => [
+//        'metadata.position' => [
+//            'label1:value1','label2:value2', 'label3:value3'],
+//        ]
+    
 ];

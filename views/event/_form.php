@@ -61,6 +61,13 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
                 = $infrastructure[EventController::INFRASTRUCTURES_DATA_LABEL];
     }
     ?>
+    <?php
+    $sensorsLabels = [];
+    foreach ($this->params[EventController::SENSORS_DATA] as $sensor) {
+        $sensorsLabels[$sensor[EventController::SENSOR_DATA_URI]] 
+                = $sensor[EventController::SENSOR_DATA_LABEL];
+    }
+    ?>
     <?=
     $form->field($model, EventCreation::PROPERTY_FROM)->widget(Select2::classname(), [
         'data' => $infrastructuresLabels,
@@ -72,6 +79,14 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
     <?=
     $form->field($model, EventCreation::PROPERTY_TO)->widget(Select2::classname(), [
         'data' => $infrastructuresLabels,
+        'pluginOptions' => [
+            'allowClear' => false
+        ],
+    ]);
+    ?>
+    <?=
+    $form->field($model, EventCreation::PROPERTY_ASSOCIATED_TO_A_SENSOR)->widget(Select2::classname(), [
+        'data' => $sensorsLabels,
         'pluginOptions' => [
             'allowClear' => false
         ],
@@ -106,8 +121,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
         'options' => $options,
         'pluginOptions' => [
             'autoclose' => true,
-            'format' => Yii::$app->params['dateTimeFormatDateTimePickerUserFriendly'],
-            'initialDate' => date("Y-m-d H:i:0")
+            'format' => Yii::$app->params['dateTimeFormatDateTimePickerUserFriendly']
         ]
     ])
     ?>
@@ -129,8 +143,27 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             'colHeaders' => ['URI'],
             'data' => $data,
             'rowHeaders' => true,
-            'contextMenu' => true
+            'contextMenu' => true,
+            'height'=> 200
         ];
+    if (sizeof($model->concernedItems) > 8) {
+          $settings = 
+            [
+                'colHeaders' => ['URI'],
+                'data' => $data,
+                'rowHeaders' => true,
+                'contextMenu' => true,
+                'height'=> 200
+            ];
+    } else {
+         $settings = 
+            [
+                'colHeaders' => ['URI'],
+                'data' => $data,
+                'rowHeaders' => true,
+                'contextMenu' => true,
+            ];
+    }
     if (sizeof($model->concernedItems) > 0) {
         foreach($model->concernedItems as $concernedItem) {
             $data[][0] = $concernedItem->uri;
@@ -146,8 +179,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             [
                 'data' => 'URI',
                 'type' => 'text',
-                'placeholder' => 'http://www.opensilex.org/example/2019/o19000002',
-                'width' => '380px'
+                'placeholder' => 'http://www.opensilex.org/example/2019/o19000002'
             ]
         ];
     }
@@ -164,7 +196,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
         ) 
     ?>
     </div>
-    
+
     <script>
         var selectClass = "select";
 
@@ -172,11 +204,13 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
         var fromDiv = $('div[class*="propertyfrom"]');
         var toDiv = $('div[class*="propertyto"]');
         var propertyTypeDiv = $('div[class*="propertytype"]');
+        var associateToASensorDiv = $('div[class*="propertyassociatedtoasensor"]');
 
         var toSelect = toDiv.find(selectClass);
         var fromSelect = fromDiv.find(selectClass);
         var hasPestSelect = hasPestDiv.find(selectClass);
         var propertyTypeSelect = propertyTypeDiv.find(selectClass);
+        var associateToASensorSelect = associateToASensorDiv.find(selectClass);
 
         var typeSelect = $('select[id*="rdftype"]');
             
@@ -194,6 +228,10 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
         toSelect.on('change', function (e) {
             setPropertyType(toSelect.val());
         }); 
+        associateToASensorSelect.on('change', function (e) {
+            setPropertyType(associateToASensorSelect.val());
+        }); 
+        
         
         if(!dateOffsetInput.val() || dateOffsetInput.val() === "") { // if event creation
             setDateTimezoneOffsetWithUserDefaultOne();
@@ -207,6 +245,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
             fromDiv.hide();
             toDiv.hide();
             propertyTypeDiv.hide();
+            associateToASensorDiv.hide();
         }
         
         /**
@@ -228,14 +267,22 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
                         hasPestDiv.hide();
                         fromDiv.show();
                         toDiv.hide();
+                        associateToASensorDiv.hide();
                         break;
                     case "http://www.opensilex.org/vocabulary/oeev#MoveTo":
                         hasPestDiv.hide();
                         fromDiv.hide();
                         toDiv.show();
+                        associateToASensorDiv.hide();
+                        break;
+                    case "http://www.opensilex.org/vocabulary/oeev#AssociatedToASensor":
+                        hasPestDiv.hide();
+                        fromDiv.hide();
+                        toDiv.hide();
+                        associateToASensorDiv.show();
                         break;
                     default:
-                        hidePropertyBlocs(hasPestDiv, fromDiv, toDiv);
+                        hidePropertyBlocs(hasPestDiv, fromDiv, toDiv, associateToASensorDiv);
                         break;
                 }
             });
@@ -260,6 +307,6 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
         };
     </script>
 
-<?php ActiveForm::end(); ?>
+    <?php ActiveForm::end(); ?>
+    </div>
 </div>
-

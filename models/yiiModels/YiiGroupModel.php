@@ -60,11 +60,11 @@ class YiiGroupModel extends WSActiveRecord {
     public $description;
     const DESCRIPTION = "description";
     /**
-     * the group's organism 
+     * the group's organization
      *  (e.g. INRA-MISTEA)
      * @var string
      */
-    public $organism;
+    public $organization;
     /**
      * the group's members (email)
      *  (e.g. john.doe[at]email.fr)
@@ -92,10 +92,10 @@ class YiiGroupModel extends WSActiveRecord {
      */
     public function rules() {
         return [
-          [['uri', 'name', 'level', 'description', 'organism', 'laboratoryName'], 'required'],
+          [['uri', 'name', 'level', 'description', 'organization', 'laboratoryName'], 'required'],
           [['description'], 'string'], 
           [['users'], 'safe'],
-          [['organism', 'laboratoryName'], 'string', 'max' => 50],
+          [['organization', 'laboratoryName'], 'string', 'max' => 50],
           [['name', 'uri', 'level'], 'string', 'max' => 200]
         ];
     }
@@ -110,7 +110,7 @@ class YiiGroupModel extends WSActiveRecord {
           'uri' => Yii::t('app', 'URI'),
           'level' => Yii::t('app', 'Level'),
           'description' => Yii::t('app', 'Description'),
-          'organism' => Yii::t('app', 'Organism'),
+          'organization' => Yii::t('app', 'Organization'),
           'laboratoryName' => Yii::t('app', 'laboratoryName'),
           'users' => Yii::t('app', 'Members')
         ];
@@ -144,8 +144,8 @@ class YiiGroupModel extends WSActiveRecord {
      */
     public function attributesToArray() {
         $elementForWebService = parent::attributesToArray();
-        if (isset($this->organism) && $this->organism != null) {
-            $elementForWebService[YiiGroupModel::NAME] = $this->organism . "-" . $this->name;
+        if (isset($this->organization) && $this->organization != null) {
+            $elementForWebService[YiiGroupModel::NAME] = $this->organization . "-" . $this->name;
         } else {
             $elementForWebService[YiiGroupModel::NAME] = $this->name;
         }

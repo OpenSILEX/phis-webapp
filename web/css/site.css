@@ -1,6 +1,135 @@
 html,body {
     height: 100%;
 }
+/*SILEX:info*/
+/*use in views/scientific-object/date_visualization.php*/
+/*Vertical list of images*/
+ul.images {
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  max-width: 1140px;
+  overflow-x: auto;
+}
+ul.images li {
+  display: inline-block;
+  width: 200px;
+  margin: 0 2px;
+}
+/*//\SILEX:info*/
+
+/*SILEX:required*/
+/*use in views/scientific-object/date_visualization.php*/
+/* Fix position of the carousel in the modal*/
+/*//\SILEX:required*/
+.modal.and {
+  position: fixed; 
+}
+ /*SILEX:info*/ 
+ /*use in views/scientific-object/date_visualization.php*/
+/*Override the default max-width of the tooltip*/
+/*//\SILEX:info*/
+.tooltip-inner {
+    max-width: 500px !important; 
+}
+
+/*SILEX:info*/ 
+/*use in views/scientific-object/date_visualization.php*/
+/*Gradient on the photo in the modal to see the text in white */
+.pickgradient{
+  position:relative;
+  display:inline-block;
+}
+.pickgradient:after {
+  content:'';
+  position:absolute;
+  left:0; bottom:0;
+  width:100%; height:40%;
+  display:inline-block;
+  background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* IE10+ */
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,0.65) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
+}
+/*//\SILEX:info*/
+
+.btn:focus,.btn:active {
+   outline: none !important;
+   box-shadow: none !important;
+}
+
+
+ /*SILEX:info*/ 
+ /*use in views/scientific-object/index.php*/
+/*width of the cart button*/
+/*//\SILEX:info*/
+#cart-btn {
+    width:88px; /* the size for a 5 digits number*/
+    
+}
+
+
+/*SILEX:info*/
+/*use in views/scientific-object/index.php*/
+/*spin logo when user select all the object in the cart  */
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spinWebkit .7s infinite linear;
+    -moz-animation: spinMoz .7s infinite linear;
+}
+
+@-webkit-keyframes spinWebkit {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+@keyframes spinMoz {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+/*//\SILEX:info*/
+
+
+/*SILEX:info*/ 
+/*use in views/scientific-object/index.php*/
+/*modal of the cart  */
+.modal.fade:not(.in).right .modal-dialog {
+    -webkit-transform: translate3d(25%, 0, 0);
+    transform: translate3d(25%, 0, 0);
+    top: 50%
+}
+.vertical-alignment-helper {
+    display:table;
+    height: 100%;
+    width: 100%;
+    pointer-events:none; /* This makes sure that we can still click outside of the modal to close it */
+}
+.vertical-align-center {
+    /* To center vertically */
+    display: table-cell;
+    vertical-align: middle;
+    pointer-events:none;
+}
+.modal-content {
+    /* Bootstrap sets the size of the modal in the modal-dialog class, we need to inherit it */
+    width:inherit;
+    max-width:inherit; /* For Bootstrap 4 - to avoid the modal window stretching full width */
+    height:inherit;
+    /* To center horizontally */
+    margin: 0 auto;
+    pointer-events: all;
+}
+ 
+/*//\SILEX:info*/
+
+
+
 
 /*SILEX:info
 use for all DetailView
