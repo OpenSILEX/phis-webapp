@@ -151,6 +151,18 @@ class DataController extends Controller {
         }
     }
     
+     /**
+     * Prepare and show the index page of the data. Use the DataSearch class.
+     * @see \app\models\yiiModels\DataSearch
+     * @return mixed
+     */
+    public function actionImages() {
+        $url="http://localhost:8081/app/images?embed=true&token=".Yii::$app->session['access_token'];
+            return $this->render('images',[
+                'url'=>$url
+            ]);
+    }
+    
     /**
      * Download a csv corresponding to the search params of the index view of the data search.
      * @return the csv file.
