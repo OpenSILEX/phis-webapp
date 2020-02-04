@@ -1,6 +1,6 @@
 # define system environment variables 
 cache:
-    key: '${CI_JOB_NAME}'
+    key:
       files:
         - composer.lock
     paths:
