@@ -6,13 +6,21 @@ cache:
     paths:
       - "vendor"
       
+variables:
+  RSYNC_USER: phis
+  SCP_ACCOUNT: mvidal
+
 build:webapp:
   image: composer:1.9.1
   stage: build
   script:
      - composer install --ignore-platform-reqs 
 
-deploy:webapp:
+.deploy: &deploy_template
+   variables:
+    REMOTE_IP: 138.102.159.37
+    RSYNC_USER: phis
+    SCP_ACCOUNT: mvidal
   image: tetraweb/php:7.0
   stage: deploy
   when : manual
@@ -34,4 +42,17 @@ deploy:webapp:
     - rsync -arzv -e "ssh  -i ${HOME}/.ssh/id_rsa" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
     - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
     - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
+
+deploy:webapp:
+  variables:
+    REMOTE_IP: 138.102.159.37
+    RSYNC_DEST: test
+  <<: *deploy_template
         
+deploy:webapp:modularity:
+  variables:
+    REMOTE_IP: 138.102.159.37
+    RSYNC_DEST: test-modularity
+  <<: *deploy_template
+  only:
+    - modularity
