@@ -1,6 +1,37 @@
-#deploy_test:
- # image: curlimages/curl
- # stage: deploy
-  #script:
-    #- echo $CI_JOB_TOKEN
-   # - curl --request POST --form "token=$CI_JOB_TOKEN" --form "ref=master" --form "variables[INSTANCE]=test"  https://forgemia.inra.fr/api/v4/projects/403/trigger/pipeline
+# define system environment variables 
+cache:
+    key: '${CI_JOB_NAME}'
+      files:
+        - composer.lock
+    paths:
+      - "vendor"
+      
+build:webapp:
+  image: composer:1.9.1
+  stage: build
+  script:
+     - composer install --ignore-platform-reqs 
+
+deploy:webapp:
+  image: tetraweb/php:7.0
+  stage: deploy
+  when : manual
+  before_script:
+    - echo "Setting private key and known hosts"
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - mkdir -p ${HOME}/.ssh && touch ${HOME}/.ssh/known_hosts
+    - ssh-keyscan -H "$REMOTE_IP" >> ${HOME}/.ssh/known_hosts
+    - cp $SSH_PRIVATE_KEY_PATH  ${HOME}/.ssh/id_rsa
+    - chmod 600 ${HOME}/.ssh/id_rsa
+    - eval $(ssh-agent -s)
+    - ssh -i ${HOME}/.ssh/id_rsa -tt $SCP_ACCOUNT@$REMOTE_IP "exit"
+    - echo "successful connection"
+    - apt-get install -y rsync
+  script:
+    - echo "#### [Webapp] Rsync webapp files"
+    - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
+    - echo $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
+    - rsync -arzv -e "ssh  -i ${HOME}/.ssh/id_rsa" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
+    - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
+    - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
+        
