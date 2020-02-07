@@ -7,9 +7,10 @@ build:webapp:
   cache:
     paths:
       - "vendor"
-    files:
-      - composer.lock
-      - composer.json
+    key:
+      files:
+        - composer.lock
+        - composer.json
   image: composer:1.9.1
   stage: build
   script:
@@ -26,8 +27,8 @@ build:webapp:
   cache:
     key:
       files:
-      - composer.lock
-      - composer.json
+        - composer.lock
+        - composer.json
     paths:
       - "vendor"
     policy: pull
