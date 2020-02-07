@@ -8,6 +8,9 @@ build:webapp:
     key: "composer-libs"
     paths:
       - "vendor"
+   files:
+      - composer.lock
+      - composer.json
   image: composer:1.9.1
   stage: build
   script:
@@ -26,6 +29,9 @@ build:webapp:
     paths:
       - "vendor"
     policy: pull
+    files:
+      - composer.lock
+      - composer.json
   before_script:
     - echo "Setting private key and known hosts"
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -39,11 +45,11 @@ build:webapp:
     - apt-get install -y rsync
   script:
     - echo "#### [Webapp] Rsync webapp files"
-    #- ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
+    - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - echo $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
-    #- rsync --quiet  -arzv -e  "ssh  -i ${HOME}/.ssh/id_rsa" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
-    #- ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
-    #- ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
+    - rsync --quiet  -arzv -e  "ssh  -i ${HOME}/.ssh/id_rsa" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
+    - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
+    - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
 
 deploy:webapp:
   <<: *deploy_template
