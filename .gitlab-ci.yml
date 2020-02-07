@@ -8,7 +8,7 @@ build:webapp:
     key: "composer-libs"
     paths:
       - "vendor"
-   files:
+    files:
       - composer.lock
       - composer.json
   image: composer:1.9.1
