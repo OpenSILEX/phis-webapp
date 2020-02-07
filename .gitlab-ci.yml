@@ -5,7 +5,6 @@ variables:
 
 build:webapp:
   cache:
-    key: "composer-libs"
     paths:
       - "vendor"
     files:
@@ -25,13 +24,13 @@ build:webapp:
   stage: deploy
   when : manual
   cache:
-    key: "composer-libs"
+    key:
+      files:
+      - composer.lock
+      - composer.json
     paths:
       - "vendor"
     policy: pull
-    files:
-      - composer.lock
-      - composer.json
   before_script:
     - echo "Setting private key and known hosts"
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
