@@ -40,7 +40,7 @@ build:webapp:
   script:
     - echo "#### [Webapp] Rsync webapp files"
     #- ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
-    #- echo $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
+    - echo $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
     #- rsync --quiet  -arzv -e  "ssh  -i ${HOME}/.ssh/id_rsa" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
     #- ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
     #- ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
