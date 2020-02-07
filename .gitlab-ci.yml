@@ -1,16 +1,13 @@
 # define system environment variables 
-cache:
-    key:
-      files:
-        - composer.lock
-    paths:
-      - "vendor"
-      
 variables:
   RSYNC_USER: phis
   SCP_ACCOUNT: mvidal
 
 build:webapp:
+  cache:
+    key: "composer-libs"
+    paths:
+      - "vendor"
   image: composer:1.9.1
   stage: build
   script:
@@ -24,6 +21,11 @@ build:webapp:
   image: tetraweb/php:7.0
   stage: deploy
   when : manual
+  cache:
+    key: "composer-libs"
+    paths:
+      - "vendor"
+    policy: pull
   before_script:
     - echo "Setting private key and known hosts"
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
