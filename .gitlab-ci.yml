@@ -1,21 +1,37 @@
 # define system environment variables 
-cache:
+variables:
+  RSYNC_USER: phis
+  SCP_ACCOUNT: mvidal
+
+build:webapp:
+  cache:
+    paths:
+      - "vendor"
     key:
       files:
         - composer.lock
-    paths:
-      - "vendor"
-      
-build:webapp:
+        - composer.json
   image: composer:1.9.1
   stage: build
   script:
      - composer install --ignore-platform-reqs 
 
-deploy:webapp:
+.deploy: &deploy_template
+  variables:
+    REMOTE_IP: 138.102.159.37
+    RSYNC_USER: phis
+    SCP_ACCOUNT: mvidal
   image: tetraweb/php:7.0
   stage: deploy
   when : manual
+  cache:
+    key:
+      files:
+        - composer.lock
+        - composer.json
+    paths:
+      - "vendor"
+    policy: pull
   before_script:
     - echo "Setting private key and known hosts"
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -29,9 +45,24 @@ deploy:webapp:
     - apt-get install -y rsync
   script:
     - echo "#### [Webapp] Rsync webapp files"
+    - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo mkdir -p /var/www/html/$RSYNC_DEST/"
     - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - echo $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
-    - rsync -arzv -e "ssh  -i ${HOME}/.ssh/id_rsa" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
+    - rsync --quiet  -arzv -e  "ssh  -i ${HOME}/.ssh/id_rsa" --progress --delete  --include='/web/documents/DatasetFiles/'  --include='/web/documents/SpectralHemisphericalReflectanceFiles/' --exclude='/web/documents/*' --exclude='.*' ./ $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
     - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
     - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
+
+deploy:webapp:
+  <<: *deploy_template
+  variables:
+    REMOTE_IP: 138.102.159.37
+    RSYNC_DEST: test
+ 
         
+deploy:webapp:modularity:
+  <<: *deploy_template
+  variables:
+    REMOTE_IP: 138.102.159.37
+    RSYNC_DEST: test-modularity
+  only:
+    - modularity
