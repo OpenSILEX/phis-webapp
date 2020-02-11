@@ -57,7 +57,8 @@ deploy:webapp:
   variables:
     REMOTE_IP: 138.102.159.37
     RSYNC_DEST: test
- 
+  only:
+    - master 
         
 deploy:webapp:modularity:
   <<: *deploy_template
