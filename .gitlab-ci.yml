@@ -3,11 +3,12 @@ variables:
   RSYNC_USER: phis
   SCP_ACCOUNT: mvidal
 
+cache:
+  key: "deploy"
+  paths:
+    - "vendor" 
+
 build:webapp:
-  cache:
-    key: "deploy"
-    paths:
-      - "vendor" 
   image: composer:1.9.1
   stage: build
   script:
@@ -21,7 +22,6 @@ build:webapp:
   image: tetraweb/php:7.0
   stage: deploy
   cache:
-    key: "deploy" 
     policy: pull
   before_script:
     - echo "Setting private key and known hosts"
@@ -36,6 +36,7 @@ build:webapp:
     - apt-get install -y rsync
   script:
     - echo "#### [Webapp] Rsync webapp files"
+    - ls vendor
     - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo mkdir -p /var/www/html/$RSYNC_DEST/"
     - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - echo $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
