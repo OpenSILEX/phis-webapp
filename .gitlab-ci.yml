@@ -6,7 +6,7 @@ variables:
 cache:
   key: "deploy"
   paths:
-    - "vendor" 
+    - "$CI_PROJECT_DIR/vendor" 
 
 build:webapp:
   image: composer:1.9.1
@@ -36,7 +36,7 @@ build:webapp:
     - apt-get install -y rsync
   script:
     - echo "#### [Webapp] Rsync webapp files"
-    - ls vendor
+    - ls $CI_PROJECT_DIR/vendor
     - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo mkdir -p /var/www/html/$RSYNC_DEST/"
     - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - echo $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
