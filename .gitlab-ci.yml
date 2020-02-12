@@ -3,13 +3,16 @@ variables:
   RSYNC_USER: phis
   SCP_ACCOUNT: mvidal
 
-build:webapp:
-  cache:
-    paths:
-      - "vendor"
-    key:
+.cache_dependencies: &cache_dependencies
+  cache:  
+    key: 
       files:
         - composer.json
+    paths:
+      - "$CI_PROJECT_DIR/vendor" 
+
+build:webapp:
+  <<: *cache_dependencies
   image: composer:1.9.1
   stage: build
   script:
@@ -22,11 +25,7 @@ build:webapp:
     SCP_ACCOUNT: mvidal
   image: tetraweb/php:7.0
   stage: deploy
-  cache:
-    key:
-      files:
-        - composer.json
-    policy: pull
+  <<: *cache_dependencies
   before_script:
     - echo "Setting private key and known hosts"
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -40,8 +39,7 @@ build:webapp:
     - apt-get install -y rsync
   script:
     - echo "#### [Webapp] Rsync webapp files"
-    - ls 
-    # - ls vendor
+    - ls $CI_PROJECT_DIR/vendor
     - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo mkdir -p /var/www/html/$RSYNC_DEST/"
     - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - echo $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
@@ -51,16 +49,17 @@ build:webapp:
 
 deploy:webapp:
   <<: *deploy_template
+  when : manual
   variables:
     REMOTE_IP: 138.102.159.37
     RSYNC_DEST: test
   only:
-   - master
-   
+    - master
+        
 deploy:webapp:modularity:
   <<: *deploy_template
   variables:
     REMOTE_IP: 138.102.159.37
     RSYNC_DEST: test-modularity
   only:
-   - modularity
+    - modularity
