@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 EventButtonWidget::widget([
                     EventButtonWidget::TYPE => "scientific-objects",
                     EventButtonWidget::CONCERNED_ITEMS_URIS => null,
-                    EventButtonWidget::AS_LINK => false
+                    EventButtonWidget::AS_LINK => false,
                 ]);
                 ?>
             </li>
@@ -62,7 +62,6 @@ $this->params['breadcrumbs'][] = $this->title;
         </ul>
 
     </div>
-
     <?=
     GridView::widget([
         'id' => 'scientific-object-table',
@@ -136,7 +135,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ]),
             ],
-            ['class' => 'yii\grid\ActionColumn',
+            [
+                'class' => 'yii\grid\ActionColumn',
                 'template' => '{event}<br/>{annotation}<br/>{dataVisualization}',
                 'buttons' => [
                     'event' => function($url, $model, $key) {
@@ -160,7 +160,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]);
     ?>
-
     <!-- The modal -->
     <div class="modal  " id="cartView" tabindex="-1" role="dialog" aria-labelledby="modalLabelLarge" aria-hidden="true">
         <div class="vertical-alignment-helper">
@@ -235,17 +234,17 @@ $this->params['breadcrumbs'][] = $this->title;
     //Open the cart popup, get the cart and fill the popup
     $('#cart-btn').click(function () {
 
-            var ajaxUrl = '<?php echo Url::to(['scientific-object/get-cart']) ?>';
-            $.post(ajaxUrl).done(function (data) {
-                var content = "";
-                for (const [key, value] of Object.entries(data.items)) {
-                    content += '<tr><td ><p>' + key + '</p></td><td ><p>' + value + '</p></td></tr>';
-                }
-                $('#cart-table tbody').html(content);
-                $('#cartView').modal('show');
-            }).fail(function (jqXHR, textStatus) {
-                alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
-            });
+        var ajaxUrl = '<?php echo Url::to(['scientific-object/get-cart']) ?>';
+        $.post(ajaxUrl).done(function (data) {
+            var content = "";
+            for (const [key, value] of Object.entries(data.items)) {
+                content += '<tr><td ><p>' + key + '</p></td><td ><p>' + value + '</p></td></tr>';
+            }
+            $('#cart-table tbody').html(content);
+            $('#cartView').modal('show');
+        }).fail(function (jqXHR, textStatus) {
+            alert('Something went wrong!/ERROR ajax callback : ' + jqXHR);
+        });
 
     });
 

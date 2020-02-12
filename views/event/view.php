@@ -28,7 +28,7 @@ $this->title = $model->uri;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', '{n, plural, =1{Event} other{Events}}', ['n' => 2]), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="event-view">
+<div class="event-view row ">
     <h1><?= Html::encode(Vocabulary::prettyUri($model->rdfType)) ?></h1>
         <?= Html::a(Yii::t('app', 'Update'), 
                 ${EventController::PARAM_UPDATABLE} ? ['update', 'id' => $model->uri] : false, 

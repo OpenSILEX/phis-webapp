@@ -81,7 +81,8 @@ class ProjectController extends Controller {
         $searchModel = new ProjectSearch();
         
         //Get the search params and update pagination
-        $searchParams = Yii::$app->request->queryParams;        
+        $searchParams = Yii::$app->request->queryParams;      
+        $searchModel->financialFundingLang = Yii::$app->language;
         if (isset($searchParams[YiiModelsConstants::PAGE])) {
             $searchParams[YiiModelsConstants::PAGE]--;
         }

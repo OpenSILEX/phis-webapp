@@ -67,6 +67,14 @@ class YiiEventModel extends WSActiveRecord {
     public $properties;
     const PROPERTIES = "properties";
     
+     /**
+     * Annotations of the event
+     * @var array 
+     */
+    public $annotations;
+    const ANNOTATIONS = "Annotations";
+    
+    
     public function __construct($pageSize = null, $page = null) {
         $this->wsModel = new WSEventModel();
         ($pageSize !== null || $pageSize !== "") ? $this->pageSize = $pageSize 
@@ -140,9 +148,10 @@ class YiiEventModel extends WSActiveRecord {
     public function getEvent($sessionToken, $uri) {
         $event = $this->wsModel->getEvent($sessionToken, $uri);
         if (!is_string($event)) {
-            if (isset($event[WSConstants::TOKEN_INVALID])) {
-                return $event;
-            } else {
+           if (isset($event->{'metadata'}->{'status'}[0]->{'exception'}->{'details'}) 
+                    && $event->{'metadata'}->{'status'}[0]->{'exception'}->{'details'} === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
+                    return \app\models\wsModels\WSConstants::TOKEN_INVALID;
+                    } else {
                 $this->arrayToAttributes($event);
                 $this->uri = $uri;
                 return $this;
@@ -151,7 +160,8 @@ class YiiEventModel extends WSActiveRecord {
             return $event;
         }
     }
-
+    
+    
     /**
      * Get the event's annotations
      * @param type $sessionToken
@@ -177,6 +187,8 @@ class YiiEventModel extends WSActiveRecord {
             return $response;
         }
     }
+    
+  
 
     /**
      * Calls the web service and returns the list of events types

@@ -46,12 +46,16 @@ return [
 
     // A
     'Acquisition session template' => 'Gabarit de session d\'aquisition',
+    'Add an event'=>'Ajouter un événement',
     'Add Dataset' => 'Importer un jeu de données',
     'Add Document' => 'Ajouter un document',
     'Add Document Script' => 'Ajouter un script',
+    'Add on scientific object' => 'Importer pour un objet scientifique',
+    'Add only on sensor' => 'Ajout des données capteurs',
     'Add row' => 'Ajouter une ligne',
     'Add Sensors' => 'Ajouter des Capteurs',
     'Add Vectors' => 'Ajouter des Vecteurs',
+    'Add Data linked to a sensor' => 'Ajouter des données liées à un capteur',
     'Address' => 'Adresse',
     'Admin' => 'Administrateur',
     'Administrative Contacts' => 'Contacts administratifs',
@@ -66,6 +70,7 @@ return [
     'Availability' => 'Disponibilité',
 
     // B
+    'Back' => 'Retour',
     'Back to sensor view' => 'Retour à la vue du capteur',
     'Brand' => 'Marque',
     'BRDF coefficient P1' => 'Coefficient BRDF P1',
@@ -80,6 +85,8 @@ return [
     'Characterize Sensor' => 'Caractériser un Capteur',
     'Characterize' => 'Caractériser',
     'Circular' => 'Circulaire',
+    'Choose a sensor' => 'Choisir un capteur' ,
+    'Choose experiment' => 'Choisir une expérimentation' ,
     'Contact' => 'Contact',
     'Contact / Help' => 'Contact / Aide',
     'Column' => 'Colonne',
@@ -96,6 +103,7 @@ return [
     'Comment' => 'Commentaire',
     'Creation Date' => 'Date de Création',
     'Creator' => 'Auteur',
+    'Create provenance' => 'Créer la provenance',
     'Creator of the annotation' => 'Auteur de l\'annotation',
     'Crop Species' => 'Espèce',
 
@@ -105,12 +113,14 @@ return [
     'Data Search'=>'Recherche de données',
     'Dataset' => 'Jeux de données',
     'Dataset Creation Date' => 'Données Insérées',
+    'Dataset input file' => 'Fichier de jeu de données',
     'Date' => 'Date',
     'Date End' => 'Date de fin',
     'Date Of Last Calibration' => 'Date de Dernier Étalonnage',
     'Date Of Purchase' => 'Date d\'Achat',
     'Date Start' => 'Date de début',
     'Description' => 'Description',
+    'Describe the produced dataset' => 'Décrire le jeu de données',
     'Diameter' => 'Diamètre',
     'Diameter (m)' => 'Diamètre (m)',
     'Document Type' => 'Type du Document',
@@ -130,6 +140,7 @@ return [
     'Experimental Organization' => 'Organisation expérimentale',
     'Experiment'=>'Expérimentation',
     'Experiment Modalities' => 'Modalités Expérimentales',
+    'Experiment associated variable(s)' => 'Variable(s) associées à l\'expérimentation',
     EventAction::EVENT_UNUPDATABLE_DUE_TO_UNUPDATABLE_PROPRTY_LABEL =>
         "L'événement ne peut être mis à jour que via le web service car une de "
         . "ses propriétés spécifiques n'est actuellement pas compatible avec la webapp.",
@@ -159,6 +170,8 @@ return [
     'Generate Layer' => 'Générer la Couche',
     'Generate Map' => 'Générer la Carte',
     'Generated URI' => 'URI générée',
+    'Generate dataset template' => 'Générer le gabarit du jeux de données',
+    'Generate dataset template (Optional)' => 'Generer le gabarit du jeu de données (Optionnel)',
     'Geographic Location' => 'Localisation géographique',
     'Geometry' => 'Géométrie',
     'Graphic visualization' => 'Visualisation graphique',
@@ -210,6 +223,8 @@ return [
 
     // N
     'Name' => 'Nom',
+    'Need a dataset template ? (Optional)'=> 'Besoin d\'un gabarit jeu de données ? (Optionnel)',
+    'Next' => 'Suivant',
     'No' => 'Non',
     'No item concerned' => 'Aucun élément concerné',
     'No Specific Property' => 'Aucune Propriété Spécifique',
@@ -236,7 +251,10 @@ return [
     'Properties'=>'Propriétés',
     PropertyWidget::NO_PROPERTY_LABEL => 'Aucune propriété spécifique',
     'Provenance comment' => 'Commentaire de la provenance',
-    'Provenance (URI)' => 'Provenance (URI)',
+    'Provenance (URI)' => 'Identifiant de la provenance',
+    'Provenance label' => 'Label de la provenance',
+    'Provenance operator(s)' => 'Opérateur(s) lié(s) à la provenance',
+    'Provenance sensor(s)' => 'Capteur(s) lié(s) à la provenance',
     'Public Access' => 'Accès Public',
 
     // Q
@@ -259,14 +277,16 @@ return [
     // S
     'Scientific Contacts' => 'Contacts scientifiques',
     'scientific objects' =>'objets scientifiques',
+    'Scientific object metadata'=>'Métadonnées de l\'objet scientifique',
     'Scientific Supervisors' => 'Superviseurs scientifiques',
-    'Search Criteria' =>'Critères de recherche',
     'See' => 'Voir',
     'Select all the' =>'Sélectionnez l\'ensemble des',
     'Select method alias...' => 'Sélectionnez l\'alias de la méthode',
     'Select trait alias...' => 'Sélectionnez l\'alias du trait',
     'Select type...' => 'Sélectionez le type',
     'Select unit alias...' => 'Sélectionnez l\'alias de l\'unité',
+    'Sensor' => 'Capteur',
+    'Sensor(s)' => 'Capteur(s)',
     'Sensor Data Visualization' => 'Visualisation des données du capteur',
     'Sensor Position' => 'Position du Capteur',
     'Sensor Profile' => 'Profil du Capteur',
@@ -302,7 +322,8 @@ return [
     'Update event' => 'Modifier l\'événement',
     'Update sensors' => 'Mise à jour des capteurs',
     'Update measured variables' => 'Mise à jour des variables mesurées',
-
+    'Upload dataset' => 'Soumettre le jeu de données',
+        
     // V
     'Value' => 'Valeur',
     'Value Labels' => 'Labels de la Valeur',
@@ -312,6 +333,7 @@ return [
     'Variety' => 'Variété',
     'Verification Code' => 'Code de vérification',
     'View / Download' => 'Visualiser / Télécharger',
+    'View' => 'Visualiser',
 
     // W
     'Was Generated By' => 'Généré Par',

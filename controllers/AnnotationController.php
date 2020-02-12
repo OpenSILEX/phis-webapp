@@ -56,6 +56,7 @@ class AnnotationController extends Controller {
             $dataToSend[] = $annotationModel->attributesToArray();
             // Send data
             $requestRes = $annotationModel->insert($sessionToken, $dataToSend);
+            
             if (is_string($requestRes) && $requestRes === \app\models\wsModels\WSConstants::TOKEN_INVALID) { // User must be connected
                 return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
             } else {
@@ -94,8 +95,7 @@ class AnnotationController extends Controller {
         // Load user instances list
         $userModel = new YiiUserModel();
         $users = $userModel->getPersonsURIAndName(Yii::$app->session[\app\models\wsModels\WSConstants::ACCESS_TOKEN]);
-
-        // Load once motivation instances list
+         // Load once motivation instances list
         $motivationInstances = $this->getMotivationInstances();
         if (is_string($searchResult)) {
             if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {

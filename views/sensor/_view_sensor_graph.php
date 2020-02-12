@@ -23,19 +23,28 @@ use miloschuman\highcharts\Highcharts;
  *      ]
  * ]
  */
-$serie = [
-    "name" => $sensorGraphData["graphName"],
-    "data" => []
-];
 
+$series = [];
+
+foreach( $sensorGraphData["provenances"] as $provenance) {
+    $series[$provenance->uri]= [
+            "name" => $provenance->label,
+            "data" => []
+        ];
+}
+
+//Create an array of data to store serie data by uri
+//array(1) { ["http://www.opensilex.org/sunagri/id/provenance/1572430583192"]=> array(2) { 
+//["name"]=> string(25) "new provs agent + sensor2" ["data"]=> array(0) { } } }
 if (is_array($sensorGraphData['data'])) {
     foreach ($sensorGraphData['data'] as $data) {
-        $serie['data'][] = [(strtotime($data->date))*1000, $data->value ];
+        $series[$data->provenanceUri]['data'][] = [(strtotime($data->date))*1000, $data->value ];
     }
-
+    //format data  - remove uri key
+    $series = array_values($series);
+    
     // Display Hightchart widget
     echo Highcharts::widget([
-        
         // Create a unique ID for each graph based on variable URI
         'id' => base64_encode($sensorGraphData["variableUri"]),
         'options' => [
@@ -54,7 +63,7 @@ if (is_array($sensorGraphData['data'])) {
             'tooltip' => [
                'xDateFormat' => '%Y-%m-%d %H:%M'
              ],
-            'series' => [$serie],
+            'series' => $series,
         ]
     ]);
 }

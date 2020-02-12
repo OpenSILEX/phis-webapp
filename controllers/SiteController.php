@@ -89,7 +89,7 @@ class SiteController extends Controller
         $model = new \app\models\yiiModels\YiiTokenModel();
 
          if ($model->load(Yii::$app->request->post())) {
-//             $model->password = md5($model->password);
+             $model->password = $model->password;
              if ($model->login()) {
                 Yii::$app->session['scientific-object']=null;
                 $this->getLoggedUsersGroups();
@@ -114,7 +114,7 @@ class SiteController extends Controller
 
         // Load POST parameters
         if ($model->load(Yii::$app->request->post())) {
-//            $model->password = md5($model->password);
+            $model->password = $model->password;
 
             // Get the previous and new user email to check if the same credentials have been submited
             $previousMail = Yii::$app->session['email'];

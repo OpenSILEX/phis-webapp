@@ -36,7 +36,8 @@ return [
     'Be carefull to write all the new and the former properties of the updated object.' => 'Attention, veillez à écrire toutes les nouvelles et les anciennes propriétés de l\'objet mis à jour.',
 
     // C
-    'Click and drag in the plot area to zoom in!' =>'Cliquer et faire glisser pour zoomer sur le graphique!',
+    'Click on a serie to add an event or annotate the scientific object.' =>'Cliquer sur une série pour ajouter un évenement ou annoter l\'object scientifique.',
+    'Click on the circle up to the serie to see images.' =>'Cliquer sur le cercle au dessus de la serie pour voir l\'image.',
     'CSV file headers does not match selected variables' => 'Les en-têtes du fichier CSV ne correspondent pas aux variables sélectionnées',
     'CSV separator must be' => 'Le séparateur de champs CSV doit être',
 
@@ -98,7 +99,7 @@ return [
     'Select image view...' => 'Sélectionnez la vue de l\'image...',
     'Select provenance...'=>'Sélectionnez la provenance...',
     'Select type...' => 'Sélectionnez le type...',
-    'Select one or many variables' => 'Sélectionnez une ou plusieurs variables',
+    'Select one or more variables' => 'Sélectionnez une ou plusieurs variables',
     'Select existing provenance or create a new one' => 'Selectionnez une provenance existante où créez en une nouvelle',
     'Software is licensed under AGPL-3.0 and data under CC BY-NC-SA 4.0' => 'Le logiciel est sous licence AGPL-3.0 et les données sous CC BY-NC-SA 4.0',
     'Some required fields are missings' => 'Des champs requis sont manquants.',
@@ -119,6 +120,8 @@ return [
     'The variety used in the plot (e.g. apache)' => 'La variété du plot (ex. apache)',
     'To assign scientific objects to two experiments: (1) create the scientific objects on one of the experiments and (2) update them with the uri of the second experiment.' => 'Pour affecter des objets scientifiques à deux expériences: (1) créez les objets scientifiques sur l\'une des expériences et (2) mettez-les à jour avec l\'uri de la deuxième expérience.',
     'to get more information about the columns content' => 'pour obtenir davantage d\'information sur le contenu de chaque colonne',
+    'The variables associated to the choosen experiment' => 'Les variables associées à l\'expérimentation choisie',
+    'The variables associated to the choosen sensor' => 'Les variables associées au capteur choisi',
 
     // U
     'Unknown error' => 'Erreur inconnue',
@@ -139,7 +142,6 @@ return [
     'You <b>cannot modify already existing</b> traits, methods and units.' => 'Vous ne pouvez pas modifier de traits, méthodes et unités déjà existantes.','Your session has expired' => 'Votre session a expirée',
     'You are on PHIS, the Hybrid Information System about Phenotyping!' => 'Bienvenue dans PHIS, le Système d\'Information Hybride pour le Phénotypage !',
     'You are on OpenSILEX, the Hybrid Information System about Life Science!' => 'Bienvenue dans OpenSILEX, le Système d\'Information Hybride pour les Sciences de la Vie !',
-    'You have to click a graphic point to see images on that date.' => 'Vous devez clicker sur un point du graphique pour voir les images à cette date.',
     'You wish to get notified when new developments are available ? You can follow us on' => 'Vous souhaitez vous tenir informé des derniers développements disponibles ? Vous pouvez nous suivre sur',
     'You wish to report a bug or to get help ? OpenSILEX development team can be contacted through the email address' => 'Vous souhaitez nous signaler une erreur ou bien nous demander de l\'aide ? L\'équipe de développement d\'OpenSILEX peut être contactée via l\'adresse'
 ];

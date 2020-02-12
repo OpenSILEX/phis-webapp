@@ -17,9 +17,15 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use app\models\yiiModels\YiiScientificObjectModel;
 use app\models\yiiModels\ScientificObjectSearch;
 use app\models\yiiModels\YiiExperimentModel;
+use app\models\yiiModels\DataFileSearch;
+use app\models\yiiModels\EventSearch;
+use app\models\yiiModels\AnnotationSearch;
+use app\models\wsModels\WSConstants;
+use app\components\helpers\SiteMessages;
 
 require_once '../config/config.php';
 
@@ -28,6 +34,7 @@ require_once '../config/config.php';
  * @see yii\web\Controller
  * @see app\models\yiiModels\YiiScientificObjectModel
  * @update [Bonnefont Julien] 12 Septembre, 2019: add visualization functionnalities & cart & cart action to add Event on multipe scientific objects
+ * @update [Renaud COLIN]  20 September, 2019: add the "isPartOf" key/value into the returned array by the getArrayForWebServiceCreate() method. 
  * @author Morgane Vidal <morgane.vidal@inra.fr>
  */
 class ScientificObjectController extends Controller {
@@ -426,9 +433,9 @@ class ScientificObjectController extends Controller {
                     $cpt = 0;
 
                     $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
-                  
+
                     $forWebService = [];
-                    
+
                     if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
                         foreach ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES} as $scientificObjectUri) {
                             $return["objectUris"][] = $scientificObjectUri;
@@ -457,7 +464,7 @@ class ScientificObjectController extends Controller {
     private function getObjectTypeCompleteUri($objectType) {
         $objectTypesList = $this->getObjectsTypesUris();
         foreach ($objectTypesList as $objectTypeUri) {
-            if (preg_match("/". $objectType . "\b/", $objectTypeUri)) {
+            if (preg_match("/" . $objectType . "\b/", $objectTypeUri)) {
                 return $objectTypeUri;
             }
         }
@@ -528,11 +535,13 @@ class ScientificObjectController extends Controller {
         $p["experiment"] = $scientificObject["experiment"];
         $p["geometry"] = $scientificObject["geometry"];
 
-        if ($scientificObject["ispartof"] != null) {
+        if ($scientificObject[YiiScientificObjectModel::ISPARTOF] != null) {
             $parent["relation"] = Yii::$app->params['isPartOf'];
-            $parent["value"] = $scientificObject["ispartof"];
+            $parent["value"] = $scientificObject[YiiScientificObjectModel::ISPARTOF];
             $p["properties"][] = $parent;
+            $p["isPartOf"] = $scientificObject[YiiScientificObjectModel::ISPARTOF];
         }
+
 
         if ($scientificObject["species"] != null) {
             $species["rdfType"] = Yii::$app->params['Species'];
@@ -808,13 +817,13 @@ class ScientificObjectController extends Controller {
                 } else {
                     $wktGeometry = "";
                 }
- 
-                $stringToWrite .= $model->uri . Yii::$app->params['csvSeparator'] . 
-                                 $model->label . Yii::$app->params['csvSeparator'] .
-                                 $model->rdfType . Yii::$app->params['csvSeparator'] .
-                                 $model->experiment . Yii::$app->params['csvSeparator'] . 
-                                 '"' . $wktGeometry . '"' . Yii::$app->params['csvSeparator'] . 
-                                 "\n";
+
+                $stringToWrite .= $model->uri . Yii::$app->params['csvSeparator'] .
+                        $model->label . Yii::$app->params['csvSeparator'] .
+                        $model->rdfType . Yii::$app->params['csvSeparator'] .
+                        $model->experiment . Yii::$app->params['csvSeparator'] .
+                        '"' . $wktGeometry . '"' . Yii::$app->params['csvSeparator'] .
+                        "\n";
             }
 
             $totalPage = intval($searchModel->totalPages);
@@ -924,14 +933,23 @@ class ScientificObjectController extends Controller {
 
         //Get the list of the variables
         $variables = [];
-
-        //If the experiment URI is empty, we get all the variables. 
-        if (empty($experimentUri)) {
+        if (empty($experimentUri)) { //If the experiment URI is empty, we get all the variables. 
             $variableModel = new \app\models\yiiModels\YiiVariableModel();
             $variables = $variableModel->getInstancesDefinitionsUrisAndLabel($token);
         } else { //There is an experiment. Get the variables linked to the experiment.
             $experimentModel = new YiiExperimentModel();
-            $variables = $experimentModel->getMeasuredVariables($token, $scientificObject->experiment);
+            $variablesSearch = $experimentModel->getMeasuredVariables($token, $scientificObject->experiment);
+
+            if (is_string($variablesSearch)) {
+                if ($variablesSearch === WSConstants::TOKEN_INVALID) {
+                    return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+                } else {
+                    return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                                SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
+                                SiteMessages::SITE_PAGE_MESSAGE => $variablesSearch]);
+                }
+            }
+            $variables = $experimentModel->variables;
         }
 
         // Load existing provenances
@@ -944,47 +962,83 @@ class ScientificObjectController extends Controller {
 
 
         //Search data for the scientific object and the given variable.
-        if (isset($_POST['variable'])) {
+        if (isset($_GET['variable']) && !empty($_GET['variable'])) {
             $toReturn = [];
-            $searchModel = new \app\models\yiiModels\DataSearchLayers();
-            $searchModel->pageSize = 80000;
-            $searchModel->object = $scientificObject->uri;
-
-            $searchModel->variable = $_POST['variable'];
-            $searchModel->startDate = $_POST['dateStart'];
-            $searchModel->endDate = $_POST['dateEnd'];
-            $searchModel->provenance = $_POST['provenances'];
-            $searchResult = $searchModel->search($token, null);
-            /* Build array for highChart
+            /* Build array for highChart with data and photos by provenances
              * e.g : 
-             * {
-             *   "variable": "http:\/\/www.opensilex.org\/demo\/id\/variable\/v0000001",
-             *   "scientificObjectData": [
-             *          "label": "Scientific object label",
-             *          "dataFromProvenance": [
-             *                     "provenance":"Data provenance uri",
-             *                     "data": ["1,874809","2015-02-10"],
-             *                             ["2,313261","2015-03-15"],..
-             *    ]
-             *  ]
+             * {"ProvenanceUri1": {
+             *                      "data" :[["1500768000000","1,874809"],..],
+             *                      "photos":[
+             *                               [{
+             *                                 "url":"",
+             *                                 "date":"",
+             *                                 "position":""}],
+             *                               [{
+             *                                 "url":"",
+             *                                 "date":"",
+             *                                 "position":""}],...
+             *                              
+             *                              
+             * "ProvenanceUri2": {
+             *                      "data" :[["1496793600000","2,313261"],..],
+             *                      "photos":[
+             *                               [{
+             *                                 "url":"",
+             *                                 "date":"",
+             *                                 "position":""}],
+             *                               [{
              * }
              */
 
             $data = [];
-            $scientificObjectData["label"] = $label;
+            /* Step 1: Raw data : data from the data W.S.
+             * e.g : 
+             * [{
+             *   "provenanceUri": "http://www.opensilex.org/demo/id/provenance/1563795626162",
+             *   "date":"1500768000000",
+             *   "value":"1,874809"
+             * }],[{
+             *   "provenanceUri": "http://www.opensilex.org/demo/id/provenance/1563795626162",
+             *   "date":"1501112228000",
+             *   "value":"1,845209"
+             * }],[{
+             *   "provenanceUri": "http://www.opensilex.org/demo/id/provenance/1563795500410",
+             *   "date":"1496793600000",
+             *   "value":"2,313261"
+             * }],[.....
+             */
+            $searchModel = new \app\models\yiiModels\DataSearchLayers();
+            $searchModel->pageSize = 80000;
+            $searchModel->object = $scientificObject->uri;
+
+            $searchModel->variable = $_GET['variable'];
+            $searchModel->startDate = $_GET['dateStart'];
+            $searchModel->endDate = $_GET['dateEnd'];
+            $searchModel->provenance = $_GET['provenances'];
+            $searchModel->dateSortAsc = 'true'; //FIX HIGHCHARTS WHEN FLAGS IS ATTACHED TO A SERIE
+            $searchResult = $searchModel->search($token, null);
+           
             foreach ($searchResult->getModels() as $model) {
-                if (!empty($model->value)) {
-                    $dataToSave = null;
-                    $provenanceLabel = $provenances[$model->provenanceUri]->label;
-                    $dataToSave["provenanceUri"] = $provenanceLabel . " (prov:" . explode("id/provenance/", $model->provenanceUri)[1] . ")";
-                    $dataToSave["date"] = (strtotime($model->date)) * 1000;
+                $dataToSave = null;
+                $dataToSave["provenanceUri"] = $model->provenanceUri;
+                $dataToSave["date"] = (strtotime($model->date)) * 1000;
+                if(is_numeric($model->value)){
                     $dataToSave["value"] = doubleval($model->value);
-                    $data[] = $dataToSave;
+                } else {
+                    $dataToSave["value"]=null;
                 }
+                
+                $data[] = $dataToSave;
             }
-            // Transform to map based to the provenance value
 
             $dataByProvenance = array();
+            /* Step 2: Transformed Raw data 
+             * e.g : 
+             * {
+             *   "ProvenanceUri1":[["1498262400000","1,874809"],[],..]
+             *   "ProvenanceUri2":[["1496793600000","2,313261"],..],
+             * }
+             */
             foreach ($data as $dataEl) {
                 $dataByProvenanceToSave = null;
                 $dataByProvenanceToSave[] = $dataEl['date'];
@@ -992,38 +1046,156 @@ class ScientificObjectController extends Controller {
                 $dataByProvenance[$dataEl['provenanceUri']][] = $dataByProvenanceToSave;
             }
 
-            if (!empty($data)) {
-                $toReturn["variable"] = $searchModel->variable;
-                $scientificObjectData["dataFromProvenance"] = $dataByProvenance;
-                $toReturn["scientificObjectData"][] = $scientificObjectData;
+            /* Step 3: Add photos serie to each provenance or null
+             * e.g :
+             * {"ProvenanceUri1": {
+             *                      "data" :[["1500768000000","1,874809"],..],
+             *                      "photosSerie":[
+             *                                       [{
+             *                                         "date":"1500768000000",
+             *                                       "photos": [[url,filtre],[],[],....] }],
+             *                                       [{
+             *                                         "date":"1404896300000",
+             *                                       "photos": [[url,filtre],[],[],....] }],..,
+             *                                       ]
+             *                     },
+             * "ProvenanceUri2": {
+             *                      "data" :[["1500768000000","2,313261"],..],
+             *                      "photosSerie": ......
+             * }
+             */
+            $isPhotos = false;
+            if (isset($_GET['show']) && isset($_GET['imageType'])) {
+
+                if (isset($_GET['filter']) && $_GET['filter'] !== "") {
+                    $selectedPositionIndex = $_GET['filter'];
+                    $attribut = explode(":", Yii::$app->params['image.filter']['metadata.position'][$selectedPositionIndex]);
+                    $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
+                }
+
+                $photosArray = null;
+                $photosArray = $this->searchImagesByObject($scientificObject->uri, $_GET['imageType'], $filterToSend ? $filterToSend : null, $_GET['dateStart'], $_GET['dateEnd']);
+                if (isset($photosArray) && !$isPhotos) {
+                    $isPhotos = true;
+                }
+
+                foreach ($dataByProvenance as $dataFromProvenanceKey => $dataFromProvenanceValue) {
+
+                    $toReturn[$dataFromProvenanceKey] = [
+                        'data' => $dataFromProvenanceValue,
+                        'photosSerie' => $photosArray,
+                    ];
+                }
+            } else {
+                foreach ($dataByProvenance as $dataFromProvenanceKey => $dataFromProvenanceValue) {
+
+                    $toReturn[$dataFromProvenanceKey] = [
+                        'data' => $dataFromProvenanceValue,
+                        'photosSerie' => null,
+                    ];
+                }
             }
 
+            //Get the events associate to the sci. obj. to put on the Highcharts Graph
+            $searchModel = new EventSearch();
+            $searchModel->pageSize = 800;
+            $searchModel->searchConcernedItemUri = $uri;
+            $searchModel->searchDateRangeStart = $_GET['dateStart'];
+            $searchModel->searchDateRangeEnd = $_GET['dateEnd'];
+            //$searchModel->dateSortAsc = 'true';
+            $searchResult = $searchModel->search($token, null);
+            if (is_string($searchResult)) {
+                if ($searchResult === WSConstants::TOKEN_INVALID) {
+                    return $this->redirect(Yii::$app->urlManager->createUrl(SiteMessages::SITE_LOGIN_PAGE_ROUTE));
+                } else {
+                    return $this->render(SiteMessages::SITE_ERROR_PAGE_ROUTE, [
+                                SiteMessages::SITE_PAGE_NAME => SiteMessages::INTERNAL_ERROR,
+                                SiteMessages::SITE_PAGE_MESSAGE => $searchResult]);
+                }
+            } else {
+                foreach ($searchResult->getModels() as $model) {
 
+                    $annotationObjects = $searchModel->getAnnotations($token, ["uri" => $model->uri]);
+                    $annotations = array();
+                    foreach ($annotationObjects as $annotationObject) {
+                        $annotations[] = [
+                            "creationDate" => $annotationObject->creationDate,
+                            "bodyValues" => $annotationObject->bodyValues
+                        ];
+                    }
+                    uasort($annotations, function($item1, $item2) {
+                        return strtotime($item1['creationDate']) > strtotime($item2['creationDate']);
+                    });
 
-            //on FORM submitted:
-            //check if image visualization is activated
-            $show = isset($_POST['show']) ? $_POST['show'] : null;
-            $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
-            $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
-            $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
-            if (isset($_POST['filter']) && $_POST['filter'] !== "") {
-                $selectedPositionIndex = $_POST['filter'];
-                $attribut=explode(":",Yii::$app->params['image.filter']['metadata.position'][$selectedPositionIndex]);
-                $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
+                    $events[] = [
+                        'date' => (strtotime($model->date)) * 1000,
+                        'title' => explode('#', $model->rdfType)[1],
+                        'annotations' => $annotations
+                    ];
+                }
             }
+            $eventsByTitle = $this->group_by('title', $events);
+            $eventCategories = array_keys($eventsByTitle);
+            $highchartsColorArray = Yii::$app->params['highchartsColor'];
+            $i = 0;
+            foreach ($eventCategories as $categorie) {
+                $colorByEventCategorie[$categorie] = $highchartsColorArray[$i];
+                $i++;
+            }
+
+            //info of the variable
+            if (!empty($experimentUri)) {
+                $variableModel = new \app\models\yiiModels\YiiVariableModel();
+            }
+            $variableModel->findByURI($token, $_GET['variable']);
+
+            $variableInfo = [
+                'label' => $variableModel->label,
+                'comment' => $variableModel->comment
+            ];
+
+            $searchParams = Yii::$app->request->queryParams;
+
+
+            // Get events associated to the table widget
+            $searchEventModel = new EventSearch();
+            $searchEventModel->searchConcernedItemUri = $uri;
+            $eventSearchParameters = [];
+            if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+                $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+            }
+            $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+            $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
+            $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE; // multiple gridview pagination
+            // Get annotations associated to the table widget
+            $searchAnnotationModel = new AnnotationSearch();
+            $annotationSearchParameters = [];
+            if (isset($searchParams[WSConstants::ANNOTATION_WIDGET_PAGE])) {
+                $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::ANNOTATION_WIDGET_PAGE] - 1;
+            }
+            $searchAnnotationModel->targets[0] = $uri;
+            $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
+            $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
+            $annotationsProvider->pagination->pageParam = WSConstants::ANNOTATION_WIDGET_PAGE; // multiple gridview pagination
+
             return $this->render('data_visualization', [
                         'model' => $scientificObject,
                         'variables' => $variables,
                         'data' => $toReturn,
-                        'show' => $show,
-                        'dateStart' => $searchModel->startDate,
-                        'dateEnd' => $searchModel->endDate,
-                        'selectedVariable' => $selectedVariable,
-                        'imageTypeSelected' => $imageTypeSelected,
-                        'selectedProvenance' => $selectedProvenance,
+                        'show' => $_GET['show'],
+                        'isPhotos' => $isPhotos,
+                        'dateStart' => $_GET['dateStart'],
+                        'dateEnd' => $_GET['dateEnd'],
+                        'selectedVariable' => $_GET['variable'],
+                        'imageTypeSelected' => $_GET['imageType'],
+                        'selectedProvenance' => $_GET['provenances'],
                         'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
                         'filterToSend' => $filterToSend,
-                        'test' => $selectedPosition,
+                        'events' => $events,
+                        'colorByEventCategorie' => $colorByEventCategorie,
+                        'variableInfo' => $variableInfo,
+                        'annotationsProvider' => $annotationsProvider,
+                        'eventsProvider' => $eventsProvider,
             ]);
         } else { //If there is no variable given, just redirect to the visualization page.
             return $this->render('data_visualization', [
@@ -1031,6 +1203,100 @@ class ScientificObjectController extends Controller {
                         'variables' => $variables
             ]);
         }
+    }
+
+    /**
+     * Function that split the sentence from the annotation body to show, on the highcharts serie, on hover in the tooltip.
+     * 
+     * @param {String} $longString the sentence to split
+     * @param {String} $maxLineLength the length of the cut
+     * @return {Array} array of short sentences
+     */
+    public function splitLongueSentence($longString, $maxLineLength) {
+
+        $words = explode(' ', $longString);
+        $currentLength = 0;
+        $index = 0;
+        foreach ($words as $word) {
+            // +1 because the word will receive back the space in the end that it loses in explode()
+            $wordLength = strlen($word) + 1;
+            if (($currentLength + $wordLength) <= $maxLineLength) {
+                $output[$index] .= $word . ' ';
+                $currentLength += $wordLength;
+            } else {
+                $index += 1;
+                $currentLength = $wordLength;
+                $output[$index] = $word;
+            }
+        }
+        return $output;
+    }
+
+    /**
+     * Create an associative array of imagesUri[]/date from an scientific object for a specified object
+     * [
+      {
+      "date":"1500768000000",
+      "photos": [[url,filtre],[],[],....] },
+      {
+      "date":"1404896300000",
+      "photos": [[url,filtre],[],[],....] },..,
+     * ]
+     * @param type $objectUri 
+     * @param type $rdfType 
+     * @param type $filter 
+     * @param type $date 
+     * @return associative array
+     */
+    private function searchImagesByObject($objectUri, $rdfType, $filter, $startDate, $endDate) {
+
+        $searchImagesModel = new DataFileSearch($pageSize = 8000);
+        $searchImagesModel->rdfType = $rdfType;
+        $searchImagesModel->startDate = $startDate;
+        $searchImagesModel->endDate = $endDate;
+        $searchImagesModel->concernedItems = [$objectUri];
+        $searchImagesModel->jsonValueFilter = $filter;
+        $searchResult = $searchImagesModel->search(Yii::$app->session['access_token'], null);
+        foreach ($searchResult->getModels() as $image) {
+            $images[] = [
+                'url' => Url::to(['image/get', 'imageUri' => urlencode($image->uri)]),
+                'date' => (strtotime($image->date)) * 1000,
+                'position' => $image->metadata->position
+            ];
+        }
+        /* Transformed Raw data 
+         * e.g : 
+         * {
+         *   "Date1":[["url1","1"],["url2","2"],..]
+         *   "Date2":....
+         * }
+         */
+        foreach ($images as $imagesEl) {
+            $imagesByDateToSave = null;
+            $imagesByDateToSave[] = $imagesEl['url'];
+            $imagesByDateToSave[] = $imagesEl['position'];
+            $imagesByDate[$imagesEl['date']][] = $imagesByDateToSave;
+        }
+        return $imagesByDate;
+    }
+
+    /**
+     * Function that groups an array of associative arrays by some key.
+     * 
+     * @param {String} $key Property to sort by.
+     * @param {Array} $data Array that stores multiple associative arrays.
+     */
+    function group_by($key, $array) {
+
+        $result = array();
+        foreach ($array as $val) {
+            if (array_key_exists($key, $val)) {
+                $result[$val[$key]][] = $val;
+            } else {
+                $result[""][] = $val;
+            }
+        }
+        return $result;
     }
 
     /**

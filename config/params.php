@@ -2,7 +2,7 @@
 
 return [
     // Global
-    'platform' => 'Demo',
+    'platform' => 'Test',
     'isDemo' => false,
     'demoLogin' => 'guest@opensilex.org',
     'demoPassword' => 'guest',
@@ -38,6 +38,12 @@ return [
     'webServicePageSizeMax' => 2097152,
 
     // ONTOLOGY -----------------------------------------------------------------
+    //-------- Provenance NameSpaces
+    'provenanceNamespaces' => [
+       "prov"=>"http://www.w3.org/ns/prov#",
+       "oeso"=>"http://www.opensilex.org/vocabulary/oeso#",
+       "rdf"=>"http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+       ],
     //-------- Concepts
     'Actuator' => 'http://www.opensilex.org/vocabulary/oeso#Actuator',
     'Lens' => 'http://www.opensilex.org/vocabulary/oeso#Lens',
@@ -70,6 +76,12 @@ return [
     'Installation' => 'http://www.opensilex.org/vocabulary/oeso#Installation',
     
     'FinancialFunding' => 'http://www.opensilex.org/vocabulary/oeso#FinancialFunding',
+    
+    'Genus' => 'http://www.opensilex.org/vocabulary/oeso#Genus',
+    'Species' => 'http://www.opensilex.org/vocabulary/oeso#Species',
+    'Variety' => 'http://www.opensilex.org/vocabulary/oeso#Variety',
+    'Accession' => 'http://www.opensilex.org/vocabulary/oeso#Accession',
+    'PlantMaterialLot' => 'http://www.opensilex.org/vocabulary/oeso#PlantMaterialLot',
 
     // Event
     'event' => 'http://www.opensilex.org/vocabulary/oeev#Event',
@@ -89,6 +101,10 @@ return [
     'dateOfLastCalibration' => 'http://www.opensilex.org/vocabulary/oeso#dateOfLastCalibration',
     'dateOfPurchase' => 'http://www.opensilex.org/vocabulary/oeso#dateOfPurchase',
     'focalLength' => 'http://www.opensilex.org/vocabulary/oeso#focalLength',
+    'fromAccession' => 'http://www.opensilex.org/vocabulary/oeso#fromAccession',
+    'fromGenus' => 'http://www.opensilex.org/vocabulary/oeso#fromGenus',
+    'fromSpecies' => 'http://www.opensilex.org/vocabulary/oeso#fromSpecies',
+    'fromVariety' => 'http://www.opensilex.org/vocabulary/oeso#fromVariety',
     'hasSpecies' => 'http://www.opensilex.org/vocabulary/oeso#hasSpecies',
     'hasVariety' => 'http://www.opensilex.org/vocabulary/oeso#hasVariety',
     'halfFieldOfView' => 'http://www.opensilex.org/vocabulary/oeso#halfFieldOfView',
@@ -132,7 +148,7 @@ return [
     'from' => 'http://www.opensilex.org/vocabulary/oeev#from',
     'to' => 'http://www.opensilex.org/vocabulary/oeev#to',
     'associatedToASensor' => 'http://www.opensilex.org/vocabulary/oeev#associatedToASensor',
-
+    
     // Image filters
     'image.filter' => [
         'metadata.position' => [
@@ -142,11 +158,14 @@ return [
             'labelView:side90','labelView:side120','labelView:side150','labelView:side180','labelView:side210',
             'labelView:side240','labelView:side270','labelView:side300','labelView:side330',
             ],
-        ]
+        ],
 //     // Image filters GENERIC
 //    'image.filter' => [
 //        'metadata.position' => [
 //            'label1:value1','label2:value2', 'label3:value3'],
 //        ]
+    //Highcharts color 
+    'highchartsColor' =>["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f",
+                "#f45b5b", "#91e8e1", "#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
     
 ];

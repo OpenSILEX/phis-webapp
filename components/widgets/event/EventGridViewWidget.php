@@ -59,7 +59,7 @@ class EventGridViewWidget extends Widget {
                         'label' => Yii::t('app', YiiEventModel::TYPE),
                         'attribute' => YiiEventModel::TYPE,
                         'value' => function ($model) {
-                            return Vocabulary::prettyUri($model->rdfType);
+                            return explode("#", $model->rdfType)[1];
                         }
                     ],
                     [

@@ -43,6 +43,7 @@ class YiiDataModel extends WSActiveRecord {
      */
     public $provenance;
     
+    
     /**
      * 
      * @param string $pageSize number of elements per page

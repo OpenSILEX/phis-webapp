@@ -34,19 +34,21 @@ class WSProvenanceModel extends WSModel {
      * @param type $sessionToken
      * @param type $label
      * @param type $comment
+     * @param type $createdDate Description
      * @param type $metadata
      * @return type
      */
-    public function createProvenance($sessionToken, $label, $comment, $metadata) {
+    public function createProvenance($sessionToken, $label, $comment,$createdDate, $metadata) {
         $subService = "/";
         $provenance = $this->post($sessionToken, $subService, [[
         "label" => $label,
         "comment" => $comment,
+        "created" => $createdDate,
         "metadata" => $metadata,
         ]]);
 
         if (
-                isset($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) && count($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) == 1
+            isset($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) && count($provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}) == 1
         ) {
             return $provenance->{WSConstants::METADATA}->{WSConstants::DATA_FILES}[0];
         } else {
@@ -54,6 +56,46 @@ class WSProvenanceModel extends WSModel {
         }
     }
 
+    /**
+     * Return an array of existing provenances match with criteria
+     * 
+     * @param string $sessionToken
+     * @param array $userCriteria array of citeria
+     * @return type
+     */
+    public function getSpecificProvenancesByCriteria($sessionToken,$userCriteria = []) {
+        $pageSize = 200;
+        $subService = "/";
+        $params = array_merge($userCriteria,[
+            WSConstants::PAGE => 0,
+            WSConstants::PAGE_SIZE => $pageSize
+        ]);
+       
+        $provenanceResult = $this->get($sessionToken, $subService, $params);
+        
+        if (isset($provenanceResult->{WSConstants::METADATA}->{WSConstants::PAGINATION}) && isset($provenanceResult->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_COUNT}) && $provenanceResult->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_COUNT} > 0) {
+
+            $result = $provenanceResult->{WSConstants::RESULT}->{WSConstants::DATA};
+
+            $totalPages = $provenanceResult->{WSConstants::METADATA}->{WSConstants::PAGINATION}->{WSConstants::TOTAL_PAGES};
+
+            for ($currentPage = 1; $currentPage < $totalPages; $currentPage++) {
+                $params[WSConstants::PAGE] = $currentPage;
+                $params[WSConstants::PAGE_SIZE] = $pageSize;
+                
+                $provenanceResult = $this->get($sessionToken, $subService, $params);
+                
+                $result = array_merge($result, $provenanceResult->{WSConstants::RESULT}->{WSConstants::DATA});
+            }
+            
+            return $result;
+        }elseif(isset($provenanceResult->{WSConstants::RESULT}->{WSConstants::DATA})){
+            return  $provenanceResult->{WSConstants::RESULT}->{WSConstants::DATA};
+        }else{
+            return [];
+        }
+    }
+    
     /**
      * Return an array of all existing provenances
      * 

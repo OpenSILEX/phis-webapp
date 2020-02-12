@@ -354,7 +354,7 @@ class ActuatorController extends Controller {
             
             // Get data
             $sessionToken = Yii::$app->session['access_token'];
-            $actuatorGraphData = $searchModel->getEnvironmentData($sessionToken);
+            $actuatorGraphData = $searchModel->getSensorData($sessionToken);
             
             // Render data
             return $this->renderAjax('_view_actuator_graph', [

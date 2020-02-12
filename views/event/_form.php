@@ -36,7 +36,7 @@ use app\components\widgets\handsontableInput\HandsontableInputWidget;
     if (!$model->isNewRecord) {
         echo $form->field($model, EventAction::URI)->textInput(['readonly' => true]);
     }
-    
+   
     foreach ($this->params[EventController::EVENT_TYPES] as $eventPossibleType) {
         $eventPossibleTypes[$eventPossibleType] = Html::encode(Vocabulary::prettyUri($eventPossibleType));
     }

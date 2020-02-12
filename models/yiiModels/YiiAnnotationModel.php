@@ -48,7 +48,7 @@ class YiiAnnotationModel extends WSActiveRecord {
     public $creationDate;
 
     const CREATION_DATE = "creationDate";
-    const CREATION_DATE_LABEL = "Annotation Date";
+    const CREATION_DATE_LABEL = "Date";
 
     /**
      * The creator of the annotation
@@ -114,7 +114,7 @@ class YiiAnnotationModel extends WSActiveRecord {
             [[self::URI, self::CREATOR, self::MOTIVATED_BY, self::BODY_VALUES, self::TARGETS], 'required'],
             [[self::URI, self::RETURN_URL, self::CREATOR, self::MOTIVATED_BY, self::BODY_VALUES, self::TARGETS], 'safe'],
             [[self::BODY_VALUES], 'string'],
-            [[self::URI, self::RETURN_URL, self::CREATOR, self::TARGETS], 'string', 'max' => 300]
+            [[self::URI, self::RETURN_URL, self::CREATOR, self::TARGETS], 'string', 'max' => 1500]
         ];
     }
 

@@ -45,13 +45,16 @@ class EventButtonWidget extends Widget {
     const CONCERNED_ITEMS_URIS = "concernedItemsUris";
 
     /**
-     * Defines the type of object which will be annotated.
+     * Defines to wich type of model the event will be create ( scientific object, vector, sensor..).
      * @var array
      */
     public $type;
 
     const TYPE = "type";
 
+    public $size="";
+    
+    const SIZE="size";
     /**
      * Renders the event button.
      * @return string the string rendered
@@ -67,10 +70,10 @@ class EventButtonWidget extends Widget {
             EventController::PARAM_RETURN_URL => Url::current()
         ];
          if (!$this->asLink) {
-            $linkLabel = Icon::show('flag', [], Icon::FA) . " " . Yii::t('app', self::ADD_EVENT_LABEL);
+            $linkLabel = Icon::show('flag', ['class'=>$this->size], Icon::FA) . " " . Yii::t('app', self::ADD_EVENT_LABEL);
             
         } else {
-            $linkLabel = '<span class="fa fa-flag"></span>';
+            $linkLabel =Icon::show('flag', ['class'=>$this->size], Icon::FA);
         } 
         if(!isset($this->type)){
             $linkAttributes = ['class' => 'btn btn-default'];

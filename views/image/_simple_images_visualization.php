@@ -54,6 +54,8 @@ use yii\helpers\Url;
                     'title' => 'Position: ' . $position . '<br>Date: ' . $date,
                     'data-toggle' => 'tooltip',
                     'data-placement' => 'bottom',
+                    'data-serie'=>$serieIndex,
+                    'data-point'=>$pointIndex,
                 ]) .
                 '</a></li>';
                 $first = false;

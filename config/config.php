@@ -14,14 +14,13 @@
 // - Yii2 configuration file
 //***********************************************************************************************
 class config {
-
+    
     public static function path() {
 
-        $appli = 'phis-webapp';
-        $hostname = 'localhost';
-
+        $appli = 'test-modularity';
+        $hostname = '138.102.159.37';
         $basePath = $appli.'/web';
-
+        
         return [
             'appli' => $appli,
             'baseIndexURL' => 'http://'.$hostname.'/'.$basePath.'/index.php',
@@ -31,7 +30,7 @@ class config {
             'basePath' => '/'.$basePath.'/',
             'hostnameURL' => 'http://'.$hostname.'/'.$appli,
             'documentsUrl' => '../web/documents/',
-            'ocpuServer' => 'http://'.$hostname.':8004/ocpu/',
+            'shinyProxyServer' => 'http://'.$hostname.':8004',
             //Concepts, relations uri
             'cVariable' => 'http://www.opensilex.org/vocabulary/oeso#Variable',
             'cTrait' => 'http://www.opensilex.org/vocabulary/oeso#Trait',

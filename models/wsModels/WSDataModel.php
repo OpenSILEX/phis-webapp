@@ -19,6 +19,12 @@ include_once '../config/web_services.php';
  */
 class WSDataModel extends\openSILEX\guzzleClientPHP\WSModel {
     
+     /**
+     * Date format for the webservice filters with timezone
+     * @example: 2017-05-03T12:35:00+2000
+     */
+    const DATE_FORMAT = "Y-m-d\TH:i:sO";
+    
     /**
      * initialize access to the projects service. Calls super constructor
      */
