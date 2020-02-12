@@ -49,7 +49,6 @@ build:webapp:
 
 deploy:webapp:
   <<: *deploy_template
-  when : manual
   variables:
     REMOTE_IP: 138.102.159.37
     RSYNC_DEST: test
