@@ -5,7 +5,9 @@ variables:
 
 .cache_dependencies: &cache_dependencies
   cache:  
-    key: "deploy"
+    key: 
+      files:
+        - composer.json
     paths:
       - "$CI_PROJECT_DIR/vendor" 
 
@@ -23,8 +25,6 @@ build:webapp:
     SCP_ACCOUNT: mvidal
   image: tetraweb/php:7.0
   stage: deploy
-  cache:
-    policy: pull
   <<: *cache_dependencies
   before_script:
     - echo "Setting private key and known hosts"
