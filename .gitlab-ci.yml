@@ -17,7 +17,6 @@ build:webapp:
      - composer install --ignore-platform-reqs 
 
 .deploy: &deploy_template
-  <<: *cache_dependencies
   variables:
     REMOTE_IP: 138.102.159.37
     RSYNC_USER: phis
@@ -26,6 +25,7 @@ build:webapp:
   stage: deploy
   cache:
     policy: pull
+  <<: *cache_dependencies
   before_script:
     - echo "Setting private key and known hosts"
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
