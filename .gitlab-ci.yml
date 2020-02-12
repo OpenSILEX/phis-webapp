@@ -5,12 +5,8 @@ variables:
 
 build:webapp:
   cache:
-    paths:
-      - "vendor"
-    key:
-      files:
-        - composer.lock
-        - composer.json
+    key: "deploy"
+      - "vendor" 
   image: composer:1.9.1
   stage: build
   script:
@@ -24,12 +20,7 @@ build:webapp:
   image: tetraweb/php:7.0
   stage: deploy
   cache:
-    key:
-      files:
-        - composer.lock
-        - composer.json
-    paths:
-      - "vendor"
+    key: "deploy" 
     policy: pull
   before_script:
     - echo "Setting private key and known hosts"
