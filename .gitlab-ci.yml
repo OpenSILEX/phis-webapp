@@ -3,20 +3,21 @@ variables:
   RSYNC_USER: phis
   SCP_ACCOUNT: mvidal
 
-.cache: &cache_deploy
-  key: "deploy"
-  paths:
-    - "$CI_PROJECT_DIR/vendor" 
+.cache_dependencies: &cache_dependencies
+  cache:  
+    key: "deploy"
+    paths:
+      - "$CI_PROJECT_DIR/vendor" 
 
 build:webapp:
-  <<: *cache_deploy
+  <<: *cache_dependencies
   image: composer:1.9.1
   stage: build
   script:
      - composer install --ignore-platform-reqs 
 
 .deploy: &deploy_template
-  <<: *cache_deploy
+  <<: *cache_dependencies
   variables:
     REMOTE_IP: 138.102.159.37
     RSYNC_USER: phis
@@ -52,7 +53,8 @@ deploy:webapp:
   variables:
     REMOTE_IP: 138.102.159.37
     RSYNC_DEST: test
- 
+  only:
+    - master
         
 deploy:webapp:modularity:
   <<: *deploy_template
