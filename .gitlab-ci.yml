@@ -6,6 +6,7 @@ variables:
 build:webapp:
   cache:
     key: "deploy"
+    paths:
       - "vendor" 
   image: composer:1.9.1
   stage: build
