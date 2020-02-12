@@ -41,7 +41,7 @@ build:webapp:
   script:
     - echo "#### [Webapp] Rsync webapp files"
     - ls 
-    - ls vendor
+    # - ls vendor
     - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo mkdir -p /var/www/html/$RSYNC_DEST/"
     - ssh -i ${HOME}/.ssh/id_rsa  $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:phis /var/www/html/$RSYNC_DEST/"
     - echo $RSYNC_USER@$REMOTE_IP:/var/www/html/$RSYNC_DEST/
