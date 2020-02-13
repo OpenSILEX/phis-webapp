@@ -5,9 +5,7 @@ variables:
 
 .cache_dependencies: &cache_dependencies
   cache:  
-    key: 
-      files:
-        - composer.json
+    key: "deploy"
     paths:
       - "$CI_PROJECT_DIR/vendor" 
 
