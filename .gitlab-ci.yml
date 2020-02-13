@@ -5,9 +5,7 @@ variables:
 
 .cache_dependencies: &cache_dependencies
   cache:  
-    key: 
-      files:
-        - composer.json
+    key: "deploy-phis-webapp"
     paths:
       - "$CI_PROJECT_DIR/vendor" 
 
@@ -49,6 +47,7 @@ build:webapp:
 
 deploy:webapp:
   <<: *deploy_template
+  when : manual
   variables:
     REMOTE_IP: 138.102.159.37
     RSYNC_DEST: test
