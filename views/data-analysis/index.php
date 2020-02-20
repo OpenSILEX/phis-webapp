@@ -32,6 +32,11 @@ echo GridView::widget([
         'display_name',
         'description',
         [
+            'attribute' => 'documentCreationDate',
+            'format' => 'text',
+            'label' => 'creation Date',
+        ],
+        [
             'value' => 'application_url',
             'format' => 'raw',
               'value' => function ($model, $key, $index) {
