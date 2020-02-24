@@ -426,9 +426,9 @@ class ScientificObjectController extends Controller {
                     $cpt = 0;
 
                     $insertionResult = $scientificObjectModel->insert($sessionToken, $forWebService);
-                  
+
                     $forWebService = [];
-                    
+
                     if ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->status[0]->exception->type != "Error") {
                         foreach ($insertionResult->{\app\models\wsModels\WSConstants::METADATA}->{\app\models\wsModels\WSConstants::DATA_FILES} as $scientificObjectUri) {
                             $return["objectUris"][] = $scientificObjectUri;
@@ -457,7 +457,7 @@ class ScientificObjectController extends Controller {
     private function getObjectTypeCompleteUri($objectType) {
         $objectTypesList = $this->getObjectsTypesUris();
         foreach ($objectTypesList as $objectTypeUri) {
-            if (preg_match("/". $objectType . "\b/", $objectTypeUri)) {
+            if (preg_match("/" . $objectType . "\b/", $objectTypeUri)) {
                 return $objectTypeUri;
             }
         }
@@ -808,13 +808,13 @@ class ScientificObjectController extends Controller {
                 } else {
                     $wktGeometry = "";
                 }
- 
-                $stringToWrite .= $model->uri . Yii::$app->params['csvSeparator'] . 
-                                 $model->label . Yii::$app->params['csvSeparator'] .
-                                 $model->rdfType . Yii::$app->params['csvSeparator'] .
-                                 $model->experiment . Yii::$app->params['csvSeparator'] . 
-                                 '"' . $wktGeometry . '"' . Yii::$app->params['csvSeparator'] . 
-                                 "\n";
+
+                $stringToWrite .= $model->uri . Yii::$app->params['csvSeparator'] .
+                        $model->label . Yii::$app->params['csvSeparator'] .
+                        $model->rdfType . Yii::$app->params['csvSeparator'] .
+                        $model->experiment . Yii::$app->params['csvSeparator'] .
+                        '"' . $wktGeometry . '"' . Yii::$app->params['csvSeparator'] .
+                        "\n";
             }
 
             $totalPage = intval($searchModel->totalPages);
@@ -1006,10 +1006,21 @@ class ScientificObjectController extends Controller {
             $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
-            if (isset($_POST['filter']) && $_POST['filter'] !== "") {
-                $selectedPositionIndex = $_POST['filter'];
-                $attribut=explode(":",Yii::$app->params['image.filter']['metadata.position'][$selectedPositionIndex]);
-                $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
+            if (!empty(Yii::$app->params['image.filter'])) {
+
+                if (isset($_POST['filter']) && $_POST['filter'] !== "") {
+                    $selectedPositionIndex = $_POST['filter'];
+                    $attribut = explode(":", Yii::$app->params['image.filter']['metadata'][$selectedPositionIndex]);
+                    $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
+                }
+                
+            } else {
+                 if (isset($_POST['filterName']) && $_POST['filterName'] !== ""&&isset($_POST['filterValue']) && $_POST['filterValue'] !== "") {
+                    $selectedFilterName = $_POST['filterName'];
+                    $selectedFilterValue = $_POST['filterValue'];
+                    $filterToSend = "{'metadata." . $selectedFilterName . "':'" . $selectedFilterValue . "'}";
+                }
+                
             }
             return $this->render('data_visualization', [
                         'model' => $scientificObject,
@@ -1022,6 +1033,8 @@ class ScientificObjectController extends Controller {
                         'imageTypeSelected' => $imageTypeSelected,
                         'selectedProvenance' => $selectedProvenance,
                         'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
+                        'selectedFilterName' => $selectedFilterName, 
+                        'selectedFilterValue' => $selectedFilterValue, 
                         'filterToSend' => $filterToSend,
                         'test' => $selectedPosition,
             ]);

@@ -134,19 +134,15 @@ return [
     'associatedToASensor' => 'http://www.opensilex.org/vocabulary/oeev#associatedToASensor',
 
     // Image filters
-    'image.filter' => [
-        'metadata.position' => [
-            'position:1','position:2','position:3','position:4','position:5',
-            'position:6','position:7','position:8','position:9','position:10',
-            'labelView:top0','labelView:top90','labelView:side0','labelView:side30','labelView:side60',
-            'labelView:side90','labelView:side120','labelView:side150','labelView:side180','labelView:side210',
-            'labelView:side240','labelView:side270','labelView:side300','labelView:side330',
-            ],
-        ]
-//     // Image filters GENERIC
+    
 //    'image.filter' => [
-//        'metadata.position' => [
-//            'label1:value1','label2:value2', 'label3:value3'],
+//        'metadata' => [
+//            'position:1','position:2','position:3','position:4','position:5',
+//            'position:6','position:7','position:8','position:9','position:10',
+//            'labelView:top0','labelView:top90','labelView:side0','labelView:side30','labelView:side60',
+//            'labelView:side90','labelView:side120','labelView:side150','labelView:side180','labelView:side210',
+//            'labelView:side240','labelView:side270','labelView:side300','labelView:side330',
+//            ],
 //        ]
     
 ];

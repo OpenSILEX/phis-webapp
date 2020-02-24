@@ -169,29 +169,49 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ]);
                                 ?>
                             </div>
-                            <div class="form-group col-md-12">
-
-                                <label class="control-label" ><?= Yii::t('app', 'Camera position') ?></label>
-
-                                <?php
-                                echo \kartik\select2\Select2::widget([
-                                    'name' => 'filter',
-                                    'data' => Yii::$app->params['image.filter']['metadata.position'],
-                                    'value' => $selectedPosition ? $selectedPosition : null,
-                                    'options' => [
-                                        'id' => 'filterSelect',
-                                        'placeholder' => Yii::t('app/messages', 'Select image view...'),
-                                        'multiple' => false
-                                    ],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
-                                    'pluginEvents' => [
-                                        "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\"); }",
-                                    ],
-                                ]);
+                            <?php
+                            if (!empty(Yii::$app->params['image.filter'])) {
                                 ?>
-                            </div>
+                                <div class="form-group col-md-12">
+
+                                    <label class="control-label" ><?= Yii::t('app', 'Camera position') ?></label>
+
+                                    <?php
+                                    echo \kartik\select2\Select2::widget([
+                                        'name' => 'filter',
+                                        'data' => Yii::$app->params['image.filter']['metadata'],
+                                        'value' => $selectedPosition ? $selectedPosition : null,
+                                        'options' => [
+                                            'id' => 'filterSelect',
+                                            'placeholder' => Yii::t('app/messages', 'Select image view...'),
+                                            'multiple' => false
+                                        ],
+                                        'pluginOptions' => [
+                                            'allowClear' => true
+                                        ],
+                                        'pluginEvents' => [
+                                            "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\"); }",
+                                        ],
+                                    ]);
+                                    ?>
+                                </div>
+
+                            <?php } else {
+                                ?>
+
+                                <div class="form-group form-inline col-md-12">
+                                    <label class="control-label" ><?= Yii::t('app', 'Metadata filter') ?></label>
+                                    <?= Html::input('text', 'filterName',
+                                            $selectedFilterName ? $selectedFilterName : '',
+                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Position')]) ?>
+                                    : <?= Html::input('text', 'filterValue',
+                                            $selectedFilterValue ? $selectedFilterValue : '',
+                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Top')]) ?>
+                                </div>
+
+                                <?php }
+                            ?>
+
                         </div>
                     </fieldset>
                 </div>
@@ -206,7 +226,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php
             if (isset($data) && isset($show) && $show == true && !empty($data)) {
                 echo "<div id='scientific-object-data-visualization-alert-div' style='height:146px;'><br><div class='alert alert-info' role='alert-info'>
-                    <p>".Yii::t('app/messages', 'You have to click a graphic point to see images on that date.')."</p></div></div>";
+                    <p>" . Yii::t('app/messages', 'You have to click a graphic point to see images on that date.') . "</p></div></div>";
             }
             ?>
             <div id="imagesCount" style="display: none;" data-id=0 ></div>
