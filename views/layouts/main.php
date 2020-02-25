@@ -196,6 +196,10 @@ ToastrAsset::register($this);
                                     'url' => ['/user/index']
                                 ],
                                 [
+                                'label' => Icon::show('cogs', [], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Profile} other{Profiles}}', ['n' => 2]),
+                                    'url' => ['/profile/index']
+                                ],
+                                [
                                     'label' => Icon::show('book', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 2]),
                                     'url' => ['/document/index']
                                 ],
@@ -311,6 +315,10 @@ ToastrAsset::register($this);
                                 [
                                     'label' => Icon::show('user', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Person} other{Persons}}', ['n' => 2]),
                                     'url' => ['/user/index']
+                                ],
+                                [
+                                    'label' => Icon::show('cogs', [], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Profile} other{Profiles}}', ['n' => 2]),
+                                    'url' => ['/profile/index']
                                 ],
                                 [
                                     'label' => Icon::show('book', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Document} other{Documents}}', ['n' => 2]),
