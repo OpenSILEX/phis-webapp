@@ -1006,6 +1006,8 @@ class ScientificObjectController extends Controller {
             $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
             $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
             $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
+            
+            // Check if parameter image.filter exist in config/params.php  
             if (!empty(Yii::$app->params['image.filter'])) {
 
                 if (isset($_POST['filter']) && $_POST['filter'] !== "") {

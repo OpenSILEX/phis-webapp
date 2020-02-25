@@ -134,6 +134,9 @@ return [
     'associatedToASensor' => 'http://www.opensilex.org/vocabulary/oeev#associatedToASensor',
 
     // Image filters
+    // If you have specific filters for the image's metadata, you can put it here 
+    // See also GET /data/file/search with jsonValueFilter params
+    // See also ScientificObjectController.php/Action:actionDataVisualization:line 1010/data_visualization.php line 172 -213 
     
 //    'image.filter' => [
 //        'metadata' => [
