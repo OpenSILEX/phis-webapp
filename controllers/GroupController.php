@@ -70,7 +70,7 @@ class GroupController extends Controller {
      * @return mixed
      */
     public function actionIndex() {
-        $url = WS_PHIS_APP_PATH . "groups?embed=true&token=".Yii::$app->session['access_token'];
+        $url = WS_PHIS_APP_PATH . "groups?embed=true&token=" . Yii::$app->session['access_token'] . "&lang=" . Yii::$app->language;
         return $this->render('iframe',[
             'url'=>$url
         ]);

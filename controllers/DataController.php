@@ -157,7 +157,7 @@ class DataController extends Controller {
      * @return mixed
      */
     public function actionImages() {
-        $url="http://138.102.159.37:8081/app/images?embed=true&token=".Yii::$app->session['access_token'];
+        $url = WS_PHIS_APP_PATH . "images?embed=true&token=" . Yii::$app->session['access_token'] . "&lang=" . Yii::$app->language;
             return $this->render('images',[
                 'url'=>$url
             ]);
