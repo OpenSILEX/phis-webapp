@@ -17,7 +17,7 @@ class config {
     
     public static function path() {
 
-        $appli = 'test-modularity';
+        $appli = 'test';
         $hostname = '138.102.159.37';
         $basePath = $appli.'/web';
         
