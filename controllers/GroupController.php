@@ -70,29 +70,10 @@ class GroupController extends Controller {
      * @return mixed
      */
     public function actionIndex() {
-        $searchModel = new GroupSearch();
-        
-        //Get the search params and update pagination
-        $searchParams = Yii::$app->request->queryParams;
-        if (isset($searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE])) {
-            $searchParams[\app\models\yiiModels\YiiModelsConstants::PAGE]--;
-        }
-        
-        $searchResult = $searchModel->search(Yii::$app->session['access_token'], $searchParams);
-        if (is_string($searchResult)) {
-            if ($searchResult === \app\models\wsModels\WSConstants::TOKEN_INVALID) {
-                return $this->redirect(Yii::$app->urlManager->createUrl("site/login"));
-            } else {
-                return $this->render('/site/error', [
-                        'name' => Yii::t('app/messages','Internal error'),
-                        'message' => $searchResult]);
-            }
-        } else {
-            return $this->render('index', [
-               'searchModel' => $searchModel,
-                'dataProvider' => $searchResult
-            ]);
-        }
+        $url = WS_PHIS_APP_PATH . "groups?embed=true&token=" . Yii::$app->session['access_token'] . "&lang=" . Yii::$app->language;
+        return $this->render('iframe',[
+            'url'=>$url
+        ]);
     }
     
     /**

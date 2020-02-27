@@ -150,19 +150,18 @@ return [
     'associatedToASensor' => 'http://www.opensilex.org/vocabulary/oeev#associatedToASensor',
     
     // Image filters
-    'image.filter' => [
-        'metadata.position' => [
-            'position:1','position:2','position:3','position:4','position:5',
-            'position:6','position:7','position:8','position:9','position:10',
-            'labelView:top0','labelView:top90','labelView:side0','labelView:side30','labelView:side60',
-            'labelView:side90','labelView:side120','labelView:side150','labelView:side180','labelView:side210',
-            'labelView:side240','labelView:side270','labelView:side300','labelView:side330',
-            ],
-        ],
-//     // Image filters GENERIC
+    // If you have specific filters for the image's metadata, you can put it here 
+    // See also GET /data/file/search with jsonValueFilter params
+    // See also ScientificObjectController.php/Action:actionDataVisualization:line 1010/data_visualization.php line 172 -213 
+    
 //    'image.filter' => [
-//        'metadata.position' => [
-//            'label1:value1','label2:value2', 'label3:value3'],
+//        'metadata' => [
+//            'position:1','position:2','position:3','position:4','position:5',
+//            'position:6','position:7','position:8','position:9','position:10',
+//            'labelView:top0','labelView:top90','labelView:side0','labelView:side30','labelView:side60',
+//            'labelView:side90','labelView:side120','labelView:side150','labelView:side180','labelView:side210',
+//            'labelView:side240','labelView:side270','labelView:side300','labelView:side330',
+//            ],
 //        ]
     //Highcharts color 
     'highchartsColor' =>["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f",

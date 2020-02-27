@@ -1156,22 +1156,29 @@ class ScientificObjectController extends Controller {
 
             $searchParams = Yii::$app->request->queryParams;
 
+            //on FORM submitted:
+            //check if image visualization is activated
+            $show = isset($_POST['show']) ? $_POST['show'] : null;
+            $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
+            $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
+            $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
+            
+            // Check if parameter image.filter exist in config/params.php  
+            if (!empty(Yii::$app->params['image.filter'])) {
 
-            // Get events associated to the table widget
-            $searchEventModel = new EventSearch();
-            $searchEventModel->searchConcernedItemUri = $uri;
-            $eventSearchParameters = [];
-            if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
-                $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
-            }
-            $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
-            $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
-            $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE; // multiple gridview pagination
-            // Get annotations associated to the table widget
-            $searchAnnotationModel = new AnnotationSearch();
-            $annotationSearchParameters = [];
-            if (isset($searchParams[WSConstants::ANNOTATION_WIDGET_PAGE])) {
-                $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::ANNOTATION_WIDGET_PAGE] - 1;
+                if (isset($_POST['filter']) && $_POST['filter'] !== "") {
+                    $selectedPositionIndex = $_POST['filter'];
+                    $attribut = explode(":", Yii::$app->params['image.filter']['metadata'][$selectedPositionIndex]);
+                    $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
+                }
+                
+            } else {
+                 if (isset($_POST['filterName']) && $_POST['filterName'] !== ""&&isset($_POST['filterValue']) && $_POST['filterValue'] !== "") {
+                    $selectedFilterName = $_POST['filterName'];
+                    $selectedFilterValue = $_POST['filterValue'];
+                    $filterToSend = "{'metadata." . $selectedFilterName . "':'" . $selectedFilterValue . "'}";
+                }
+                
             }
             $searchAnnotationModel->targets[0] = $uri;
             $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
@@ -1190,6 +1197,8 @@ class ScientificObjectController extends Controller {
                         'imageTypeSelected' => $_GET['imageType'],
                         'selectedProvenance' => $_GET['provenances'],
                         'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
+                        'selectedFilterName' => $selectedFilterName, 
+                        'selectedFilterValue' => $selectedFilterValue, 
                         'filterToSend' => $filterToSend,
                         'events' => $events,
                         'colorByEventCategorie' => $colorByEventCategorie,
