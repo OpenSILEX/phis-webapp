@@ -205,7 +205,7 @@ ToastrAsset::register($this);
                                 ],
                                 [
                                     'label' => Icon::show('fire', [], Icon::BSG) . " " . Yii::t('app', 'Web API'),
-                                    'url' => WS_PHIS_PATH_DOC
+                                    'url' => WS_PHIS_PATH_DOC . "/api-docs"
                                 ],
                                 [
                                     'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'),

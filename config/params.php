@@ -2,7 +2,7 @@
 
 return [
     // Global
-    'platform' => 'Test',
+    'platform' => 'Test Hybride',
     'isDemo' => false,
     'demoLogin' => 'guest@opensilex.org',
     'demoPassword' => 'guest',
