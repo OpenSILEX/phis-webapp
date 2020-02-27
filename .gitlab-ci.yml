@@ -53,7 +53,7 @@ deploy:webapp:
   only:
     - master
         
-deploy:webapp:modularity:
+deploy:webapp:full-php:
   <<: *deploy_template
   variables:
     REMOTE_IP: 138.102.159.37
