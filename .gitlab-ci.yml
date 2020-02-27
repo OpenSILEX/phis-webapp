@@ -5,7 +5,7 @@ variables:
 
 .cache_dependencies: &cache_dependencies
   cache:  
-    key: "deploy-phis-webapp-${CI_JOB_NAME}"
+    key: "deploy-phis-webapp"
     paths:
       - "$CI_PROJECT_DIR/vendor" 
 
@@ -15,7 +15,9 @@ build:webapp:
   stage: build
   script:
      - composer install --ignore-platform-reqs 
-
+  only:
+    - master
+    
 .deploy: &deploy_template
   variables:
     REMOTE_IP: 138.102.159.37
