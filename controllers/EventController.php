@@ -338,9 +338,7 @@ class EventController extends GenericController {
      * Gets the creator of an event.
      */
     private function getCreatorUri($sessionToken) {
-        $userModel = new YiiUserModel();
-        $userModel->findByEmail($sessionToken, Yii::$app->session['email']);
-        return $userModel->uri;
+        return Yii::$app->session[YiiTokenModel::URI];
     }
 
 }

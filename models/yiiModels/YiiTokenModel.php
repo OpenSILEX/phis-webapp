@@ -17,6 +17,7 @@ namespace app\models\yiiModels;
 use app\models\wsModels\WSActiveRecord;
 use app\models\wsModels\WSTokenModel;
 use Yii;
+use Lcobucci\JWT\Configuration;
 
 
 class YiiTokenModel extends WSActiveRecord {
@@ -34,6 +35,7 @@ class YiiTokenModel extends WSActiveRecord {
     const IS_ADMIN = "isAdmin";
     const ACCESS_TOKEN = "access_token";
     const IS_GUEST = "isGuest";
+    const URI = "uri";
     
     
     public function __construct() {
@@ -63,22 +65,6 @@ class YiiTokenModel extends WSActiveRecord {
         ];
     }
 
-    /**
-     * @action affecte à la variable de session isAdmin true si le compte est admin, false sinon
-     * @param string $email
-     */
-    private function setIsAdmin($email) {
-        Yii::$app->session[YiiTokenModel::IS_ADMIN] = false;
-        $userModel = new YiiUserModel(null, null);
-        $requestResult = $userModel->findByEmail(Yii::$app->session[YiiTokenModel::ACCESS_TOKEN], $email);
-        // quick fix admin always true
-//        if ($requestResult === true) {
-//            if ($userModel->isAdmin === 1) {
-//                Yii::$app->session[YiiTokenModel::IS_ADMIN] = true;
-//            }
-//        }
-        Yii::$app->session[YiiTokenModel::IS_ADMIN] = true;
-    }
     
     /**
      * Effectue la connexion au web service : si les identifiants sont les bons,
@@ -94,8 +80,9 @@ class YiiTokenModel extends WSActiveRecord {
             Yii::$app->session[YiiTokenModel::ACCESS_TOKEN] = $requestResult;
             Yii::$app->session[YiiTokenModel::EMAIL] = $this->email;
             Yii::$app->session[YiiTokenModel::IS_GUEST] = false;
-            $this->setIsAdmin($this->email);
-            
+            $decoded = Configuration::forUnsecuredSigner()->getParser()->parse($requestResult);
+            Yii::$app->session[YiiTokenModel::URI] = $decoded->claims()->get("sub");
+            Yii::$app->session[YiiTokenModel::IS_ADMIN] = $decoded->claims()->get("is_admin", false);
             return true;
         } else {
             Yii::$app->session[YiiTokenModel::IS_GUEST] = true;

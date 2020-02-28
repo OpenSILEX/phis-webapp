@@ -41,7 +41,8 @@
         "himiklab/yii2-handsontable-widget" : "v1.1.1",
         "phayes/geophp": "1.2",
         "nezhelskoy/yii2-highlight": "v1.2.8",
-        "antkaz/yii2-vue": "^1.0"
+        "antkaz/yii2-vue": "^1.0",
+        "lcobucci/jwt": "^4.0@alpha"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "2.0.14",

@@ -50,8 +50,7 @@ class AnnotationController extends Controller {
         if ($annotationModel->load(Yii::$app->request->post())) {
             // Set model creator 
             $userModel = new YiiUserModel();
-            $userModel->findByEmail($sessionToken, Yii::$app->session['email']);
-            $annotationModel->creator = $userModel->uri;
+            $annotationModel->creator = Yii::$app->session[YiiTokenModel::URI];
             $annotationModel->isNewRecord = true;
             $dataToSend[] = $annotationModel->attributesToArray();
             // Send data
