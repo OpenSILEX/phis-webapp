@@ -597,8 +597,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                           setTimeout(() => {
                               let experimentUri = $("#experiment-selector").val();
                               if(experimentUri === undefined || experimentUri === null || experimentUri === "" ){
-                                  toastr.warning("You must select a valid experiment to continued");
-                                  reject("You must select a valid experiment to continue");
+                                  toastr.warning("You must select a valid experiment to be able to continue");
+                                  reject("You must select a valid experiment to be able to continue");
                               }else{
                                  resolve(true);
                                 }   
@@ -613,7 +613,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                                       provenanceUri === null ||
                                       provenanceUri === "" ||
                                       !provenances.hasOwnProperty(provenanceUri)){
-                                  toastr.warning("You must select a valid provenance to continued");
+                                  toastr.warning("You must select a valid provenance to be able to continue");
                                   reject("You must select a valid provenance to continue");
                               }else{
                                  resolve(true);
@@ -630,7 +630,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                                     formVue.loadingWizard = false;
                                       resolve(true);
                                 }else{
-                                     toastr.warning("You must select a valid data file to continued");
+                                     toastr.warning("You must select a valid data file to be able to continue");
                                   reject("You must select a valid provenance to continue");
                                   
                                 }
