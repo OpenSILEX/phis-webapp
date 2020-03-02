@@ -137,7 +137,7 @@ ToastrAsset::register($this);
                                     'url' => ['/data/index']
                                 ],
                                 [
-                                    'label' => Icon::show('picture', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Images'),
+                                    'label' => Icon::show('picture-o', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Images'),
                                     'url' => ['/data/images']
                                 ]
                             ]
