@@ -27,6 +27,8 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
     //create a trait (?) with methods search and jsonListOfArray and use it in 
     //each class ElementNameSearch
     //\SILEX:refactor
+    private $withProperties;
+    const WITH_PROPERTIES = "withProperties";
     
     /**
      * @inheritdoc
@@ -34,7 +36,7 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
     public function rules()
     {
         return [
-            [['uri', 'label', 'experiment', 'alias', 'type'], 'safe'],
+            [['uri', 'label', 'experiment', 'alias', 'type', 'withProperties'], 'safe'],
         ];
     }
     
@@ -81,5 +83,28 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
                 //\SILEX:info
             ]);
         }
+    }
+    
+    function getWithProperties() {
+        return $this->withProperties;
+    }
+
+    function setWithProperties($withProperties) {
+        if(is_bool($withProperties)){
+            $this->withProperties = $withProperties;
+        }else{
+            $this->withProperties = true;
+        }
+    }
+    
+    /**
+     * Add with properties parameters
+     * @return array
+     */
+    public function attributesToArray() {
+        $elementForWebService = parent::attributesToArray();
+        $elementForWebService[ScientificObjectSearch::WITH_PROPERTIES] = $this->getWithProperties(); 
+        
+        return $elementForWebService;
     }
 }

@@ -19,10 +19,8 @@ use Yii;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 use yii\filters\VerbFilter;
-use app\models\yiiModels\YiiDocumentModel;
 use app\models\wsModels\WSProvenanceModel;
 use app\models\wsModels\WSDataModel;
-use app\models\yiiModels\YiiConcernedItemModel;
 use openSILEX\handsontablePHP\adapter\HandsontableSimple;
 use openSILEX\handsontablePHP\classes\ColumnConfig;
 use app\models\wsModels\WSConstants;
@@ -384,6 +382,7 @@ class DatasetController extends Controller {
                     $SciencitificObjectSearch = new \app\models\yiiModels\ScientificObjectSearch();
                     $SciencitificObjectSearch->experiment = $datasetModel->experiment;
                     $SciencitificObjectSearch->pageSize = 30000;
+                    $SciencitificObjectSearch->setWithProperties(false);
                     $SciencitificObjectSearchResults = $SciencitificObjectSearch->search($token);
 
                     $objectUris = [];
