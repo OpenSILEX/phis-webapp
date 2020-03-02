@@ -214,7 +214,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 try {
                     var provenanceAgents = [];
                     provenances[uri]["metadata"]["prov:Agent"].forEach(function(agentElement){
-                        if(agentElement.hasOwnProperty("oeso:Operator")){
+                        if(agentElement.hasOwnProperty("rdf:type") && agentElement["rdf:type"] === "oeso:Operator"){
                             provenanceAgents.push(agentElement["prov:id"]);
                         }
                       });
