@@ -86,7 +86,6 @@ $this->params['breadcrumbs'][] = $this->title;
 //                return $toReturn;
 //              }
 //            ],
-            'field',
             [
                'attribute' => 'campaign',
                'format' => 'raw',

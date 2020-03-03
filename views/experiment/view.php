@@ -94,9 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     return date_format(date_create($model->endDate), 'jS F Y');
                 }
             ],
-            'field',
             'campaign',
-            'place',
             [
                 'attribute' => 'scientificSupervisorContact',
                 'format' => 'raw',
