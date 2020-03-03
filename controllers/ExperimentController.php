@@ -243,6 +243,7 @@ class ExperimentController extends Controller {
         } else { 
             $searchProjectModel = new ProjectSearch();
             $searchProjectModel->pageSize = 200;
+            
             $projects = $searchProjectModel->find($sessionToken,[]);
             
             $userModel = new \app\models\yiiModels\YiiUserModel();
