@@ -164,8 +164,8 @@ class YiiExperimentModel extends WSActiveRecord {
      */
     public $scientificSupervisorContacts;
 
-    const CONTACT_SCIENTIFIC_SUPERVISOR = "http://www.opensilex.org/vocabulary/oeso/#ScientificSupervisor";
-    const CONTACT_TECHNICAL_SUPERVISOR = "http://www.opensilex.org/vocabulary/oeso/#TechnicalSupervisor";
+    const CONTACT_SCIENTIFIC_SUPERVISOR = "http://www.opensilex.org/vocabulary/oeso#ScientificSupervisor";
+    const CONTACT_TECHNICAL_SUPERVISOR = "http://www.opensilex.org/vocabulary/oeso#TechnicalSupervisor";
 
     /**
      * the experiment's technical supervisor contacts (email).

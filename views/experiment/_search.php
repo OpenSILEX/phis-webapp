@@ -33,8 +33,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'endDate') ?>
 
-    <?= $form->field($model, 'field') ?>
-
     <?= $form->field($model, 'campaign') ?>
     
     <div class="form-group">
