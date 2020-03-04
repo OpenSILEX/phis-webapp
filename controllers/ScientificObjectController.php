@@ -1180,6 +1180,25 @@ class ScientificObjectController extends Controller {
                 }
                 
             }
+            
+            
+            // Get events associated to the table widget
+            $searchEventModel = new EventSearch();
+            $searchEventModel->searchConcernedItemUri = $uri;
+            $eventSearchParameters = [];
+            if (isset($searchParams[WSConstants::EVENT_WIDGET_PAGE])) {
+                $eventSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::EVENT_WIDGET_PAGE] - 1;
+            }
+            $eventSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['eventWidgetPageSize'];
+            $eventsProvider = $searchEventModel->searchWithAnnotationsDescription($token, $eventSearchParameters);
+            $eventsProvider->pagination->pageParam = WSConstants::EVENT_WIDGET_PAGE; // multiple gridview pagination
+            // Get annotations associated to the table widget
+            $searchAnnotationModel = new AnnotationSearch();
+            $annotationSearchParameters = [];
+            if (isset($searchParams[WSConstants::ANNOTATION_WIDGET_PAGE])) {
+                $annotationSearchParameters[WSConstants::PAGE] = $searchParams[WSConstants::ANNOTATION_WIDGET_PAGE] - 1;
+
+            
             $searchAnnotationModel->targets[0] = $uri;
             $annotationSearchParameters[WSConstants::PAGE_SIZE] = Yii::$app->params['annotationWidgetPageSize'];
             $annotationsProvider = $searchAnnotationModel->search($token, $annotationSearchParameters);
