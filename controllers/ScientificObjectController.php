@@ -1200,6 +1200,8 @@ class ScientificObjectController extends Controller {
                         'imageTypeSelected' => $_GET['imageType'],
                         'selectedProvenance' => $_GET['provenances'],
                         'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
+                        'selectedFilterName' => $selectedFilterName, 
+                        'selectedFilterValue' => $selectedFilterValue, 
                         'filterToSend' => $filterToSend,
                         'events' => $events,
                         'colorByEventCategorie' => $colorByEventCategorie,

@@ -183,29 +183,29 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?php
                             if (!empty(Yii::$app->params['image.filter'])) {
                                 ?>
-                            <div class="form-group col-md-12">
+                                <div class="form-group col-md-12">
 
                                     <label class="control-label" ><?= Yii::t('app', 'Camera position') ?></label>
 
-                                <?php
-                                echo \kartik\select2\Select2::widget([
-                                    'name' => 'filter',
-                                    'data' => Yii::$app->params['image.filter']['metadata.position'],
-                                    'value' => $selectedPosition ? $selectedPosition : null,
-                                    'options' => [
-                                        'id' => 'filterSelect',
-                                        'placeholder' => Yii::t('app/messages', 'Select image view...'),
-                                        'multiple' => false
-                                    ],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
-                                    'pluginEvents' => [
-                                        "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\"); }",
-                                    ],
-                                ]);
-                                ?>
-                            </div>
+                                    <?php
+                                    echo \kartik\select2\Select2::widget([
+                                        'name' => 'filter',
+                                        'data' => Yii::$app->params['image.filter']['metadata.position'],
+                                        'value' => $selectedPosition ? $selectedPosition : null,
+                                        'options' => [
+                                            'id' => 'filterSelect',
+                                            'placeholder' => Yii::t('app/messages', 'Select image view...'),
+                                            'multiple' => false
+                                        ],
+                                        'pluginOptions' => [
+                                            'allowClear' => true
+                                        ],
+                                        'pluginEvents' => [
+                                            "select2:select" => "function() {  $('#scientific-object-data-visualization-submit-button').text(\"" . Yii::t('app', 'Update') . "\"); }",
+                                        ],
+                                    ]);
+                                    ?>
+                                </div>
 
                             <?php } else {
                                 ?>
@@ -218,7 +218,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     : <?= Html::input('text', 'filterValue',
                                             $selectedFilterValue ? $selectedFilterValue : '',
                                             $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Top')]) ?>
-                        </div>
+                                </div>
 
                                 <?php }
                             ?>
@@ -233,7 +233,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <?php if (isset($data) && isset($isPhotos) && $isPhotos && !empty($data)) { ?>
-            <div id="visualization-images" style='height:146px;'  >
+            <div id="visualization-images" style='height:246px;'  >
                 <div id='scientific-object-data-visualization-alert-div' >
                     <br>
                     <div class='alert alert-info' role='alert-info'>
@@ -340,13 +340,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'click' => new JsExpression("
                                         function (event) { 
                                             var searchFormData = new FormData();
+                                            console.log(event.point.x);
                                             searchFormData.append('concernedItems[]', \"$objectURI\"); "
                                         . " searchFormData.append('serieIndex', this.index);"
                                         . " searchFormData.append('pointIndex', event.point.index);"
                                         . " searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
                                         . " searchFormData.append('jsonValueFilter', \"$filterToSend\");"
+                                        . " searchFormData.append('provenance', \"$selectedProvenance\");"
                                         . " searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
-                                        . " searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
+                                        . " searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x+1000));"
                                         . " searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
                                         . " $.ajax({"
                                         . "          url: \"$url2\","
@@ -356,7 +358,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                         . "  contentType: false,"
                                         . "         data: searchFormData,"
                                         . "                                }).done(function (data) {"
-                                        . "                                          onDayImageListHTMLFragmentReception(data);}"
+                                       
+                                        . "                                           console.log(data);onDayImageListHTMLFragmentReception(data);}"
                                         . "                                 ).fail(function (jqXHR, textStatus) {"
                                         . "                                           alert('ERROR : ' + jqXHR);});}")
                             ]
