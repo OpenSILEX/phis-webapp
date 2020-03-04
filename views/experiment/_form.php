@@ -151,8 +151,22 @@ $(document).ready(function(){
     }
     ?>
 
-    <?= $form->field($model, 'cropSpecies')->textInput() ?>
-    
+    <?php
+    $cropSpecies = null;
+    if ($model->attributes[\app\models\yiiModels\YiiExperimentModel::CROP_SPECIES] != null) {
+        $cropSpecies[] = $model->attributes[\app\models\yiiModels\YiiExperimentModel::CROP_SPECIES];
+    }
+
+    echo $form->field($model, 'cropSpecies')->widget(\kartik\select2\Select2::classname(), [
+        'data' => $this->params['listSpecies'],
+        'options' => ['placeholder' => Yii::t('app', 'Select species'),
+            'multiple' => false,
+            'value' => $cropSpecies],
+        'pluginOptions' => [
+            'allowClear' => true
+        ]
+    ]) ?>
+
     <?php if ($model->isNewRecord) {
             echo $form->field($model, 'groups')->widget(\kartik\select2\Select2::classname(),[
                 'data' => $this->params['listGroups'],
