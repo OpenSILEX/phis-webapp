@@ -5,13 +5,13 @@ variables:
 
 .cache_dependencies: &cache_dependencies
   cache:  
-    key: build-web-app-cache
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
       - "$CI_PROJECT_DIR/vendor" 
 
 .cache_dependencies_deploy: &cache_dependencies_deploy
   cache:  
-    key: build-web-app-cache
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
       - "$CI_PROJECT_DIR/vendor"
     policy: pull
