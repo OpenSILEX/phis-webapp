@@ -91,8 +91,6 @@ $(document).ready(function(){
         ]
     ]) ?>
 
-    <?= $form->field($model, 'field')->textInput(['maxlength' => true]) ?>
-
     <?php
     $readonly = $model->isNewRecord ? false : true;
     echo $form->field($model, 'campaign')->textInput(
@@ -103,8 +101,6 @@ $(document).ready(function(){
              'readonly' => $readonly,
              'onChange' => 'updateURI()',]) ?>
 
-    <?= $form->field($model, 'place')->textInput(['maxlength' => true]) ?>
-    
     <?php if ($model->isNewRecord) {
         echo $form->field($model, 'scientificSupervisorContacts')->widget(\kartik\select2\Select2::classname(),[
                 'data' => $this->params['listContacts'],

@@ -76,14 +76,38 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         }
         
         /**
-         * Save provenance model via ajax
+         * Save provenance model via ajax or update provenance documents
          * @returns {Boolean}         */
-        function saveProvenance(){
+        function saveOrUpdateProvenance(){
 
             var newProvenanceUri = $("#provenance-selector :selected").val();
             
             if(provenances.hasOwnProperty(newProvenanceUri)){
-                  toastr.info("Already existing provenance");
+                var documents = [];
+                var documentsInputList = $("input[id^='yiidatasetmodel-documentsuris-documenturi-']")
+                documentsInputList.each(function (i, documentInput) {
+                    documents.push($(documentInput).val());
+                });
+                if(documents.length > 0){
+                    $.ajax({
+                        url: '<?= Url::toRoute(['provenance/ajax-update-provenance-documents-from-dataset']); ?>',
+                        type: 'POST',
+                        datatype: 'json',
+                        data: {provenanceUri :newProvenanceUri,
+                                documents : documents}
+                    })
+                    .done(function () {
+                        toastr.info("Documents updated");
+                    }).fail(function (jqXHR, textStatus) {
+                        // Disaply errors
+                        $('#document-save-msg').parent().removeClass('alert-info');
+                        $('#document-save-msg').parent().addClass('alert-danger');
+                        $('#document-save-msg').html('Request failed: ' + textStatus);
+                        toastr.error("An error has occured during provenance saving");
+                    });
+                }else{
+                    toastr.warning("No documents added");
+                }
             }
             
             if(!provenances.hasOwnProperty(newProvenanceUri) 
@@ -190,8 +214,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 try {
                     var provenanceAgents = [];
                     provenances[uri]["metadata"]["prov:Agent"].forEach(function(agentElement){
-                        if(agentElement.hasOwnProperty("oeso:Operator")){
-                            provenanceAgents.push(agentElement["oeso:Operator"]);
+                        if(agentElement.hasOwnProperty("rdf:type") && agentElement["rdf:type"] === "oeso:Operator"){
+                            provenanceAgents.push(agentElement["prov:id"]);
                         }
                       });
                     $("#yiidatasetmodel-provenanceagents").val(provenanceAgents);
@@ -211,6 +235,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 $("#already-linked-documents").load(documentsLoadUri, {
                     "uri": uri
                 });
+                $("#saveProvenanceButton").text("Add provenance documents");
+                $("#saveProvenanceButton").data("status","update");
             } else {
                 // Otherwise clear provenance agents and enable input
                 $("#yiidatasetmodel-provenanceagents").val(agents).removeAttr("disabled").trigger("change");
@@ -220,6 +246,10 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
 
                 // Clear linked documents list
                 $("#already-linked-documents").empty();
+                
+                $("#saveProvenanceButton").text("Create provenance");
+                $("#saveProvenanceButton").data("status","create");
+
             }
         }
         
@@ -494,19 +524,21 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         ])->label(false)
         ?>
         <br>
-        <?= Html::button(Yii::t('app', 'Create provenance'), ['class' => 'btn btn-success','onclick' => 'saveProvenance()']) ?>
+        <?= Html::button(Yii::t('app', 'Create provenance'), ['class' => 'btn btn-success','onclick' => 'saveOrUpdateProvenance()', 'id' => 'saveProvenanceButton']) ?>
         <br>
         <br>
 
                 </tab-content>
                 <tab-content title="<?= Yii::t('app','Upload dataset'); ?>"
-                             icon="ti-check">
+                             icon="ti-check"
+                             :before-change="beforeUploadData">
                 <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
 
             <?=
             $form->field($model, 'file')->widget(FileInput::classname(), [
                 'options' => [
                     'maxFileSize' => 2000,
+                    'id' => 'dataset-file-uploader',
                     'pluginOptions' => ['allowedFileExtensions' => ['csv'], 'showUpload' => false],
                 ]
             ]);
@@ -543,7 +575,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
     <script>
         $(document).ready(function () {
             Vue.use(VueFormWizard)
-            new Vue({
+            var formVue = new Vue({
              el: '#app',
              data:{
                 loadingWizard: false
@@ -551,6 +583,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
              methods: {
                 onComplete: function(){
                     this.loadingWizard = true;
+                    $("button.wizard-btn").attr('disabled','disabled');
                     $("#<?= $form->getId() ?>").submit();
                 },
                 setLoading: function(value) {
@@ -564,8 +597,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                           setTimeout(() => {
                               let experimentUri = $("#experiment-selector").val();
                               if(experimentUri === undefined || experimentUri === null || experimentUri === "" ){
-                                  toastr.warning("You must select a valid experiment to continued");
-                                  reject("You must select a valid experiment to continue");
+                                  toastr.warning("You must select a valid experiment to be able to continue");
+                                  reject("You must select a valid experiment to be able to continue");
                               }else{
                                  resolve(true);
                                 }   
@@ -580,11 +613,27 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                                       provenanceUri === null ||
                                       provenanceUri === "" ||
                                       !provenances.hasOwnProperty(provenanceUri)){
-                                  toastr.warning("You must select a valid provenance to continued");
+                                  toastr.warning("You must select a valid provenance to be able to continue");
                                   reject("You must select a valid provenance to continue");
                               }else{
                                  resolve(true);
                                 }   
+                              }, 200)
+                      });
+                  },
+                  beforeUploadData: function(){
+                      return new Promise((resolve, reject) => {
+                          setTimeout(() => {
+                               console.log($('#dataset-file-uploader').fileinput('getFilesCount'));
+                                var fileCount = $('#dataset-file-uploader').fileinput('getFilesCount');
+                                if(fileCount === 1){
+                                    formVue.loadingWizard = false;
+                                      resolve(true);
+                                }else{
+                                     toastr.warning("You must select a valid data file to be able to continue");
+                                  reject("You must select a valid provenance to continue");
+                                  
+                                }
                               }, 200)
                       });
                   }
@@ -692,7 +741,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         $("#provenance-selector").change(function () {
             updateProvenanceFields($(this).val());
         });
-
+        
+        
         // Update provenance fields depending of startup value
         updateProvenanceFields($("#provenance-selector").val());
      });    

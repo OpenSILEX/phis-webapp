@@ -9,13 +9,22 @@ variables:
     paths:
       - "$CI_PROJECT_DIR/vendor" 
 
+.cache_dependencies: &cache_dependencies_deploy
+  cache:  
+    key: "deploy-phis-webapp"
+    paths:
+      - "$CI_PROJECT_DIR/vendor"
+    policy: pull
+
 build:webapp:
   <<: *cache_dependencies
   image: composer:1.9.1
   stage: build
   script:
      - composer install --ignore-platform-reqs 
-
+  only:
+    - master
+    
 .deploy: &deploy_template
   variables:
     REMOTE_IP: 138.102.159.37
@@ -23,7 +32,7 @@ build:webapp:
     SCP_ACCOUNT: mvidal
   image: tetraweb/php:7.0
   stage: deploy
-  <<: *cache_dependencies
+  <<: *cache_dependencies_deploy
   before_script:
     - echo "Setting private key and known hosts"
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -53,7 +62,7 @@ deploy:webapp:
   only:
     - master
         
-deploy:webapp:modularity:
+deploy:webapp:full-php:
   <<: *deploy_template
   variables:
     REMOTE_IP: 138.102.159.37

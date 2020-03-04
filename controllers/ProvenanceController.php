@@ -76,6 +76,28 @@ class ProvenanceController extends Controller {
     }
     
     /**
+     * Update provenance documents from post data 
+     * [
+     *  provenance : { label, comment, metadata:{ ... } },
+     *  documents : { uri1,uri2}
+     * ]
+     */
+    public function actionAjaxUpdateProvenanceDocumentsFromDataset(){
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $data = Yii::$app->request->post();
+        
+        $documents = [];
+        
+        $provenanceUri = $data["provenanceUri"];
+        if(isset($data["documents"])){
+            $documents = $data["documents"];
+        }
+        
+        return $this->linkDocumentsToProvenance($provenanceUri, $documents);
+    }
+    
+    /**
      * Return an array with provenance list with all characteristics
      * and provenance label mapped with provenance uri
      * @return array
@@ -117,10 +139,16 @@ class ProvenanceController extends Controller {
              ]
             ];
         foreach ($sensingDevices as $sensingDevice) {
-          $metadata["prov:Agent"][] = ["oeso:SensingDevice" => $sensingDevice];
+          $metadata["prov:Agent"][] = [
+              "prov:id" =>  $sensingDevice,
+              "rdf:type" => "oeso:SensingDevice"
+            ];
         }
         foreach ($agents as $agent) {
-          $metadata["prov:Agent"][] = ["oeso:Operator" => $agent];
+          $metadata["prov:Agent"][] = [
+                "prov:id" => $agent,
+                "rdf:type" => "oeso:Operator"
+            ];
         }
             
         $provenanceUri = $provenanceService->createProvenance(

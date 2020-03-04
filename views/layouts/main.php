@@ -84,10 +84,11 @@ ToastrAsset::register($this);
     } else if (Yii::$app->session['isAdmin']) {
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
-                            [
+                          /*  [
                                 'label' => Icon::show('home', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]),
                                 'url' => ['/infrastructure'],
-                            ],
+                            ]
+                          ,*/
                             [
                                 'label' => Icon::show('folder-open', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]),
                                 'url' => ['/project/index'],
@@ -96,10 +97,10 @@ ToastrAsset::register($this);
                                 'label' => Icon::show('flask', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Experiment} other{Experiments}}', ['n' => 2]),
                                 'url' => ['/experiment/index']
                             ],
-                            [
-                                'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Germplasm'),
-                                'url' => ['/germplasm/index']
-                            ],                            
+//                            [
+//                                'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Germplasm'),
+//                                'url' => ['/germplasm/index']
+//                            ],                            
                             [
                                 'label' => Icon::show('leaf', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Scientific Object} other{Scientific Objects}}', ['n' => 2]),
                                 'url' => ['/scientific-object/index']
@@ -128,16 +129,16 @@ ToastrAsset::register($this);
                                     'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Add on scientific object'),
                                     'url' => ['/dataset/create']
                                 ],
-                                [
-                                    'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Add only on sensor'),
-                                    'url' => ['/dataset/create-on-sensor']
-                                ],
+                                // [
+                                //     'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Add only on sensor'),
+                                //     'url' => ['/dataset/create-on-sensor']
+                                // ],
                                 [
                                     'label' => Icon::show('search', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'View'),
                                     'url' => ['/data/index']
                                 ],
                                 [
-                                    'label' => Icon::show('images', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Images'),
+                                    'label' => Icon::show('picture-o', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Images'),
                                     'url' => ['/data/images']
                                 ]
                             ]
@@ -205,7 +206,7 @@ ToastrAsset::register($this);
                                 ],
                                 [
                                     'label' => Icon::show('fire', [], Icon::BSG) . " " . Yii::t('app', 'Web API'),
-                                    'url' => WS_PHIS_PATH_DOC
+                                    'url' => WS_PHIS_PATH_DOC . "/api-docs"
                                 ],
                                 [
                                     'label' => Icon::show('link', [], Icon::BSG) . " " . Yii::t('app', 'Documentation'),
@@ -239,10 +240,12 @@ ToastrAsset::register($this);
     } else {
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
+                            /*
                             [
                                 'label' => Icon::show('home', ['class' => 'fas'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]),
                                 'url' => ['/infrastructure'],
                             ],
+                            */
                             [
                                 'label' => Icon::show('folder-open', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]),
                                 'url' => ['/project/index'],
