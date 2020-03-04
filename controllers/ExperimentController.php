@@ -265,7 +265,7 @@ class ExperimentController extends Controller {
             $speciesSearch = new SpeciesSearch();
             $speciesSearch->pageSize = 200;
             $speciesSearch->language = Yii::$app->language;
-            $species =  $this->speciesToMap($speciesSearch->find($sessionToken,[]));
+            $species = $this->speciesToMap($speciesSearch->find($sessionToken,$speciesSearch->attributesToArray()));
 
             if (Yii::$app->session['isAdmin']) {
                 $searchGroupModel = new GroupSearch();
@@ -362,7 +362,7 @@ class ExperimentController extends Controller {
             $speciesSearch = new SpeciesSearch();
             $speciesSearch->pageSize = 200;
             $speciesSearch->language = Yii::$app->language;
-            $species =  $this->speciesToMap($speciesSearch->find($sessionToken,[]));
+            $species = $this->speciesToMap($speciesSearch->find($sessionToken,$speciesSearch->attributesToArray()));
 
             if (is_string($projects) || is_string($groups)) {
                 return $this->render('/site/error', [
