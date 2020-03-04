@@ -179,9 +179,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ?>
                             </div>
 
+                           
+                            <?php
+                            if (!empty(Yii::$app->params['image.filter'])) {
+                                ?>
                             <div class="form-group col-md-12">
-                                <label class="control-label" ><?= Yii::t('app', 'Camera position') ?>
-                                </label>
+
+                                    <label class="control-label" ><?= Yii::t('app', 'Camera position') ?></label>
+
                                 <?php
                                 echo \kartik\select2\Select2::widget([
                                     'name' => 'filter',
@@ -201,6 +206,22 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ]);
                                 ?>
                             </div>
+
+                            <?php } else {
+                                ?>
+
+                                <div class="form-group form-inline col-md-12">
+                                    <label class="control-label" ><?= Yii::t('app', 'Metadata filter') ?></label>
+                                    <?= Html::input('text', 'filterName',
+                                            $selectedFilterName ? $selectedFilterName : '',
+                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Position')]) ?>
+                                    : <?= Html::input('text', 'filterValue',
+                                            $selectedFilterValue ? $selectedFilterValue : '',
+                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Top')]) ?>
+                        </div>
+
+                                <?php }
+                            ?>
                         </div>
                     </fieldset>
                 </div>
