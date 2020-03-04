@@ -84,10 +84,11 @@ ToastrAsset::register($this);
     } else if (Yii::$app->session['isAdmin']) {
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
-                            [
+                          /*  [
                                 'label' => Icon::show('home', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]),
                                 'url' => ['/infrastructure'],
-                            ],
+                            ]
+                          ,*/
                             [
                                 'label' => Icon::show('folder-open', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]),
                                 'url' => ['/project/index'],
@@ -239,10 +240,12 @@ ToastrAsset::register($this);
     } else {
         $menuItems[] = ['label' => Yii::t('app', 'Experimental Organization'),
                         'items' => [
+                            /*
                             [
                                 'label' => Icon::show('home', ['class' => 'fas'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Scientific frame} other{Scientific frames}}', ['n' => 2]),
                                 'url' => ['/infrastructure'],
                             ],
+                            */
                             [
                                 'label' => Icon::show('folder-open', [], Icon::BSG) . " " . Yii::t('app', '{n, plural, =1{Project} other{Projects}}', ['n' => 2]),
                                 'url' => ['/project/index'],
