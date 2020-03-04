@@ -59,19 +59,19 @@ ToastrAsset::register($this);
     ]);
     $menuItems;
     // DataAnalysis Menu
-    $menuDataAnalysisItems = [
-//            'label' => Yii::t('app', 'Data Analysis'),
-//                   'items' => [
-//                       [
-//                           'label' => Icon::show('bar-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Standalone R App} other{Standalone R Apps}}', ['n' => 2]),
-//                           'url' => ['/data-analysis/index'],
-//                       ],
-//                       [
-//                        'label' => Icon::show('area-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'R Gallery'),
-//                        'url' => ['/data-analysis/gallery'],
-//                        ]
-//                   ]
-             ];
+     $menuDataAnalysisItems = [
+            'label' => Yii::t('app', 'Data Analysis'),
+                   'items' => [
+                       [
+                           'label' => Icon::show('bar-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Standalone R App} other{Standalone R Apps}}', ['n' => 2]),
+                           'url' => ['/data-analysis/index'],
+                       ],
+                       [
+                        'label' => Icon::show('area-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'R Gallery'),
+                        'url' => ['/data-analysis/gallery'],
+                        ]
+                   ]
+              ];
 
 //unconnect user
     if (Yii::$app->session['isGuest'] || Yii::$app->session['isGuest'] === null) {
@@ -183,9 +183,9 @@ ToastrAsset::register($this);
 //                            ]
                             //\SILEX:info
                         ]];
-        if (Yii::$app->params['dataAnalysisModule'] == true) {
-            $menuItems[] = $menuDataAnalysisItems;
-        }
+//        if (Yii::$app->params['dataAnalysisModule'] == true) {
+//            $menuItems[] = $menuDataAnalysisItems;
+//        }
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
                                 [
@@ -306,9 +306,9 @@ ToastrAsset::register($this);
 //                            ],
                             //\SILEX:info
                         ]];
-        if (Yii::$app->params['dataAnalysisModule'] == true) {
-            $menuItems[] = $menuDataAnalysisItems;
-        }
+//        if (Yii::$app->params['dataAnalysisModule'] == true) {
+//            $menuItems[] = $menuDataAnalysisItems;
+//        }
         $menuItems[] = ['label' => Yii::t('app', 'Tools'),
                         'items' => [
                                 [
