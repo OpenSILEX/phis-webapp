@@ -583,8 +583,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
              methods: {
                 onComplete: function(){
                     this.loadingWizard = true;
-                    $("button.wizard-btn").attr('disabled','disabled');
                     $("#<?= $form->getId() ?>").submit();
+                    $("button.wizard-btn").attr('disabled','disabled');
                 },
                 setLoading: function(value) {
                       this.loadingWizard = value;

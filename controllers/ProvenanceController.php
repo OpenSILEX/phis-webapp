@@ -234,7 +234,7 @@ class ProvenanceController extends Controller {
             
                 $provenanceService = new WSProvenanceModel();
                 $jsonValueFilter =[];
-                $jsonValueFilter["metadata.prov:Agent.oeso:SensingDevice"]= ["\$all" => $data["sensorUris"]];
+                $jsonValueFilter["metadata.prov:Agent.prov:id"]= ["\$all" => $data["sensorUris"]];
                 $provenancesFiltered = $provenanceService->getSpecificProvenancesByCriteria(
                 $token,
                     ['jsonValueFilter' => json_encode($jsonValueFilter)]

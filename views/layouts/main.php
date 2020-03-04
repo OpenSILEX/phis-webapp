@@ -128,10 +128,10 @@ ToastrAsset::register($this);
                                     'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Add on scientific object'),
                                     'url' => ['/dataset/create']
                                 ],
-                                // [
-                                //     'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Add only on sensor'),
-                                //     'url' => ['/dataset/create-on-sensor']
-                                // ],
+                                [
+                                    'label' => Icon::show('plus', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'Add only on sensor'),
+                                    'url' => ['/dataset/create-on-sensor']
+                                ],
                                 [
                                     'label' => Icon::show('search', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'View'),
                                     'url' => ['/data/index']
