@@ -640,7 +640,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                       return new Promise((resolve, reject) => {
                           setTimeout(() => {
                               let sensorUri = $("#yiidatasensormodel-provenancesensingdevices").val();
-                              if(sensorUri === undefined || sensorUri === null || sensorUri === "" || sensorUri.length === 0){
+                              if(sensorUri === undefined || sensorUri === null || sensorUri === "" || sensorUri.length === 0 || !sensingDevices.hasOwnProperty(sensorUri)){
                                   toastr.warning("You must select a valid sensorUri to be able to continue");
                                   reject("You must select a valid sensorUri to be able to continue");
                               }else{

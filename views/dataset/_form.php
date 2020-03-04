@@ -291,6 +291,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         }
         // Inject URI to get document widget linked to an URI
         echo 'documentsLoadUri = "' . Url::to(['document/get-documents-widget']) . '";';
+         // Inject provenances list indexed by URI
+        echo 'experiments = ' . json_encode($this->params['experiments']) . ';';
         // Inject provenances list indexed by URI
         echo 'provenances = ' . json_encode($this->params['provenances']) . ';';
         // Inject sensingDevices list indexed by URI
@@ -596,7 +598,8 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                       return new Promise((resolve, reject) => {
                           setTimeout(() => {
                               let experimentUri = $("#experiment-selector").val();
-                              if(experimentUri === undefined || experimentUri === null || experimentUri === "" ){
+                              
+                              if(experimentUri === undefined || experimentUri === null || experimentUri === ""|| !experiments.hasOwnProperty(experimentUri)){
                                   toastr.warning("You must select a valid experiment to be able to continue");
                                   reject("You must select a valid experiment to be able to continue");
                               }else{
@@ -735,7 +738,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         $("#experiment-selector").change(function () {
              populateVariableList($(this).val());
         });
-         populateVariableList($("#experiment-selector").val());
+        populateVariableList($("#experiment-selector").val());
         
         // On provenance change update provenance fields
         $("#provenance-selector").change(function () {
