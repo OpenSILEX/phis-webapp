@@ -38,12 +38,6 @@ return [
     'webServicePageSizeMax' => 2097152,
 
     // ONTOLOGY -----------------------------------------------------------------
-    //-------- Provenance NameSpaces
-    'provenanceNamespaces' => [
-       "prov"=>"http://www.w3.org/ns/prov#",
-       "oeso"=>"http://www.opensilex.org/vocabulary/oeso#",
-       "rdf"=>"http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-       ],
     //-------- Concepts
     'Actuator' => 'http://www.opensilex.org/vocabulary/oeso#Actuator',
     'Lens' => 'http://www.opensilex.org/vocabulary/oeso#Lens',
