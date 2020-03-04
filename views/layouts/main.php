@@ -60,17 +60,17 @@ ToastrAsset::register($this);
     $menuItems;
     // DataAnalysis Menu
     $menuDataAnalysisItems = [
-            'label' => Yii::t('app', 'Data Analysis'),
-                   'items' => [
-                       [
-                           'label' => Icon::show('bar-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Standalone R App} other{Standalone R Apps}}', ['n' => 2]),
-                           'url' => ['/data-analysis/index'],
-                       ],
-                       [
-                        'label' => Icon::show('area-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'R Gallery'),
-                        'url' => ['/data-analysis/gallery'],
-                        ]
-                   ]
+//            'label' => Yii::t('app', 'Data Analysis'),
+//                   'items' => [
+//                       [
+//                           'label' => Icon::show('bar-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', '{n, plural, =1{Standalone R App} other{Standalone R Apps}}', ['n' => 2]),
+//                           'url' => ['/data-analysis/index'],
+//                       ],
+//                       [
+//                        'label' => Icon::show('area-chart', ['class' => 'fa-large'], Icon::FA) . " " . Yii::t('app', 'R Gallery'),
+//                        'url' => ['/data-analysis/gallery'],
+//                        ]
+//                   ]
              ];
 
 //unconnect user
