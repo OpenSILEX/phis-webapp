@@ -480,6 +480,7 @@ class DatasetController extends Controller {
         
         // Load existing sensors
         $sensors = $this->getSensorsUrisTypesLabels($token);
+        $this->view->params["sensingDevicesUriLabel"] = $this->getSensorListByUriAndLabel($sensors);
         $this->view->params["sensingDevices"] = $this->getSensorListToShowFromSensorList($sensors);
 
          // Load existing agents
@@ -582,7 +583,7 @@ class DatasetController extends Controller {
     }
     
     /**
-     * 
+     * Format sensor by type and uri => label
      * @param type $sensorsUriTypesLabel
      * @return array
      */
@@ -599,5 +600,17 @@ class DatasetController extends Controller {
             }
         }
         return $sensorLabelListToShow;
+    }
+     /**
+     * Format sensor by uri => label
+     * @param type $sensorsUriTypesLabel
+     * @return array
+     */
+    public function getSensorListByUriAndLabel($sensorsUriTypesLabel) {
+        $sensorsListByUriAndLabel = [];
+        foreach ($sensorsUriTypesLabel as $sensorUriTypesLabel) {
+            $sensorsListByUriAndLabel[$sensorUriTypesLabel[self::SENSOR_DATA_URI]] = $sensorUriTypesLabel[self::SENSOR_DATA_LABEL];
+        }
+        return $sensorsListByUriAndLabel;
     }
 }

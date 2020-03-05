@@ -218,7 +218,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
          * @param string  provenance uri
          * @returns {undefined}         */
         function updateProvenanceFields(uri) {
-            console.log(provenances[uri])
+//            console.log(provenances[uri])
             if (provenances.hasOwnProperty(uri)) {
                 // If selected provenance is known get its comment
                 var comment = provenances[uri]["comment"];
@@ -347,13 +347,15 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         // Inject URI to get document widget linked to an URI
         echo 'documentsLoadUri = "' . Url::to(['document/get-documents-widget']) . '";';
         // Inject provenances list indexed by URI
-        echo 'provenances = ' . json_encode($this->params['provenances']) . ';';
+        echo 'provenances =  {};';
         // Inject sensingDevices list indexed by URI
         echo 'sensingDevices = ' . json_encode($this->params['sensingDevices']) . ';';
+        // uri and label
+        echo 'sensingDevicesUriAndLabel = ' . json_encode($this->params['sensingDevicesUriLabel']) . ';';
+        
         // Inject agents list indexed by URI
         echo 'agents = ' . json_encode($this->params['agents']) . ';';
         ?>
-
     });
     </script>
 <div class="dataset-form well">
@@ -640,7 +642,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                       return new Promise((resolve, reject) => {
                           setTimeout(() => {
                               let sensorUri = $("#yiidatasensormodel-provenancesensingdevices").val();
-                              if(sensorUri === undefined || sensorUri === null || sensorUri === "" || sensorUri.length === 0 || !sensingDevices.hasOwnProperty(sensorUri)){
+                              if(sensorUri === undefined || sensorUri === null || sensorUri === "" || sensorUri.length === 0 || !sensingDevicesUriAndLabel.hasOwnProperty(sensorUri)){
                                   toastr.warning("You must select a valid sensorUri to be able to continue");
                                   reject("You must select a valid sensorUri to be able to continue");
                               }else{
