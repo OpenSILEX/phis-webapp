@@ -1017,17 +1017,17 @@ class ScientificObjectController extends Controller {
             $searchModel->provenance = $_GET['provenances'];
             $searchModel->dateSortAsc = 'true'; //FIX HIGHCHARTS WHEN FLAGS IS ATTACHED TO A SERIE
             $searchResult = $searchModel->search($token, null);
-           
+
             foreach ($searchResult->getModels() as $model) {
                 $dataToSave = null;
                 $dataToSave["provenanceUri"] = $model->provenanceUri;
                 $dataToSave["date"] = (strtotime($model->date)) * 1000;
-                if(is_numeric($model->value)){
+                if (is_numeric($model->value)) {
                     $dataToSave["value"] = doubleval($model->value);
                 } else {
-                    $dataToSave["value"]=null;
+                    $dataToSave["value"] = null;
                 }
-                
+
                 $data[] = $dataToSave;
             }
 
@@ -1066,19 +1066,20 @@ class ScientificObjectController extends Controller {
              */
             $isPhotos = false;
             if (isset($_GET['show']) && isset($_GET['imageType'])) {
-
-                // Check if parameter image.filter exist in config/params.php  
+                // Check if parameter image.filter exist in config/params.php 
                 if (!empty(Yii::$app->params['image.filter'])) {
-
-                    if (isset($_POST['filter']) && $_POST['filter'] !== "") {
-                        $selectedPositionIndex = $_POST['filter'];
+ 
+                    if (isset($_GET['filter']) && $_GET['filter'] !== "") {
+                        $selectedPositionIndex = $_GET['filter'];
                         $attribut = explode(":", Yii::$app->params['image.filter']['metadata'][$selectedPositionIndex]);
-                    $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
-                }
+                        $filterToSend = "{'metadata." . $attribut[0] . "':'" . $attribut[1] . "'}";
+                    }
                 } else {
-                    if (isset($_POST['filterName']) && $_POST['filterName'] !== "" && isset($_POST['filterValue']) && $_POST['filterValue'] !== "") {
-                        $selectedFilterName = $_POST['filterName'];
-                        $selectedFilterValue = $_POST['filterValue'];
+
+   
+                    if (isset($_GET['filterName']) && isset($_GET['filterValue'])) {
+                        $selectedFilterName = $_GET['filterName'];
+                        $selectedFilterValue = $_GET['filterValue'];
                         $filterToSend = "{'metadata." . $selectedFilterName . "':'" . $selectedFilterValue . "'}";
                     }
                 }
@@ -1200,8 +1201,8 @@ class ScientificObjectController extends Controller {
                         'imageTypeSelected' => $_GET['imageType'],
                         'selectedProvenance' => $_GET['provenances'],
                         'selectedPosition' => $selectedPositionIndex, // seems that select widget use index when they are selectable number values
-                        'selectedFilterName' => $selectedFilterName, 
-                        'selectedFilterValue' => $selectedFilterValue, 
+                        'selectedFilterName' => $selectedFilterName,
+                        'selectedFilterValue' => $selectedFilterValue,
                         'filterToSend' => $filterToSend,
                         'events' => $events,
                         'colorByEventCategorie' => $colorByEventCategorie,

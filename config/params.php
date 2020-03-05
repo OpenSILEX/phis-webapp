@@ -156,7 +156,9 @@ return [
 //            'labelView:side90','labelView:side120','labelView:side150','labelView:side180','labelView:side210',
 //            'labelView:side240','labelView:side270','labelView:side300','labelView:side330',
 //            ],
-//        ]
+//        ],
+    
+    
     //Highcharts color 
     'highchartsColor' =>["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f",
                 "#f45b5b", "#91e8e1", "#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]

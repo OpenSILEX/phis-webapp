@@ -190,7 +190,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <?php
                                     echo \kartik\select2\Select2::widget([
                                         'name' => 'filter',
-                                        'data' => Yii::$app->params['image.filter']['metadata.position'],
+                                        'data' => Yii::$app->params['image.filter']['metadata'],
                                         'value' => $selectedPosition ? $selectedPosition : null,
                                         'options' => [
                                             'id' => 'filterSelect',
@@ -214,10 +214,10 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <label class="control-label" ><?= Yii::t('app', 'Metadata filter') ?></label>
                                     <?= Html::input('text', 'filterName',
                                             $selectedFilterName ? $selectedFilterName : '',
-                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Position')]) ?>
+                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Field')]) ?>
                                     : <?= Html::input('text', 'filterValue',
                                             $selectedFilterValue ? $selectedFilterValue : '',
-                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Top')]) ?>
+                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Value')]) ?>
                                 </div>
 
                                 <?php }
