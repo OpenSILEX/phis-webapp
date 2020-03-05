@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= Html::a(Yii::t('yii', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
     <?= Html::a(Yii::t('yii', 'Update'), ['update'], ['class' => 'btn btn-primary']) ?>
-    <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('app', 'Export all Scientific Object'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
+    <?= Html::a(Icon::show('download-alt', [], Icon::BSG) . " " . Yii::t('app', 'Export all Scientific Objects'), ['download-csv', 'model' => $searchModel], ['class' => 'btn btn-primary']) ?>
 
     <div class="btn-group pull-right">
 
