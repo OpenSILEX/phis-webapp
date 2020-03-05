@@ -25,7 +25,6 @@ use openSILEX\handsontablePHP\adapter\HandsontableSimple;
 use openSILEX\handsontablePHP\classes\ColumnConfig;
 use app\models\wsModels\WSConstants;
 use app\models\yiiModels\YiiExperimentModel;
-use app\models\yiiModels\YiiSensorModel;
 use app\components\helpers\Vocabulary;
 
 require_once '../config/config.php';
@@ -485,8 +484,9 @@ class DatasetController extends Controller {
 
          // Load existing agents
         $userModel = new \app\models\yiiModels\YiiUserModel();
-        $users = $userModel->getPersonsMailsAndName($token);
+        $users = $userModel->getPersonsURIAndName($token);
         $this->view->params['agents'] = $users;
+        
         //If the form is complete, register data
         if ($datasetModel->load(Yii::$app->request->post())) {
             //Store uploaded CSV file
