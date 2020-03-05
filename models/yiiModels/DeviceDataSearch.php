@@ -126,8 +126,8 @@ class DeviceDataSearch extends \yii\base\Model {
                 // @see php.net/manual/en/dateinterval.construct.php
                 // create start date from last date
                 $dateTimeStart = new \DateTime($lastDate);
-                // substract a 'P'eriode of '7' 'D'ays to the date
-                $dateTimeStart->sub(new \DateInterval("P7D"));
+                // substract a 'P'eriode of '20' 'D'ays to the date
+                $dateTimeStart->sub(new \DateInterval("P20D"));
                 //\SILEX:info
             } else {
                 return null;
