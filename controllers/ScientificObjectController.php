@@ -1065,10 +1065,18 @@ class ScientificObjectController extends Controller {
              * }
              */
             $isPhotos = false;
+            
+//            //on FORM submitted:
+//            //check if image visualization is activated
+//            $show = isset($_POST['show']) ? $_POST['show'] : null;
+//            $selectedVariable = isset($_POST['variable']) ? $_POST['variable'] : null;
+//            $imageTypeSelected = isset($_POST['imageType']) ? $_POST['imageType'] : null;
+//            $selectedProvenance = isset($_POST['provenances']) ? $_POST['provenances'] : null;
+            
             if (isset($_GET['show']) && isset($_GET['imageType'])) {
                 // Check if parameter image.filter exist in config/params.php 
                 if (!empty(Yii::$app->params['image.filter'])) {
- 
+
                     if (isset($_GET['filter']) && $_GET['filter'] !== "") {
                         $selectedPositionIndex = $_GET['filter'];
                         $attribut = explode(":", Yii::$app->params['image.filter']['metadata'][$selectedPositionIndex]);
@@ -1076,8 +1084,9 @@ class ScientificObjectController extends Controller {
                     }
                 } else {
 
-   
-                    if (isset($_GET['filterName']) && isset($_GET['filterValue'])) {
+
+                    if (isset($_GET['filterName']) && $_GET['filterName'] !== "" && isset($_GET['filterValue']) && $_GET['filterValue'] !== "") {
+
                         $selectedFilterName = $_GET['filterName'];
                         $selectedFilterValue = $_GET['filterValue'];
                         $filterToSend = "{'metadata." . $selectedFilterName . "':'" . $selectedFilterValue . "'}";
@@ -1086,6 +1095,7 @@ class ScientificObjectController extends Controller {
 
                 $photosArray = null;
                 $photosArray = $this->searchImagesByObject($scientificObject->uri, $_GET['imageType'], $filterToSend ? $filterToSend : null, $_GET['dateStart'], $_GET['dateEnd']);
+
                 if (isset($photosArray) && !$isPhotos) {
                     $isPhotos = true;
                 }
