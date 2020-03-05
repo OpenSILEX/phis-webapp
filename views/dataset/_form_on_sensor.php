@@ -347,7 +347,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         // Inject URI to get document widget linked to an URI
         echo 'documentsLoadUri = "' . Url::to(['document/get-documents-widget']) . '";';
         // Inject provenances list indexed by URI
-        echo 'provenances =  {};';
+        echo 'provenances = ' . json_encode($this->params['provenances']) . ';';
         // Inject sensingDevices list indexed by URI
         echo 'sensingDevices = ' . json_encode($this->params['sensingDevices']) . ';';
         // Inject agents list indexed by URI
