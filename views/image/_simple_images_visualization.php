@@ -107,7 +107,7 @@ use yii\helpers\Url;
                 }
                 echo Html::img($url, [
                 ]) .
-                '<div class="carousel-caption">Position: '.$position.'<br>Date: '.$date.'</div>'
+                '<div class="carousel-caption">Date: '.$date.'</div>'
                 . '</div>';
                 $first = false;
             }
