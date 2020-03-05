@@ -142,6 +142,7 @@ return [
     'Experiment'=>'Expérimentation',
     'Experiment Modalities' => 'Modalités Expérimentales',
     'Experiment associated variable(s)' => 'Variable(s) associées à l\'expérimentation',
+    'Export all Scientific Objects'=>'Export de tous les objets scientifiques',
     EventAction::EVENT_UNUPDATABLE_DUE_TO_UNUPDATABLE_PROPRTY_LABEL =>
         "L'événement ne peut être mis à jour que via le web service car une de "
         . "ses propriétés spécifiques n'est actuellement pas compatible avec la webapp.",
