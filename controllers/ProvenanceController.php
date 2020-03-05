@@ -125,18 +125,21 @@ class ProvenanceController extends Controller {
         $provenanceService = new WSProvenanceModel();
         $date = new \DateTime();
         $createdDate = $date->format("Y-m-d\TH:i:sO");
-        $metadata = [
-            "prov:Agent" =>[
-             ]
-            ];
+        $metadata = [];
         foreach ($sensingDevices as $sensingDevice) {
+            if(!isset($metadata["prov:Agent"])){
+                $metadata["prov:Agent"] = [];
+            }
           $metadata["prov:Agent"][] = [
               "prov:id" =>  $sensingDevice,
               "rdf:type" => "oeso:SensingDevice"
             ];
         }
         foreach ($agents as $agent) {
-          $metadata["prov:Agent"][] = [
+            if(!isset($metadata["prov:Agent"])){
+                $metadata["prov:Agent"] = [];
+            }
+            $metadata["prov:Agent"][] = [
                 "prov:id" => $agent,
                 "rdf:type" => "oeso:Operator"
             ];
