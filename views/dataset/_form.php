@@ -471,7 +471,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                                  icon="ti-settings"
                                  :before-change="beforeUploadDataset">
                        <h4><?= Yii::t('app', 'Provenance'); ?></h4>
-                <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, write the provenance label in the research field and press `Enter`'); ?></p>
+                <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, write the provenance label in the research field and press `Enter`. After you will be able to fill provenance input fields and create it by press `Create provenance` button.'); ?></p>
     
         <?=
         $form->field($model, 'provenanceUri')->widget(\kartik\select2\Select2::classname(), [

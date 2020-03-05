@@ -119,6 +119,7 @@ return [
     'The value' => 'La valeur',
     'The variety used in the plot (e.g. apache)' => 'La variété du plot (ex. apache)',
     'To assign scientific objects to two experiments: (1) create the scientific objects on one of the experiments and (2) update them with the uri of the second experiment.' => 'Pour affecter des objets scientifiques à deux expériences: (1) créez les objets scientifiques sur l\'une des expériences et (2) mettez-les à jour avec l\'uri de la deuxième expérience.',
+    'To create a new provenance, write the provenance label in the research field and press `Enter`. After you will be able to fill provenance input fields and create it by press `Create provenance` button.' => 'Pour créer une nouvelle provenance, écrivez le nom de votre nouvel provenance puis appuyer sur la touche `Entrée`. Vous pourrez ainsi compléter votre nouvelle provenance et cliquer sur le bouton `Créer la provenance`.',
     'to get more information about the columns content' => 'pour obtenir davantage d\'information sur le contenu de chaque colonne',
     'The variables associated to the choosen experiment' => 'Les variables associées à l\'expérimentation choisie',
     'The variables associated to the choosen sensor' => 'Les variables associées au capteur choisi',

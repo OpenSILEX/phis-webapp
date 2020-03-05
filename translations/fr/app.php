@@ -173,7 +173,7 @@ return [
     'Generate Map' => 'Générer la Carte',
     'Generated URI' => 'URI générée',
     'Generate dataset template' => 'Générer le gabarit du jeux de données',
-    'Generate dataset template (Optional)' => 'Generer le gabarit du jeu de données (Optionnel)',
+    'Generate dataset template (Optional)' => 'Générer le gabarit du jeu de données (Optionnel)',
     'Geographic Location' => 'Localisation géographique',
     'Geometry' => 'Géométrie',
     'Graphic visualization' => 'Visualisation graphique',
