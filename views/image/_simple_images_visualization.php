@@ -51,7 +51,7 @@ use yii\helpers\Url;
                 echo Html::img($url, [
                     'width' => 200,
                     'data-html' => 'true',
-                    'title' => 'Position: ' . $position . '<br>Date: ' . $date,
+                    'title' => 'Date: ' . $date,
                     'data-toggle' => 'tooltip',
                     'data-placement' => 'bottom',
                     'data-serie'=>$serieIndex,
@@ -107,7 +107,7 @@ use yii\helpers\Url;
                 }
                 echo Html::img($url, [
                 ]) .
-                '<div class="carousel-caption">Position: '.$position.'<br>Date: '.$date.'</div>'
+                '<div class="carousel-caption">Date: '.$date.'</div>'
                 . '</div>';
                 $first = false;
             }

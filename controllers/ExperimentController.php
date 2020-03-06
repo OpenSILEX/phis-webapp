@@ -8,6 +8,7 @@
 //******************************************************************************
 namespace app\controllers;
 
+use app\models\yiiModels\SpeciesSearch;
 use Yii;
 use yii\web\NotFoundHttpException;
 use yii\web\Controller;
@@ -213,6 +214,14 @@ class ExperimentController extends Controller {
             return null;
         }
     }
+
+    private function speciesToMap($species){
+        if ($species !== null) {
+            return \yii\helpers\ArrayHelper::map($species, 'uri', 'label');
+        } else {
+            return null;
+        }
+    }
     
     /**
      * @action Create an Experiment
@@ -242,13 +251,22 @@ class ExperimentController extends Controller {
             }
         } else { 
             $searchProjectModel = new ProjectSearch();
+            $searchProjectModel->pageSize = 200;
+
             $projects = $searchProjectModel->find($sessionToken,[]);
-            
+
             $userModel = new \app\models\yiiModels\YiiUserModel();
+            $userModel->pageSize = 200;
+            
             $contacts = $userModel->getPersonsMailsAndName($sessionToken);
             
             $groups = null;
-            
+
+            $speciesSearch = new SpeciesSearch();
+            $speciesSearch->pageSize = 200;
+            $speciesSearch->language = Yii::$app->language;
+            $species = $this->speciesToMap($speciesSearch->find($sessionToken,$speciesSearch->attributesToArray()));
+
             if (Yii::$app->session['isAdmin']) {
                 $searchGroupModel = new GroupSearch();
                 $groups = $searchGroupModel->find($sessionToken,[]);
@@ -268,6 +286,7 @@ class ExperimentController extends Controller {
                 $this->view->params['listProjects'] = $projects;
                 $this->view->params['listGroups'] = $groups;
                 $this->view->params['listContacts'] = $contacts;
+                $this->view->params['listSpecies'] = $species;
                 $experimentModel->isNewRecord = true;
 
                 return $this->render('create', [
@@ -340,6 +359,11 @@ class ExperimentController extends Controller {
             $userModel = new \app\models\yiiModels\YiiUserModel();
             $contacts = $userModel->getPersonsMailsAndName($sessionToken);
 
+            $speciesSearch = new SpeciesSearch();
+            $speciesSearch->pageSize = 200;
+            $speciesSearch->language = Yii::$app->language;
+            $species = $this->speciesToMap($speciesSearch->find($sessionToken,$speciesSearch->attributesToArray()));
+
             if (is_string($projects) || is_string($groups)) {
                 return $this->render('/site/error', [
                     'name' => Yii::t('app/messages','Internal error'),
@@ -356,6 +380,8 @@ class ExperimentController extends Controller {
                 $this->view->params['listContacts'] = $contacts;
                 $this->view->params['listActualScientificSupervisors'] = $actualScientificSupervisors;
                 $this->view->params['listActualTechnicalSupervisors'] = $actualTechnicalSupervisors;
+                $this->view->params['listSpecies'] = $species;
+
                 $model->isNewRecord = false;
 
                 return $this->render('update', [

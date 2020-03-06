@@ -178,6 +178,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ]);
                                 ?>
                             </div>
+
+                           
                             <?php
                             if (!empty(Yii::$app->params['image.filter'])) {
                                 ?>
@@ -212,15 +214,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <label class="control-label" ><?= Yii::t('app', 'Metadata filter') ?></label>
                                     <?= Html::input('text', 'filterName',
                                             $selectedFilterName ? $selectedFilterName : '',
-                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Position')]) ?>
+                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Field')]) ?>
                                     : <?= Html::input('text', 'filterValue',
                                             $selectedFilterValue ? $selectedFilterValue : '',
-                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Top')]) ?>
+                                            $options = ['class' => 'form-control', 'placeholder' => Yii::t('app/messages', 'Value')]) ?>
                                 </div>
 
                                 <?php }
                             ?>
-
                         </div>
                     </fieldset>
                 </div>
@@ -230,31 +231,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php ActiveForm::end(); ?>
         </div>
-        <div id="visualization-images"   >
-
-            <?php
-            if (isset($data) && isset($show) && $show == true && !empty($data)) {
-                echo "<div id='scientific-object-data-visualization-alert-div' style='height:146px;'><br><div class='alert alert-info' role='alert-info'>
-                    <p>" . Yii::t('app/messages', 'You have to click a graphic point to see images on that date.') . "</p></div></div>";
-            }
-            ?>
-            <div id="imagesCount" style="display: none;" data-id=0 ></div>
-            <ul id="visualization-images-list" class="images" >
-
-            </ul>
-
-            <div class="modal carousel and slide " data-ride="carousel"  data-interval="false" id="lightbox">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-body">
-                            <div    >
-                                <ol id="carousel-indicators" class="carousel-indicators">
-
-                                </ol>
-                                <div id="carousel-inner" class="carousel-inner">
 
         <?php if (isset($data) && isset($isPhotos) && $isPhotos && !empty($data)) { ?>
-            <div id="visualization-images" style='height:146px;'  >
+            <div id="visualization-images" style='height:246px;'  >
                 <div id='scientific-object-data-visualization-alert-div' >
                     <br>
                     <div class='alert alert-info' role='alert-info'>
@@ -361,13 +340,15 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'click' => new JsExpression("
                                         function (event) { 
                                             var searchFormData = new FormData();
+                                            console.log(event.point.x);
                                             searchFormData.append('concernedItems[]', \"$objectURI\"); "
                                         . " searchFormData.append('serieIndex', this.index);"
                                         . " searchFormData.append('pointIndex', event.point.index);"
                                         . " searchFormData.append('DataFileSearch[rdfType]',\"$imageTypeSelected\");"
                                         . " searchFormData.append('jsonValueFilter', \"$filterToSend\");"
+                                        . " searchFormData.append('provenance', \"$selectedProvenance\");"
                                         . " searchFormData.append('startDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
-                                        . " searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x));"
+                                        . " searchFormData.append('endDate',Highcharts.dateFormat('%Y-%m-%dT%H:%M:%S+0000', event.point.x+1000));"
                                         . " searchFormData.append('imagesCount',$('#imagesCount').attr('data-id'));"
                                         . " $.ajax({"
                                         . "          url: \"$url2\","
@@ -377,7 +358,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                         . "  contentType: false,"
                                         . "         data: searchFormData,"
                                         . "                                }).done(function (data) {"
-                                        . "                                          onDayImageListHTMLFragmentReception(data);}"
+                                       
+                                        . "                                           console.log(data);onDayImageListHTMLFragmentReception(data);}"
                                         . "                                 ).fail(function (jqXHR, textStatus) {"
                                         . "                                           alert('ERROR : ' + jqXHR);});}")
                             ]

@@ -77,12 +77,36 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         /**
          * Save provenance model via ajax
          * @returns {Boolean}         */
-        function saveProvenance(){
+        function saveOrUpdateProvenance(){
 
             var newProvenanceUri = $("#provenance-selector :selected").val();
             
             if(provenances.hasOwnProperty(newProvenanceUri)){
-                  toastr.info("Already existing provenance");
+                var documents = [];
+                var documentsInputList = $("input[id^='yiidatasensormodel-documentsuris-documenturi-']")
+                documentsInputList.each(function (i, documentInput) {
+                    documents.push($(documentInput).val());
+                });
+                if(documents.length > 0){
+                    $.ajax({
+                        url: '<?= Url::toRoute(['provenance/ajax-update-provenance-documents-from-dataset']); ?>',
+                        type: 'POST',
+                        datatype: 'json',
+                        data: {provenanceUri :newProvenanceUri,
+                                documents : documents}
+                    })
+                    .done(function () {
+                        toastr.info("Documents updated");
+                    }).fail(function (jqXHR, textStatus) {
+                        // Disaply errors
+                        $('#document-save-msg').parent().removeClass('alert-info');
+                        $('#document-save-msg').parent().addClass('alert-danger');
+                        $('#document-save-msg').html('Request failed: ' + textStatus);
+                        toastr.error("An error has occured during provenance saving");
+                    });
+                }else{
+                    toastr.warning("No documents added");
+                }
             }
             
             if(!provenances.hasOwnProperty(newProvenanceUri) 
@@ -194,7 +218,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
          * @param string  provenance uri
          * @returns {undefined}         */
         function updateProvenanceFields(uri) {
-            console.log(provenances[uri])
+//            console.log(provenances[uri])
             if (provenances.hasOwnProperty(uri)) {
                 // If selected provenance is known get its comment
                 var comment = provenances[uri]["comment"];
@@ -207,8 +231,14 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 $(".field-yiidatasensormodel-provenancecomment .help-block").empty();
 
                 // Set provenance provenanceAgents, disable input and remove validation messages 
+                 // Set provenance provenanceAgents, disable input and remove validation messages 
                 try {
-                    var provenanceAgents = provenances[uri]["metadata"]["prov:Agent"]["oeso:Operator"];
+                    var provenanceAgents = [];
+                    provenances[uri]["metadata"]["prov:Agent"].forEach(function(agentElement){
+                        if(agentElement.hasOwnProperty("rdf:type") && agentElement["rdf:type"] === "oeso:Operator"){
+                            provenanceAgents.push(agentElement["prov:id"]);
+                        }
+                      });
                     $("#yiidatasensormodel-provenanceagents").val(provenanceAgents);
                     $("#yiidatasensormodel-provenanceagents").trigger("change");
                 } catch (error) {
@@ -227,6 +257,9 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 $("#already-linked-documents").load(documentsLoadUri, {
                     "uri": uri
                 });
+                
+                $("#saveProvenanceButton").text("Add provenance documents");
+                $("#saveProvenanceButton").data("status","update");
             } else {
                 // Otherwise clear provenance agents and enable input
                 $("#yiidatasensormodel-provenanceagents").val(agents).removeAttr("disabled").trigger("change");
@@ -236,6 +269,9 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
 
                 // Clear linked documents list
                 $("#already-linked-documents").empty();
+                
+                $("#saveProvenanceButton").text("Create provenance");
+                $("#saveProvenanceButton").data("status","create");
             }
         }
         
@@ -314,10 +350,12 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         echo 'provenances =  {};';
         // Inject sensingDevices list indexed by URI
         echo 'sensingDevices = ' . json_encode($this->params['sensingDevices']) . ';';
+        // uri and label
+        echo 'sensingDevicesUriAndLabel = ' . json_encode($this->params['sensingDevicesUriLabel']) . ';';
+        
         // Inject agents list indexed by URI
         echo 'agents = ' . json_encode($this->params['agents']) . ';';
         ?>
-
     });
     </script>
 <div class="dataset-form well">
@@ -477,7 +515,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                                  icon="ti-settings"
                                  :before-change="beforeUploadDataset">
                        <h4><?= Yii::t('app', 'Provenance'); ?></h4>
-                <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, write the provenance label in the research field and press `Enter`'); ?></p>
+                <p class="alert alert-info"><?= Yii::t('app/messages', 'To create a new provenance, write the provenance label in the research field and press `Enter`. After you will be able to fill provenance input fields and create it by press `Create provenance` button.'); ?></p>
     
         <?=
         $form->field($model, 'provenanceUri')->widget(\kartik\select2\Select2::classname(), [
@@ -532,19 +570,21 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         ])->label(false)
         ?>
         <br>
-        <?= Html::button(Yii::t('app', 'Create provenance'), ['class' => 'btn btn-success','onclick' => 'saveProvenance()']) ?>
+        <?= Html::button(Yii::t('app', 'Create provenance'), ['class' => 'btn btn-success','onclick' => 'saveOrUpdateProvenance()', 'id' => 'saveProvenanceButton']) ?>
         <br>
         <br>
 
                 </tab-content>
                 <tab-content title="<?= Yii::t('app','Upload dataset'); ?>"
-                             icon="ti-check">
+                             icon="ti-check"
+                             :before-change="beforeUploadData">
                 <h3><i>  <?= Yii::t('app', 'Dataset input file') ?></i></h3>
 
             <?=
             $form->field($model, 'file')->widget(FileInput::classname(), [
                 'options' => [
                     'maxFileSize' => 2000,
+                    'id' => 'dataset-file-uploader',
                     'pluginOptions' => ['allowedFileExtensions' => ['csv'], 'showUpload' => false],
                 ]
             ]);
@@ -581,14 +621,16 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
     <script>
         $(document).ready(function () {
             Vue.use(VueFormWizard)
-            new Vue({
+            var formVue = new Vue({
              el: '#app',
              data:{
                 loadingWizard: false
              },
              methods: {
                 onComplete: function(){
+                    this.loadingWizard = true;
                     $("#<?= $form->getId() ?>").submit();
+                    $("button.wizard-btn").attr('disabled','disabled');
                 },
                 setLoading: function(value) {
                       this.loadingWizard = value
@@ -599,10 +641,10 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 beforeSelectProvenance: function(){
                       return new Promise((resolve, reject) => {
                           setTimeout(() => {
-                              let experimentUri = $("#yiidatasensormodel-provenancesensingdevices").val();
-                              if(experimentUri === undefined || experimentUri === null || experimentUri === "" ){
-                                  toastr.warning("You must select a valid experiment to be able to continue");
-                                  reject("You must select a valid experiment to be able to continue");
+                              let sensorUri = $("#yiidatasensormodel-provenancesensingdevices").val();
+                              if(sensorUri === undefined || sensorUri === null || sensorUri === "" || sensorUri.length === 0 || !sensingDevicesUriAndLabel.hasOwnProperty(sensorUri)){
+                                  toastr.warning("You must select a valid sensorUri to be able to continue");
+                                  reject("You must select a valid sensorUri to be able to continue");
                               }else{
                                  resolve(true);
                                 }   
@@ -622,6 +664,22 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                               }else{
                                  resolve(true);
                                 }   
+                              }, 200)
+                      });
+                  },
+                  beforeUploadData: function(){
+                      return new Promise((resolve, reject) => {
+                          setTimeout(() => {
+                               console.log($('#dataset-file-uploader').fileinput('getFilesCount'));
+                                var fileCount = $('#dataset-file-uploader').fileinput('getFilesCount');
+                                if(fileCount === 1){
+                                    formVue.loadingWizard = false;
+                                      resolve(true);
+                                }else{
+                                     toastr.warning("You must select a valid data file to be able to continue");
+                                  reject("You must select a valid provenance to continue");
+                                  
+                                }
                               }, 200)
                       });
                   }
@@ -678,6 +736,7 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 data: {variables: variablesLabels}
             })
             .done(function (data) {
+                console.log("result file rights",data);
             })
             .fail(function (jqXHR, textStatus) {
                 $('#document-save-msg').parent().removeClass('alert-info');

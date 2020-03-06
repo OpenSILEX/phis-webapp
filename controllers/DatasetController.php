@@ -25,7 +25,6 @@ use openSILEX\handsontablePHP\adapter\HandsontableSimple;
 use openSILEX\handsontablePHP\classes\ColumnConfig;
 use app\models\wsModels\WSConstants;
 use app\models\yiiModels\YiiExperimentModel;
-use app\models\yiiModels\YiiSensorModel;
 use app\components\helpers\Vocabulary;
 
 require_once '../config/config.php';
@@ -161,8 +160,10 @@ class DatasetController extends Controller {
         }
         
         $file = fopen('./documents/DatasetFiles/' . $csvPath . '/datasetSensorTemplate.csv', 'w');
-        fputcsv($file, $fileColumns, $delimiter = Yii::$app->params['csvSeparator']);
+        var_dump($file);
+        $success = fputcsv($file, $fileColumns, $delimiter = Yii::$app->params['csvSeparator']);
         fclose($file);
+        return json_encode($success);
     }
 
   
@@ -478,12 +479,14 @@ class DatasetController extends Controller {
         
         // Load existing sensors
         $sensors = $this->getSensorsUrisTypesLabels($token);
+        $this->view->params["sensingDevicesUriLabel"] = $this->getSensorListByUriAndLabel($sensors);
         $this->view->params["sensingDevices"] = $this->getSensorListToShowFromSensorList($sensors);
 
          // Load existing agents
         $userModel = new \app\models\yiiModels\YiiUserModel();
-        $users = $userModel->getPersonsMailsAndName($token);
+        $users = $userModel->getPersonsURIAndName($token);
         $this->view->params['agents'] = $users;
+        
         //If the form is complete, register data
         if ($datasetModel->load(Yii::$app->request->post())) {
             //Store uploaded CSV file
@@ -580,7 +583,7 @@ class DatasetController extends Controller {
     }
     
     /**
-     * 
+     * Format sensor by type and uri => label
      * @param type $sensorsUriTypesLabel
      * @return array
      */
@@ -597,5 +600,17 @@ class DatasetController extends Controller {
             }
         }
         return $sensorLabelListToShow;
+    }
+     /**
+     * Format sensor by uri => label
+     * @param type $sensorsUriTypesLabel
+     * @return array
+     */
+    public function getSensorListByUriAndLabel($sensorsUriTypesLabel) {
+        $sensorsListByUriAndLabel = [];
+        foreach ($sensorsUriTypesLabel as $sensorUriTypesLabel) {
+            $sensorsListByUriAndLabel[$sensorUriTypesLabel[self::SENSOR_DATA_URI]] = $sensorUriTypesLabel[self::SENSOR_DATA_LABEL];
+        }
+        return $sensorsListByUriAndLabel;
     }
 }

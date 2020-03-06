@@ -122,12 +122,15 @@ class DeviceDataSearch extends \yii\base\Model {
             // If last date found, compute the latest week period
             if ($lastDate != null) {
                 $dateTimeEnd = new \DateTime($lastDate);
+                // add a 'P'eriode of 'T'ime of '1' 'S'second to the date
+                // to be able to manage microsecond research
+                $dateTimeEnd->add(new \DateInterval("PT1S"));
                 //SILEX:info
                 // @see php.net/manual/en/dateinterval.construct.php
                 // create start date from last date
                 $dateTimeStart = new \DateTime($lastDate);
-                // substract a 'P'eriode of '7' 'D'ays to the date
-                $dateTimeStart->sub(new \DateInterval("P7D"));
+                // substract a 'P'eriode of '20' 'D'ays to the date
+                $dateTimeStart->sub(new \DateInterval("P20D"));
                 //\SILEX:info
             } else {
                 return null;

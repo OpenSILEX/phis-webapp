@@ -142,6 +142,7 @@ return [
     'Experiment'=>'Expérimentation',
     'Experiment Modalities' => 'Modalités Expérimentales',
     'Experiment associated variable(s)' => 'Variable(s) associées à l\'expérimentation',
+    'Export all Scientific Objects'=>'Export de tous les objets scientifiques',
     EventAction::EVENT_UNUPDATABLE_DUE_TO_UNUPDATABLE_PROPRTY_LABEL =>
         "L'événement ne peut être mis à jour que via le web service car une de "
         . "ses propriétés spécifiques n'est actuellement pas compatible avec la webapp.",
@@ -172,7 +173,7 @@ return [
     'Generate Map' => 'Générer la Carte',
     'Generated URI' => 'URI générée',
     'Generate dataset template' => 'Générer le gabarit du jeux de données',
-    'Generate dataset template (Optional)' => 'Generer le gabarit du jeu de données (Optionnel)',
+    'Generate dataset template (Optional)' => 'Générer le gabarit du jeu de données (Optionnel)',
     'Geographic Location' => 'Localisation géographique',
     'Geometry' => 'Géométrie',
     'Graphic visualization' => 'Visualisation graphique',
