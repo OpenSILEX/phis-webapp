@@ -302,39 +302,28 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 }
         }
         
-        function saveDocument(){
-            // On save get document form values
-            var formData = new FormData();
-            var file_data = $('#document-content #yiidocumentmodel-file').prop('files')[0];
-            formData.append('file', file_data);
-            var other_data = $('form').serializeArray();
-            $.each(other_data, function (key, input) {
-                formData.append(input.name, input.value);
-            });
+        
+        // The download function takes a CSV string, the filename and mimeType as parameters
+        // Scroll/look down at the bottom of this snippet to see how download is called
+        function download(content, fileName, mimeType) {
+          var a = document.createElement('a');
+          mimeType = mimeType || 'application/octet-stream';
 
-            // Send documents form
-            $.ajax({
-                url: 'index.php?r=document%2Fcreate-from-dataset',
-                type: 'POST',
-                processData: false,
-                datatype: 'json',
-                contentType: false,
-                data: formData
-
-            })
-            .done(function (data) {
-                    // Add document URI and close document add form
-                    $('#yiidatasensormodel-documentsuris-documenturi-' + nbDocuments).val(data);
-                    documentUploaded = true;
-                    $('#document-modal').modal('toggle');
-
-            })
-            .fail(function (jqXHR, textStatus) {
-                    // Disaply errors
-                    $('#document-save-msg').parent().removeClass('alert-info');
-                    $('#document-save-msg').parent().addClass('alert-danger');
-                    $('#document-save-msg').html('Request failed: ' + textStatus);
-            });
+          if (navigator.msSaveBlob) { // IE10
+            navigator.msSaveBlob(new Blob([content], {
+              type: mimeType
+            }), fileName);
+          } else if (URL && 'download' in a) { //html5 A[download]
+            a.href = URL.createObjectURL(new Blob([content], {
+              type: mimeType
+            }));
+            a.setAttribute('download', fileName);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          } else {
+            location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+          }
         }
     </script>
         <script>
@@ -504,10 +493,13 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                     </div>               
                     
         <?= 
-        Html::a("<button type='button' class='btn btn-success'> " . Yii::t('app', 'Download Template') . "</button>",
-            \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetSensorTemplate.csv',
-            ['id' => 'downloadDatasetTemplate']
-        );
+            Html::button(
+                    Yii::t('app', 'Download Template'),
+                    [
+                    'id' => 'downloadDatasetTemplate',
+                    'class' => 'btn btn-success'  
+                    ]
+            );
         ?>
                 <br><br>
                 </tab-content>
@@ -710,8 +702,40 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
 
         // Initial document count
         var nbDocuments = -1;
+        
         $(document).on('click', '#document-save', function () {
-            saveDocument();
+            // On save get document form values
+            var formData = new FormData();
+            var file_data = $('#document-content #yiidocumentmodel-file').prop('files')[0];
+            formData.append('file', file_data);
+            var other_data = $('form').serializeArray();
+            $.each(other_data, function (key, input) {
+                formData.append(input.name, input.value);
+            });
+
+            // Send documents form
+            $.ajax({
+                url: 'index.php?r=document%2Fcreate-from-dataset',
+                type: 'POST',
+                processData: false,
+                datatype: 'json',
+                contentType: false,
+                data: formData
+
+            })
+            .done(function (data) {
+                    // Add document URI and close document add form
+                    $('#yiidatasensormodel-documentsuris-documenturi-' + nbDocuments).val(data);
+                    documentUploaded = true;
+                    $('#document-modal').modal('toggle');
+
+            })
+            .fail(function (jqXHR, textStatus) {
+                    // Disaply errors
+                    $('#document-save-msg').parent().removeClass('alert-info');
+                    $('#document-save-msg').parent().addClass('alert-danger');
+                    $('#document-save-msg').html('Request failed: ' + textStatus);
+            });
             return false;
         });
 
@@ -724,25 +748,30 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
         });
 
         // Download adjusted to variables CSV template file on click
-        $(document).on('change', '#uriVariable-selector', function () {
+        $(document).on('click', '#downloadDatasetTemplate', function () {
             var variablesLabels = [];
             $("#uriVariable-selector :selected").each(function (i, sel) {
                 variablesLabels.push($(sel).text());
             });
-            $.ajax({
-                url: 'index.php?r=dataset%2Fgenerate-and-download-sensor-dataset-creation-file',
-                type: 'POST',
-                datatype: 'json',
-                data: {variables: variablesLabels}
-            })
-            .done(function (data) {
-                console.log("result file rights",data);
-            })
-            .fail(function (jqXHR, textStatus) {
-                $('#document-save-msg').parent().removeClass('alert-info');
-                $('#document-save-msg').parent().addClass('alert-danger');
-                $('#document-save-msg').html('Request failed: ' + textStatus);
-            });
+            if(variablesLabels.length > 0){
+                $.ajax({
+                    url: 'index.php?r=dataset%2Fgenerate-and-download-sensor-dataset-creation-file',
+                    type: 'POST',
+                    datatype: 'json',
+                    data: {variables: variablesLabels}
+                })
+                .done(function (csvContent) {
+                    console.log(csvContent);
+                    download(csvContent, 'sensorDatasetTemplate.csv', 'text/csv;encoding:utf-8');
+                })
+                .fail(function (jqXHR, textStatus) {
+                    $('#document-save-msg').parent().removeClass('alert-info');
+                    $('#document-save-msg').parent().addClass('alert-danger');
+                    $('#document-save-msg').html('Request failed: ' + textStatus);
+                });
+            }else{
+                toastr.warning("You must selected at least one variable");
+            }
         });
         
         // On provenance change update provenance fields
