@@ -15,13 +15,13 @@ variables:
     paths:
       - "$CI_PROJECT_DIR/vendor"
     policy: pull
-
+    
 build:webapp:
   <<: *cache_dependencies
   image: composer:1.9.1
   stage: build
   script:
-     - composer install --ignore-platform-reqs 
+    - composer install --ignore-platform-reqs 
   only:
     - master
     
@@ -54,6 +54,7 @@ build:webapp:
     - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chown -R phis:www-data /var/www/html/$RSYNC_DEST/"
     - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R ug+rw /var/www/html/$RSYNC_DEST/web"
     - ssh -i ${HOME}/.ssh/id_rsa -p22 $SCP_ACCOUNT@$REMOTE_IP "sudo chmod -R 777 /var/www/html/$RSYNC_DEST/web/documents"
+    
 deploy:webapp:
   <<: *deploy_template
   variables:
