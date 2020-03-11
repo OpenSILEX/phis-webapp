@@ -15,6 +15,7 @@ use app\models\wsModels\WSUriModel;
 use app\models\yiiModels\YiiUserModel;
 use app\components\helpers\Vocabulary;
 use app\controllers\UserController;
+use app\models\yiiModels\YiiTokenModel;
 
 /**
  * Controller for Annotation model.
