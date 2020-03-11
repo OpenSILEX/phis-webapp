@@ -26,6 +26,7 @@ use openSILEX\handsontablePHP\classes\ColumnConfig;
 use app\models\wsModels\WSConstants;
 use app\models\yiiModels\YiiExperimentModel;
 use app\components\helpers\Vocabulary;
+use app\models\yiiModels\YiiSensorModel;
 
 require_once '../config/config.php';
 
