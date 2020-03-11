@@ -15,6 +15,7 @@ use app\controllers\GenericController;
 use app\models\yiiModels\EventSearch;
 use app\models\yiiModels\DocumentSearch;
 use app\models\yiiModels\YiiUserModel;
+use app\models\yiiModels\YiiTokenModel;
 use app\models\yiiModels\YiiEventModel;
 use app\models\yiiModels\EventCreation;
 use app\models\yiiModels\EventUpdate;
