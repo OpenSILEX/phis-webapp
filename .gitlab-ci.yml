@@ -14,13 +14,14 @@ variables:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
       - "$CI_PROJECT_DIR/vendor"
-
+    policy: pull
+    
 build:webapp:
   <<: *cache_dependencies
   image: composer:1.9.1
   stage: build
   script:
-     - composer install --ignore-platform-reqs 
+    - composer install --ignore-platform-reqs 
   only:
     - master
     
