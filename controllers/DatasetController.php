@@ -129,15 +129,9 @@ class DatasetController extends Controller {
         foreach ($variables as $variableAlias) {
             $fileColumns[] = $variableAlias;
         }
-
-        $csvPath = "coma";
-        if (Yii::$app->params['csvSeparator'] == ";") {
-            $csvPath = "semicolon";
-        }
         
-        $file = fopen('./documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv', 'w');
-        fputcsv($file, $fileColumns, $delimiter = Yii::$app->params['csvSeparator']);
-        fclose($file);
+        $csvString = implode(Yii::$app->params['csvSeparator'], $fileColumns); 
+        return json_encode($csvString);
     }
     
      /**
@@ -153,17 +147,9 @@ class DatasetController extends Controller {
         foreach ($variables as $variableAlias) {
             $fileColumns[] = $variableAlias;
         }
-       
-        $csvPath = "coma";
-        if (Yii::$app->params['csvSeparator'] == ";") {
-            $csvPath = "semicolon";
-        }
         
-        $file = fopen('./documents/DatasetFiles/' . $csvPath . '/datasetSensorTemplate.csv', 'w');
-        var_dump($file);
-        $success = fputcsv($file, $fileColumns, $delimiter = Yii::$app->params['csvSeparator']);
-        fclose($file);
-        return json_encode($success);
+        $csvString = implode(Yii::$app->params['csvSeparator'], $fileColumns); 
+        return json_encode($csvString);
     }
 
   
@@ -370,8 +356,7 @@ class DatasetController extends Controller {
             unlink($serverFilePath);
 
             //Loaded given variables
-            $experimentController = new ExperimentController();
-            $experimentVariables = $experimentController->getExperimentMesuredVariablesSelectList($datasetModel->experiment) ;
+            $experimentVariables = $this->getExperimentMesuredVariablesSelectList($datasetModel->experiment) ;
             $csvRawVariables = array_slice($csvHeaders, 2);
             // clean variables name
             $csvVariables = array_map('trim', $csvRawVariables);
@@ -499,8 +484,7 @@ class DatasetController extends Controller {
             $csvHeaders = str_getcsv(array_shift($fileContent), Yii::$app->params['csvSeparator']);
             unlink($serverFilePath);
 
-            $sensorController = new SensorController();
-            $sensorVariables = $sensorController->getSensorMeasuredVariablesSelectList($datasetModel->provenanceSensingDevices) ;
+            $sensorVariables = $this->getSensorMeasuredVariablesSelectList($datasetModel->provenanceSensingDevices) ;
             $csvVariables = array_slice($csvHeaders, 1);
             // select all variables that don"t exist in experiment variables
             $variablesNotInSensor = array_diff($csvVariables, array_values($sensorVariables)); 
@@ -612,5 +596,54 @@ class DatasetController extends Controller {
             $sensorsListByUriAndLabel[$sensorUriTypesLabel[self::SENSOR_DATA_URI]] = $sensorUriTypesLabel[self::SENSOR_DATA_LABEL];
         }
         return $sensorsListByUriAndLabel;
+    }
+    
+     /**
+     * Prepare a variable list associated to an experiment
+     * @param string $experimentUri
+     * @return array
+     */
+    public function getExperimentMesuredVariablesSelectList($experimentUri) {
+        if(!isset($experimentUri) || empty($experimentUri)){
+            return [];
+        }
+        $experimentModel = new YiiExperimentModel();
+        $variables = $experimentModel->getMeasuredVariables(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN],
+                $experimentUri
+                );
+        if(isset($variables) && is_array($variables)){
+            return $variables;
+        }
+        return [];
+    }
+    
+     /**
+     * variables associated to a given sensor
+     * @param array $sensorUris
+     * @return type
+     *  @example [
+     *      "http://www.opensilex.org/demo/variables/id/v001" => "labelv1",
+     *      "http://www.opensilex.org/demo/variables/id/v002" => "labelv2",
+     * ]
+     */
+    public function getSensorMeasuredVariablesSelectList($sensorUris) {
+        $variables = [];
+        if(!isset($sensorUris) || empty($sensorUris)){
+            return $variables;
+        }
+        $sensorModel = new YiiSensorModel();
+        foreach ($sensorUris as $uri) {
+            $variablesTmp = $sensorModel->getMeasuredVariables(
+                Yii::$app->session[WSConstants::ACCESS_TOKEN],
+                $uri
+                );
+            $variables = array_merge($variables,$variablesTmp);
+        }
+        
+        if(isset($variables) && is_array($variables)){
+            return $variables;
+        }
+        return [];
     }
 }

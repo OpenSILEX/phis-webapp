@@ -280,6 +280,28 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                 }
         }
         
+        // The download function takes a CSV string, the filename and mimeType as parameters
+        // Scroll/look down at the bottom of this snippet to see how download is called
+        function download(content, fileName, mimeType) {
+          var a = document.createElement('a');
+          mimeType = mimeType || 'application/octet-stream';
+
+          if (navigator.msSaveBlob) { // IE10
+            navigator.msSaveBlob(new Blob([content], {
+              type: mimeType
+            }), fileName);
+          } else if (URL && 'download' in a) { //html5 A[download]
+            a.href = URL.createObjectURL(new Blob([content], {
+              type: mimeType
+            }));
+            a.setAttribute('download', fileName);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          } else {
+            location.href = 'data:application/octet-stream,' + encodeURIComponent(content); // only this mime type is supported
+          }
+        }
         
     </script>
         <script>
@@ -460,9 +482,12 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
                     </div>               
                     
         <?= 
-        Html::a("<button type='button' class='btn btn-success'> " . Yii::t('app', 'Download Template') . "</button>",
-            \config::path()['basePath'] . 'documents/DatasetFiles/' . $csvPath . '/datasetTemplate.csv',
-            ['id' => 'downloadDatasetTemplate']
+        Html::button(
+                Yii::t('app', 'Download Template'),
+                [
+                'id' => 'downloadDatasetTemplate',
+                'class' => 'btn btn-success'  
+                ]
         );
         ?>
                 <br><br>
@@ -714,24 +739,31 @@ $this->registerCssFile("https://rawgit.com/lykmapipo/themify-icons/master/css/th
 
       
         // Download adjusted to variables CSV template file on click
-        $(document).on('change', '#uriVariable-selector', function () {
+        $(document).on('click', '#downloadDatasetTemplate', function (event) {
+            event.preventDefault();
             var variablesLabels = [];
             $("#uriVariable-selector :selected").each(function (i, sel) {
                 variablesLabels.push($(sel).text());
             });
-            $.ajax({
-                url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-creation-file',
-                type: 'POST',
-                datatype: 'json',
-                data: {variables: variablesLabels}
-            })
-            .done(function (data) {
-            })
-            .fail(function (jqXHR, textStatus) {
-                $('#document-save-msg').parent().removeClass('alert-info');
-                $('#document-save-msg').parent().addClass('alert-danger');
-                $('#document-save-msg').html('Request failed: ' + textStatus);
-            });
+            if(variablesLabels.length > 0){
+                $.ajax({
+                    url: 'index.php?r=dataset%2Fgenerate-and-download-dataset-creation-file',
+                    type: 'POST',
+                    datatype: 'json',
+                    data: {variables: variablesLabels}
+                })
+                .done(function (csvContent) {
+                    console.log(csvContent);
+                    download(csvContent, 'datasetTemplate.csv', 'text/csv;encoding:utf-8');
+                })
+                .fail(function (jqXHR, textStatus) {
+                    $('#document-save-msg').parent().removeClass('alert-info');
+                    $('#document-save-msg').parent().addClass('alert-danger');
+                    $('#document-save-msg').html('Request failed: ' + textStatus);
+                });
+            }else{
+                toastr.warning("You must selected at least one variable");
+            }
         });
         
         // On provenance change update provenance fields
