@@ -5,13 +5,13 @@ variables:
 
 .cache_dependencies: &cache_dependencies
   cache:  
-    key: ${CI_COMMIT_REF_SLUG}
+    key: "master-phiswebapp"
     paths:
       - "$CI_PROJECT_DIR/vendor" 
 
 .cache_dependencies_deploy: &cache_dependencies_deploy
   cache:  
-    key: ${CI_COMMIT_REF_SLUG}
+    key: "master-phiswebapp"
     paths:
       - "$CI_PROJECT_DIR/vendor"
     policy: pull
