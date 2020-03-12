@@ -26,6 +26,7 @@ use openSILEX\handsontablePHP\classes\ColumnConfig;
 use app\models\wsModels\WSConstants;
 use app\models\yiiModels\YiiExperimentModel;
 use app\components\helpers\Vocabulary;
+use app\models\yiiModels\YiiSensorModel;
 
 require_once '../config/config.php';
 
@@ -131,7 +132,7 @@ class DatasetController extends Controller {
         }
         
         $csvString = implode(Yii::$app->params['csvSeparator'], $fileColumns); 
-        return json_encode($csvString);
+        return $csvString;
     }
     
      /**
@@ -149,7 +150,7 @@ class DatasetController extends Controller {
         }
         
         $csvString = implode(Yii::$app->params['csvSeparator'], $fileColumns); 
-        return json_encode($csvString);
+        return $csvString;
     }
 
   
@@ -411,7 +412,6 @@ class DatasetController extends Controller {
                         
                         $dataService = new WSDataModel();
                         $result = $dataService->post($token, "/", $values);
-
                         // If data successfully saved
                         if (is_array($result->metadata->datafiles) && count($result->metadata->datafiles) > 0) {
                             $arrayData = $this->csvToArray($fileContent);

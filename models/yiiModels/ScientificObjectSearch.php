@@ -47,7 +47,7 @@ class ScientificObjectSearch extends YiiScientificObjectModel {
      * @return mixed DataProvider of the result 
      *               or string "token" if the user needs to log in
      */
-    public function search($sessionToken, $params) {
+    public function search($sessionToken, $params = []) {
         
         //1. load the searched params 
         $this->load($params);
