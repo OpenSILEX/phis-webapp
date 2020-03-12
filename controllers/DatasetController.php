@@ -132,7 +132,7 @@ class DatasetController extends Controller {
         }
         
         $csvString = implode(Yii::$app->params['csvSeparator'], $fileColumns); 
-        return json_encode($csvString);
+        return $csvString;
     }
     
      /**
@@ -150,7 +150,7 @@ class DatasetController extends Controller {
         }
         
         $csvString = implode(Yii::$app->params['csvSeparator'], $fileColumns); 
-        return json_encode($csvString);
+        return $csvString;
     }
 
   
@@ -412,7 +412,6 @@ class DatasetController extends Controller {
                         
                         $dataService = new WSDataModel();
                         $result = $dataService->post($token, "/", $values);
-
                         // If data successfully saved
                         if (is_array($result->metadata->datafiles) && count($result->metadata->datafiles) > 0) {
                             $arrayData = $this->csvToArray($fileContent);
