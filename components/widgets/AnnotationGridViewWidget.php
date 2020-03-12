@@ -68,7 +68,7 @@ class AnnotationGridViewWidget extends Widget {
                                 'label' => Yii::t('app', YiiAnnotationModel::CREATOR_LABEL),
                                 'attribute' => YiiAnnotationModel::CREATOR,
                                 'value' => function($model) {
-                                    return explode("agent/", $model->creator)[1];
+                                    return $model->creator;
                                 },
                             ],
                             YiiAnnotationModel::MOTIVATED_BY =>
