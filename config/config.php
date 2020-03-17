@@ -29,7 +29,7 @@ class config {
             'baseIndexPath' => '/'.$basePath.'/index.php',
             'basePath' => '/'.$basePath.'/',
             'hostnameURL' => 'http://'.$hostname.'/'.$appli,
-            'documentsUrl' => '../web/documents/',
+            'documentsUrl' => './documents/',
             'shinyProxyServer' => 'http://'.$hostname.':8004',
             //Concepts, relations uri
             'cVariable' => 'http://www.opensilex.org/vocabulary/oeso#Variable',
